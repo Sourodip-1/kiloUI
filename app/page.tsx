@@ -1,69 +1,173 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import * as React from "react";
+import Link from "next/link";
+import {
+  ArrowRight,
+  Terminal,
+  Copy,
+  Check,
+  Sparkles,
+  Layers,
+  Code,
+  ShieldCheck,
+  Cpu,
+} from "lucide-react";
+import { REGISTRY_DATA, RegistryItem } from "@/registry/registry-data";
+import { VectorKiloLogo, VectorCategoryIcon } from "@/components/vector-icons";
+import { ComponentCarousel } from "@/components/component-carousel";
+import { useAppShell } from "@/components/app-shell";
+
+export default function OverviewPage() {
+  const { showToast, theme } = useAppShell();
+  const [copiedCli, setCopiedCli] = React.useState(false);
+
+  const allItems = Object.values(REGISTRY_DATA);
+  const categories = Array.from(new Set(allItems.map((item) => item.category)));
+
+  // Latest components for the horizontal carousel
+  const latestComponents = [
+    REGISTRY_DATA["sidebar"],
+    REGISTRY_DATA["stat-card"],
+    REGISTRY_DATA["dialog"],
+    REGISTRY_DATA["switch"],
+    REGISTRY_DATA["button"],
+    REGISTRY_DATA["input"],
+    REGISTRY_DATA["badge"],
+    REGISTRY_DATA["card"],
+    REGISTRY_DATA["tabs"],
+    REGISTRY_DATA["accordion"],
+  ].filter(Boolean) as RegistryItem[];
+
+  const handleCopyCli = async (cmd: string) => {
+    try {
+      await navigator.clipboard.writeText(cmd);
+      setCopiedCli(true);
+      showToast("Copied CLI command to clipboard");
+      setTimeout(() => setCopiedCli(false), 2000);
+    } catch {
+      showToast("Failed to copy command");
+    }
+  };
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-12">
+      {/* 1. Quiet, Focused Hero Section */}
+      <section className="space-y-4">
+        {/* Clean Logo without background container or decorative frame */}
+        <div className="flex items-center gap-3">
+          <Link
+            href="/"
+            className="group/logo inline-flex items-center gap-3 cursor-pointer"
+            aria-label="kilo/ui Home"
+          >
+            {/* Logo has green slash, adaptive K, animated slash on hover, no size zoom */}
+            <div className="h-10 w-10 flex items-center justify-center">
+              <VectorKiloLogo
+                theme={theme}
+                className="h-10 w-10"
+              />
+            </div>
+            <div>
+              <h1 className="font-mono text-2xl font-bold tracking-tight text-[var(--text-primary)] select-none">
+                kilo<span className="text-[var(--accent-green)]">/</span>ui
+              </h1>
+              <p className="font-mono text-[11px] text-[var(--text-muted)]">
+                v0.1.0 • Component Library & Interactive Playground
+              </p>
+            </div>
+          </Link>
+        </div>
+
+        {/* Concise Description */}
+        <p className="text-sm text-[var(--text-secondary)] max-w-2xl leading-relaxed">
+          A minimal, precision-engineered component library and interactive playground with a dark visual identity, clean navigation, subtle animations, and a complete documentation and editing experience for every component.
+        </p>
+
+        {/* Quick Actions & CLI Command */}
+        <div className="flex flex-wrap items-center gap-3 pt-2">
+          <Link
+            href="/components"
+            className="inline-flex items-center gap-2 h-9 px-4 rounded-md bg-[var(--text-primary)] text-[var(--bg-main)] font-mono text-xs font-medium hover:opacity-90 active:scale-98 transition-all cursor-pointer"
+          >
+            <Layers className="h-3.5 w-3.5" />
+            <span>Explore Components</span>
+            <ArrowRight className="h-3.5 w-3.5 ml-1" />
+          </Link>
+
+          <Link
+            href="/docs"
+            className="inline-flex items-center gap-2 h-9 px-4 rounded-md border border-[var(--border)] bg-[var(--surface-elevated)] text-[var(--text-primary)] font-mono text-xs hover:border-[var(--border-hover)] hover:bg-[var(--surface-secondary)] transition-all cursor-pointer"
+          >
+            <Code className="h-3.5 w-3.5 text-[var(--text-secondary)]" />
+            <span>Registry API</span>
+          </Link>
+
+          {/* Quick CLI snippet */}
+          <button
+            type="button"
+            onClick={() => handleCopyCli("npx kilo-ui add button")}
+            className="inline-flex items-center gap-2 h-9 px-3 rounded-md border border-[var(--border)] bg-[var(--surface-secondary)]/50 font-mono text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:border-[var(--border-hover)] transition-all cursor-pointer"
+            title="Click to copy CLI installation command"
+          >
+            <Terminal className="h-3.5 w-3.5 text-[var(--accent-green)]" />
+            <span>npx kilo-ui add button</span>
+            {copiedCli ? (
+              <Check className="h-3.5 w-3.5 text-[var(--accent-green)] ml-1" />
+            ) : (
+              <Copy className="h-3.5 w-3.5 text-[var(--text-muted)] ml-1" />
+            )}
+          </button>
+        </div>
+      </section>
+
+      {/* 2. Latest Components Horizontal Carousel */}
+      <section className="space-y-4 pt-1">
+        <ComponentCarousel
+          title="Latest Components"
+          items={latestComponents}
+          seeAllHref="/components"
+          seeAllLabel="See all components"
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+      </section>
+
+      {/* 3. Browse by Category */}
+      <section className="space-y-4 pt-4 border-t border-[var(--border)]">
+        <div className="flex items-center justify-between">
+          <h2 className="font-mono text-sm font-semibold tracking-tight text-[var(--text-primary)]">
+            Component Categories
+          </h2>
+          <span className="font-mono text-xs text-[var(--text-muted)]">
+            {categories.length} categories • {allItems.length} components
+          </span>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          {categories.map((cat) => {
+            const count = allItems.filter((i) => i.category === cat).length;
+            return (
+              <Link
+                key={cat}
+                href={`/components?category=${encodeURIComponent(cat)}`}
+                className="group flex flex-col justify-between p-3 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)]/50 hover:border-[var(--border-hover)] hover:bg-[var(--surface-secondary)]/60 transition-all cursor-pointer"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <VectorCategoryIcon
+                    category={cat}
+                    className="h-4 w-4 text-[var(--text-primary)] group-hover:text-[var(--accent-green)] transition-colors"
+                  />
+                  <span className="font-mono text-[10px] text-[var(--text-muted)] group-hover:text-[var(--text-primary)] transition-colors">
+                    {count}
+                  </span>
+                </div>
+                <div className="font-mono text-xs font-medium text-[var(--text-primary)] group-hover:text-[var(--accent-green)] transition-colors truncate">
+                  {cat}
+                </div>
+              </Link>
+            );
+          })}
         </div>
-      </main>
+      </section>
     </div>
   );
 }
