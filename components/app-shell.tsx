@@ -195,24 +195,24 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 font-mono text-xs text-[var(--text-muted)]">
                 <Link
                   href="/"
-                  className="hover:text-[var(--text-primary)] transition-colors flex items-center gap-0.5"
+                  className="hover:text-[var(--text-primary)] transition-colors flex items-center gap-0.5 font-bold"
                 >
                   <span>kilo</span>
-                  <span className="text-[var(--accent-green)] font-semibold">/</span>
+                  <span className="text-[var(--accent-green)] font-bold">/</span>
                   <span>ui</span>
                 </Link>
 
                 {pathname === "/" && (
                   <>
                     <span>/</span>
-                    <span className="text-[var(--text-primary)] font-medium">Overview</span>
+                    <span className="text-[var(--text-primary)] font-bold">Overview</span>
                   </>
                 )}
 
                 {pathname === "/components" && (
                   <>
                     <span>/</span>
-                    <span className="text-[var(--text-primary)] font-medium">All Components</span>
+                    <span className="text-[var(--text-primary)] font-bold">All Components</span>
                   </>
                 )}
 
@@ -221,19 +221,26 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                     <span>/</span>
                     <Link
                       href={`/components?category=${encodeURIComponent(currentItem.category)}`}
-                      className="hover:text-[var(--text-primary)] transition-colors hidden sm:inline"
+                      className="hover:text-[var(--text-primary)] transition-colors hidden sm:inline font-semibold"
                     >
                       {currentItem.category}
                     </Link>
                     <span className="hidden sm:inline">/</span>
-                    <span className="text-[var(--text-primary)] font-medium">{currentItem.title}</span>
+                    <span className="text-[var(--text-primary)] font-bold">{currentItem.title}</span>
+                  </>
+                )}
+
+                {pathname?.startsWith("/icons") && (
+                  <>
+                    <span>/</span>
+                    <span className="text-[var(--text-primary)] font-bold">Icon Pack</span>
                   </>
                 )}
 
                 {pathname?.startsWith("/docs") && (
                   <>
                     <span>/</span>
-                    <span className="text-[var(--text-primary)] font-medium">Registry API</span>
+                    <span className="text-[var(--text-primary)] font-bold">Registry API</span>
                   </>
                 )}
               </nav>
@@ -247,8 +254,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 className="relative hidden sm:flex items-center gap-2 h-8 w-48 md:w-56 rounded border border-[var(--border)] bg-[var(--surface-elevated)] px-2.5 text-xs text-[var(--text-muted)] hover:border-[var(--border-hover)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
               >
                 <Search className="h-3.5 w-3.5 text-[var(--text-secondary)]" />
-                <span className="truncate">Search primitives...</span>
-                <kbd className="ml-auto pointer-events-none rounded border border-[var(--border)] bg-[var(--surface-secondary)] px-1 py-0.5 font-mono text-[9px] text-[var(--text-muted)]">
+                <span className="truncate font-medium">Search primitives...</span>
+                <kbd className="ml-auto pointer-events-none rounded border border-[var(--border)] bg-[var(--surface-secondary)] px-1 py-0.5 font-mono text-[9px] font-bold text-[var(--text-muted)]">
                   ⌘K
                 </kbd>
               </button>
@@ -334,6 +341,30 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <main className="flex-1 w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
             {children}
           </main>
+
+          {/* Clean Bounded Footer */}
+          <footer className="border-t border-[var(--border)] py-6 px-4 sm:px-6 lg:px-8 text-xs text-[var(--text-muted)] mt-auto shrink-0 bg-[var(--bg-main)]">
+            <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+              <div className="flex items-center gap-2 font-mono text-[11px]">
+                <span className="font-semibold text-[var(--text-primary)]">kilo/ui</span>
+                <span>•</span>
+                <span>10 Components</span>
+                <span>•</span>
+                <span>100 Animated Icons</span>
+              </div>
+              <div className="flex items-center gap-4 text-[11px] font-mono">
+                <Link href="/icons" className="hover:text-[var(--text-primary)] transition-colors">
+                  Icon Pack
+                </Link>
+                <Link href="/components" className="hover:text-[var(--text-primary)] transition-colors">
+                  All Components
+                </Link>
+                <Link href="/docs" className="hover:text-[var(--text-primary)] transition-colors">
+                  Registry Docs
+                </Link>
+              </div>
+            </div>
+          </footer>
         </div>
 
         {/* Global Command Palette / Search Modal */}

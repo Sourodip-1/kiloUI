@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { RotateCcw, Check, Copy, ChevronDown } from "lucide-react";
+import { RotateCcw, Check, Copy, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/registry/ui/button";
 import { Input } from "@/registry/ui/input";
@@ -51,6 +51,8 @@ export interface ComponentPreviewStageProps {
   showKnobs?: boolean;
   showGrid?: boolean;
   onConfiguredCodeChange?: (code: string) => void;
+  activeVariant?: string;
+  onVariantChange?: (variant: string) => void;
 }
 
 /** Tile container for individual controls matching photo 2 */
@@ -70,7 +72,7 @@ function CustomizeTile({
         className
       )}
     >
-      <span className="text-xs font-medium text-[var(--text-secondary)] whitespace-nowrap pr-2 select-none">
+      <span className="text-xs font-semibold font-mono tracking-tight text-[var(--text-secondary)] whitespace-nowrap pr-2 select-none">
         {label}
       </span>
       <div className="flex items-center justify-end flex-1 min-w-0">{children}</div>
@@ -78,7 +80,7 @@ function CustomizeTile({
   );
 }
 
-/** Dropdown select matching photo 2 */
+/** Custom elevated select matching kilo/ui design tokens */
 function CustomizeSelect({
   value,
   onChange,
@@ -88,28 +90,103 @@ function CustomizeSelect({
   onChange: (val: string) => void;
   options: { label: string; value: string }[] | string[];
 }) {
-  const normOptions = options.map((opt) =>
-    typeof opt === "string" ? { label: opt, value: opt } : opt
+  const [open, setOpen] = React.useState(false);
+  const containerRef = React.useRef<HTMLDivElement>(null);
+
+  const normOptions = React.useMemo(
+    () =>
+      options.map((opt) =>
+        typeof opt === "string" ? { label: opt, value: opt } : opt
+      ),
+    [options]
   );
 
+  const selectedOption =
+    normOptions.find((opt) => opt.value === value) || {
+      label: value,
+      value,
+    };
+
+  React.useEffect(() => {
+    if (!open) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open]);
+
   return (
-    <div className="relative flex items-center">
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="appearance-none bg-transparent pr-4 text-xs text-[var(--text-primary)] font-medium text-right focus:outline-none cursor-pointer truncate max-w-[130px]"
+    <div ref={containerRef} className="relative inline-block text-left">
+      <button
+        type="button"
+        onClick={() => setOpen((prev) => !prev)}
+        className={cn(
+          "group flex items-center justify-between gap-1.5 px-2.5 py-1 rounded-md text-xs font-mono transition-all duration-150 cursor-pointer select-none",
+          "bg-[var(--surface-tertiary)]/80 hover:bg-[var(--surface-tertiary)] border border-[var(--border)] hover:border-[var(--border-hover)]",
+          "text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-green)]/40 shadow-xs",
+          open && "border-[var(--accent-green)]/50 ring-1 ring-[var(--accent-green)]/40 bg-[var(--surface-elevated)]"
+        )}
+        aria-haspopup="listbox"
+        aria-expanded={open}
       >
-        {normOptions.map((opt) => (
-          <option
-            key={opt.value}
-            value={opt.value}
-            className="bg-[var(--surface-elevated)] text-[var(--text-primary)]"
-          >
-            {opt.label}
-          </option>
-        ))}
-      </select>
-      <ChevronDown className="h-3 w-3 text-[var(--text-muted)] pointer-events-none shrink-0 ml-0.5" />
+        <span className="truncate max-w-[110px] font-medium text-[var(--text-primary)]">
+          {selectedOption.label}
+        </span>
+        <ChevronDown
+          className={cn(
+            "h-3 w-3 text-[var(--text-muted)] transition-transform duration-200 shrink-0 group-hover:text-[var(--text-primary)]",
+            open && "rotate-180 text-[var(--accent-green)]"
+          )}
+        />
+      </button>
+
+      {open && (
+        <div
+          role="listbox"
+          className={cn(
+            "absolute right-0 top-full mt-1.5 z-50 min-w-[130px] max-h-56 overflow-y-auto",
+            "rounded-lg p-1 bg-[var(--surface-elevated)] border border-[var(--border)] shadow-xl shadow-black/60 backdrop-blur-md",
+            "animate-in fade-in-0 zoom-in-95 duration-150"
+          )}
+        >
+          {normOptions.map((opt) => {
+            const isSelected = opt.value === value;
+            return (
+              <button
+                key={opt.value}
+                type="button"
+                role="option"
+                aria-selected={isSelected}
+                onClick={() => {
+                  onChange(opt.value);
+                  setOpen(false);
+                }}
+                className={cn(
+                  "flex items-center justify-between w-full px-2.5 py-1.5 rounded-md text-xs font-mono transition-colors text-left cursor-pointer",
+                  isSelected
+                    ? "bg-[var(--surface-secondary)] text-[var(--accent-green)] font-medium"
+                    : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)]"
+                )}
+              >
+                <span className="truncate">{opt.label}</span>
+                {isSelected && (
+                  <Check className="h-3 w-3 text-[var(--accent-green)] shrink-0 ml-2" />
+                )}
+              </button>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
@@ -178,9 +255,13 @@ export function ComponentPreviewStage({
   showKnobs = true,
   showGrid = false,
   onConfiguredCodeChange,
+  activeVariant,
+  onVariantChange,
 }: ComponentPreviewStageProps) {
   // 1. Button state
-  const [btnVariant, setBtnVariant] = React.useState<any>("default");
+  const [btnVariant, setBtnVariant] = React.useState<any>(
+    item.name === "button" && activeVariant ? activeVariant : "default"
+  );
   const [btnSize, setBtnSize] = React.useState<any>("default");
   const [btnLabel, setBtnLabel] = React.useState("Action Button");
   const [btnLoading, setBtnLoading] = React.useState(false);
@@ -209,9 +290,24 @@ export function ComponentPreviewStage({
   const [dialogTriggerLabel, setDialogTriggerLabel] = React.useState("Open Deploy Modal");
 
   // 5. Badge state
-  const [badgeVariant, setBadgeVariant] = React.useState<any>("success");
+  const [badgeVariant, setBadgeVariant] = React.useState<any>(
+    item.name === "badge" && activeVariant ? activeVariant : "default"
+  );
   const [badgeDot, setBadgeDot] = React.useState(true);
   const [badgeText, setBadgeText] = React.useState("Operational");
+
+  // Sync state if activeVariant prop changes (e.g. user clicked sidebar variant)
+  React.useEffect(() => {
+    if (activeVariant) {
+      if (item.name === "button") {
+        setBtnVariant(activeVariant);
+      } else if (item.name === "badge") {
+        setBadgeVariant(activeVariant);
+      } else if (item.name === "tabs") {
+        setTabVariant(activeVariant === "slide" ? "slide" : "default");
+      }
+    }
+  }, [activeVariant, item.name]);
 
   // 6. Card state
   const [cardTitle, setCardTitle] = React.useState("Edge Runtime Worker");
@@ -220,6 +316,9 @@ export function ComponentPreviewStage({
 
   // 7. Tabs state
   const [tabValue, setTabValue] = React.useState("overview");
+  const [tabVariant, setTabVariant] = React.useState<"default" | "slide">(
+    item.name === "tabs" && activeVariant === "slide" ? "slide" : "default"
+  );
 
   // 8. StatCard state
   const [statTitle, setStatTitle] = React.useState("Active Registry Users");
@@ -231,6 +330,63 @@ export function ComponentPreviewStage({
 
   // 9. Sidebar state
   const [sidebarDemoCollapsed, setSidebarDemoCollapsed] = React.useState(false);
+
+  // Available semantic variants for this component
+  const variants = React.useMemo(() => {
+    if (item.variants && item.variants.length > 0) return item.variants;
+    if (item.name === "button") return ["default", "secondary", "outline", "ghost", "accent", "destructive", "link"];
+    if (item.name === "badge") return ["default", "secondary", "outline", "success", "destructive", "muted"];
+    if (item.name === "tabs") return ["default", "slide"];
+    return [];
+  }, [item.variants, item.name]);
+
+  const hasVariants = variants.length > 1;
+
+  const currentVariant =
+    item.name === "button"
+      ? btnVariant
+      : item.name === "badge"
+      ? badgeVariant
+      : item.name === "tabs"
+      ? tabVariant
+      : activeVariant || variants[0] || "default";
+
+  const currentIndex = Math.max(0, variants.indexOf(currentVariant));
+
+  const handlePrevVariant = React.useCallback(() => {
+    if (!hasVariants) return;
+    const prevIdx = (currentIndex - 1 + variants.length) % variants.length;
+    const prevVal = variants[prevIdx];
+    if (item.name === "button") setBtnVariant(prevVal);
+    if (item.name === "badge") setBadgeVariant(prevVal);
+    if (item.name === "tabs") setTabVariant(prevVal as "default" | "slide");
+    onVariantChange?.(prevVal);
+  }, [hasVariants, currentIndex, variants, item.name, onVariantChange]);
+
+  const handleNextVariant = React.useCallback(() => {
+    if (!hasVariants) return;
+    const nextIdx = (currentIndex + 1) % variants.length;
+    const nextVal = variants[nextIdx];
+    if (item.name === "button") setBtnVariant(nextVal);
+    if (item.name === "badge") setBadgeVariant(nextVal);
+    if (item.name === "tabs") setTabVariant(nextVal as "default" | "slide");
+    onVariantChange?.(nextVal);
+  }, [hasVariants, currentIndex, variants, item.name, onVariantChange]);
+
+  const [variantMenuOpen, setVariantMenuOpen] = React.useState(false);
+  const variantMenuRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (variantMenuRef.current && !variantMenuRef.current.contains(e.target as Node)) {
+        setVariantMenuOpen(false);
+      }
+    }
+    if (variantMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => document.removeEventListener("mousedown", handleClickOutside);
+    }
+  }, [variantMenuOpen]);
 
   const handleResetAll = () => {
     setBtnVariant("default");
@@ -261,6 +417,7 @@ export function ComponentPreviewStage({
     setCardHover(true);
 
     setTabValue("overview");
+    setTabVariant("default");
 
     setStatTitle("Active Registry Users");
     setStatValue("12,840");
@@ -289,6 +446,8 @@ export function ComponentPreviewStage({
       code = `<Card hover={${cardHover}} className="max-w-md">\n  <CardHeader>\n    <CardTitle>${cardTitle}</CardTitle>\n    <CardDescription>${cardDesc}</CardDescription>\n  </CardHeader>\n  <CardContent>\n    <p className="text-xs text-[var(--text-secondary)]">Edge network node operational</p>\n  </CardContent>\n</Card>`;
     } else if (item.name === "stat-card") {
       code = `<StatCard\n  title="${statTitle}"\n  value="${statValue}"\n  change="${statChange}"\n  trend="${statTrend}"\n  caption="${statCaption}"\n/>`;
+    } else if (item.name === "tabs") {
+      code = `<Tabs defaultValue="${tabValue}" variant="${tabVariant}">\n  <TabsList variant="${tabVariant}">\n    <TabsTrigger value="overview">Overview</TabsTrigger>\n    <TabsTrigger value="metrics">Metrics</TabsTrigger>\n    <TabsTrigger value="logs">Logs</TabsTrigger>\n  </TabsList>\n  <TabsContent value="overview">\n    <p>Overview content</p>\n  </TabsContent>\n  <TabsContent value="metrics">\n    <p>Metrics content</p>\n  </TabsContent>\n  <TabsContent value="logs">\n    <p>Logs content</p>\n  </TabsContent>\n</Tabs>`;
     }
     onConfiguredCodeChange(code);
   }, [
@@ -361,6 +520,108 @@ export function ComponentPreviewStage({
           >
             <RotateCcw className="h-3.5 w-3.5" />
           </button>
+        )}
+
+        {/* Unified Floating Variant Navigation Dock (Canvas Bottom) */}
+        {interactive && showKnobs && hasVariants && (
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex items-center gap-0.5 p-1 rounded-full border border-[var(--border)] bg-[var(--surface-elevated)]/95 backdrop-blur-md shadow-md select-none transition-all duration-200 hover:border-[var(--border-hover)]">
+            {/* Previous Variant Button */}
+            <button
+              type="button"
+              onClick={handlePrevVariant}
+              className="h-6 w-6 rounded-full flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] active:scale-90 transition-all cursor-pointer"
+              title={`Previous variant: ${variants[(currentIndex - 1 + variants.length) % variants.length]}`}
+              aria-label="Previous variant"
+            >
+              <ChevronLeft className="h-3.5 w-3.5" />
+            </button>
+
+            {/* Center Variant Badge with Dropdown */}
+            <div className="relative" ref={variantMenuRef}>
+              <button
+                type="button"
+                onClick={() => setVariantMenuOpen((prev) => !prev)}
+                className="flex items-center gap-1.5 px-2 py-0.5 rounded-full hover:bg-[var(--surface-secondary)] active:scale-98 transition-all cursor-pointer group"
+                title="Select variant"
+                aria-haspopup="listbox"
+                aria-expanded={variantMenuOpen}
+              >
+                <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent-green)] shrink-0" />
+                <span className="text-xs font-semibold text-[var(--text-primary)] capitalize tracking-tight">
+                  {currentVariant}
+                </span>
+                <span className="text-[10px] font-medium text-[var(--text-muted)] pl-0.5">
+                  {currentIndex + 1}/{variants.length}
+                </span>
+                <ChevronDown
+                  className={cn(
+                    "h-3 w-3 text-[var(--text-muted)] transition-transform duration-200 group-hover:text-[var(--text-primary)]",
+                    variantMenuOpen && "rotate-180 text-[var(--accent-green)]"
+                  )}
+                />
+              </button>
+
+              {/* Quick Jump Variant Menu Popover */}
+              {variantMenuOpen && (
+                <div
+                  role="listbox"
+                  className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 z-30 min-w-[140px] max-h-56 overflow-y-auto rounded-xl p-1 bg-[var(--surface-elevated)] border border-[var(--border)] shadow-xl backdrop-blur-md animate-in fade-in-0 zoom-in-95 duration-150"
+                >
+                  <div className="px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
+                    Variants ({variants.length})
+                  </div>
+                  {variants.map((v, i) => {
+                    const isSelected = v === currentVariant;
+                    return (
+                      <button
+                        key={v}
+                        type="button"
+                        role="option"
+                        aria-selected={isSelected}
+                        onClick={() => {
+                          if (item.name === "button") setBtnVariant(v);
+                          if (item.name === "badge") setBadgeVariant(v);
+                          if (item.name === "tabs") setTabVariant(v as "default" | "slide");
+                          onVariantChange?.(v);
+                          setVariantMenuOpen(false);
+                        }}
+                        className={cn(
+                          "flex items-center justify-between w-full px-2.5 py-1.5 rounded-lg text-xs transition-colors text-left cursor-pointer",
+                          isSelected
+                            ? "bg-[var(--surface-secondary)] text-[var(--accent-green)] font-semibold"
+                            : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] font-medium"
+                        )}
+                      >
+                        <div className="flex items-center gap-1.5">
+                          <span
+                            className={cn(
+                              "h-1.5 w-1.5 rounded-full shrink-0",
+                              isSelected ? "bg-[var(--accent-green)]" : "bg-transparent"
+                            )}
+                          />
+                          <span className="capitalize">{v}</span>
+                        </div>
+                        <span className="text-[10px] text-[var(--text-muted)]">
+                          {i + 1}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* Next Variant Button */}
+            <button
+              type="button"
+              onClick={handleNextVariant}
+              className="h-6 w-6 rounded-full flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] active:scale-90 transition-all cursor-pointer"
+              title={`Next variant: ${variants[(currentIndex + 1) % variants.length]}`}
+              aria-label="Next variant"
+            >
+              <ChevronRight className="h-3.5 w-3.5" />
+            </button>
+          </div>
         )}
 
         {/* --- ACTUAL LIVE COMPONENT PREVIEW --- */}
@@ -507,58 +768,62 @@ export function ComponentPreviewStage({
           {item.name === "tabs" && (
             showKnobs ? (
               <div className="w-full max-w-md">
-                <Tabs value={tabValue} onValueChange={setTabValue}>
-                  <TabsList className="w-full justify-start">
+                <Tabs value={tabValue} onValueChange={setTabValue} variant={tabVariant}>
+                  <TabsList variant={tabVariant} className="w-full justify-start">
                     <TabsTrigger value="overview">Overview</TabsTrigger>
                     <TabsTrigger value="metrics">Metrics</TabsTrigger>
                     <TabsTrigger value="logs">Logs</TabsTrigger>
                   </TabsList>
-                  <TabsContent
-                    value="overview"
-                    className="p-4 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)]/50 mt-2 text-xs text-[var(--text-secondary)]"
-                  >
-                    All cluster nodes operational across 8 global availability zones.
-                  </TabsContent>
-                  <TabsContent
-                    value="metrics"
-                    className="p-4 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)]/50 mt-2 text-xs text-[var(--text-secondary)]"
-                  >
-                    CPU: 12% • Memory: 1.4GB / 4GB • Network: 280MB/s
-                  </TabsContent>
-                  <TabsContent
-                    value="logs"
-                    className="p-4 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)]/50 mt-2 text-xs font-mono text-[var(--text-muted)]"
-                  >
-                    [14:22:04] Worker #104 ready on 0.0.0.0:3000
-                  </TabsContent>
+                  <div className="relative overflow-x-clip min-h-[90px] mt-2">
+                    <TabsContent
+                      value="overview"
+                      className="p-4 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)]/50 text-xs text-[var(--text-secondary)] mt-0"
+                    >
+                      All cluster nodes operational across 8 global availability zones.
+                    </TabsContent>
+                    <TabsContent
+                      value="metrics"
+                      className="p-4 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)]/50 text-xs text-[var(--text-secondary)] mt-0"
+                    >
+                      CPU: 12% • Memory: 1.4GB / 4GB • Network: 280MB/s
+                    </TabsContent>
+                    <TabsContent
+                      value="logs"
+                      className="p-4 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)]/50 text-xs font-mono text-[var(--text-muted)] mt-0"
+                    >
+                      [14:22:04] Worker #104 ready on 0.0.0.0:3000
+                    </TabsContent>
+                  </div>
                 </Tabs>
               </div>
             ) : (
               <div className="w-full max-w-[245px]">
-                <Tabs value={tabValue} onValueChange={setTabValue}>
-                  <TabsList className="w-full grid grid-cols-3 h-7 p-0.5">
+                <Tabs value={tabValue} onValueChange={setTabValue} variant={tabVariant}>
+                  <TabsList variant={tabVariant} className="w-full grid grid-cols-3 h-7 p-0.5">
                     <TabsTrigger value="overview" className="text-[11px] py-1">Overview</TabsTrigger>
                     <TabsTrigger value="metrics" className="text-[11px] py-1">Metrics</TabsTrigger>
                     <TabsTrigger value="logs" className="text-[11px] py-1">Logs</TabsTrigger>
                   </TabsList>
-                  <TabsContent
-                    value="overview"
-                    className="p-2 rounded-md border border-[var(--border)] bg-[var(--surface-elevated)]/50 mt-1.5 text-[11px] text-[var(--text-secondary)] truncate"
-                  >
-                    Operational across 8 zones.
-                  </TabsContent>
-                  <TabsContent
-                    value="metrics"
-                    className="p-2 rounded-md border border-[var(--border)] bg-[var(--surface-elevated)]/50 mt-1.5 text-[11px] text-[var(--text-secondary)] truncate"
-                  >
-                    CPU: 12% • Memory: 1.4GB
-                  </TabsContent>
-                  <TabsContent
-                    value="logs"
-                    className="p-2 rounded-md border border-[var(--border)] bg-[var(--surface-elevated)]/50 mt-1.5 text-[10px] font-mono text-[var(--text-muted)] truncate"
-                  >
-                    Worker #104 ready
-                  </TabsContent>
+                  <div className="relative overflow-x-clip min-h-[60px] mt-1.5">
+                    <TabsContent
+                      value="overview"
+                      className="p-2 rounded-md border border-[var(--border)] bg-[var(--surface-elevated)]/50 text-[11px] text-[var(--text-secondary)] truncate mt-0"
+                    >
+                      Operational across 8 zones.
+                    </TabsContent>
+                    <TabsContent
+                      value="metrics"
+                      className="p-2 rounded-md border border-[var(--border)] bg-[var(--surface-elevated)]/50 text-[11px] text-[var(--text-secondary)] truncate mt-0"
+                    >
+                      CPU: 12% • Memory: 1.4GB
+                    </TabsContent>
+                    <TabsContent
+                      value="logs"
+                      className="p-2 rounded-md border border-[var(--border)] bg-[var(--surface-elevated)]/50 text-[10px] font-mono text-[var(--text-muted)] truncate mt-0"
+                    >
+                      Worker #104 ready
+                    </TabsContent>
+                  </div>
                 </Tabs>
               </div>
             )
@@ -804,10 +1069,10 @@ export function ComponentPreviewStage({
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex items-center justify-between pb-1">
-            <h3 className="font-sans text-sm font-semibold tracking-tight text-[var(--text-primary)]">
+            <h3 className="font-mono text-xs uppercase font-bold tracking-wider text-[var(--text-primary)]">
               Customize
             </h3>
-            <span className="text-[11px] font-mono text-[var(--text-muted)]">
+            <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[var(--text-muted)]">
               Live reactive properties
             </span>
           </div>
@@ -819,7 +1084,10 @@ export function ComponentPreviewStage({
                 <CustomizeTile label="Variant">
                   <CustomizeSelect
                     value={btnVariant}
-                    onChange={setBtnVariant}
+                    onChange={(val) => {
+                      setBtnVariant(val);
+                      onVariantChange?.(val);
+                    }}
                     options={item.variants || ["default", "secondary", "outline", "ghost", "accent", "destructive", "link"]}
                   />
                 </CustomizeTile>
@@ -985,8 +1253,11 @@ export function ComponentPreviewStage({
                 <CustomizeTile label="Variant">
                   <CustomizeSelect
                     value={badgeVariant}
-                    onChange={setBadgeVariant}
-                    options={item.variants || ["default", "secondary", "outline", "accent", "destructive", "pill"]}
+                    onChange={(val) => {
+                      setBadgeVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={item.variants || ["default", "secondary", "outline", "success", "destructive", "muted"]}
                   />
                 </CustomizeTile>
 
@@ -1103,13 +1374,25 @@ export function ComponentPreviewStage({
 
             {/* Tabs Controls */}
             {item.name === "tabs" && (
-              <CustomizeTile label="Active Tab">
-                <CustomizeSelect
-                  value={tabValue}
-                  onChange={setTabValue}
-                  options={["overview", "analytics", "reports", "settings"]}
-                />
-              </CustomizeTile>
+              <>
+                <CustomizeTile label="Variant">
+                  <CustomizeSelect
+                    value={tabVariant}
+                    onChange={(v) => {
+                      setTabVariant(v as "default" | "slide");
+                      onVariantChange?.(v);
+                    }}
+                    options={["default", "slide"]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Active Tab">
+                  <CustomizeSelect
+                    value={tabValue}
+                    onChange={setTabValue}
+                    options={["overview", "metrics", "logs"]}
+                  />
+                </CustomizeTile>
+              </>
             )}
           </div>
         </div>

@@ -1,16 +1,22 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Google_Sans, Google_Sans_Code } from "next/font/google";
 import "./globals.css";
 import { AppShell } from "@/components/app-shell";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const googleSans = Google_Sans({
+  variable: "--font-google-sans",
   subsets: ["latin"],
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
+  adjustFontFallback: false,
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const googleSansCode = Google_Sans_Code({
+  variable: "--font-google-sans-code",
   subsets: ["latin"],
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
+  adjustFontFallback: false,
 });
 
 export const metadata: Metadata = {
@@ -38,7 +44,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${googleSans.variable} ${googleSansCode.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-[var(--bg-main)] text-[var(--text-primary)]">
         <AppShell>{children}</AppShell>

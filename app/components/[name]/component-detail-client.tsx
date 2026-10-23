@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Terminal,
   Copy,
@@ -27,6 +28,7 @@ import { PropsTable } from "@/components/props-table";
 import { CodeBlock } from "@/components/code-block";
 import { ComponentCarousel } from "@/components/component-carousel";
 import { useAppShell } from "@/components/app-shell";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/registry/ui/tabs";
 import { cn } from "@/lib/utils";
 
 function OpenAILogo({ className }: { className?: string }) {
@@ -55,9 +57,23 @@ function V0Logo({ className }: { className?: string }) {
 
 interface ComponentDetailClientProps {
   item: RegistryItem;
+  initialVariant?: string;
 }
 
-export function ComponentDetailClient({ item }: ComponentDetailClientProps) {
+export function ComponentDetailClient({ item, initialVariant }: ComponentDetailClientProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const activeVariant = searchParams?.get("variant") || initialVariant;
+
+  const handleVariantChange = React.useCallback(
+    (variant: string) => {
+      const currentParams = searchParams ? new URLSearchParams(searchParams.toString()) : new URLSearchParams();
+      currentParams.set("variant", variant);
+      router.replace(`/components/${item.name}?${currentParams.toString()}`, { scroll: false });
+    },
+    [router, searchParams, item.name]
+  );
+
   const { showToast } = useAppShell();
   const [activeTab, setActiveTab] = React.useState<"preview" | "code">("preview");
   const [viewport, setViewport] = React.useState<"desktop" | "tablet" | "mobile">("desktop");
@@ -116,9 +132,22 @@ export function ComponentDetailClient({ item }: ComponentDetailClientProps) {
     (i) => i.name !== item.name && i.name !== "bento-cluster"
   );
 
-  const aiPrompt =
+  const promptWriting =
     item.aiPrompt ||
-    `Create a production-ready React component in TypeScript for kilo/ui: ${item.title}. Description: ${item.description}. Category: ${item.category}.`;
+    `Create and integrate a production-ready ${item.title} component for kilo/ui in React (TypeScript) and Tailwind CSS.\n\nDescription: ${item.description}\nCategory: ${item.category}`;
+
+  const aiPrompt = `${promptWriting}
+
+### Component Source Code (${mainFile?.name || `${item.name}.tsx`}):
+\`\`\`tsx
+${sourceCode.trim()}
+\`\`\`
+${(configuredCode || item.usage) ? `
+### Example Usage:
+\`\`\`tsx
+${(configuredCode || item.usage || "").trim()}
+\`\`\`
+` : ""}`.trim();
 
   const handleToggleFavorite = () => {
     try {
@@ -158,7 +187,7 @@ export function ComponentDetailClient({ item }: ComponentDetailClientProps) {
       let label = "";
       if (type === "prompt") {
         content = aiPrompt;
-        label = "Copied AI prompt!";
+        label = "Copied AI prompt with code!";
       } else if (type === "configured") {
         content = configuredCode || item.usage || sourceCode;
         label = "Copied configured code!";
@@ -176,18 +205,27 @@ export function ComponentDetailClient({ item }: ComponentDetailClientProps) {
     }
   };
 
-  const handleOpenIn = (platform: "chatgpt" | "claude" | "v0") => {
+  const handleOpenIn = async (platform: "chatgpt" | "claude" | "v0") => {
     setDropdownOpen(false);
+    // Also copy prompt with code to clipboard for convenience
+    try {
+      if (typeof window !== "undefined") {
+        await navigator.clipboard.writeText(aiPrompt);
+      }
+    } catch {
+      // ignore
+    }
+
     let url = "";
     if (platform === "chatgpt") {
       url = `https://chatgpt.com/?q=${encodeURIComponent(aiPrompt)}`;
-      showToast("Opening prompt in ChatGPT...");
+      showToast("Prompt copied & opening in ChatGPT...");
     } else if (platform === "claude") {
       url = `https://claude.ai/new?q=${encodeURIComponent(aiPrompt)}`;
-      showToast("Opening prompt in Claude...");
+      showToast("Prompt copied & opening in Claude...");
     } else if (platform === "v0") {
       url = `https://v0.dev?q=${encodeURIComponent(aiPrompt)}`;
-      showToast("Opening in v0...");
+      showToast("Prompt copied & opening in v0...");
     }
     if (url && typeof window !== "undefined") {
       window.open(url, "_blank", "noopener,noreferrer");
@@ -255,37 +293,32 @@ export function ComponentDetailClient({ item }: ComponentDetailClientProps) {
 
       {/* 2. Unified Preview / Code Toolbar and Stage */}
       <div className="space-y-3">
-        {/* Toolbar matching user screenshot */}
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          {/* Left: View Switcher (Preview / Code) */}
-          <div className="inline-flex items-center rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] p-1 shadow-xs">
-            <button
-              type="button"
-              onClick={() => setActiveTab("preview")}
-              className={cn(
-                "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-mono font-medium transition-all cursor-pointer",
-                activeTab === "preview"
-                  ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] shadow-xs"
-                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
-              )}
-            >
-              <Eye className="h-3.5 w-3.5" />
-              <span>Preview</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab("code")}
-              className={cn(
-                "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-mono font-medium transition-all cursor-pointer",
-                activeTab === "code"
-                  ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] shadow-xs"
-                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
-              )}
-            >
-              <Code className="h-3.5 w-3.5" />
-              <span>Code</span>
-            </button>
-          </div>
+        {/* View Switcher Tabs with Slide Physics */}
+        <Tabs
+          value={activeTab}
+          onValueChange={(val) => setActiveTab(val as "preview" | "code")}
+          variant="slide"
+          className="space-y-6"
+        >
+          {/* Toolbar with Slide Switcher */}
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            {/* Left: View Switcher (Preview / Code) */}
+            <TabsList variant="slide" className="h-9 p-1">
+              <TabsTrigger
+                value="preview"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono font-semibold"
+              >
+                <Eye className="h-3.5 w-3.5" />
+                <span>Preview</span>
+              </TabsTrigger>
+              <TabsTrigger
+                value="code"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono font-semibold"
+              >
+                <Code className="h-3.5 w-3.5" />
+                <span>Code</span>
+              </TabsTrigger>
+            </TabsList>
 
           {/* Right: Viewport Sizing + Favorites + Share + Copy for AI */}
           <div className="flex items-center gap-2">
@@ -497,71 +530,74 @@ export function ComponentDetailClient({ item }: ComponentDetailClientProps) {
           </div>
         </div>
 
-        {/* Primary View (Live Preview with Knobs OR TSX Source Code) */}
-        {activeTab === "preview" ? (
-          <div className="space-y-12">
-            <section className="space-y-3">
-              <ComponentPreviewStage
-                item={item}
-                interactive={true}
-                showKnobs={true}
-                viewport={viewport}
-                showGrid={showGrid}
-                onConfiguredCodeChange={setConfiguredCode}
-              />
-            </section>
-
-            {/* Props Table (React Bits style) */}
-            {item.props && item.props.length > 0 && (
-              <section className="space-y-4 pt-4 border-t border-[var(--border)]">
-                <PropsTable props={item.props} title="Component API & Props" />
-              </section>
-            )}
-
-            {/* Usage Snippet */}
-            {item.usage && (
-              <section className="space-y-3 pt-4 border-t border-[var(--border)]">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-mono text-sm font-semibold tracking-tight text-white">
-                    Usage Example
-                  </h3>
-                </div>
-                <CodeBlock
-                  code={item.usage}
-                  language="tsx"
-                  filename={`example-${item.name}.tsx`}
+          {/* Primary View (Live Preview with Knobs OR TSX Source Code) with Slide Physics */}
+          <div className="relative w-full overflow-x-clip min-h-[460px]">
+            <TabsContent value="preview" className="space-y-12 mt-0">
+              <section className="space-y-3">
+                <ComponentPreviewStage
+                  item={item}
+                  interactive={true}
+                  showKnobs={true}
+                  viewport={viewport}
+                  showGrid={showGrid}
+                  onConfiguredCodeChange={setConfiguredCode}
+                  activeVariant={activeVariant}
+                  onVariantChange={handleVariantChange}
                 />
               </section>
-            )}
-          </div>
-        ) : (
-          <div className="space-y-8">
-            <section className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-mono text-sm font-semibold tracking-tight text-white">
-                    Full TSX Source Implementation
-                  </h3>
-                  <p className="text-xs text-[var(--text-muted)]">
-                    Complete copy-pasteable implementation matching the live component preview.
-                  </p>
+
+              {/* Props Table (React Bits style) */}
+              {item.props && item.props.length > 0 && (
+                <section className="space-y-4 pt-4 border-t border-[var(--border)]">
+                  <PropsTable props={item.props} title="Component API & Props" />
+                </section>
+              )}
+
+              {/* Usage Snippet */}
+              {item.usage && (
+                <section className="space-y-3 pt-4 border-t border-[var(--border)]">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-mono text-sm font-bold tracking-tight text-[var(--text-primary)] uppercase">
+                      Usage Example
+                    </h3>
+                  </div>
+                  <CodeBlock
+                    code={item.usage}
+                    language="tsx"
+                    filename={`example-${item.name}.tsx`}
+                  />
+                </section>
+              )}
+            </TabsContent>
+
+            <TabsContent value="code" className="space-y-8 mt-0">
+              <section className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="font-mono text-sm font-bold tracking-tight text-[var(--text-primary)] uppercase">
+                      Full TSX Source Implementation
+                    </h3>
+                    <p className="text-xs text-[var(--text-muted)]">
+                      Complete copy-pasteable implementation matching the live component preview.
+                    </p>
+                  </div>
                 </div>
-              </div>
 
-              <CodeBlock
-                code={sourceCode}
-                language="tsx"
-                filename={mainFile?.name || `${item.name}.tsx`}
-              />
-            </section>
-
-            {item.props && item.props.length > 0 && (
-              <section className="space-y-4 pt-4 border-t border-[var(--border)]">
-                <PropsTable props={item.props} title="Component API & Props" />
+                <CodeBlock
+                  code={sourceCode}
+                  language="tsx"
+                  filename={mainFile?.name || `${item.name}.tsx`}
+                />
               </section>
-            )}
+
+              {item.props && item.props.length > 0 && (
+                <section className="space-y-4 pt-4 border-t border-[var(--border)]">
+                  <PropsTable props={item.props} title="Component API & Props" />
+                </section>
+              )}
+            </TabsContent>
           </div>
-        )}
+        </Tabs>
       </div>
 
       {/* Fullscreen Overlay */}

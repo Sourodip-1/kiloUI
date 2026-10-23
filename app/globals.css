@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+@theme {
+  --font-sans: var(--font-google-sans), "Google Sans", "Geist", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-google-sans-code), "Google Sans Code", "Geist Mono", "JetBrains Mono", "SF Mono", Monaco, Consolas, monospace;
+}
+
 :root {
   /* Dark mode default - developer tool aesthetic */
   --bg-main: #090a0a;
@@ -118,10 +123,40 @@ html {
 body {
   background-color: var(--bg-main);
   color: var(--text-primary);
-  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--font-google-sans), "Google Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   transition: background-color 250ms var(--ease-spring), color 250ms var(--ease-spring);
+  text-rendering: optimizeLegibility;
+}
+
+/* --- GOOGLE SANS CORPORATE TYPOGRAPHY SCHEMA --- */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-google-sans), "Google Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+  letter-spacing: -0.025em;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.font-heading {
+  font-family: var(--font-google-sans), "Google Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+  letter-spacing: -0.025em;
+  font-weight: 700;
+}
+
+.font-subheading {
+  font-family: var(--font-google-sans), "Google Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+  letter-spacing: -0.015em;
+  font-weight: 600;
+}
+
+.kilo-tech-label {
+  font-family: var(--font-google-sans-code), "Google Sans Code", monospace;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
 }
 
 /* Developer tool crisp scrollbar */
@@ -143,7 +178,8 @@ body {
 
 /* Subtle code typography */
 code, pre {
-  font-family: var(--font-geist-mono), monospace;
+  font-family: var(--font-google-sans-code), "Google Sans Code", monospace;
+  font-feature-settings: "tnum", "zero";
 }
 
 /* --- PHYSICS & MOTION UTILITIES --- */
@@ -216,4 +252,461 @@ code, pre {
 .will-change-width {
   will-change: width;
 }
+
+/* ============================================================================
+   KILO/ICONS ANIMATED TWO-TONE SVG VECTOR PRIMITIVES
+   ============================================================================ */
+:root {
+  --icon-primary: var(--text-primary);
+  --icon-accent: var(--accent-green, #8bc49a);
+  --icon-stroke-width: 2px;
+  --icon-anim-speed: 1;
+}
+
+.kilo-icon,
+.dev-icon {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: none !important;
+}
+
+.kilo-icon path,
+.kilo-icon circle,
+.kilo-icon rect,
+.kilo-icon line,
+.kilo-icon polyline,
+.kilo-icon polygon,
+.dev-icon path,
+.dev-icon circle,
+.dev-icon rect,
+.dev-icon line,
+.dev-icon polyline,
+.dev-icon polygon {
+  fill: none;
+}
+
+.kilo-icon .stroke-primary,
+.dev-icon .stroke-primary {
+  stroke: var(--icon-primary, var(--primary-color, #ffffff));
+  stroke-width: var(--icon-stroke-width, var(--stroke-width, 2px));
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none !important;
+  filter: none !important;
+  transition: stroke 0.2s ease, stroke-width 0.2s ease;
+}
+
+.kilo-icon .stroke-accent,
+.dev-icon .stroke-accent {
+  stroke: var(--icon-accent, var(--accent-color, #8bc49a));
+  stroke-width: var(--icon-stroke-width, var(--stroke-width, 2px));
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none !important;
+  filter: none !important;
+  transition: stroke 0.2s ease, stroke-width 0.2s ease;
+}
+
+.kilo-icon .fill-primary,
+.dev-icon .fill-primary {
+  fill: var(--icon-primary, var(--primary-color, #ffffff)) !important;
+  filter: none !important;
+  transition: fill 0.2s ease;
+}
+
+.kilo-icon .fill-accent,
+.dev-icon .fill-accent {
+  fill: var(--icon-accent, var(--accent-color, #8bc49a)) !important;
+  filter: none !important;
+  transition: fill 0.2s ease;
+}
+
+.anim-el {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.origin-center-svg {
+  transform-box: view-box;
+  transform-origin: 12px 12px;
+}
+.origin-bottom-svg {
+  transform-box: fill-box;
+  transform-origin: bottom center;
+}
+.origin-top-svg {
+  transform-box: fill-box;
+  transform-origin: top center;
+}
+.origin-left-svg {
+  transform-box: fill-box;
+  transform-origin: center left;
+}
+.origin-top-left-svg {
+  transform-box: fill-box;
+  transform-origin: top left;
+}
+
+.anim-menu-top {
+  transform-box: view-box;
+  transform-origin: 12px 6px;
+}
+.anim-menu-mid {
+  transform-box: view-box;
+  transform-origin: 12px 12px;
+}
+.anim-menu-bot {
+  transform-box: view-box;
+  transform-origin: 12px 18px;
+}
+
+/* Master Keyframe Animation Library (Refined Developer Micro-Interactions) */
+@keyframes kf-menu-top {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(6px) rotate(45deg); }
+}
+@keyframes kf-menu-mid {
+  0%, 100% { opacity: 1; transform: scaleX(1); }
+  50% { opacity: 0; transform: scaleX(0); }
+}
+@keyframes kf-menu-bot {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-6px) rotate(-45deg); }
+}
+
+@keyframes kf-close-spin {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(90deg); }
+}
+
+@keyframes kf-draw-36 {
+  0% { stroke-dashoffset: 36; }
+  50% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: 36; }
+}
+@keyframes kf-draw-64 {
+  0% { stroke-dashoffset: 64; }
+  50% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: 64; }
+}
+@keyframes kf-draw-reverse-36 {
+  0% { stroke-dashoffset: -36; }
+  50% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -36; }
+}
+
+@keyframes kf-scale-expand {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+@keyframes kf-pop-up {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-2px) scale(1.05); }
+}
+
+@keyframes kf-bell-swing {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(7deg); }
+  50% { transform: rotate(-6deg); }
+  75% { transform: rotate(3deg); }
+}
+
+@keyframes kf-flap-open {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(-0.4); }
+}
+@keyframes kf-folder-open {
+  0%, 100% { transform: rotateX(0deg) translateY(0); }
+  50% { transform: rotateX(-20deg) translateY(1.5px); }
+}
+
+@keyframes kf-plane-fly {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(3px, -3px); }
+}
+
+@keyframes kf-heartbeat {
+  0%, 100% { transform: scale(1); }
+  30% { transform: scale(1.12); }
+  60% { transform: scale(0.96); }
+}
+
+@keyframes kf-star-spin {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(90deg) scale(1.06); }
+}
+
+@keyframes kf-bookmark-fold {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.82); }
+}
+
+@keyframes kf-bounce-up {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2.5px); }
+}
+@keyframes kf-bounce-down {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(2.5px); }
+}
+@keyframes kf-slide-right {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(2.5px); }
+}
+@keyframes kf-slide-left {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(-2.5px); }
+}
+@keyframes kf-slide-in-x {
+  0% { transform: translateX(-5px); opacity: 0.25; }
+  50%, 80% { transform: translateX(0); opacity: 1; }
+  100% { transform: translateX(-5px); opacity: 0.25; }
+}
+@keyframes kf-external-up-right {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(3px, -3px); }
+}
+
+@keyframes kf-rotate-90 {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(90deg); }
+}
+@keyframes kf-spin-360 {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes kf-key-turn {
+  0%, 100% { transform: rotate(0deg) translateX(0); }
+  50% { transform: rotate(28deg) translateX(1.5px); }
+}
+
+@keyframes kf-sheet-separate {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(2.5px, -2.5px); }
+}
+
+@keyframes kf-lid-open {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-2.5px) rotate(-14deg); }
+}
+@keyframes kf-shackle-close {
+  0%, 100% { transform: translateY(-2.5px); }
+  50%, 80% { transform: translateY(0); }
+}
+@keyframes kf-shackle-open {
+  0%, 100% { transform: translateY(0); }
+  50%, 80% { transform: translateY(-3px); }
+}
+
+@keyframes kf-press-down {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(2px) scale(0.95); }
+}
+
+@keyframes kf-seq-1 {
+  0%, 100% { opacity: 0.25; transform: scale(0.8); }
+  30%, 60% { opacity: 1; transform: scale(1.2); }
+}
+@keyframes kf-seq-2 {
+  0%, 20%, 100% { opacity: 0.25; transform: scale(0.8); }
+  50%, 80% { opacity: 1; transform: scale(1.2); }
+}
+@keyframes kf-seq-3 {
+  0%, 40%, 100% { opacity: 0.25; transform: scale(0.8); }
+  70%, 95% { opacity: 1; transform: scale(1.2); }
+}
+
+@keyframes kf-eye-blink {
+  0%, 40%, 60%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.12); }
+}
+
+@keyframes kf-shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-2.5px); }
+  40%, 80% { transform: translateX(2.5px); }
+}
+
+@keyframes kf-flicker {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  33% { transform: scale(1.08, 0.94) rotate(-3deg); }
+  66% { transform: scale(0.94, 1.08) rotate(3deg); }
+}
+
+@keyframes kf-bar-grow {
+  0%, 100% { transform: scaleY(0.45); }
+  50% { transform: scaleY(1.1); }
+}
+
+@keyframes kf-globe-axis {
+  0%, 100% { transform: scaleX(1); }
+  50% { transform: scaleX(0.35); }
+}
+
+@keyframes kf-pin-drop {
+  0%, 100% { transform: translateY(0); }
+  35% { transform: translateY(-4.5px); }
+  65% { transform: translateY(1px); }
+  82% { transform: translateY(-1.5px); }
+}
+
+@keyframes kf-compass {
+  0%, 100% { transform: rotate(0deg); }
+  35% { transform: rotate(35deg); }
+  70% { transform: rotate(-20deg); }
+}
+
+@keyframes kf-truck-drive {
+  0%, 100% { transform: translateX(-2px); }
+  50% { transform: translateX(2.5px); }
+}
+
+@keyframes kf-dash-flow {
+  0% { stroke-dashoffset: 24; }
+  100% { stroke-dashoffset: 0; }
+}
+
+@keyframes kf-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0.15; }
+}
+
+/* Trigger Bindings (Loop vs Hover) */
+[data-trigger="loop"] .dev-card .anim-menu-top,
+[data-trigger="hover"] .dev-card:hover .anim-menu-top { animation: kf-menu-top calc(2.2s / var(--icon-anim-speed, 1)) ease-in-out infinite; }
+[data-trigger="loop"] .dev-card .anim-menu-mid,
+[data-trigger="hover"] .dev-card:hover .anim-menu-mid { animation: kf-menu-mid calc(2.2s / var(--icon-anim-speed, 1)) ease-in-out infinite; }
+[data-trigger="loop"] .dev-card .anim-menu-bot,
+[data-trigger="hover"] .dev-card:hover .anim-menu-bot { animation: kf-menu-bot calc(2.2s / var(--icon-anim-speed, 1)) ease-in-out infinite; }
+
+[data-trigger="loop"] .dev-card .anim-close-spin,
+[data-trigger="hover"] .dev-card:hover .anim-close-spin { animation: kf-close-spin calc(2.2s / var(--icon-anim-speed, 1)) ease-in-out infinite; }
+
+[data-trigger="loop"] .dev-card .anim-draw-36,
+[data-trigger="hover"] .dev-card:hover .anim-draw-36 { stroke-dasharray: 36; animation: kf-draw-36 calc(2.2s / var(--icon-anim-speed, 1)) ease-in-out infinite; }
+
+[data-trigger="loop"] .dev-card .anim-draw-64,
+[data-trigger="hover"] .dev-card:hover .anim-draw-64 { stroke-dasharray: 64; animation: kf-draw-64 calc(2.4s / var(--icon-anim-speed, 1)) ease-in-out infinite; }
+
+[data-trigger="loop"] .dev-card .anim-draw-rev,
+[data-trigger="hover"] .dev-card:hover .anim-draw-rev { stroke-dasharray: 36; animation: kf-draw-reverse-36 calc(2.2s / var(--icon-anim-speed, 1)) ease-in-out infinite; }
+
+[data-trigger="loop"] .dev-card .anim-expand,
+[data-trigger="hover"] .dev-card:hover .anim-expand { animation: kf-scale-expand calc(1.8s / var(--icon-anim-speed, 1)) ease-in-out infinite; }
+
+[data-trigger="loop"] .dev-card .anim-pop,
+[data-trigger="hover"] .dev-card:hover .anim-pop { animation: kf-pop-up calc(1.8s / var(--icon-anim-speed, 1)) ease-in-out infinite; }
+
+[data-trigger="loop"] .dev-card .anim-swing,
+[data-trigger="hover"] .dev-card:hover .anim-swing { animation: kf-bell-swing calc(2s / var(--icon-anim-speed, 1)) ease-in-out infinite; }
+
+[data-trigger="loop"] .dev-card .anim-flap,
+[data-trigger="hover"] .dev-card:hover .anim-flap { animation: kf-flap-open calc(2s / var(--icon-anim-speed, 1)) ease-in-out infinite; }
+
+[data-trigger="loop"] .dev-card .anim-plane,
+[data-trigger="hover"] .dev-card:hover .anim-plane { animation: kf-plane-fly calc(2.2s / var(--icon-anim-speed, 1)) ease-in-out infinite; }
+
+[data-trigger="loop"] .dev-card .anim-heartbeat,
+[data-trigger="hover"] .dev-card:hover .anim-heartbeat { animation: kf-heartbeat calc(1.5s / var(--icon-anim-speed, 1)) ease-in-out infinite; }
+
+[data-trigger="loop"] .dev-card .anim-star,
+[data-trigger="hover"] .dev-card:hover .anim-star { animation: kf-star-spin calc(2.4s / var(--icon-anim-speed, 1)) ease-in-out infinite; }
+
+[data-trigger="loop"] .dev-card .anim-fold,
+[data-trigger="hover"] .dev-card:hover .anim-fold { animation: kf-bookmark-fold calc(1.8s / var(--icon-anim-speed, 1)) ease-in-out infinite; }
+
+[data-trigger="loop"] .dev-card .anim-bounce-up,
+[data-trigger="hover"] .dev-card:hover .anim-bounce-up { animation: kf-bounce-up calc(1.6s / var(--icon-anim-speed, 1)) ease-in-out infinite; }
+
+[data-trigger="loop"] .dev-card .anim-bounce-down,
+[data-trigger="hover"] .dev-card:hover .anim-bounce-down { animation: kf-bounce-down calc(1.5s / var(--icon-anim-speed, 1)) ease-in-out infinite; }
+
+[data-trigger="loop"] .dev-card .anim-slide-right,
+[data-trigger="hover"] .dev-card:hover .anim-slide-right { animation: kf-slide-right calc(1.5s / var(--icon-anim-speed, 1)) ease-in-out infinite; }
+
+[data-trigger="loop"] .dev-card .anim-slide-left,
+[data-trigger="hover"] .dev-card:hover .anim-slide-left { animation: kf-slide-left calc(1.5s / var(--icon-anim-speed, 1)) ease-in-out infinite; }
+
+[data-trigger="loop"] .dev-card .anim-slide-in,
+[data-trigger="hover"] .dev-card:hover .anim-slide-in { animation: kf-slide-in-x calc(1.8s / var(--icon-anim-speed, 1)) ease-in-out infinite; }
+
+[data-trigger="loop"] .dev-card .anim-ext-arrow,
+[data-trigger="hover"] .dev-card:hover .anim-ext-arrow { animation: kf-external-up-right calc(1.6s / var(--icon-anim-speed, 1)) ease-in-out infinite; }
+
+[data-trigger="loop"] .dev-card .anim-rot-90,
+[data-trigger="hover"] .dev-card:hover .anim-rot-90 { animation: kf-rotate-90 calc(1.8s / var(--icon-anim-speed, 1)) cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+
+[data-trigger="loop"] .dev-card .anim-spin-360,
+[data-trigger="hover"] .dev-card:hover .anim-spin-360 { animation: kf-spin-360 calc(2.8s / var(--icon-anim-speed, 1)) linear infinite; }
+
+[data-trigger="loop"] .dev-card .anim-spin-fast,
+[data-trigger="hover"] .dev-card:hover .anim-spin-fast { animation: kf-spin-360 calc(1.2s / var(--icon-anim-speed, 1)) linear infinite; }
+
+[data-trigger="loop"] .dev-card .anim-key,
+[data-trigger="hover"] .dev-card:hover .anim-key { animation: kf-key-turn calc(1.8s / var(--icon-anim-speed, 1)) ease-in-out infinite; }
+
+[data-trigger="loop"] .dev-card .anim-separate,
+[data-trigger="hover"] .dev-card:hover .anim-separate { animation: kf-sheet-separate calc(1.8s / var(--icon-anim-speed, 1)) ease-in-out infinite; }
+
+[data-trigger="loop"] .dev-card .anim-lid,
+[data-trigger="hover"] .dev-card:hover .anim-lid { animation: kf-lid-open calc(1.8s / var(--icon-anim-speed, 1)) ease-in-out infinite; }
+
+[data-trigger="loop"] .dev-card .anim-shackle-close,
+[data-trigger="hover"] .dev-card:hover .anim-shackle-close { animation: kf-shackle-close calc(1.8s / var(--icon-anim-speed, 1)) ease-in-out infinite; }
+
+[data-trigger="loop"] .dev-card .anim-shackle-open,
+[data-trigger="hover"] .dev-card:hover .anim-shackle-open { animation: kf-shackle-open calc(1.8s / var(--icon-anim-speed, 1)) ease-in-out infinite; }
+
+[data-trigger="loop"] .dev-card .anim-press,
+[data-trigger="hover"] .dev-card:hover .anim-press { animation: kf-press-down calc(1.6s / var(--icon-anim-speed, 1)) ease-in-out infinite; }
+
+[data-trigger="loop"] .dev-card .anim-seq-1,
+[data-trigger="hover"] .dev-card:hover .anim-seq-1 { animation: kf-seq-1 calc(1.6s / var(--icon-anim-speed, 1)) ease-in-out infinite; }
+[data-trigger="loop"] .dev-card .anim-seq-2,
+[data-trigger="hover"] .dev-card:hover .anim-seq-2 { animation: kf-seq-2 calc(1.6s / var(--icon-anim-speed, 1)) ease-in-out infinite; }
+[data-trigger="loop"] .dev-card .anim-seq-3,
+[data-trigger="hover"] .dev-card:hover .anim-seq-3 { animation: kf-seq-3 calc(1.6s / var(--icon-anim-speed, 1)) ease-in-out infinite; }
+
+[data-trigger="loop"] .dev-card .anim-blink-eye,
+[data-trigger="hover"] .dev-card:hover .anim-blink-eye { animation: kf-eye-blink calc(2.4s / var(--icon-anim-speed, 1)) ease-in-out infinite; }
+
+[data-trigger="loop"] .dev-card .anim-shake,
+[data-trigger="hover"] .dev-card:hover .anim-shake { animation: kf-shake calc(1.2s / var(--icon-anim-speed, 1)) ease-in-out infinite; }
+
+[data-trigger="loop"] .dev-card .anim-flicker,
+[data-trigger="hover"] .dev-card:hover .anim-flicker { animation: kf-flicker calc(1.2s / var(--icon-anim-speed, 1)) ease-in-out infinite; }
+
+[data-trigger="loop"] .dev-card .anim-bar-1,
+[data-trigger="hover"] .dev-card:hover .anim-bar-1 { animation: kf-bar-grow calc(1.4s / var(--icon-anim-speed, 1)) ease-in-out infinite; }
+[data-trigger="loop"] .dev-card .anim-bar-2,
+[data-trigger="hover"] .dev-card:hover .anim-bar-2 { animation: kf-bar-grow calc(1.4s / var(--icon-anim-speed, 1)) ease-in-out 0.35s infinite; }
+[data-trigger="loop"] .dev-card .anim-bar-3,
+[data-trigger="hover"] .dev-card:hover .anim-bar-3 { animation: kf-bar-grow calc(1.4s / var(--icon-anim-speed, 1)) ease-in-out 0.7s infinite; }
+
+[data-trigger="loop"] .dev-card .anim-globe,
+[data-trigger="hover"] .dev-card:hover .anim-globe { animation: kf-globe-axis calc(2.2s / var(--icon-anim-speed, 1)) ease-in-out infinite; }
+
+[data-trigger="loop"] .dev-card .anim-pin,
+[data-trigger="hover"] .dev-card:hover .anim-pin { animation: kf-pin-drop calc(1.8s / var(--icon-anim-speed, 1)) ease-in-out infinite; }
+
+[data-trigger="loop"] .dev-card .anim-compass,
+[data-trigger="hover"] .dev-card:hover .anim-compass { animation: kf-compass calc(2.2s / var(--icon-anim-speed, 1)) ease-in-out infinite; }
+
+[data-trigger="loop"] .dev-card .anim-truck,
+[data-trigger="hover"] .dev-card:hover .anim-truck { animation: kf-truck-drive calc(1.6s / var(--icon-anim-speed, 1)) ease-in-out infinite; }
+
+[data-trigger="loop"] .dev-card .anim-dash-flow,
+[data-trigger="hover"] .dev-card:hover .anim-dash-flow { stroke-dasharray: 4 4; animation: kf-dash-flow calc(1.2s / var(--icon-anim-speed, 1)) linear infinite; }
+
+[data-trigger="loop"] .dev-card .anim-cursor,
+[data-trigger="hover"] .dev-card:hover .anim-cursor { animation: kf-blink calc(1s / var(--icon-anim-speed, 1)) steps(2, start) infinite; }
+
+.icon-stage-grid {
+  background-size: 16px 16px;
+  background-image: 
+    linear-gradient(to right, color-mix(in srgb, var(--icon-primary, #fff) 5%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--icon-primary, #fff) 5%, transparent) 1px, transparent 1px);
+}
+
 

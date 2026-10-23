@@ -2,19 +2,22 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { ChevronDown, X, Menu, Terminal, ChevronsUpDown, ChevronsDownUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   VectorLayersIcon,
   VectorFolderIcon,
   VectorApiIcon,
+  VectorIconPackIcon,
   VectorPanelLeftIcon,
   VectorKiloLogo,
   VectorCategoryIcon,
   VectorComponentIcon,
 } from "@/components/vector-icons";
 import { REGISTRY_DATA, RegistryItem } from "@/registry/registry-data";
+import { SidebarHoverPreview, HoverState } from "@/components/sidebar-hover-preview";
+import { SlidingHighlightContainer } from "@/components/sliding-highlight";
 
 export interface SidebarProps extends React.HTMLAttributes<HTMLElement> {
   className?: string;
@@ -25,9 +28,162 @@ export interface SidebarProps extends React.HTMLAttributes<HTMLElement> {
   activeComponent?: string;
   activeCategory?: string;
   theme?: "dark" | "light" | "system";
+  activeVariant?: string;
 }
 
-export function Sidebar({
+interface ComponentVariantsTreeProps {
+  comp: RegistryItem;
+  isCompActive: boolean;
+  activeVariant?: string;
+  isCollapsed: boolean;
+  isVariantExpanded: boolean;
+  onMobileOpenChange?: (open: boolean) => void;
+  onMouseEnter: (comp: RegistryItem, e: React.MouseEvent<HTMLElement>, variant: string) => void;
+  onMouseLeave: () => void;
+}
+
+function ComponentVariantsTree({
+  comp,
+  isCompActive,
+  activeVariant,
+  isCollapsed,
+  isVariantExpanded,
+  onMobileOpenChange,
+  onMouseEnter,
+  onMouseLeave,
+}: ComponentVariantsTreeProps) {
+  const treeRef = React.useRef<HTMLDivElement>(null);
+  const activeVariantIdx = isCompActive
+    ? (comp.variants?.findIndex(
+        (v) => activeVariant === v || (!activeVariant && v === "default")
+      ) ?? -1)
+    : -1;
+
+  // Track the exact pixel top position of the active variant item
+  const [indicatorTop, setIndicatorTop] = React.useState<number>(() => {
+    return activeVariantIdx >= 0 ? activeVariantIdx * 28 + 4 : 4;
+  });
+
+  const updatePosition = React.useCallback(() => {
+    if (!treeRef.current || activeVariantIdx === -1) return;
+    const activeEl = treeRef.current.querySelector<HTMLElement>(
+      `[data-variant-idx="${activeVariantIdx}"]`
+    );
+    if (activeEl) {
+      setIndicatorTop(activeEl.offsetTop);
+    } else {
+      setIndicatorTop(activeVariantIdx * 28 + 4);
+    }
+  }, [activeVariantIdx]);
+
+  React.useEffect(() => {
+    updatePosition();
+    window.addEventListener("resize", updatePosition);
+    return () => window.removeEventListener("resize", updatePosition);
+  }, [updatePosition]);
+
+  return (
+    <div
+      className={cn(
+        "grid transition-[grid-template-rows,opacity] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]",
+        !isCollapsed && isVariantExpanded
+          ? "grid-rows-[1fr] opacity-100"
+          : "grid-rows-[0fr] opacity-0 pointer-events-none"
+      )}
+    >
+      <div className="overflow-hidden">
+        <div ref={treeRef} className="relative ml-3.5 pl-3 pt-1 pb-1 space-y-1">
+          {/* Animated active vertical trunk line (grows / reduces smoothly with natural spring physics) */}
+          <span
+            aria-hidden="true"
+            className={cn(
+              "absolute left-0 -top-1 w-px bg-[var(--accent-green)] z-10 pointer-events-none transition-[height,opacity] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-[height]",
+              activeVariantIdx !== -1 ? "opacity-100" : "opacity-0"
+            )}
+            style={{
+              height: `${Math.max(0, indicatorTop + 4)}px`,
+            }}
+          />
+
+          {/* Animated active curved branch elbow (smoothly glides up / down to the selected variant) */}
+          <span
+            aria-hidden="true"
+            className={cn(
+              "absolute left-0 top-0 w-3 h-3.5 border-l border-b rounded-bl-[6px] border-[var(--accent-green)] z-20 pointer-events-none transition-[transform,opacity] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform",
+              activeVariantIdx !== -1 ? "opacity-100" : "opacity-0"
+            )}
+            style={{
+              transform: `translate3d(0, ${indicatorTop}px, 0)`,
+            }}
+          />
+
+          {/* Base tree items and subtle static gray background lines */}
+          {comp.variants?.map((variant, idx) => {
+            const isThisVariantActive = activeVariantIdx !== -1 && idx === activeVariantIdx;
+            const isLast = idx === (comp.variants?.length ?? 1) - 1;
+
+            return (
+              <div
+                key={variant}
+                data-variant-idx={idx}
+                className="relative flex items-center h-6"
+              >
+                {/* Static top gray connector to parent for the first item */}
+                {idx === 0 && (
+                  <span
+                    aria-hidden="true"
+                    className="absolute -left-3 -top-1 h-1 w-px bg-[var(--border)] pointer-events-none"
+                  />
+                )}
+
+                {/* Static base gray curved branch */}
+                <span
+                  aria-hidden="true"
+                  className="absolute -left-3 top-0 w-3 h-3.5 border-l border-b rounded-bl-[6px] border-[var(--border)] pointer-events-none"
+                />
+
+                {/* Static base gray spine to subsequent siblings */}
+                {!isLast && (
+                  <span
+                    aria-hidden="true"
+                    className="absolute -left-3 top-3.5 bottom-[-4px] w-px bg-[var(--border)] pointer-events-none"
+                  />
+                )}
+
+                <Link
+                  href={`/components/${comp.name}?variant=${variant}`}
+                  data-hover-item="true"
+                  onClick={() => onMobileOpenChange?.(false)}
+                  onMouseEnter={(e) => onMouseEnter(comp, e, variant)}
+                  onMouseLeave={onMouseLeave}
+                  className={cn(
+                    "group/v relative z-10 flex items-center gap-2 w-full px-2 py-1 rounded text-xs font-sans tracking-normal transition-colors duration-150 text-left",
+                    isThisVariantActive
+                      ? "bg-[var(--surface-secondary)] text-[var(--accent-green)] font-medium border border-[var(--border)] shadow-xs"
+                      : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] font-normal border border-transparent"
+                  )}
+                  title={`${comp.title} (${variant} variant)`}
+                >
+                  <span
+                    className={cn(
+                      "h-1.5 w-1.5 rounded-full transition-all duration-300 shrink-0",
+                      isThisVariantActive
+                        ? "bg-[var(--accent-green)] scale-110"
+                        : "bg-[var(--text-muted)]/50 group-hover/v:bg-[var(--text-primary)]"
+                    )}
+                  />
+                  <span className="truncate">{variant}</span>
+                </Link>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SidebarBase({
   className,
   collapsed = false,
   onCollapsedChange,
@@ -36,6 +192,7 @@ export function Sidebar({
   activeComponent,
   activeCategory,
   theme = "dark",
+  activeVariant,
   ...props
 }: SidebarProps) {
   const pathname = usePathname();
@@ -59,6 +216,28 @@ export function Sidebar({
     Navigation: true,
     "Media & Layout": true,
   });
+
+  const [expandedVariants, setExpandedVariants] = React.useState<Record<string, boolean>>({
+    button: true,
+    badge: true,
+  });
+
+  // Automatically expand variant tree when activeComponent is selected
+  React.useEffect(() => {
+    if (activeComponent) {
+      setExpandedVariants((prev) => ({
+        ...prev,
+        [activeComponent]: true,
+      }));
+    }
+  }, [activeComponent]);
+
+  const toggleComponentVariants = (compName: string) => {
+    setExpandedVariants((prev) => ({
+      ...prev,
+      [compName]: !prev[compName],
+    }));
+  };
 
   const toggleCategory = (cat: string) => {
     setExpandedCategories((prev) => ({
@@ -93,8 +272,74 @@ export function Sidebar({
     }
   };
 
+  // Hover preview state & smooth glide tracking
+  const [hoverState, setHoverState] = React.useState<HoverState | null>(null);
+  const hoverTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+  const closeTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+  const asideRef = React.useRef<HTMLElement | null>(null);
+
+  const handleComponentMouseEnter = (
+    compItem: RegistryItem,
+    e: React.MouseEvent<HTMLElement>,
+    variant?: string
+  ) => {
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+
+    const rect = e.currentTarget.getBoundingClientRect();
+    const asideRect = asideRef.current?.getBoundingClientRect();
+    const sidebarRight = asideRect ? asideRect.right : (isCollapsed ? 56 : 256);
+    const centerY = rect.top + rect.height / 2;
+
+    if (hoverState) {
+      setHoverState({
+        item: compItem,
+        top: centerY,
+        sidebarRight,
+        variant,
+      });
+      return;
+    }
+
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    hoverTimeoutRef.current = setTimeout(() => {
+      setHoverState({
+        item: compItem,
+        top: centerY,
+        sidebarRight,
+        variant,
+      });
+    }, 110);
+  };
+
+  const handleComponentMouseLeave = () => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+    closeTimeoutRef.current = setTimeout(() => {
+      setHoverState(null);
+    }, 160);
+  };
+
+  const handleMouseEnterPreview = () => {
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+  };
+
+  const handleMouseLeavePreview = () => {
+    closeTimeoutRef.current = setTimeout(() => {
+      setHoverState(null);
+    }, 160);
+  };
+
   const isOverview = pathname === "/";
   const isAllComponents = pathname === "/components";
+  const isIcons = pathname === "/icons" || pathname?.startsWith("/icons");
   const isDocs = pathname === "/docs" || pathname?.startsWith("/docs");
 
   const sidebarContent = (
@@ -119,7 +364,7 @@ export function Sidebar({
           </div>
           <span
             className={cn(
-              "font-mono text-sm font-semibold tracking-tight text-[var(--text-primary)] whitespace-nowrap transition-opacity duration-200 select-none",
+              "font-sans text-sm font-semibold tracking-tight text-[var(--text-primary)] whitespace-nowrap transition-opacity duration-200 select-none",
               isCollapsed && "opacity-0 pointer-events-none"
             )}
           >
@@ -153,110 +398,120 @@ export function Sidebar({
       </div>
 
       {/* 2. Primary Navigation */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden px-2.5 py-3 space-y-4 w-64">
-        <nav className="space-y-1">
-          {/* Overview */}
-          <Link
-            href="/"
-            onClick={() => onMobileOpenChange?.(false)}
-            className={cn(
-              "group flex items-center w-full rounded p-2 text-xs font-medium transition-colors active:scale-[0.98]",
-              isOverview
-                ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] border border-[var(--border)]"
-                : "text-[var(--text-secondary)] hover:bg-[var(--surface-secondary)] hover:text-[var(--text-primary)] border border-transparent"
-            )}
-            title={isCollapsed ? "Overview" : undefined}
-          >
-            <div className="flex h-5 w-5 shrink-0 items-center justify-center">
-              <VectorFolderIcon
-                isActive={isOverview}
-                className={cn(
-                  "h-4 w-4 transition-colors",
-                  isOverview
-                    ? "text-[var(--accent-green)]"
-                    : "text-[var(--text-primary)] group-hover:text-[var(--accent-green)]"
-                )}
-              />
-            </div>
-            <span
+      <div className="flex-1 overflow-y-auto overflow-x-hidden px-2.5 py-3 w-64">
+        <SlidingHighlightContainer
+          className="space-y-4 min-h-full"
+          pillClassName="bg-[var(--surface-secondary)]/90 border border-[var(--border)]/40 rounded-md shadow-2xs"
+        >
+          <nav className="space-y-1">
+            {/* Overview */}
+            <Link
+              href="/"
+              data-hover-item="true"
+              onClick={() => onMobileOpenChange?.(false)}
               className={cn(
-                "ml-2.5 whitespace-nowrap transition-opacity duration-200",
-                isCollapsed && "opacity-0 pointer-events-none"
+                "group relative z-10 flex items-center w-full rounded p-2 text-xs font-semibold tracking-tight transition-colors duration-150 active:scale-[0.98]",
+                isOverview
+                  ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] border border-[var(--border)]"
+                  : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-transparent"
               )}
+              title={isCollapsed ? "Overview" : undefined}
             >
-              Overview
-            </span>
-          </Link>
-
-          {/* All Components */}
-          <Link
-            href="/components"
-            onClick={() => onMobileOpenChange?.(false)}
-            className={cn(
-              "group flex items-center w-full rounded p-2 text-xs font-medium transition-colors active:scale-[0.98]",
-              isAllComponents
-                ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] border border-[var(--border)]"
-                : "text-[var(--text-secondary)] hover:bg-[var(--surface-secondary)] hover:text-[var(--text-primary)] border border-transparent"
-            )}
-            title={isCollapsed ? "All Components" : undefined}
-          >
-            <div className="flex h-5 w-5 shrink-0 items-center justify-center">
-              <VectorLayersIcon
-                isActive={isAllComponents}
+              <div className="flex h-5 w-5 shrink-0 items-center justify-center">
+                <VectorFolderIcon
+                  isActive={isOverview}
+                  className={cn(
+                    "h-4 w-4 transition-colors duration-150",
+                    isOverview
+                      ? "text-[var(--accent-green)]"
+                      : "text-[var(--text-primary)] group-hover:text-[var(--accent-green)]"
+                  )}
+                />
+              </div>
+              <span
                 className={cn(
-                  "h-4 w-4 transition-colors",
-                  isAllComponents
-                    ? "text-[var(--accent-green)]"
-                    : "text-[var(--text-primary)] group-hover:text-[var(--accent-green)]"
+                  "ml-2.5 whitespace-nowrap transition-opacity duration-200",
+                  isCollapsed && "opacity-0 pointer-events-none"
                 )}
-              />
-            </div>
-            <div
-              className={cn(
-                "flex items-center justify-between flex-1 ml-2.5 overflow-hidden transition-opacity duration-200",
-                isCollapsed && "opacity-0 pointer-events-none"
-              )}
-            >
-              <span className="whitespace-nowrap">All Components</span>
-              <span className="font-mono text-[10px] text-[var(--text-muted)]">
-                {registryItems.length}
+              >
+                Overview
               </span>
-            </div>
-          </Link>
+            </Link>
 
-          {/* Registry API */}
-          <Link
-            href="/docs"
-            onClick={() => onMobileOpenChange?.(false)}
-            className={cn(
-              "group flex items-center w-full rounded p-2 text-xs font-medium transition-colors active:scale-[0.98]",
-              isDocs
-                ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] border border-[var(--border)]"
-                : "text-[var(--text-secondary)] hover:bg-[var(--surface-secondary)] hover:text-[var(--text-primary)] border border-transparent"
-            )}
-            title={isCollapsed ? "Registry API" : undefined}
-          >
-            <div className="flex h-5 w-5 shrink-0 items-center justify-center">
-              <VectorApiIcon
-                isActive={isDocs}
-                className={cn(
-                  "h-4 w-4 transition-colors",
-                  isDocs
-                    ? "text-[var(--accent-green)]"
-                    : "text-[var(--text-primary)] group-hover:text-[var(--accent-green)]"
-                )}
-              />
-            </div>
-            <span
+            {/* All Components */}
+            <Link
+              href="/components"
+              data-hover-item="true"
+              onClick={() => onMobileOpenChange?.(false)}
               className={cn(
-                "ml-2.5 whitespace-nowrap transition-opacity duration-200",
-                isCollapsed && "opacity-0 pointer-events-none"
+                "group relative z-10 flex items-center w-full rounded p-2 text-xs font-semibold tracking-tight transition-colors duration-150 active:scale-[0.98]",
+                isAllComponents
+                  ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] border border-[var(--border)]"
+                  : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-transparent"
               )}
+              title={isCollapsed ? "All Components" : undefined}
             >
-              Registry API
-            </span>
-          </Link>
-        </nav>
+              <div className="flex h-5 w-5 shrink-0 items-center justify-center">
+                <VectorLayersIcon
+                  isActive={isAllComponents}
+                  className={cn(
+                    "h-4 w-4 transition-colors duration-150",
+                    isAllComponents
+                      ? "text-[var(--accent-green)]"
+                      : "text-[var(--text-primary)] group-hover:text-[var(--accent-green)]"
+                  )}
+                />
+              </div>
+              <div
+                className={cn(
+                  "flex items-center justify-between flex-1 ml-2.5 overflow-hidden transition-opacity duration-200",
+                  isCollapsed && "opacity-0 pointer-events-none"
+                )}
+              >
+                <span className="whitespace-nowrap">All Components</span>
+                <span className="text-[10px] font-sans font-medium tabular-nums text-[var(--text-muted)]">
+                  {registryItems.length}
+                </span>
+              </div>
+            </Link>
+
+            {/* Icon Pack (Replaces Registry API in primary navigation) */}
+            <Link
+              href="/icons"
+              data-hover-item="true"
+              onClick={() => onMobileOpenChange?.(false)}
+              className={cn(
+                "group relative z-10 flex items-center w-full rounded p-2 text-xs font-semibold tracking-tight transition-colors duration-150 active:scale-[0.98]",
+                isIcons
+                  ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] border border-[var(--border)]"
+                  : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-transparent"
+              )}
+              title={isCollapsed ? "Icon Pack (100)" : undefined}
+            >
+              <div className="flex h-5 w-5 shrink-0 items-center justify-center">
+                <VectorIconPackIcon
+                  isActive={isIcons}
+                  className={cn(
+                    "h-4 w-4 transition-colors duration-150",
+                    isIcons
+                      ? "text-[var(--accent-green)]"
+                      : "text-[var(--text-primary)] group-hover:text-[var(--accent-green)]"
+                  )}
+                />
+              </div>
+              <div
+                className={cn(
+                  "flex items-center justify-between flex-1 ml-2.5 overflow-hidden transition-opacity duration-200",
+                  isCollapsed && "opacity-0 pointer-events-none"
+                )}
+              >
+                <span className="whitespace-nowrap">Icon Pack</span>
+                <span className="text-[10px] font-sans font-medium tabular-nums text-[var(--accent-green)] bg-[var(--accent-green)]/10 px-1.5 py-0.2 rounded border border-[var(--accent-green)]/20">
+                  100
+                </span>
+              </div>
+            </Link>
+          </nav>
 
         {/* Horizontal Divider before Categories */}
         <div
@@ -269,7 +524,7 @@ export function Sidebar({
         {/* 3. Categories & Components */}
         <div className="space-y-1">
           {/* Categories Header */}
-          <div className="flex items-center justify-between w-full rounded p-2 text-[10px] font-mono uppercase tracking-wider text-[var(--text-muted)] select-none">
+          <div className="flex items-center justify-between w-full rounded p-2 text-[10px] font-sans font-semibold uppercase tracking-wider text-[var(--text-muted)] select-none">
             <div className="flex items-center flex-1 min-w-0">
               <div
                 className="flex h-5 w-5 shrink-0 items-center justify-center cursor-default"
@@ -284,7 +539,7 @@ export function Sidebar({
                 )}
               >
                 <span>Categories</span>
-                <span className="text-[9px] text-[var(--text-muted)] font-normal">({categories.length})</span>
+                <span className="text-[9px] text-[var(--text-muted)] font-normal tabular-nums">({categories.length})</span>
               </span>
             </div>
             <button
@@ -314,16 +569,25 @@ export function Sidebar({
             return (
               <div key={cat} className="space-y-0.5">
                 <div
+                  data-hover-item="true"
                   className={cn(
-                    "group/cat flex w-full items-center justify-between rounded p-2 text-xs transition-colors",
+                    "group/cat relative z-10 flex w-full items-center justify-between rounded p-2 text-xs font-semibold tracking-tight transition-colors duration-150",
                     isCategoryActive
-                      ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] font-medium"
-                      : "text-[var(--text-secondary)] hover:bg-[var(--surface-secondary)] hover:text-[var(--text-primary)]"
+                      ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] border border-[var(--border)]"
+                      : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-transparent"
                   )}
                 >
                   <Link
                     href={`/components?category=${encodeURIComponent(cat)}`}
                     onClick={() => onMobileOpenChange?.(false)}
+                    onMouseEnter={(e) => {
+                      if (isCollapsed && catItems[0]) {
+                        handleComponentMouseEnter(catItems[0], e);
+                      }
+                    }}
+                    onMouseLeave={() => {
+                      if (isCollapsed) handleComponentMouseLeave();
+                    }}
                     className="flex items-center flex-1 min-w-0 text-left"
                     title={isCollapsed ? `${cat} (${catItems.length})` : undefined}
                   >
@@ -355,7 +619,7 @@ export function Sidebar({
                       isCollapsed && "opacity-0 pointer-events-none"
                     )}
                   >
-                    <span className="font-mono text-[10px] text-[var(--text-muted)]">
+                    <span className="text-[10px] font-sans font-medium tabular-nums text-[var(--text-muted)]">
                       {catItems.length}
                     </span>
                     <button
@@ -387,34 +651,88 @@ export function Sidebar({
                   )}
                 >
                   <div className="overflow-hidden">
-                    <div className="ml-3.5 pl-2 border-l border-[var(--border)] py-0.5 space-y-0.5">
+                    <div className="ml-3.5 pl-2 border-l border-[var(--border)] py-0.5 space-y-1">
                       {catItems.map((comp) => {
                         const isCompActive =
                           pathname === `/components/${comp.name}` || activeComponent === comp.name;
+                        const hasVariants = Boolean(comp.variants && comp.variants.length > 0);
+                        const isVariantExpanded = Boolean(expandedVariants[comp.name]);
 
                         return (
-                          <Link
-                            key={comp.name}
-                            href={`/components/${comp.name}`}
-                            onClick={() => onMobileOpenChange?.(false)}
-                            className={cn(
-                              "group/comp flex items-center gap-2 w-full px-2 py-1 rounded text-[11px] transition-colors text-left",
-                              isCompActive
-                                ? "bg-[var(--surface-secondary)] text-[var(--accent-green)] font-medium border border-[var(--border)]"
-                                : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)]"
-                            )}
-                          >
-                            <VectorComponentIcon
-                              name={comp.name}
+                          <div key={comp.name} className="relative">
+                            <div
+                              data-hover-item="true"
                               className={cn(
-                                "h-3 w-3 shrink-0 transition-colors",
-                                isCompActive
-                                  ? "text-[var(--accent-green)]"
-                                  : "text-[var(--text-primary)] group-hover/comp:text-[var(--accent-green)]"
+                                "group/comp relative z-10 flex items-center justify-between w-full rounded text-xs font-medium tracking-tight transition-colors duration-150",
+                                isCompActive && !activeVariant
+                                  ? "bg-[var(--surface-secondary)] text-[var(--accent-green)] border border-[var(--border)]"
+                                  : isCompActive
+                                  ? "bg-[var(--surface-secondary)]/60 text-[var(--text-primary)] border border-transparent"
+                                  : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-transparent"
                               )}
-                            />
-                            <span className="truncate">{comp.title}</span>
-                          </Link>
+                            >
+                              <Link
+                                href={`/components/${comp.name}`}
+                                onClick={() => onMobileOpenChange?.(false)}
+                                onMouseEnter={(e) => handleComponentMouseEnter(comp, e)}
+                                onMouseLeave={handleComponentMouseLeave}
+                                className="flex items-center gap-2 flex-1 min-w-0 px-2 py-1 text-left"
+                                title={comp.title}
+                              >
+                                <VectorComponentIcon
+                                  name={comp.name}
+                                  className={cn(
+                                    "h-3 w-3 shrink-0 transition-colors",
+                                    isCompActive
+                                      ? "text-[var(--accent-green)]"
+                                      : "text-[var(--text-primary)] group-hover/comp:text-[var(--accent-green)]"
+                                  )}
+                                />
+                                <span className="truncate font-medium">{comp.title}</span>
+                              </Link>
+
+                              {hasVariants && (
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    toggleComponentVariants(comp.name);
+                                  }}
+                                  className={cn(
+                                    "flex items-center gap-0.5 px-1.5 py-0.5 mr-1 rounded text-[10px] font-sans font-medium tabular-nums transition-colors cursor-pointer select-none",
+                                    isCompActive
+                                      ? "text-[var(--accent-green)] hover:bg-[var(--accent-green)]/15"
+                                      : "text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-tertiary)]"
+                                  )}
+                                  title={`${isVariantExpanded ? "Hide" : "Show"} ${comp.variants?.length} variants`}
+                                  aria-label={`${isVariantExpanded ? "Hide" : "Show"} variants for ${comp.title}`}
+                                >
+                                  <span className="text-[9px] font-bold opacity-80">{comp.variants?.length}</span>
+                                  <ChevronDown
+                                    className={cn(
+                                      "h-2.5 w-2.5 transition-transform duration-200",
+                                      isVariantExpanded ? "rotate-0" : "-rotate-90"
+                                    )}
+                                  />
+                                </button>
+                              )}
+                            </div>
+
+                            {/* Expandable Variants Tree with animated glide & height transitions */}
+                            {hasVariants && (
+                              <ComponentVariantsTree
+                                comp={comp}
+                                isCompActive={isCompActive}
+                                activeVariant={activeVariant}
+                                isCollapsed={isCollapsed}
+                                isVariantExpanded={isVariantExpanded}
+                                onMobileOpenChange={onMobileOpenChange}
+                                onMouseEnter={handleComponentMouseEnter}
+                                onMouseLeave={handleComponentMouseLeave}
+                              />
+                            )}
+                          </div>
                         );
                       })}
                     </div>
@@ -424,13 +742,14 @@ export function Sidebar({
             );
           })}
         </div>
+        </SlidingHighlightContainer>
       </div>
 
       {/* 4. Minimal Clean Footer */}
       <div className="border-t border-[var(--border)] p-2.5 shrink-0 w-64">
         <Link
           href="/docs"
-          className="flex items-center justify-between text-[11px] font-mono text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors px-1"
+          className="flex items-center justify-between text-xs font-sans font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors px-1"
           title="Registry Documentation"
         >
           <span
@@ -458,6 +777,7 @@ export function Sidebar({
     <>
       {/* Desktop Persistent Sidebar */}
       <aside
+        ref={asideRef}
         className={cn(
           "hidden lg:flex flex-col shrink-0 border-r border-[var(--border)] bg-[var(--bg-sidebar)] overflow-hidden transition-[width] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-[width] h-screen sticky top-0 z-30",
           isCollapsed ? "w-14" : "w-64",
@@ -467,6 +787,14 @@ export function Sidebar({
       >
         {sidebarContent}
       </aside>
+
+      {/* Floating Hover Preview Card with Natural Spring Physics */}
+      <SidebarHoverPreview
+        hoverState={hoverState}
+        onMouseEnterPreview={handleMouseEnterPreview}
+        onMouseLeavePreview={handleMouseLeavePreview}
+        isCollapsed={isCollapsed}
+      />
 
       {/* Mobile Drawer Overlay */}
       {mobileOpen && (
@@ -481,5 +809,19 @@ export function Sidebar({
         </div>
       )}
     </>
+  );
+}
+
+function SidebarWithSearchParams(props: SidebarProps) {
+  const searchParams = useSearchParams();
+  const activeVariant = props.activeVariant || searchParams?.get("variant") || undefined;
+  return <SidebarBase {...props} activeVariant={activeVariant} />;
+}
+
+export function Sidebar(props: SidebarProps) {
+  return (
+    <React.Suspense fallback={<SidebarBase {...props} />}>
+      <SidebarWithSearchParams {...props} />
+    </React.Suspense>
   );
 }

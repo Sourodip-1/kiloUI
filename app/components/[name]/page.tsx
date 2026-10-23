@@ -1,3 +1,4 @@
+import * as React from "react";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { REGISTRY_DATA } from "@/registry/registry-data";
@@ -22,7 +23,25 @@ export async function generateMetadata({
   };
 }
 
-export default async function ComponentPage({
+export default function ComponentPage({
+  params,
+}: {
+  params: Promise<{ name: string }>;
+}) {
+  return (
+    <React.Suspense
+      fallback={
+        <div className="flex-1 max-w-6xl mx-auto px-4 sm:px-6 py-8 text-xs text-[var(--text-muted)] font-mono animate-pulse">
+          Loading component...
+        </div>
+      }
+    >
+      <ComponentPageContent params={params} />
+    </React.Suspense>
+  );
+}
+
+async function ComponentPageContent({
   params,
 }: {
   params: Promise<{ name: string }>;
@@ -36,3 +55,4 @@ export default async function ComponentPage({
 
   return <ComponentDetailClient item={item} />;
 }
+
