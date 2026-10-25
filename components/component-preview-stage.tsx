@@ -50,6 +50,7 @@ import { GrainyHorizonShader } from "@/registry/ui/grainy-horizon-shader";
 import { FireflyCursor } from "@/registry/ui/firefly-cursor";
 import { EtherealSmokeShader, ETHEREAL_SMOKE_PRESETS } from "@/registry/ui/ethereal-smoke-shader";
 import { RegistryItem } from "@/registry/registry-data";
+import { ScaledThumbnailWrapper } from "@/components/scaled-thumbnail-wrapper";
 import {
   VectorKiloLogo,
   VectorPanelLeftIcon,
@@ -791,20 +792,26 @@ export function ComponentPreviewStage({
   );
 
   // 23. Ethereal Smoke Shader state
+  const initialSmokePreset =
+    (item.name === "ethereal-smoke-shader" && activeVariant && (ETHEREAL_SMOKE_PRESETS as any)[activeVariant])
+      ? (activeVariant as "chai-blue" | "ethereal-violet" | "solar-flare" | "emerald-mist" | "spectral-white")
+      : "chai-blue";
+  const initialSmokeConf = ETHEREAL_SMOKE_PRESETS[initialSmokePreset] || ETHEREAL_SMOKE_PRESETS["chai-blue"];
+
   const [smokePreset, setSmokePreset] = React.useState<
     "chai-blue" | "ethereal-violet" | "solar-flare" | "emerald-mist" | "spectral-white"
-  >("chai-blue");
+  >(initialSmokePreset);
   const [smokeOrigin, setSmokeOrigin] = React.useState<"right" | "left" | "center" | "bottom">("right");
   const [smokeOriginX, setSmokeOriginX] = React.useState<number>(0.98);
   const [smokeOriginY, setSmokeOriginY] = React.useState<number>(0.50);
-  const [smokeCoreColor, setSmokeCoreColor] = React.useState<string>("#ffffff");
-  const [smokeColor, setSmokeColor] = React.useState<string>("#5a88e5");
-  const [smokeAtmoColor, setSmokeAtmoColor] = React.useState<string>("#171a3d");
-  const [smokeBgColor, setSmokeBgColor] = React.useState<string>("#05060a");
-  const [smokeIntensity, setSmokeIntensity] = React.useState<number>(1.15);
-  const [smokeSpread, setSmokeSpread] = React.useState<number>(1.4);
-  const [smokeTurbulence, setSmokeTurbulence] = React.useState<number>(1.0);
-  const [smokeSpeed, setSmokeSpeed] = React.useState<number>(0.8);
+  const [smokeCoreColor, setSmokeCoreColor] = React.useState<string>(initialSmokeConf.coreColor);
+  const [smokeColor, setSmokeColor] = React.useState<string>(initialSmokeConf.smokeColor);
+  const [smokeAtmoColor, setSmokeAtmoColor] = React.useState<string>(initialSmokeConf.atmoColor);
+  const [smokeBgColor, setSmokeBgColor] = React.useState<string>(initialSmokeConf.bgColor);
+  const [smokeIntensity, setSmokeIntensity] = React.useState<number>(initialSmokeConf.intensity);
+  const [smokeSpread, setSmokeSpread] = React.useState<number>(initialSmokeConf.spread);
+  const [smokeTurbulence, setSmokeTurbulence] = React.useState<number>(initialSmokeConf.turbulence);
+  const [smokeSpeed, setSmokeSpeed] = React.useState<number>(initialSmokeConf.speed);
   const [smokeMouseStrength, setSmokeMouseStrength] = React.useState<number>(0.85);
   const [smokeMouseSpread, setSmokeMouseSpread] = React.useState<number>(0.95);
   const [smokeTrailWidth, setSmokeTrailWidth] = React.useState<number>(24);
@@ -1465,7 +1472,7 @@ export function ComponentPreviewStage({
       : "w-full max-w-full";
 
   return (
-    <div className={cn("space-y-4", className)}>
+    <div className={cn(showKnobs ? "space-y-4" : "h-full w-full flex items-center justify-center", className)}>
       {/* 1. Canvas Viewport */}
       <div
         className={cn(
@@ -1599,7 +1606,12 @@ export function ComponentPreviewStage({
         )}
 
         {/* --- ACTUAL LIVE COMPONENT PREVIEW --- */}
-        <div className="w-full flex items-center justify-center">
+        <ScaledThumbnailWrapper
+          enabled={!showKnobs}
+          category={item.category}
+          name={item.name}
+          className={showKnobs ? "w-full flex items-center justify-center" : "w-full h-full"}
+        >
           {/* Button */}
           {item.name === "button" && (
             <div className="flex flex-col items-center gap-3">
@@ -2779,7 +2791,7 @@ export function ComponentPreviewStage({
                 captions={concaveCaptions}
                 controls={concaveControls}
                 paused={concavePaused}
-                className={showKnobs ? "h-[440px] sm:h-[500px]" : "h-full min-h-[160px]"}
+                className={showKnobs ? "h-[440px] sm:h-[500px]" : "h-full w-full"}
               />
             </div>
           )}
@@ -2787,8 +2799,8 @@ export function ComponentPreviewStage({
           {/* Prismatic Slats Background Live Preview matching Images 4 and 5 */}
           {item.name === "prismatic-slats-bg" && (
             <div
-              className="w-full rounded-2xl overflow-hidden border border-[var(--border)] shadow-2xl"
-              style={{ height: showKnobs ? 440 : 160 }}
+              className={showKnobs ? "w-full rounded-2xl overflow-hidden border border-[var(--border)] shadow-2xl" : "w-full h-full rounded-2xl overflow-hidden border border-[var(--border)] shadow-2xl"}
+              style={{ height: showKnobs ? 440 : "100%" }}
             >
               <PrismaticSlatsBg
                 preset={slatPreset}
@@ -2824,8 +2836,8 @@ export function ComponentPreviewStage({
           {/* Grainy Grid Shader Live Preview */}
           {item.name === "grainy-grid-shader" && (
             <div
-              className="w-full rounded-2xl overflow-hidden border border-[var(--border)] shadow-2xl"
-              style={{ height: showKnobs ? 440 : 200 }}
+              className={showKnobs ? "w-full rounded-2xl overflow-hidden border border-[var(--border)] shadow-2xl" : "w-full h-full rounded-2xl overflow-hidden border border-[var(--border)] shadow-2xl"}
+              style={{ height: showKnobs ? 440 : "100%" }}
             >
               <GrainyGridShader
                 variant={gridVariant}
@@ -2845,8 +2857,8 @@ export function ComponentPreviewStage({
           {/* Grainy Horizon Shader Live Preview (Smooth Static Radiant Shader with Liquid Aura Cursor) */}
           {item.name === "grainy-horizon-shader" && (
             <div
-              className="w-full rounded-2xl overflow-hidden border border-[var(--border)] shadow-2xl relative"
-              style={{ height: showKnobs ? 440 : 220 }}
+              className={showKnobs ? "w-full rounded-2xl overflow-hidden border border-[var(--border)] shadow-2xl relative" : "w-full h-full rounded-2xl overflow-hidden border border-[var(--border)] shadow-2xl relative"}
+              style={{ height: showKnobs ? 440 : "100%" }}
             >
               <GrainyHorizonShader
                 color={horizonColor}
@@ -2862,8 +2874,8 @@ export function ComponentPreviewStage({
           {/* Firefly Cursor Live Interactive Simulation Preview */}
           {item.name === "firefly-cursor" && (
             <div
-              className="w-full rounded-2xl overflow-hidden border border-[var(--border)] shadow-2xl bg-black relative"
-              style={{ height: showKnobs ? 440 : 220 }}
+              className={showKnobs ? "w-full rounded-2xl overflow-hidden border border-[var(--border)] shadow-2xl bg-black relative" : "w-full h-full rounded-2xl overflow-hidden border border-[var(--border)] shadow-2xl bg-black relative"}
+              style={{ height: showKnobs ? 440 : "100%" }}
             >
               <FireflyCursor
                 preset={cursorPreset}
@@ -2887,8 +2899,8 @@ export function ComponentPreviewStage({
           {/* Ethereal Smoke Shader Live Interactive Preview (Chai AI type Volumetric Smoke) */}
           {item.name === "ethereal-smoke-shader" && (
             <div
-              className="w-full rounded-2xl overflow-hidden border border-[var(--border)] shadow-2xl bg-[#05060a] relative"
-              style={{ height: showKnobs ? 440 : 220 }}
+              className={showKnobs ? "w-full rounded-2xl overflow-hidden border border-[var(--border)] shadow-2xl bg-[#05060a] relative" : "w-full h-full rounded-2xl overflow-hidden border border-[var(--border)] shadow-2xl bg-[#05060a] relative"}
+              style={{ height: showKnobs ? 440 : "100%" }}
             >
               <EtherealSmokeShader
                 preset={smokePreset}
@@ -2914,7 +2926,7 @@ export function ComponentPreviewStage({
               />
             </div>
           )}
-        </div>
+        </ScaledThumbnailWrapper>
       </div>
 
       {/* 2. Customize Controls Panel matching photo 2 */}

@@ -155,13 +155,13 @@ export function SidebarHoverPreview({
           }}
         />
 
-        <div className="w-full flex items-center justify-center pointer-events-none relative z-10">
+        <div className="w-full h-full flex items-center justify-center pointer-events-none relative z-10 overflow-hidden">
           <ComponentPreviewStage
             item={item}
             interactive={false}
             showKnobs={false}
             activeVariant={current.variant}
-            className="border-none bg-transparent p-0 shadow-none w-full"
+            className="border-none bg-transparent p-0 shadow-none w-full h-full"
           />
         </div>
       </div>
