@@ -9,7 +9,6 @@ import {
   Check,
   Sparkles,
   Layers,
-  Code,
   ShieldCheck,
   Cpu,
 } from "lucide-react";
@@ -93,14 +92,6 @@ export default function OverviewPage() {
             <Layers className="h-3.5 w-3.5" />
             <span>Explore Components</span>
             <ArrowRight className="h-3.5 w-3.5 ml-1" />
-          </Link>
-
-          <Link
-            href="/docs"
-            className="inline-flex items-center gap-2 h-9 px-4 rounded-md border border-[var(--border)] bg-[var(--surface-elevated)] text-[var(--text-primary)] font-mono text-xs hover:border-[var(--border-hover)] hover:bg-[var(--surface-secondary)] transition-all cursor-pointer"
-          >
-            <Code className="h-3.5 w-3.5 text-[var(--text-secondary)]" />
-            <span>Registry API</span>
           </Link>
 
           {/* Quick CLI snippet */}

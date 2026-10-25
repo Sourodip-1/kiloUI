@@ -58,6 +58,32 @@ export function VectorLayersIcon({ className = "h-4 w-4", isActive = false, ...p
 }
 
 /**
+ * 1b. Vector Cube Icon (Icons section)
+ * Isometric 3D package/cube with facet lighting matching Image 1.
+ */
+export function VectorCubeIcon({ className = "h-4 w-4", isActive = false, ...props }: VectorIconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={`${className} overflow-visible transition-colors`}
+      {...props}
+    >
+      <path
+        d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+        className={isActive ? "stroke-[var(--accent-green)] fill-[var(--accent-green)]/10" : "group-hover:stroke-[var(--accent-green)]"}
+      />
+      <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+      <line x1="12" y1="22.08" x2="12" y2="12" />
+    </svg>
+  );
+}
+
+/**
  * 2. Vector Folder & Blueprint Icon (Overview)
  * Interactive project deck folder: on hover, the front pocket flexes open
  * and an interior blueprint document sheet smoothly rises upward with spring physics.
@@ -194,76 +220,68 @@ export function VectorApiIcon({ className = "h-4 w-4", isActive = false, ...prop
   );
 }
 
+
+// Alias for backwards compatibility
+export const VectorBookOpenIcon = VectorApiIcon;
+
 /**
- * 4. Vector Icon Pack Icon (Icon Pack / Primitives Studio)
- * Precision geometric vector primitives representation (Square, Circle, Triangle, Diamond).
- * On hover, shapes react with subtle spring physics and light up in accent green.
+ * Vector Motion Icon (Motion Engine / Physics)
+ * Represents kinetic physics, spring oscillation, and smooth momentum.
  */
-export function VectorIconPackIcon({ className = "h-4 w-4", isActive = false, ...props }: VectorIconProps) {
+export function VectorMotionIcon({ className = "h-4 w-4", isActive = false, ...props }: VectorIconProps) {
   return (
     <svg
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.75"
+      strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
       className={`${className} overflow-visible transition-colors`}
       {...props}
     >
-      {/* 1. Rounded Square (Top-Left) */}
-      <rect
-        x="3"
-        y="3"
-        width="7"
-        height="7"
-        rx="1.5"
+      {/* Kinetic harmonic spring wave */}
+      <path
+        d="M2 13c2-5 4-5 6 0s4 5 6 0 3.5-4 5.5-1"
         className={`transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
           isActive
-            ? "stroke-[var(--accent-green)] fill-[var(--accent-green)]/15"
-            : "stroke-[var(--text-secondary)] group-hover:stroke-[var(--text-primary)] group-hover:-translate-y-0.5"
+            ? "stroke-[var(--accent-green)]"
+            : "group-hover:stroke-[var(--accent-green)]"
         }`}
       />
-      {/* 2. Precision Circle (Top-Right) */}
+      {/* Trajectory speed streak */}
+      <path
+        d="M5 8c2-2 5-2 7 0"
+        className={`transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          isActive
+            ? "stroke-[var(--accent-green)] opacity-80"
+            : "opacity-40 group-hover:opacity-90 group-hover:stroke-[var(--accent-green)]"
+        }`}
+      />
+      {/* Moving kinetic node / particle */}
       <circle
-        cx="17.5"
-        cy="6.5"
-        r="3.5"
+        cx="19.5"
+        cy="12"
+        r="1.5"
         className={`transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
           isActive
-            ? "stroke-[var(--accent-green)] fill-[var(--accent-green)]/20"
-            : "stroke-[var(--text-muted)] group-hover:stroke-[var(--accent-green)] group-hover:scale-110 origin-[17.5px_6.5px]"
+            ? "fill-[var(--accent-green)] stroke-[var(--accent-green)]"
+            : "fill-current group-hover:fill-[var(--accent-green)]"
         }`}
       />
-      {/* 3. Geometric Triangle (Bottom-Left) */}
-      <polygon
-        points="6.5 14 10 20.5 3 20.5"
+      {/* Bottom dampening trail */}
+      <path
+        d="M8 17c2 1.5 4 1.5 6 0"
         className={`transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
           isActive
-            ? "stroke-[var(--accent-green)] fill-[var(--accent-green)]/15"
-            : "stroke-[var(--text-muted)] group-hover:stroke-[var(--accent-green)] group-hover:rotate-6 origin-[6.5px_17px]"
-        }`}
-      />
-      {/* 4. Diamond / Anchor Node (Bottom-Right) */}
-      <rect
-        x="14"
-        y="14"
-        width="6"
-        height="6"
-        rx="1"
-        transform="rotate(45 17 17)"
-        className={`transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-          isActive
-            ? "stroke-[var(--accent-green)] fill-[var(--accent-green)]/20"
-            : "stroke-[var(--text-secondary)] group-hover:stroke-[var(--text-primary)] group-hover:scale-110 origin-[17px_17px]"
+            ? "stroke-[var(--accent-green)] opacity-60"
+            : "opacity-30 group-hover:opacity-75 group-hover:stroke-[var(--accent-green)]"
         }`}
       />
     </svg>
   );
 }
 
-// Alias for backwards compatibility
-export const VectorBookOpenIcon = VectorApiIcon;
 
 /**
  * 4. Vector PanelLeft Icon (Collapse / Expand Sidebar)
@@ -665,6 +683,32 @@ export function VectorCategoryIcon({
     );
   }
 
+  // 7. Backgrounds & Shaders -> Prismatic diagonal slat icon
+  if (norm.includes("background") || norm.includes("shader") || norm.includes("slat") || norm.includes("slate") || norm.includes("prismatic")) {
+    return (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={`${className} transition-colors ${
+          isActive ? "stroke-[var(--accent-green)]" : "group-hover:stroke-[var(--accent-green)]"
+        }`}
+      >
+        {/* Diagonal slats at ~35deg */}
+        <path d="M3 3 L10 21" strokeDasharray="0" />
+        <path d="M8 3 L15 21" className={isActive ? "stroke-[var(--accent-green)]" : ""} />
+        <path d="M13 3 L20 21" />
+        <path d="M18 3 L24 16" />
+        {/* Colour shimmer bars */}
+        <path d="M3 9 L21 9" strokeOpacity="0.3" strokeWidth="1" />
+        <path d="M3 15 L21 15" strokeOpacity="0.3" strokeWidth="1" />
+      </svg>
+    );
+  }
+
   // Fallback / Foundation
   return (
     <svg
@@ -718,6 +762,27 @@ export function VectorComponentIcon({
     );
   }
 
+  // Minimalist Login
+  if (norm.includes("login") || norm.includes("portal") || norm.includes("minimalist-login")) {
+    return (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={`${className} ${isActive ? "stroke-[var(--accent-green)]" : ""}`}
+      >
+        <circle cx="9" cy="12" r="6" />
+        <ellipse cx="9" cy="12" rx="6" ry="2.5" />
+        <circle cx="9" cy="12" r="1.5" fill="currentColor" />
+        <path d="M16 8h5v8h-5" />
+        <line x1="13" y1="12" x2="19" y2="12" className="stroke-[var(--accent-green)]" />
+      </svg>
+    );
+  }
+
   // Input
   if (norm.includes("input")) {
     return (
@@ -733,6 +798,28 @@ export function VectorComponentIcon({
         <rect x="3" y="5" width="18" height="14" rx="3" />
         <line x1="7" y1="9" x2="7" y2="15" className="stroke-[var(--accent-green)]" />
         <line x1="10" y1="12" x2="15" y2="12" strokeDasharray="1.5 1.5" />
+      </svg>
+    );
+  }
+
+  // Checkbox
+  if (norm.includes("checkbox") || norm.includes("check")) {
+    return (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={`${className} ${isActive ? "stroke-[var(--accent-green)]" : ""}`}
+      >
+        <rect x="3" y="3" width="18" height="18" rx="4" />
+        <path
+          d="m8 12 3 3 6-6"
+          className={isActive ? "stroke-[var(--accent-green)]" : "stroke-current"}
+          strokeWidth="2"
+        />
       </svg>
     );
   }
@@ -799,6 +886,91 @@ export function VectorComponentIcon({
     );
   }
 
+  // Expanding Image Card
+  if (norm.includes("expanding") || norm === "expanding-card") {
+    return (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={`${className} ${isActive ? "stroke-[var(--accent-green)]" : ""}`}
+      >
+        <rect x="3" y="3" width="8" height="8" rx="2" className="stroke-[var(--accent-green)]" />
+        <rect x="13" y="3" width="8" height="8" rx="2" strokeDasharray="2 2" opacity="0.6" />
+        <rect x="3" y="13" width="8" height="8" rx="2" strokeDasharray="2 2" opacity="0.6" />
+        <polyline points="15 19 19 19 19 15" className="stroke-[var(--accent-green)]" />
+        <line x1="19" y1="19" x2="14" y2="14" className="stroke-[var(--accent-green)]" />
+      </svg>
+    );
+  }
+
+  // Concave 3D Carousel
+  if (norm.includes("concave")) {
+    return (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={`${className} ${isActive ? "stroke-[var(--accent-green)]" : ""}`}
+      >
+        {/* Left card tilting inward */}
+        <path d="M4 6 L8 7.5 L8 16.5 L4 18 Z" className={isActive ? "stroke-[var(--accent-green)]" : "opacity-60"} />
+        {/* Center card */}
+        <rect x="9" y="5" width="6" height="14" rx="1.5" className={isActive ? "stroke-[var(--accent-green)] fill-[var(--accent-green)]/15" : ""} />
+        {/* Right card tilting inward */}
+        <path d="M20 6 L16 7.5 L16 16.5 L20 18 Z" className={isActive ? "stroke-[var(--accent-green)]" : "opacity-60"} />
+      </svg>
+    );
+  }
+
+  // Blurred Edge Carousel
+  if (norm.includes("carousel")) {
+    return (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={`${className} ${isActive ? "stroke-[var(--accent-green)]" : ""}`}
+      >
+        <rect x="6" y="4" width="12" height="16" rx="2.5" />
+        <path d="M2 7v10" strokeDasharray="1.5 1.5" opacity="0.5" />
+        <path d="M22 7v10" strokeDasharray="1.5 1.5" opacity="0.5" />
+        <circle cx="12" cy="16" r="1" fill="currentColor" />
+        <polyline points="9 10 12 7 15 10" />
+      </svg>
+    );
+  }
+
+  // TOC Content Slider
+  if (norm.includes("slider") || norm.includes("content-slider") || norm.includes("toc")) {
+    return (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={`${className} ${isActive ? "stroke-[var(--accent-green)]" : ""}`}
+      >
+        <line x1="4" y1="4" x2="4" y2="20" strokeWidth="1.5" />
+        <line x1="4" y1="9" x2="4" y2="15" strokeWidth="3" className="stroke-[var(--accent-green)]" />
+        <line x1="9" y1="6" x2="20" y2="6" />
+        <line x1="9" y1="12" x2="18" y2="12" className="stroke-[var(--text-primary)]" />
+        <line x1="12" y1="18" x2="19" y2="18" opacity="0.6" />
+      </svg>
+    );
+  }
+
   // Card
   if (norm.includes("card")) {
     return (
@@ -834,6 +1006,25 @@ export function VectorComponentIcon({
         <line x1="3" y1="10" x2="21" y2="10" />
         <line x1="9.5" y1="5" x2="9.5" y2="10" />
         <line x1="16" y1="5" x2="16" y2="10" />
+      </svg>
+    );
+  }
+
+  // Gooey Nav & Notched Navbar
+  if (norm.includes("gooey") || norm.includes("nav") || norm.includes("notch")) {
+    return (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={`${className} ${isActive ? "stroke-[var(--accent-green)]" : ""}`}
+      >
+        <path d="M3 8V18a3 3 0 0 0 3 3h12a3 3 0 0 0 3-3V8a3 3 0 0 0-3-3h-2c-1 0-1.5 2-2.5 2h-5C7.5 7 7 5 6 5H4a3 3 0 0 0-1 3z" />
+        <line x1="9" y1="5" x2="15" y2="5" className={isActive ? "stroke-[var(--accent-green)]" : "stroke-current"} strokeWidth="2" strokeLinecap="round" />
+        <circle cx="12" cy="14" r="1.5" className={isActive ? "fill-[var(--accent-green)]" : "fill-current"} />
       </svg>
     );
   }
@@ -893,6 +1084,169 @@ export function VectorComponentIcon({
         <rect x="3" y="4" width="18" height="16" rx="3" />
         <polyline points="6 15 10 11 14 14 18 9" />
         <circle cx="18" cy="9" r="1" fill="currentColor" />
+      </svg>
+    );
+  }
+
+  // Footer
+  if (norm.includes("footer")) {
+    return (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={`${className} ${isActive ? "stroke-[var(--accent-green)]" : ""}`}
+      >
+        <rect x="3" y="3" width="18" height="18" rx="3" />
+        <line x1="3" y1="14" x2="21" y2="14" />
+        <path d="M7 18h10" className="stroke-[var(--accent-green)]" />
+        <circle cx="7" cy="8" r="1" fill="currentColor" />
+        <circle cx="12" cy="8" r="1" fill="currentColor" />
+        <circle cx="17" cy="8" r="1" fill="currentColor" />
+      </svg>
+    );
+  }
+
+  // Scroll Marquee
+  if (norm.includes("scroll-marquee") || (norm.includes("marquee") && !norm.includes("directional"))) {
+    return (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={`${className} ${isActive ? "stroke-[var(--accent-green)]" : ""}`}
+      >
+        <rect x="2" y="7" width="20" height="10" rx="2" />
+        <polyline points="10 10 7 12 10 14" className="stroke-[var(--accent-green)]" />
+        <line x1="7" y1="12" x2="17" y2="12" />
+      </svg>
+    );
+  }
+
+  // Directional Marquee
+  if (norm.includes("directional") || norm.includes("directional-marquee")) {
+    return (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={`${className} ${isActive ? "stroke-[var(--accent-green)]" : ""}`}
+      >
+        <rect x="2" y="4" width="20" height="7" rx="2" />
+        <polyline points="15 6 18 7.5 15 9" className="stroke-[var(--accent-green)]" />
+        <line x1="6" y1="7.5" x2="18" y2="7.5" />
+        <rect x="2" y="13" width="20" height="7" rx="2" />
+        <polyline points="9 15 6 16.5 9 18" className="stroke-[var(--accent-green)]" />
+        <line x1="6" y1="16.5" x2="18" y2="16.5" />
+      </svg>
+    );
+  }
+
+  // Kinetic Text
+  if (norm.includes("kinetic") || norm.includes("text")) {
+    return (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={`${className} ${isActive ? "stroke-[var(--accent-green)]" : ""}`}
+      >
+        <path d="M4 7V4h16v3" />
+        <path d="M9 20h6" />
+        <path d="M12 4v16" />
+        <path d="M18 10c1.5 1 2 2.5 1 4" className="stroke-[var(--accent-green)]" />
+        <path d="M6 14c-1.5-1-2-2.5-1-4" className="stroke-[var(--accent-green)]" />
+      </svg>
+    );
+  }
+
+  // Prismatic Slats Background
+  if (norm.includes("prismatic") || norm.includes("slat") || norm.includes("slate") || norm.includes("reactive-slat") || norm.includes("reactive-slate")) {
+    return (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={`${className} ${isActive ? "stroke-[var(--accent-green)]" : ""}`}
+      >
+        <line x1="3" y1="3" x2="9" y2="21" />
+        <line x1="8" y1="3" x2="14" y2="21" className="stroke-[var(--accent-green)] opacity-80" />
+        <line x1="13" y1="3" x2="19" y2="21" />
+        <line x1="3" y1="10" x2="21" y2="10" strokeOpacity="0.35" strokeWidth="1" />
+        <line x1="3" y1="16" x2="21" y2="16" strokeOpacity="0.25" strokeWidth="1" />
+      </svg>
+    );
+  }
+
+  // Liquid Glass Search Bar
+  if (norm.includes("liquid") || norm.includes("search")) {
+    return (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={`${className} ${isActive ? "stroke-[#3478F6]" : ""}`}
+      >
+        <circle cx="11" cy="11" r="7" className="stroke-current" />
+        <path d="m21 21-4.35-4.35" className={isActive ? "stroke-[#3478F6]" : "stroke-current"} strokeWidth="2" />
+        <path d="M8 8.5a3.5 3.5 0 0 1 3.5-3.5" className="stroke-[#3478F6] opacity-80" strokeWidth="1.5" />
+      </svg>
+    );
+  }
+
+  // Grainy Grid Shader (2x2 morphing grid)
+  if (norm.includes("grainy-grid") || norm.includes("grid-shader")) {
+    return (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={`${className} ${isActive ? "stroke-[var(--accent-green)]" : ""}`}
+      >
+        <rect x="4" y="4" width="6" height="6" rx="1.5" />
+        <rect x="14" y="4" width="6" height="6" rx="1.5" />
+        <rect x="4" y="14" width="6" height="6" rx="1.5" />
+        <rect x="14" y="14" width="6" height="6" rx="1.5" />
+      </svg>
+    );
+  }
+
+  // Grainy Horizon Shader (curved luminous horizon)
+  if (norm.includes("horizon") || norm.includes("grainy-horizon") || norm.includes("grainy-glow")) {
+    return (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={`${className} ${isActive ? "stroke-[#7c3aed]" : ""}`}
+      >
+        <path d="M2 9c4 4 16 4 20 0" className={isActive ? "stroke-[#c084fc]" : "stroke-current"} />
+        <path d="M4 14c3.5 3 12.5 3 16 0" className="stroke-[#7c3aed] opacity-80" />
+        <circle cx="12" cy="18" r="1.5" fill="#c084fc" />
       </svg>
     );
   }

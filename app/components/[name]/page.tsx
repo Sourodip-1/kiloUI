@@ -14,7 +14,10 @@ export async function generateMetadata({
   params: Promise<{ name: string }>;
 }): Promise<Metadata> {
   const { name } = await params;
-  const item = REGISTRY_DATA[name];
+  const item =
+    REGISTRY_DATA[name] ||
+    (name === "liquid-glass-search-bar" ? REGISTRY_DATA["search-bar"] : undefined) ||
+    (name === "reactive-slates" || name === "reactive-slats" ? REGISTRY_DATA["prismatic-slats-bg"] : undefined);
   if (!item) return { title: "Component Not Found — kilo/ui" };
 
   return {
@@ -47,7 +50,10 @@ async function ComponentPageContent({
   params: Promise<{ name: string }>;
 }) {
   const { name } = await params;
-  const item = REGISTRY_DATA[name];
+  const item =
+    REGISTRY_DATA[name] ||
+    (name === "liquid-glass-search-bar" ? REGISTRY_DATA["search-bar"] : undefined) ||
+    (name === "reactive-slates" || name === "reactive-slats" ? REGISTRY_DATA["prismatic-slats-bg"] : undefined);
 
   if (!item) {
     notFound();

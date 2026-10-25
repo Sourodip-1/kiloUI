@@ -37,6 +37,7 @@ export function SlidingHighlightContainer({
   }>({ top: 0, height: 0, left: 0, width: 0, opacity: 0 });
 
   const leaveTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+  const prevActiveKeyRef = React.useRef(activeKey);
 
   const calculateTargetRect = React.useCallback(
     (target: HTMLElement) => {
@@ -45,15 +46,14 @@ export function SlidingHighlightContainer({
       const containerRect = container.getBoundingClientRect();
       const targetRect = target.getBoundingClientRect();
 
-      // Account for container border thickness so coordinates map 1:1 to padding box
-      const computed = window.getComputedStyle(container);
-      const borderLeft = parseFloat(computed.borderLeftWidth) || 0;
-      const borderTop = parseFloat(computed.borderTopWidth) || 0;
+      // Account for container border thickness and scroll
+      const borderLeft = container.clientLeft || 0;
+      const borderTop = container.clientTop || 0;
 
       return {
-        top: Math.round(targetRect.top - containerRect.top - borderTop),
+        top: Math.round(targetRect.top - (containerRect.top + borderTop) + container.scrollTop),
         height: Math.round(targetRect.height),
-        left: Math.round(targetRect.left - containerRect.left - borderLeft),
+        left: Math.round(targetRect.left - (containerRect.left + borderLeft) + container.scrollLeft),
         width: Math.round(targetRect.width),
         opacity: 1,
       };
@@ -89,14 +89,22 @@ export function SlidingHighlightContainer({
     [activeSelector, updateHoverTarget]
   );
 
+  // Initial mount and activeKey change tracking
   React.useEffect(() => {
-    // Initial mount or activeKey change
-    const timer = setTimeout(() => {
-      syncWithActiveElement(hasEntered);
-    }, 20);
-    return () => clearTimeout(timer);
+    const isKeyChange =
+      prevActiveKeyRef.current !== activeKey && prevActiveKeyRef.current !== undefined;
+    prevActiveKeyRef.current = activeKey;
+
+    syncWithActiveElement(hasEntered || isKeyChange);
+    const rAf = requestAnimationFrame(() => {
+      syncWithActiveElement(hasEntered || isKeyChange);
+    });
+    if (isKeyChange) setHasEntered(true);
+
+    return () => cancelAnimationFrame(rAf);
   }, [activeSelector, activeKey, syncWithActiveElement, hasEntered]);
 
+  // Pointer over item
   const handlePointerOver = React.useCallback(
     (e: React.PointerEvent<HTMLDivElement>) => {
       if (!containerRef.current) return;
@@ -114,6 +122,7 @@ export function SlidingHighlightContainer({
     [itemSelector, updateHoverTarget]
   );
 
+  // Pointer leaves container -> glides back to active item
   const handlePointerLeave = React.useCallback(() => {
     leaveTimeoutRef.current = setTimeout(() => {
       if (activeSelector && containerRef.current) {
@@ -129,7 +138,7 @@ export function SlidingHighlightContainer({
     }, 120);
   }, [activeSelector, updateHoverTarget]);
 
-  // Recalculate on window resize
+  // Recalculate on window resize, scroll, or font load
   React.useEffect(() => {
     const handleRecalculate = () => {
       if (activeTargetRef.current && containerRef.current?.contains(activeTargetRef.current)) {
@@ -141,8 +150,23 @@ export function SlidingHighlightContainer({
     };
 
     window.addEventListener("resize", handleRecalculate);
+    const container = containerRef.current;
+    if (container) container.addEventListener("scroll", handleRecalculate);
+
+    let ro: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== "undefined" && container) {
+      ro = new ResizeObserver(() => handleRecalculate());
+      ro.observe(container);
+    }
+
+    if (typeof document !== "undefined" && document.fonts?.ready) {
+      document.fonts.ready.then(handleRecalculate).catch(() => {});
+    }
+
     return () => {
       window.removeEventListener("resize", handleRecalculate);
+      if (container) container.removeEventListener("scroll", handleRecalculate);
+      ro?.disconnect();
       if (leaveTimeoutRef.current) clearTimeout(leaveTimeoutRef.current);
     };
   }, [calculateTargetRect, activeSelector, syncWithActiveElement]);

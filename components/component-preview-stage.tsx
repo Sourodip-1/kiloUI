@@ -1,11 +1,14 @@
 "use client";
 
 import * as React from "react";
-import { RotateCcw, Check, Copy, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
+import { RotateCcw, Check, Copy, ChevronDown, ChevronLeft, ChevronRight, Sparkles, Mic, SlidersHorizontal, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/registry/ui/button";
 import { Input } from "@/registry/ui/input";
 import { Switch } from "@/registry/ui/switch";
+import { Checkbox } from "@/registry/ui/checkbox";
+import { NotchedNavbar, HomeIcon, BriefcaseIcon, MailIcon } from "@/registry/ui/notched-navbar";
+import { SearchBar, LiquidGlassSearchBar } from "@/registry/ui/search-bar";
 import {
   Dialog,
   DialogTrigger,
@@ -32,6 +35,18 @@ import {
   AccordionContent,
 } from "@/registry/ui/accordion";
 import { StatCard } from "@/registry/ui/stat-card";
+import { ExpandingCard } from "@/registry/ui/expanding-card";
+import { BlurredCarousel } from "@/registry/ui/blurred-carousel";
+import { ContentSlider } from "@/registry/ui/content-slider";
+import { Footer } from "@/registry/ui/footer";
+import { ScrollMarquee } from "@/registry/ui/scroll-marquee";
+import { DirectionalMarquee } from "@/registry/ui/directional-marquee";
+import { KineticText } from "@/registry/ui/kinetic-text";
+import { MinimalistLogin } from "@/registry/ui/minimalist-login";
+import { PrismaticSlatsBg } from "@/registry/ui/prismatic-slats-bg";
+import { ConcaveCarousel } from "@/registry/ui/concave-carousel";
+import { GrainyGridShader } from "@/registry/ui/grainy-grid-shader";
+import { GrainyHorizonShader } from "@/registry/ui/grainy-horizon-shader";
 import { RegistryItem } from "@/registry/registry-data";
 import {
   VectorKiloLogo,
@@ -68,14 +83,17 @@ function CustomizeTile({
   return (
     <div
       className={cn(
-        "flex items-center justify-between h-10 px-3.5 rounded-lg bg-[var(--surface-secondary)]/75 hover:bg-[var(--surface-secondary)] border border-[var(--border)]/70 transition-colors",
+        "flex items-center justify-between gap-2.5 h-10 px-3.5 rounded-lg bg-[var(--surface-secondary)]/75 hover:bg-[var(--surface-secondary)] border border-[var(--border)]/70 transition-colors min-w-0 relative",
         className
       )}
     >
-      <span className="text-xs font-semibold font-mono tracking-tight text-[var(--text-secondary)] whitespace-nowrap pr-2 select-none">
+      <span
+        title={label}
+        className="text-xs font-semibold font-mono tracking-tight text-[var(--text-secondary)] truncate shrink-0 max-w-[50%] select-none"
+      >
         {label}
       </span>
-      <div className="flex items-center justify-end flex-1 min-w-0">{children}</div>
+      <div className="flex items-center justify-end shrink-0 min-w-0">{children}</div>
     </div>
   );
 }
@@ -126,7 +144,7 @@ function CustomizeSelect({
   }, [open]);
 
   return (
-    <div ref={containerRef} className="relative inline-block text-left">
+    <div ref={containerRef} className={cn("relative inline-block text-left", open && "z-50")}>
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
@@ -139,7 +157,7 @@ function CustomizeSelect({
         aria-haspopup="listbox"
         aria-expanded={open}
       >
-        <span className="truncate max-w-[110px] font-medium text-[var(--text-primary)]">
+        <span className="truncate max-w-[120px] font-medium text-[var(--text-primary)]">
           {selectedOption.label}
         </span>
         <ChevronDown
@@ -154,8 +172,8 @@ function CustomizeSelect({
         <div
           role="listbox"
           className={cn(
-            "absolute right-0 top-full mt-1.5 z-50 min-w-[130px] max-h-56 overflow-y-auto",
-            "rounded-lg p-1 bg-[var(--surface-elevated)] border border-[var(--border)] shadow-xl shadow-black/60 backdrop-blur-md",
+            "absolute right-0 top-full mt-1.5 z-[100] min-w-[140px] max-h-56 overflow-y-auto",
+            "rounded-lg p-1 bg-[var(--surface-elevated)] border border-[var(--border)] shadow-2xl shadow-black/80 backdrop-blur-md",
             "animate-in fade-in-0 zoom-in-95 duration-150"
           )}
         >
@@ -246,6 +264,130 @@ function CustomizeInput({
   );
 }
 
+/** Color picker tile control with swatches and native picker */
+function CustomizeColorPicker({
+  value,
+  onChange,
+  presets = [
+    { label: "Default", color: "" },
+    { label: "White", color: "#ffffff" },
+    { label: "Sage Green", color: "#8bc49a" },
+    { label: "Cyan", color: "#22d3ee" },
+    { label: "Violet", color: "#a78bfa" },
+    { label: "Amber", color: "#fbbf24" },
+    { label: "Rose", color: "#fb7185" },
+  ],
+}: {
+  value: string;
+  onChange: (val: string) => void;
+  presets?: { label: string; color: string }[];
+}) {
+  return (
+    <div className="flex items-center gap-1.5">
+      <div className="flex items-center gap-1">
+        {presets.map((preset) => {
+          const isSelected = value === preset.color;
+          return (
+            <button
+              key={preset.label}
+              type="button"
+              onClick={() => onChange(preset.color)}
+              title={preset.label}
+              className={cn(
+                "h-4 w-4 rounded-full border transition-transform cursor-pointer relative",
+                isSelected
+                  ? "scale-125 border-[var(--text-primary)] ring-1 ring-[var(--accent-green)]"
+                  : "border-[var(--border)] hover:scale-110 opacity-75 hover:opacity-100"
+              )}
+              style={{
+                backgroundColor: preset.color || "rgba(255,255,255,0.2)",
+              }}
+            />
+          );
+        })}
+      </div>
+      <label className="relative flex items-center cursor-pointer ml-1" title="Custom color picker">
+        <input
+          type="color"
+          value={value.startsWith("#") ? value : "#8bc49a"}
+          onChange={(e) => onChange(e.target.value)}
+          className="sr-only"
+        />
+        <div
+          className="h-4 w-4 rounded border border-[var(--border)] hover:border-[var(--text-primary)] transition-colors shadow-2xs"
+          style={{ backgroundColor: value || "transparent" }}
+        />
+      </label>
+    </div>
+  );
+}
+
+/** Precise slider with mono value readout matching Images 3 and 5 */
+function CustomizeSlider({
+  value,
+  onChange,
+  min,
+  max,
+  step = 1,
+  unit = "",
+  formatValue,
+}: {
+  value: number;
+  onChange: (val: number) => void;
+  min: number;
+  max: number;
+  step?: number;
+  unit?: string;
+  formatValue?: (v: number) => string;
+}) {
+  const displayVal = formatValue ? formatValue(value) : `${value}${unit}`;
+  return (
+    <div className="flex items-center gap-2">
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        className="w-24 sm:w-28 accent-[var(--accent-green)] h-1.5 bg-[var(--surface-tertiary)] rounded-full cursor-pointer"
+      />
+      <span className="font-mono text-xs text-[var(--text-primary)] w-12 text-right shrink-0 select-none">
+        {displayVal}
+      </span>
+    </div>
+  );
+}
+
+/** Hex color readout + interactive picker swatch matching Images 3 & 5 */
+function CustomizeHexColorPicker({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (val: string) => void;
+}) {
+  return (
+    <div className="flex items-center gap-2">
+      <span className="font-mono text-xs text-[var(--text-primary)] uppercase select-all">
+        {value}
+      </span>
+      <label className="relative flex items-center cursor-pointer" title="Pick color">
+        <input
+          type="color"
+          value={value.startsWith("#") ? value : "#050505"}
+          onChange={(e) => onChange(e.target.value)}
+          className="sr-only"
+        />
+        <div
+          className="h-4 w-4 rounded border border-[var(--border)] hover:border-[var(--text-primary)] transition-colors shadow-2xs"
+          style={{ backgroundColor: value }}
+        />
+      </label>
+    </div>
+  );
+}
+
 export function ComponentPreviewStage({
   item,
   interactive = true,
@@ -275,6 +417,52 @@ export function ComponentPreviewStage({
   const [inputError, setInputError] = React.useState("");
   const [inputDisabled, setInputDisabled] = React.useState(false);
 
+  // Checkbox state
+  const [checkboxChecked, setCheckboxChecked] = React.useState(true);
+  const [checkboxVariant, setCheckboxVariant] = React.useState<any>(
+    item.name === "checkbox" && activeVariant ? activeVariant : "motion"
+  );
+  const [checkboxSize, setCheckboxSize] = React.useState<"sm" | "default" | "lg">("default");
+  const [checkboxIndeterminate, setCheckboxIndeterminate] = React.useState(false);
+  const [checkboxDisabled, setCheckboxDisabled] = React.useState(false);
+  const [checkboxLabel, setCheckboxLabel] = React.useState("Auto-deploy to edge network");
+  const [checkboxDesc, setCheckboxDesc] = React.useState("Triggers pipeline sync on successful build verification");
+  const [checkboxBadge, setCheckboxBadge] = React.useState("Motion");
+
+  // Notched Navbar state
+  const [notchedVariant, setNotchedVariant] = React.useState<string>(
+    item.name === "notched-navbar" && activeVariant ? activeVariant : "default"
+  );
+  const [notchedBorderPadding, setNotchedBorderPadding] = React.useState<number>(8);
+  const [notchedWidth, setNotchedWidth] = React.useState<number>(
+    item.name === "notched-navbar" && (activeVariant === "left" || activeVariant === "right")
+      ? 260
+      : item.name === "notched-navbar" && activeVariant === "compact"
+      ? 300
+      : 540
+  );
+  const [notchedHeight, setNotchedHeight] = React.useState<number>(
+    item.name === "notched-navbar" && (activeVariant === "left" || activeVariant === "right")
+      ? 56
+      : item.name === "notched-navbar" && activeVariant === "deep-notch"
+      ? 52
+      : 42
+  );
+  const [notchedActiveTab, setNotchedActiveTab] = React.useState<string>("home");
+  const [notchedFrameBg, setNotchedFrameBg] = React.useState<string>("#222326");
+
+  // Search Bar (Liquid Glass) state
+  const [searchBarExpanded, setSearchBarExpanded] = React.useState<boolean>(false);
+  const [searchBarQuery, setSearchBarQuery] = React.useState<string>("");
+  const [searchBarPlaceholder, setSearchBarPlaceholder] = React.useState<string>("Search components...");
+  const [searchBarVariant, setSearchBarVariant] = React.useState<string>(
+    (item.name === "search-bar" || item.name === "liquid-glass-search-bar") && activeVariant
+      ? activeVariant
+      : "downward-expand"
+  );
+  const [searchBarSelectedTitle, setSearchBarSelectedTitle] = React.useState<string | null>(null);
+  const [searchBarBgMode, setSearchBarBgMode] = React.useState<"refraction-grid" | "sky" | "dark">("refraction-grid");
+
   // 3. Switch state
   const [switchChecked, setSwitchChecked] = React.useState(true);
   const [switchLabel, setSwitchLabel] = React.useState("Cache Turbo Output");
@@ -296,18 +484,6 @@ export function ComponentPreviewStage({
   const [badgeDot, setBadgeDot] = React.useState(true);
   const [badgeText, setBadgeText] = React.useState("Operational");
 
-  // Sync state if activeVariant prop changes (e.g. user clicked sidebar variant)
-  React.useEffect(() => {
-    if (activeVariant) {
-      if (item.name === "button") {
-        setBtnVariant(activeVariant);
-      } else if (item.name === "badge") {
-        setBadgeVariant(activeVariant);
-      } else if (item.name === "tabs") {
-        setTabVariant(activeVariant === "slide" ? "slide" : "default");
-      }
-    }
-  }, [activeVariant, item.name]);
 
   // 6. Card state
   const [cardTitle, setCardTitle] = React.useState("Edge Runtime Worker");
@@ -316,9 +492,10 @@ export function ComponentPreviewStage({
 
   // 7. Tabs state
   const [tabValue, setTabValue] = React.useState("overview");
-  const [tabVariant, setTabVariant] = React.useState<"default" | "slide">(
-    item.name === "tabs" && activeVariant === "slide" ? "slide" : "default"
+  const [tabVariant, setTabVariant] = React.useState<"default" | "slide" | "liquid-pill" | "island" | "minimal">(
+    item.name === "tabs" && activeVariant ? (activeVariant as any) : "default"
   );
+  const [tabPillStyle, setTabPillStyle] = React.useState<"liquid-glow" | "solid" | "glass" | "accent">("liquid-glow");
 
   // 8. StatCard state
   const [statTitle, setStatTitle] = React.useState("Active Registry Users");
@@ -330,25 +507,361 @@ export function ComponentPreviewStage({
 
   // 9. Sidebar state
   const [sidebarDemoCollapsed, setSidebarDemoCollapsed] = React.useState(false);
+  const [sidebarVariant, setSidebarVariant] = React.useState<"scrollable-categories" | "default">(
+    (activeVariant as any) || "scrollable-categories"
+  );
+
+  // 10. Expanding Card state
+  const [expandingTitle, setExpandingTitle] = React.useState("Components");
+  const [expandingSubtitle, setExpandingSubtitle] = React.useState("Hover to reveal full showcase view");
+  const [expandingForced, setExpandingForced] = React.useState(activeVariant === "expanded");
+
+  // 11. Blurred Carousel state
+  const [carouselTitle, setCarouselTitle] = React.useState("Featured Templates");
+  const [carouselAutoplay, setCarouselAutoplay] = React.useState(activeVariant === "autoplay");
+
+  // 12. TOC Content Slider state
+  const [tocActiveId, setTocActiveId] = React.useState("usage");
+  const [tocRubberBand, setTocRubberBand] = React.useState(true);
+
+  // 13. Footer state
+  const [footerBrandText, setFooterBrandText] = React.useState("kilo/ui");
+  const [footerBlurBlend, setFooterBlurBlend] = React.useState(true);
+  const [footerShowNewsletter, setFooterShowNewsletter] = React.useState(true);
+
+  // 14. Scroll Marquee state
+  const [marqueeText, setMarqueeText] = React.useState("ENGINEERED FOR HIGH VELOCITY • MINIMAL BY DESIGN • HARDWARE ACCELERATED •");
+  const [marqueeVariant, setMarqueeVariant] = React.useState<"scroll-left" | "scroll-right" | "dual-scroll" | "velocity-skew">(
+    (activeVariant as any) || "scroll-left"
+  );
+  const [marqueeOutline, setMarqueeOutline] = React.useState(false);
+  const [marqueeTextColor, setMarqueeTextColor] = React.useState<string>("");
+  const [marqueeBlurColor, setMarqueeBlurColor] = React.useState<string>("mask");
+
+  // 15. Directional Marquee state
+  const [dirMarqueeDir, setDirMarqueeDir] = React.useState<"auto" | "down" | "up">("auto");
+  const [dirMarqueeHud, setDirMarqueeHud] = React.useState(true);
+  const [dirMarqueeTextColor, setDirMarqueeTextColor] = React.useState<string>("");
+  const [dirMarqueeBlurColor, setDirMarqueeBlurColor] = React.useState<string>("mask");
+
+  // 16. Kinetic Text state
+  const [kineticText, setKineticText] = React.useState("KILO / MOTION UI");
+  const [kineticVariant, setKineticVariant] = React.useState<"rubber-band" | "wave-ripple" | "scramble-decode" | "magnetic-tilt">(
+    (activeVariant as any) || "rubber-band"
+  );
+
+  // 17. Minimalist Login state
+  const [loginVariant, setLoginVariant] = React.useState<"sharp-edges" | "rounded-corners">(
+    (activeVariant as any) || "sharp-edges"
+  );
+  const [loginRadius, setLoginRadius] = React.useState<number>(20);
+  const [loginSphereMotion, setLoginSphereMotion] = React.useState<boolean>(true);
+  const [loginInteractiveDots, setLoginInteractiveDots] = React.useState<boolean>(true);
+  const [loginRotationSpeed, setLoginRotationSpeed] = React.useState<number>(1);
+
+  // 18. Concave Carousel state (Matching Image 3 controls)
+  const [concavePreset, setConcavePreset] = React.useState<"Rotunda" | "Tunnel" | "Flat" | "Panoramic" | "Convex">("Rotunda");
+  const [concaveAutoplay, setConcaveAutoplay] = React.useState<"Drift" | "None" | "Step">("Drift");
+  const [concaveBg, setConcaveBg] = React.useState<string>("#0A0A0A");
+  const [concaveAspect, setConcaveAspect] = React.useState<number>(1.25);
+  const [concaveSize, setConcaveSize] = React.useState<number>(0.46);
+  const [concaveCurvature, setConcaveCurvature] = React.useState<number>(0.72);
+  const [concaveDistance, setConcaveDistance] = React.useState<number>(4.0);
+  const [concaveTilt, setConcaveTilt] = React.useState<number>(0.0);
+  const [concaveGap, setConcaveGap] = React.useState<number>(16);
+  const [concaveRadius, setConcaveRadius] = React.useState<number>(14);
+  const [concaveReflection, setConcaveReflection] = React.useState<number>(0.06);
+  const [concaveDim, setConcaveDim] = React.useState<number>(0.35);
+  const [concaveSpeed, setConcaveSpeed] = React.useState<number>(0.16);
+  const [concaveInterval, setConcaveInterval] = React.useState<number>(4.0);
+  const [concaveInertia, setConcaveInertia] = React.useState<number>(0.50);
+  const [concaveSnap, setConcaveSnap] = React.useState<boolean>(false);
+  const [concavePauseOnHover, setConcavePauseOnHover] = React.useState<boolean>(false);
+  const [concaveDraggable, setConcaveDraggable] = React.useState<boolean>(true);
+  const [concaveWheel, setConcaveWheel] = React.useState<boolean>(true);
+  const [concaveCaptions, setConcaveCaptions] = React.useState<boolean>(true);
+  const [concaveControls, setConcaveControls] = React.useState<boolean>(true);
+  const [concavePaused, setConcavePaused] = React.useState<boolean>(false);
+
+  const handleConcavePresetChange = React.useCallback((preset: "Rotunda" | "Tunnel" | "Flat" | "Panoramic" | "Convex") => {
+    setConcavePreset(preset);
+    if (preset === "Rotunda") {
+      setConcaveCurvature(0.72);
+      setConcaveDistance(4.0);
+      setConcaveTilt(0.0);
+      setConcaveGap(16);
+      setConcaveDim(0.35);
+    } else if (preset === "Tunnel") {
+      setConcaveCurvature(1.25);
+      setConcaveDistance(2.8);
+      setConcaveTilt(4.0);
+      setConcaveGap(12);
+      setConcaveDim(0.55);
+    } else if (preset === "Flat") {
+      setConcaveCurvature(0.0);
+      setConcaveDistance(5.0);
+      setConcaveTilt(0.0);
+      setConcaveGap(24);
+      setConcaveDim(0.10);
+    } else if (preset === "Panoramic") {
+      setConcaveCurvature(0.45);
+      setConcaveDistance(6.0);
+      setConcaveTilt(0.0);
+      setConcaveGap(20);
+      setConcaveDim(0.25);
+    } else if (preset === "Convex") {
+      setConcaveCurvature(-0.72);
+      setConcaveDistance(4.5);
+      setConcaveTilt(0.0);
+      setConcaveGap(16);
+      setConcaveDim(0.35);
+    }
+  }, []);
+
+  // 19. Prismatic Slats Shader state (Matching Image 5 controls)
+  const [slatPreset, setSlatPreset] = React.useState<"Violet" | "Cyan" | "Sunset" | "Emerald">("Violet");
+  const [slatBg, setSlatBg] = React.useState<string>("#050505");
+  const [slatPrimary, setSlatPrimary] = React.useState<string>("#5227FF");
+  const [slatSecondary, setSlatSecondary] = React.useState<string>("#FF9FFC");
+  const [slatAngle, setSlatAngle] = React.useState<number>(28);
+  const [slatFlutes, setSlatFlutes] = React.useState<number>(8);
+  const [slatRefraction, setSlatRefraction] = React.useState<number>(4.0);
+  const [slatAberration, setSlatAberration] = React.useState<number>(0.61);
+  const [slatSoftness, setSlatSoftness] = React.useState<number>(0.50);
+  const [slatWave, setSlatWave] = React.useState<number>(0.06);
+  const [slatWaveFreq, setSlatWaveFreq] = React.useState<number>(1.5);
+  const [slatDrift, setSlatDrift] = React.useState<number>(0.00);
+  const [slatHighlight, setSlatHighlight] = React.useState<number>(0.12);
+  const [slatHighlightSoft, setSlatHighlightSoft] = React.useState<number>(0.30);
+  const [slatLightAngle, setSlatLightAngle] = React.useState<number>(-90);
+  const [slatRadius, setSlatRadius] = React.useState<number>(6.5);
+  const [slatMomentum, setSlatMomentum] = React.useState<number>(13);
+  const [slatSwirl, setSlatSwirl] = React.useState<number>(0);
+  const [slatIntensity, setSlatIntensity] = React.useState<number>(1.00);
+  const [slatTrail, setSlatTrail] = React.useState<number>(1.00);
+  const [slatTexture, setSlatTexture] = React.useState<number>(0.60);
+  const [slatGrainVal, setSlatGrainVal] = React.useState<number>(0.050);
+  const [slatSpeed, setSlatSpeed] = React.useState<number>(1.00);
+  const [slatAutoplay, setSlatAutoplay] = React.useState<boolean>(false);
+  const [slatInteractive, setSlatInteractive] = React.useState<boolean>(true);
+  const [slatPaused, setSlatPaused] = React.useState<boolean>(false);
+
+  const handleSlatPresetChange = React.useCallback((preset: "Violet" | "Cyan" | "Sunset" | "Emerald") => {
+    setSlatPreset(preset);
+    if (preset === "Violet") {
+      setSlatPrimary("#5227FF");
+      setSlatSecondary("#FF9FFC");
+      setSlatBg("#050505");
+    } else if (preset === "Cyan") {
+      setSlatPrimary("#00d2ff");
+      setSlatSecondary("#3a7bd5");
+      setSlatBg("#030b14");
+    } else if (preset === "Sunset") {
+      setSlatPrimary("#ff416c");
+      setSlatSecondary("#ff4b2b");
+      setSlatBg("#0c0406");
+    } else if (preset === "Emerald") {
+      setSlatPrimary("#00b09b");
+      setSlatSecondary("#96c93d");
+      setSlatBg("#040e0a");
+    }
+  }, []);
+
+  // 20. Grainy Grid Shader state
+  const [gridVariant, setGridVariant] = React.useState<"rough-matte" | "tactile-kraft" | "cyber-mesh">("rough-matte");
+  const [gridGrain, setGridGrain] = React.useState<number>(0.22);
+  const [gridRoughness, setGridRoughness] = React.useState<number>(1.0);
+  const [gridColumns, setGridColumns] = React.useState<number>(6);
+  const [gridRows, setGridRows] = React.useState<number>(4);
+  const [gridCellSize, setGridCellSize] = React.useState<number>(52);
+  const [gridSpeed, setGridSpeed] = React.useState<number>(1.0);
+  const [gridRadius, setGridRadius] = React.useState<number>(140);
+  const [gridAutoWave, setGridAutoWave] = React.useState<boolean>(true);
+  const [gridInteractive, setGridInteractive] = React.useState<boolean>(true);
+  const [gridShowBoxes, setGridShowBoxes] = React.useState<boolean>(true);
+
+  const handleGridVariantChange = React.useCallback((v: "rough-matte" | "tactile-kraft" | "cyber-mesh") => {
+    setGridVariant(v);
+  }, []);
+
+  // 21. Grainy Horizon Shader state
+  const [horizonVariant, setHorizonVariant] = React.useState<
+    "ultraviolet" | "aurora-green" | "solar-amber" | "cyber-cyan" | "monochrome"
+  >("ultraviolet");
+  const [horizonGrain, setHorizonGrain] = React.useState<number>(0.26);
+  const [horizonRoughness, setHorizonRoughness] = React.useState<number>(1.2);
+  const [horizonGlowIntensity, setHorizonGlowIntensity] = React.useState<number>(1.2);
+  const [horizonCurvature, setHorizonCurvature] = React.useState<number>(0.52);
+  const [horizonGlowSpread, setHorizonGlowSpread] = React.useState<number>(1.1);
+  const [horizonSpeed, setHorizonSpeed] = React.useState<number>(0.8);
+  const [horizonDrift, setHorizonDrift] = React.useState<number>(0.35);
+  const [horizonInteractive, setHorizonInteractive] = React.useState<boolean>(true);
+  const [horizonInverted, setHorizonInverted] = React.useState<boolean>(false);
+
+  const handleHorizonVariantChange = React.useCallback(
+    (v: "ultraviolet" | "aurora-green" | "solar-amber" | "cyber-cyan" | "monochrome") => {
+      setHorizonVariant(v);
+    },
+    []
+  );
 
   // Available semantic variants for this component
   const variants = React.useMemo(() => {
     if (item.variants && item.variants.length > 0) return item.variants;
     if (item.name === "button") return ["default", "secondary", "outline", "ghost", "accent", "destructive", "link"];
     if (item.name === "badge") return ["default", "secondary", "outline", "success", "destructive", "muted"];
-    if (item.name === "tabs") return ["default", "slide"];
+    if (item.name === "sidebar") return ["scrollable-categories", "default"];
+    if (item.name === "scroll-marquee") return ["scroll-left", "scroll-right", "dual-scroll", "velocity-skew"];
+    if (item.name === "kinetic-text") return ["rubber-band", "wave-ripple", "scramble-decode", "magnetic-tilt"];
+    if (item.name === "minimalist-login") return ["sharp-edges", "rounded-corners"];
+    if (item.name === "concave-carousel") return ["Rotunda", "Tunnel", "Flat", "Panoramic", "Convex"];
+    if (item.name === "prismatic-slats-bg") return ["Violet", "Cyan", "Sunset", "Emerald"];
+    if (item.name === "grainy-grid-shader") return ["rough-matte", "tactile-kraft", "cyber-mesh"];
+    if (item.name === "grainy-horizon-shader")
+      return ["ultraviolet", "aurora-green", "solar-amber", "cyber-cyan", "monochrome"];
     return [];
   }, [item.variants, item.name]);
 
   const hasVariants = variants.length > 1;
 
+  // Unified variant setter supporting all interactive components
+  const applyVariant = React.useCallback(
+    (v: string) => {
+      if (item.name === "button") setBtnVariant(v);
+      else if (item.name === "checkbox") {
+        setCheckboxVariant(v as any);
+        if (v === "lineart") {
+          setCheckboxLabel("CAD Blueprint Layer");
+          setCheckboxDesc("Vector line-art drafting with technical stroke-path animation");
+          setCheckboxBadge("Lineart");
+        } else if (v === "motion") {
+          setCheckboxLabel("Physics Spring Bounce");
+          setCheckboxDesc("Spring-damped bounce physics with radar wave easing");
+          setCheckboxBadge("Motion");
+        } else if (v === "strike") {
+          setCheckboxLabel("Implement WebGPU shader pipeline");
+          setCheckboxDesc("Task item with animated strikethrough transition");
+          setCheckboxBadge("Task");
+        } else if (v === "card") {
+          setCheckboxLabel("Edge Compute Node");
+          setCheckboxDesc("Global low-latency serverless edge runtime with TLS termination");
+          setCheckboxBadge("Popular");
+        } else if (v === "chip") {
+          setCheckboxLabel("Framer Motion");
+          setCheckboxDesc("");
+          setCheckboxBadge("Pill");
+        } else {
+          setCheckboxLabel("Developer Environment");
+          setCheckboxDesc("Standard developer checkbox token");
+          setCheckboxBadge("Default");
+        }
+      }
+      else if (item.name === "badge") setBadgeVariant(v);
+      else if (item.name === "sidebar") setSidebarVariant((v as any) || "scrollable-categories");
+      else if (item.name === "tabs") setTabVariant((v as any) || "default");
+      else if (item.name === "scroll-marquee") setMarqueeVariant((v as any) || "scroll-left");
+      else if (item.name === "kinetic-text") setKineticVariant((v as any) || "rubber-band");
+      else if (item.name === "minimalist-login") setLoginVariant(v as any);
+      else if (item.name === "expanding-card") setExpandingForced(v === "expanded");
+      else if (item.name === "blurred-carousel") setCarouselAutoplay(v === "autoplay");
+      else if (item.name === "notched-navbar") {
+        setNotchedVariant(v);
+        if (v === "down" || v === "bottom") {
+          setNotchedWidth(540);
+          setNotchedHeight(42);
+          setNotchedBorderPadding(8);
+          setNotchedFrameBg("#222326");
+        } else if (v === "left" || v === "right") {
+          setNotchedWidth(260);
+          setNotchedHeight(56);
+          setNotchedBorderPadding(8);
+          setNotchedFrameBg("#222326");
+        } else if (v === "compact") {
+          setNotchedWidth(300);
+          setNotchedHeight(38);
+          setNotchedBorderPadding(6);
+          setNotchedFrameBg("#222326");
+        } else if (v === "deep-notch") {
+          setNotchedWidth(560);
+          setNotchedHeight(52);
+          setNotchedBorderPadding(10);
+          setNotchedFrameBg("#1c1d21");
+        } else if (v === "dark-slate") {
+          setNotchedWidth(540);
+          setNotchedHeight(42);
+          setNotchedBorderPadding(8);
+          setNotchedFrameBg("#0f172a");
+        } else {
+          setNotchedWidth(540);
+          setNotchedHeight(42);
+          setNotchedBorderPadding(8);
+          setNotchedFrameBg("#222326");
+        }
+      }
+      else if (item.name === "search-bar" || item.name === "liquid-glass-search-bar") {
+        setSearchBarVariant(v || "downward-expand");
+      }
+      else if (item.name === "concave-carousel") {
+        handleConcavePresetChange(v as any);
+      }
+      else if (item.name === "prismatic-slats-bg") {
+        handleSlatPresetChange(v as any);
+      }
+      else if (item.name === "grainy-grid-shader") {
+        handleGridVariantChange(v as any);
+      }
+      else if (item.name === "grainy-horizon-shader") {
+        handleHorizonVariantChange(v as any);
+      }
+    },
+    [
+      item.name,
+      handleConcavePresetChange,
+      handleSlatPresetChange,
+      handleGridVariantChange,
+      handleHorizonVariantChange,
+    ]
+  );
+
+  // Synchronize state immediately when activeVariant prop or item changes (sidebar click, URL change, etc.)
+  React.useEffect(() => {
+    const targetVariant = activeVariant || (variants.length > 0 ? variants[0] : "default");
+    applyVariant(targetVariant);
+  }, [activeVariant, variants, applyVariant]);
+
   const currentVariant =
     item.name === "button"
       ? btnVariant
+      : item.name === "checkbox"
+      ? checkboxVariant
+      : item.name === "notched-navbar"
+      ? notchedVariant
+      : (item.name === "search-bar" || item.name === "liquid-glass-search-bar")
+      ? searchBarVariant
       : item.name === "badge"
       ? badgeVariant
+      : item.name === "sidebar"
+      ? sidebarVariant
       : item.name === "tabs"
       ? tabVariant
+      : item.name === "scroll-marquee"
+      ? marqueeVariant
+      : item.name === "kinetic-text"
+      ? kineticVariant
+      : item.name === "minimalist-login"
+      ? loginVariant
+      : item.name === "concave-carousel"
+      ? concavePreset
+      : item.name === "prismatic-slats-bg"
+      ? slatPreset
+      : item.name === "grainy-grid-shader"
+      ? gridVariant
+      : item.name === "grainy-horizon-shader"
+      ? horizonVariant
+      : item.name === "expanding-card"
+      ? (expandingForced ? "expanded" : "default")
+      : item.name === "blurred-carousel"
+      ? (carouselAutoplay ? "autoplay" : "default")
       : activeVariant || variants[0] || "default";
 
   const currentIndex = Math.max(0, variants.indexOf(currentVariant));
@@ -357,21 +870,17 @@ export function ComponentPreviewStage({
     if (!hasVariants) return;
     const prevIdx = (currentIndex - 1 + variants.length) % variants.length;
     const prevVal = variants[prevIdx];
-    if (item.name === "button") setBtnVariant(prevVal);
-    if (item.name === "badge") setBadgeVariant(prevVal);
-    if (item.name === "tabs") setTabVariant(prevVal as "default" | "slide");
+    applyVariant(prevVal);
     onVariantChange?.(prevVal);
-  }, [hasVariants, currentIndex, variants, item.name, onVariantChange]);
+  }, [hasVariants, currentIndex, variants, applyVariant, onVariantChange]);
 
   const handleNextVariant = React.useCallback(() => {
     if (!hasVariants) return;
     const nextIdx = (currentIndex + 1) % variants.length;
     const nextVal = variants[nextIdx];
-    if (item.name === "button") setBtnVariant(nextVal);
-    if (item.name === "badge") setBadgeVariant(nextVal);
-    if (item.name === "tabs") setTabVariant(nextVal as "default" | "slide");
+    applyVariant(nextVal);
     onVariantChange?.(nextVal);
-  }, [hasVariants, currentIndex, variants, item.name, onVariantChange]);
+  }, [hasVariants, currentIndex, variants, applyVariant, onVariantChange]);
 
   const [variantMenuOpen, setVariantMenuOpen] = React.useState(false);
   const variantMenuRef = React.useRef<HTMLDivElement>(null);
@@ -426,6 +935,13 @@ export function ComponentPreviewStage({
     setStatBadge(true);
 
     setSidebarDemoCollapsed(false);
+    setSidebarVariant("scrollable-categories");
+
+    setSearchBarExpanded(false);
+    setSearchBarQuery("");
+    setSearchBarPlaceholder("Search components...");
+    setSearchBarVariant("downward-expand");
+    setSearchBarSelectedTitle(null);
     onReset?.();
   };
 
@@ -438,20 +954,155 @@ export function ComponentPreviewStage({
       code = `<Button variant="${btnVariant}" size="${btnSize}"${btnLoading ? " isLoading" : ""}${btnDisabled ? " disabled" : ""}>\n  ${btnLabel}\n</Button>`;
     } else if (item.name === "input") {
       code = `<Input\n  label="${inputLabel}"\n  value="${inputVal}"\n  placeholder="${inputPlaceholder}"\n  helperText="${inputHelper}"\n  ${inputError ? `error="${inputError}"\n  ` : ""}${inputDisabled ? "disabled\n" : ""}/>`;
+    } else if (item.name === "checkbox") {
+      code = `<Checkbox\n  variant="${checkboxVariant}"\n  size="${checkboxSize}"\n  checked={${checkboxChecked}}\n  label="${checkboxLabel}"\n  description="${checkboxDesc}"${checkboxBadge ? `\n  badge="${checkboxBadge}"` : ""}${checkboxIndeterminate ? "\n  indeterminate={true}" : ""}${checkboxDisabled ? "\n  disabled={true}" : ""}\n/>`;
     } else if (item.name === "switch") {
       code = `<Switch\n  checked={${switchChecked}}\n  label="${switchLabel}"\n  description="${switchDesc}"\n  ${switchDisabled ? "disabled\n" : ""}/>`;
     } else if (item.name === "badge") {
       code = `<Badge variant="${badgeVariant}"${badgeDot ? " dot" : ""}>${badgeText}</Badge>`;
+    } else if (item.name === "sidebar") {
+      code = `<Sidebar\n  variant="${sidebarVariant}"\n  collapsed={${sidebarDemoCollapsed}}\n/>`;
     } else if (item.name === "card") {
       code = `<Card hover={${cardHover}} className="max-w-md">\n  <CardHeader>\n    <CardTitle>${cardTitle}</CardTitle>\n    <CardDescription>${cardDesc}</CardDescription>\n  </CardHeader>\n  <CardContent>\n    <p className="text-xs text-[var(--text-secondary)]">Edge network node operational</p>\n  </CardContent>\n</Card>`;
     } else if (item.name === "stat-card") {
       code = `<StatCard\n  title="${statTitle}"\n  value="${statValue}"\n  change="${statChange}"\n  trend="${statTrend}"\n  caption="${statCaption}"\n/>`;
     } else if (item.name === "tabs") {
-      code = `<Tabs defaultValue="${tabValue}" variant="${tabVariant}">\n  <TabsList variant="${tabVariant}">\n    <TabsTrigger value="overview">Overview</TabsTrigger>\n    <TabsTrigger value="metrics">Metrics</TabsTrigger>\n    <TabsTrigger value="logs">Logs</TabsTrigger>\n  </TabsList>\n  <TabsContent value="overview">\n    <p>Overview content</p>\n  </TabsContent>\n  <TabsContent value="metrics">\n    <p>Metrics content</p>\n  </TabsContent>\n  <TabsContent value="logs">\n    <p>Logs content</p>\n  </TabsContent>\n</Tabs>`;
+      code = `<Tabs defaultValue="${tabValue}" variant="${tabVariant}"${(tabVariant === "liquid-pill" || tabVariant === "island") ? ` pillStyle="${tabPillStyle}"` : ""}>
+  <TabsList variant="${tabVariant}"${(tabVariant === "liquid-pill" || tabVariant === "island") ? ` pillStyle="${tabPillStyle}"` : ""}>
+    <TabsTrigger value="overview">Overview</TabsTrigger>
+    <TabsTrigger value="metrics">Metrics</TabsTrigger>
+    <TabsTrigger value="logs" badge="Live">Logs</TabsTrigger>
+    <TabsTrigger value="settings">Settings</TabsTrigger>
+  </TabsList>
+  <TabsContent value="overview">
+    <p className="text-xs p-4 text-[var(--text-secondary)]">Cluster healthy and operational across 8 zones.</p>
+  </TabsContent>
+  <TabsContent value="metrics">
+    <p className="text-xs p-4 text-[var(--text-secondary)]">CPU: 12% • Memory: 1.4GB / 4GB</p>
+  </TabsContent>
+  <TabsContent value="logs">
+    <p className="text-xs p-4 font-mono text-[var(--text-muted)]">[14:22:04] Ready on 0.0.0.0:3000</p>
+  </TabsContent>
+  <TabsContent value="settings">
+    <p className="text-xs p-4 text-[var(--text-secondary)]">Workspace environment settings.</p>
+  </TabsContent>
+</Tabs>`;
+    } else if (item.name === "notched-navbar") {
+      code = `<NotchedNavbar
+  variant="${notchedVariant}"
+  notchWidth={${notchedWidth}}
+  notchHeight={${notchedHeight}}
+  whiteBoxPadding={${notchedBorderPadding}}
+  frameBg="${notchedFrameBg}"
+  activeLink="${notchedActiveTab}"
+  onLinkClick={(id) => setActiveTab(id)}
+>
+  <div className="p-6 space-y-4">
+    <div className="flex items-center justify-between border-b border-white/10 pb-3">
+      <h3 className="text-base font-semibold text-white">Infrastructure Telemetry</h3>
+      <span className="text-[11px] font-mono text-emerald-400">Operational</span>
+    </div>
+    <div className="grid grid-cols-3 gap-3">
+      <div className="p-3 rounded-lg bg-white/5 border border-white/10">
+        <span className="text-[10px] text-neutral-400 uppercase">Requests</span>
+        <div className="text-lg font-bold text-white">1.4M</div>
+      </div>
+      <div className="p-3 rounded-lg bg-white/5 border border-white/10">
+        <span className="text-[10px] text-neutral-400 uppercase">Latency</span>
+        <div className="text-lg font-bold text-white">24ms</div>
+      </div>
+      <div className="p-3 rounded-lg bg-white/5 border border-white/10">
+        <span className="text-[10px] text-neutral-400 uppercase">Uptime</span>
+        <div className="text-lg font-bold text-white">99.9%</div>
+      </div>
+    </div>
+  </div>
+</NotchedNavbar>`;
+    } else if (item.name === "search-bar" || item.name === "liquid-glass-search-bar") {
+      code = `<SearchBar
+  placeholder="${searchBarPlaceholder}"
+  variant="${searchBarVariant}"
+  onSelectResult={(item) => console.log("Selected:", item)}
+/>`;
+    } else if (item.name === "minimalist-login") {
+      code = `<MinimalistLogin
+  variant="${loginVariant}"${loginVariant === "rounded-corners" ? `\n  borderRadius={${loginRadius}}` : ""}${!loginSphereMotion ? `\n  sphereMotion={false}` : ""}${!loginInteractiveDots ? `\n  interactiveDots={false}` : ""}
+  onSubmit={(data) => console.log("Login submitted:", data)}
+/>`;
+    } else if (item.name === "concave-carousel") {
+      code = `<ConcaveCarousel
+  preset="${concavePreset}"
+  autoplay="${concaveAutoplay}"
+  aspect={${concaveAspect}}
+  size={${concaveSize}}
+  curvature={${concaveCurvature}}
+  distance={${concaveDistance}}
+  gap={${concaveGap}}
+  radius={${concaveRadius}}
+  reflection={${concaveReflection}}
+  dim={${concaveDim}}
+  inertia={${concaveInertia}}
+  wheel={${concaveWheel}}
+  draggable={${concaveDraggable}}
+  captions={${concaveCaptions}}
+  controls={${concaveControls}}
+/>`;
+    } else if (item.name === "prismatic-slats-bg") {
+      code = `<PrismaticSlatsBg
+  preset="${slatPreset}"
+  primary="${slatPrimary}"
+  secondary="${slatSecondary}"
+  background="${slatBg}"
+  angle={${slatAngle}}
+  flutes={${slatFlutes}}
+  refraction={${slatRefraction}}
+  aberration={${slatAberration}}
+  softness={${slatSoftness}}
+  wave={${slatWave}}
+  waveFrequency={${slatWaveFreq}}
+  highlight={${slatHighlight}}
+  radius={${slatRadius}}
+  momentum={${slatMomentum}}
+  intensity={${slatIntensity}}
+  grain={${slatGrainVal}}
+  interactive={${slatInteractive}}
+/>`;
+    } else if (item.name === "grainy-grid-shader") {
+      code = `<GrainyGridShader
+  variant="${gridVariant}"
+  grain={${gridGrain}}
+  roughness={${gridRoughness}}
+  columns={${gridColumns}}
+  rows={${gridRows}}
+  cellSize={${gridCellSize}}
+  speed={${gridSpeed}}
+  interactiveRadius={${gridRadius}}
+  autoWave={${gridAutoWave}}
+  interactive={${gridInteractive}}
+  showBoxes={${gridShowBoxes}}
+/>`;
+    } else if (item.name === "grainy-horizon-shader") {
+      code = `<GrainyHorizonShader
+  variant="${horizonVariant}"
+  grain={${horizonGrain}}
+  roughness={${horizonRoughness}}
+  glowIntensity={${horizonGlowIntensity}}
+  curvature={${horizonCurvature}}
+  glowSpread={${horizonGlowSpread}}
+  speed={${horizonSpeed}}
+  drift={${horizonDrift}}
+  interactive={${horizonInteractive}}
+  inverted={${horizonInverted}}
+/>`;
     }
     onConfiguredCodeChange(code);
   }, [
     item,
+    loginVariant,
+    loginRadius,
+    loginSphereMotion,
+    loginInteractiveDots,
+    loginRotationSpeed,
     btnVariant,
     btnSize,
     btnLabel,
@@ -463,6 +1114,21 @@ export function ComponentPreviewStage({
     inputHelper,
     inputError,
     inputDisabled,
+    checkboxChecked,
+    checkboxVariant,
+    checkboxSize,
+    checkboxIndeterminate,
+    checkboxDisabled,
+    checkboxLabel,
+    checkboxDesc,
+    tabVariant,
+    tabPillStyle,
+    notchedVariant,
+    notchedBorderPadding,
+    notchedWidth,
+    notchedHeight,
+    notchedActiveTab,
+    notchedFrameBg,
     switchChecked,
     switchLabel,
     switchDesc,
@@ -470,6 +1136,8 @@ export function ComponentPreviewStage({
     badgeVariant,
     badgeDot,
     badgeText,
+    sidebarVariant,
+    sidebarDemoCollapsed,
     cardTitle,
     cardDesc,
     cardHover,
@@ -478,6 +1146,96 @@ export function ComponentPreviewStage({
     statChange,
     statTrend,
     statCaption,
+    expandingTitle,
+    expandingSubtitle,
+    expandingForced,
+    carouselTitle,
+    carouselAutoplay,
+    tocActiveId,
+    tocRubberBand,
+    footerBrandText,
+    footerBlurBlend,
+    footerShowNewsletter,
+    marqueeText,
+    marqueeVariant,
+    marqueeOutline,
+    marqueeTextColor,
+    marqueeBlurColor,
+    dirMarqueeDir,
+    dirMarqueeHud,
+    dirMarqueeTextColor,
+    dirMarqueeBlurColor,
+    kineticText,
+    kineticVariant,
+    concavePreset,
+    concaveAutoplay,
+    concaveBg,
+    concaveAspect,
+    concaveSize,
+    concaveCurvature,
+    concaveDistance,
+    concaveTilt,
+    concaveGap,
+    concaveRadius,
+    concaveReflection,
+    concaveDim,
+    concaveSpeed,
+    concaveInterval,
+    concaveInertia,
+    concaveSnap,
+    concavePauseOnHover,
+    concaveDraggable,
+    concaveWheel,
+    concaveCaptions,
+    concaveControls,
+    concavePaused,
+    slatPreset,
+    slatBg,
+    slatPrimary,
+    slatSecondary,
+    slatAngle,
+    slatFlutes,
+    slatRefraction,
+    slatAberration,
+    slatSoftness,
+    slatWave,
+    slatWaveFreq,
+    slatDrift,
+    slatHighlight,
+    slatHighlightSoft,
+    slatLightAngle,
+    slatRadius,
+    slatMomentum,
+    slatSwirl,
+    slatIntensity,
+    slatTrail,
+    slatTexture,
+    slatGrainVal,
+    slatSpeed,
+    slatAutoplay,
+    slatInteractive,
+    slatPaused,
+    gridVariant,
+    gridGrain,
+    gridRoughness,
+    gridColumns,
+    gridRows,
+    gridCellSize,
+    gridSpeed,
+    gridRadius,
+    gridAutoWave,
+    gridInteractive,
+    gridShowBoxes,
+    horizonVariant,
+    horizonGrain,
+    horizonRoughness,
+    horizonGlowIntensity,
+    horizonCurvature,
+    horizonGlowSpread,
+    horizonSpeed,
+    horizonDrift,
+    horizonInteractive,
+    horizonInverted,
     onConfiguredCodeChange,
   ]);
 
@@ -579,9 +1337,7 @@ export function ComponentPreviewStage({
                         role="option"
                         aria-selected={isSelected}
                         onClick={() => {
-                          if (item.name === "button") setBtnVariant(v);
-                          if (item.name === "badge") setBadgeVariant(v);
-                          if (item.name === "tabs") setTabVariant(v as "default" | "slide");
+                          applyVariant(v);
                           onVariantChange?.(v);
                           setVariantMenuOpen(false);
                         }}
@@ -653,6 +1409,287 @@ export function ComponentPreviewStage({
                 onChange={(e) => setInputVal(e.target.value)}
               />
             </div>
+          )}
+
+          {/* Checkbox */}
+          {item.name === "checkbox" && (
+            <div className="w-full max-w-md space-y-4">
+              {/* 1. MOTION VARIANT: Physics Spring Laboratory */}
+              {checkboxVariant === "motion" && (
+                <div className="p-6 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/80 backdrop-blur-md shadow-lg space-y-4 relative overflow-hidden group">
+                  <div className="flex items-center justify-between">
+                    <span className="flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--accent-green)]">
+                      <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent-green)] animate-ping" />
+                      Spring Physics Engine
+                    </span>
+                    <span className="text-[10px] font-mono text-[var(--text-muted)]">
+                      easing: spring(0.34, 1.56)
+                    </span>
+                  </div>
+
+                  <div className="p-4 rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-secondary)]/60 flex items-center justify-between">
+                    <Checkbox
+                      variant="motion"
+                      size={checkboxSize}
+                      label={checkboxLabel}
+                      description={checkboxDesc}
+                      badge={checkboxBadge}
+                      checked={checkboxChecked}
+                      indeterminate={checkboxIndeterminate}
+                      disabled={checkboxDisabled}
+                      onCheckedChange={setCheckboxChecked}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between text-[11px] font-mono text-[var(--text-muted)] pt-1">
+                    <span>Micro-bounce on toggle</span>
+                    <button
+                      type="button"
+                      onClick={() => setCheckboxChecked((c) => !c)}
+                      className="text-[var(--accent-green)] hover:underline cursor-pointer"
+                    >
+                      Trigger Bounce →
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* 2. LINEART VARIANT: Technical CAD / Blueprint Stage */}
+              {checkboxVariant === "lineart" && (
+                <div
+                  className="p-6 rounded-2xl border-2 border-[var(--border)] bg-[var(--canvas-bg)] shadow-md space-y-4 relative overflow-hidden font-mono"
+                  style={{
+                    backgroundImage:
+                      "linear-gradient(to right, var(--canvas-grid-dot) 1px, transparent 1px), linear-gradient(to bottom, var(--canvas-grid-dot) 1px, transparent 1px)",
+                    backgroundSize: "16px 16px",
+                  }}
+                >
+                  <div className="flex items-center justify-between text-[10px] uppercase tracking-wider text-[var(--accent-green)] border-b border-[var(--border-subtle)] pb-2">
+                    <span className="flex items-center gap-1.5">
+                      <span className="text-[var(--text-muted)]">[CAD]</span>
+                      SVG Path Tracing
+                    </span>
+                    <span className="text-[var(--text-muted)] font-mono">
+                      POS: [142.8, 64.0]
+                    </span>
+                  </div>
+
+                  <div className="p-4 rounded-xl border-2 border-dashed border-[var(--border)] bg-[var(--surface-elevated)]/90 backdrop-blur-sm">
+                    <Checkbox
+                      variant="lineart"
+                      size={checkboxSize}
+                      label={checkboxLabel}
+                      description={checkboxDesc}
+                      badge={checkboxBadge}
+                      checked={checkboxChecked}
+                      indeterminate={checkboxIndeterminate}
+                      disabled={checkboxDisabled}
+                      onCheckedChange={setCheckboxChecked}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between text-[10px] text-[var(--text-muted)]">
+                    <span>Dash offset animation (28px stroke)</span>
+                    <button
+                      type="button"
+                      onClick={() => setCheckboxChecked((c) => !c)}
+                      className="text-[var(--accent-green)] hover:underline cursor-pointer uppercase"
+                    >
+                      Redraw Path ↺
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* 3. STRIKE VARIANT: Interactive Task Checklist */}
+              {checkboxVariant === "strike" && (
+                <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-md space-y-3">
+                  <div className="flex items-center justify-between pb-2 border-b border-[var(--border)]">
+                    <span className="text-xs font-mono font-bold uppercase tracking-wider text-[var(--text-muted)]">
+                      Sprint Task Checklist
+                    </span>
+                    <span className="text-[10px] font-mono text-[var(--accent-green)] bg-[var(--accent-green)]/10 px-2 py-0.5 rounded-full">
+                      Interactive Tasks
+                    </span>
+                  </div>
+
+                  <div className="space-y-3 pt-1">
+                    <Checkbox
+                      variant="strike"
+                      size={checkboxSize}
+                      label={checkboxLabel}
+                      description={checkboxDesc}
+                      badge={checkboxBadge}
+                      checked={checkboxChecked}
+                      onCheckedChange={setCheckboxChecked}
+                    />
+                    <Checkbox
+                      variant="strike"
+                      size={checkboxSize}
+                      defaultChecked
+                      label="Deploy edge worker bundle to cloudflare"
+                      description="Automated CI/CD webhook on main branch"
+                    />
+                    <Checkbox
+                      variant="strike"
+                      size={checkboxSize}
+                      defaultChecked={false}
+                      label="Run accessibility audit with axe-core"
+                      description="100% WCAG 2.1 AA compliant standard"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* 4. CARD VARIANT: Selectable Tiles */}
+              {checkboxVariant === "card" && (
+                <div className="space-y-3 w-full">
+                  <Checkbox
+                    variant="card"
+                    size={checkboxSize}
+                    label={checkboxLabel}
+                    description={checkboxDesc}
+                    badge={checkboxBadge}
+                    checked={checkboxChecked}
+                    disabled={checkboxDisabled}
+                    onCheckedChange={setCheckboxChecked}
+                  />
+                  <Checkbox
+                    variant="card"
+                    size={checkboxSize}
+                    defaultChecked={!checkboxChecked}
+                    label="Serverless Edge Compute"
+                    description="Sub-10ms TTFB across 310 global edge points of presence"
+                    badge="Global"
+                  />
+                </div>
+              )}
+
+              {/* 5. CHIP VARIANT: Selectable Tag Pills */}
+              {checkboxVariant === "chip" && (
+                <div className="p-6 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/60 flex flex-wrap items-center justify-center gap-2.5">
+                  <Checkbox
+                    variant="chip"
+                    size={checkboxSize}
+                    label={checkboxLabel}
+                    badge={checkboxBadge}
+                    checked={checkboxChecked}
+                    disabled={checkboxDisabled}
+                    onCheckedChange={setCheckboxChecked}
+                  />
+                  <Checkbox variant="chip" label="TypeScript" defaultChecked />
+                  <Checkbox variant="chip" label="Tailwind CSS" defaultChecked />
+                  <Checkbox variant="chip" label="Framer Motion" />
+                  <Checkbox variant="chip" label="Turbopack" defaultChecked />
+                </div>
+              )}
+
+              {/* 6. DEFAULT VARIANT: Minimal Clean Developer Checkbox */}
+              {checkboxVariant === "default" && (
+                <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/70 backdrop-blur-sm shadow-sm">
+                  <Checkbox
+                    variant="default"
+                    size={checkboxSize}
+                    label={checkboxLabel}
+                    description={checkboxDesc}
+                    badge={checkboxBadge}
+                    checked={checkboxChecked}
+                    indeterminate={checkboxIndeterminate}
+                    disabled={checkboxDisabled}
+                    onCheckedChange={setCheckboxChecked}
+                  />
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Notched Navbar */}
+          {item.name === "notched-navbar" && (
+            showKnobs ? (
+              <div className="w-full max-w-4xl flex flex-col items-center justify-center p-2">
+                <NotchedNavbar
+                  variant={notchedVariant as any}
+                  notchWidth={notchedWidth}
+                  notchHeight={notchedHeight}
+                  whiteBoxPadding={notchedBorderPadding}
+                  frameBg={notchedFrameBg}
+                  backdropBg="var(--canvas-bg)"
+                  activeLink={notchedActiveTab}
+                  onLinkClick={(id) => setNotchedActiveTab(id)}
+                >
+                  <div className="space-y-6">
+                    {/* Minimal Dashboard Header */}
+                    <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                      <div>
+                        <h3 className="text-base sm:text-lg font-semibold tracking-tight text-white">
+                          Infrastructure Telemetry
+                        </h3>
+                        <p className="text-xs text-neutral-400 mt-0.5">
+                          Edge cluster performance and real-time load
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2 text-[11px] font-mono text-emerald-400">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                        <span>All Systems Operational</span>
+                      </div>
+                    </div>
+
+                    {/* Minimal Metric Cards */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                      <div className="p-3.5 rounded-xl bg-white/[0.04] border border-white/10 space-y-1">
+                        <span className="text-[10px] font-mono text-neutral-400 uppercase tracking-wider">Edge Requests</span>
+                        <div className="text-xl font-bold text-white tracking-tight">1.42M</div>
+                        <span className="text-[10px] font-mono text-emerald-400">+14.2% vs yesterday</span>
+                      </div>
+
+                      <div className="p-3.5 rounded-xl bg-white/[0.04] border border-white/10 space-y-1">
+                        <span className="text-[10px] font-mono text-neutral-400 uppercase tracking-wider">Avg Latency</span>
+                        <div className="text-xl font-bold text-white tracking-tight">24ms</div>
+                        <span className="text-[10px] font-mono text-neutral-400">p99: 42ms worldwide</span>
+                      </div>
+
+                      <div className="p-3.5 rounded-xl bg-white/[0.04] border border-white/10 space-y-1">
+                        <span className="text-[10px] font-mono text-neutral-400 uppercase tracking-wider">Cache Hit Ratio</span>
+                        <div className="text-xl font-bold text-white tracking-tight">99.4%</div>
+                        <span className="text-[10px] font-mono text-emerald-400">Zero purge events</span>
+                      </div>
+                    </div>
+                  </div>
+                </NotchedNavbar>
+              </div>
+            ) : (
+              /* SMALL PREVIEW CARD (on /components, carousels, sidebar hover) */
+              <div className="w-full max-w-[340px] flex items-center justify-center p-0.5">
+                <NotchedNavbar
+                  variant="compact"
+                  notchWidth={140}
+                  notchHeight={28}
+                  filletWidth={14}
+                  borderRadius={10}
+                  whiteBoxPadding={0}
+                  backdropBg="transparent"
+                  minHeight={115}
+                  links={[
+                    { id: "home", label: "Home", icon: <HomeIcon /> },
+                    { id: "explore", label: "Explore", icon: <BriefcaseIcon /> },
+                    { id: "contact", label: "Contact", icon: <MailIcon /> },
+                  ]}
+                  activeLink={notchedActiveTab === "experience" || notchedActiveTab === "settings" ? "explore" : notchedActiveTab}
+                  onLinkClick={(id) => setNotchedActiveTab(id)}
+                  className="shadow-md"
+                >
+                  <div className="flex flex-col items-center justify-center text-center py-2 space-y-1">
+                    <div className="text-xs font-semibold text-white tracking-tight flex items-center gap-1.5">
+                      <span>Infrastructure Telemetry</span>
+                      <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-green)] animate-pulse" />
+                    </div>
+                    <p className="text-[10px] text-neutral-400 font-mono">
+                      Global edge cluster operational
+                    </p>
+                  </div>
+                </NotchedNavbar>
+              </div>
+            )
           )}
 
           {/* Switch */}
@@ -766,67 +1803,57 @@ export function ComponentPreviewStage({
 
           {/* Tabs */}
           {item.name === "tabs" && (
-            showKnobs ? (
-              <div className="w-full max-w-md">
-                <Tabs value={tabValue} onValueChange={setTabValue} variant={tabVariant}>
-                  <TabsList variant={tabVariant} className="w-full justify-start">
-                    <TabsTrigger value="overview">Overview</TabsTrigger>
-                    <TabsTrigger value="metrics">Metrics</TabsTrigger>
-                    <TabsTrigger value="logs">Logs</TabsTrigger>
-                  </TabsList>
-                  <div className="relative overflow-x-clip min-h-[90px] mt-2">
-                    <TabsContent
-                      value="overview"
-                      className="p-4 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)]/50 text-xs text-[var(--text-secondary)] mt-0"
-                    >
-                      All cluster nodes operational across 8 global availability zones.
-                    </TabsContent>
-                    <TabsContent
-                      value="metrics"
-                      className="p-4 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)]/50 text-xs text-[var(--text-secondary)] mt-0"
-                    >
-                      CPU: 12% • Memory: 1.4GB / 4GB • Network: 280MB/s
-                    </TabsContent>
-                    <TabsContent
-                      value="logs"
-                      className="p-4 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)]/50 text-xs font-mono text-[var(--text-muted)] mt-0"
-                    >
-                      [14:22:04] Worker #104 ready on 0.0.0.0:3000
-                    </TabsContent>
-                  </div>
-                </Tabs>
-              </div>
-            ) : (
-              <div className="w-full max-w-[245px]">
-                <Tabs value={tabValue} onValueChange={setTabValue} variant={tabVariant}>
-                  <TabsList variant={tabVariant} className="w-full grid grid-cols-3 h-7 p-0.5">
-                    <TabsTrigger value="overview" className="text-[11px] py-1">Overview</TabsTrigger>
-                    <TabsTrigger value="metrics" className="text-[11px] py-1">Metrics</TabsTrigger>
-                    <TabsTrigger value="logs" className="text-[11px] py-1">Logs</TabsTrigger>
-                  </TabsList>
-                  <div className="relative overflow-x-clip min-h-[60px] mt-1.5">
-                    <TabsContent
-                      value="overview"
-                      className="p-2 rounded-md border border-[var(--border)] bg-[var(--surface-elevated)]/50 text-[11px] text-[var(--text-secondary)] truncate mt-0"
-                    >
-                      Operational across 8 zones.
-                    </TabsContent>
-                    <TabsContent
-                      value="metrics"
-                      className="p-2 rounded-md border border-[var(--border)] bg-[var(--surface-elevated)]/50 text-[11px] text-[var(--text-secondary)] truncate mt-0"
-                    >
-                      CPU: 12% • Memory: 1.4GB
-                    </TabsContent>
-                    <TabsContent
-                      value="logs"
-                      className="p-2 rounded-md border border-[var(--border)] bg-[var(--surface-elevated)]/50 text-[10px] font-mono text-[var(--text-muted)] truncate mt-0"
-                    >
-                      Worker #104 ready
-                    </TabsContent>
-                  </div>
-                </Tabs>
-              </div>
-            )
+            <div className="w-full max-w-lg flex flex-col items-center justify-center p-2">
+              <Tabs
+                value={tabValue}
+                onValueChange={setTabValue}
+                variant={tabVariant}
+                pillStyle={tabPillStyle}
+                className="w-full flex flex-col items-center"
+              >
+                <TabsList
+                  variant={tabVariant}
+                  pillStyle={tabPillStyle}
+                  className="mb-4"
+                >
+                  <TabsTrigger value="overview">Overview</TabsTrigger>
+                  <TabsTrigger value="metrics">Metrics</TabsTrigger>
+                  <TabsTrigger value="logs" badge="Live">Logs</TabsTrigger>
+                  <TabsTrigger value="settings">Settings</TabsTrigger>
+                </TabsList>
+                <div className="w-full relative overflow-x-clip min-h-[100px]">
+                  <TabsContent
+                    value="overview"
+                    className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)]/50 text-xs text-[var(--text-secondary)] space-y-1.5"
+                  >
+                    <div className="font-semibold text-sm text-[var(--text-primary)]">System Overview</div>
+                    <p>All 8 global edge nodes are operational with continuous sub-10ms routing.</p>
+                  </TabsContent>
+                  <TabsContent
+                    value="metrics"
+                    className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)]/50 text-xs text-[var(--text-secondary)] space-y-1.5"
+                  >
+                    <div className="font-semibold text-sm text-[var(--text-primary)]">Telemetry</div>
+                    <p className="font-mono text-xs text-[var(--accent-green)]">CPU: 12.4% • Memory: 1.4GB / 4GB • Network: 312 MB/s</p>
+                  </TabsContent>
+                  <TabsContent
+                    value="logs"
+                    className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)]/50 text-xs font-mono text-[var(--text-muted)] space-y-1"
+                  >
+                    <div className="font-semibold text-sm text-[var(--text-primary)] font-sans">Worker Logs</div>
+                    <p>[14:22:04] info: Worker #104 ready on 0.0.0.0:3000</p>
+                    <p>[14:22:07] info: S-curve notch layout calculated (tangents continuous)</p>
+                  </TabsContent>
+                  <TabsContent
+                    value="settings"
+                    className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)]/50 text-xs text-[var(--text-secondary)] space-y-1.5"
+                  >
+                    <div className="font-semibold text-sm text-[var(--text-primary)]">Preferences</div>
+                    <p>Turbopack build optimizations and edge worker deployment webhooks are active.</p>
+                  </TabsContent>
+                </div>
+              </Tabs>
+            </div>
           )}
 
           {/* Accordion */}
@@ -961,47 +1988,128 @@ export function ComponentPreviewStage({
                   </div>
 
                   {/* Nav Items */}
-                  <div className="flex-1 p-2 space-y-1 overflow-hidden">
-                    <div className="flex items-center gap-2 p-1.5 rounded bg-[var(--surface-secondary)] text-[var(--text-primary)] font-medium text-[11px]">
-                      <VectorFolderIcon isActive={true} className="h-3.5 w-3.5 text-[var(--accent-green)] shrink-0" />
-                      {!sidebarDemoCollapsed && <span>Overview</span>}
-                    </div>
-                    <div className="flex items-center gap-2 p-1.5 rounded text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] text-[11px] transition-colors cursor-pointer">
-                      <VectorLayersIcon className="h-3.5 w-3.5 text-[var(--text-primary)] shrink-0" />
-                      {!sidebarDemoCollapsed && (
-                        <div className="flex items-center justify-between flex-1">
-                          <span>Components</span>
-                          <span className="font-mono text-[9px] text-[var(--text-muted)]">10</span>
+                  {sidebarVariant === "scrollable-categories" ? (
+                    <>
+                      {/* Fixed Top Items */}
+                      <div className="p-2 space-y-1 shrink-0 border-b border-[var(--border)]/40">
+                        <div className="flex items-center gap-2 p-1.5 rounded bg-[var(--surface-secondary)] text-[var(--text-primary)] font-medium text-[11px]">
+                          <VectorFolderIcon isActive={true} className="h-3.5 w-3.5 text-[var(--accent-green)] shrink-0" />
+                          {!sidebarDemoCollapsed && <span>Overview</span>}
                         </div>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-2 p-1.5 rounded text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] text-[11px] transition-colors cursor-pointer">
-                      <VectorApiIcon className="h-3.5 w-3.5 text-[var(--text-primary)] shrink-0" />
-                      {!sidebarDemoCollapsed && <span>Registry API</span>}
-                    </div>
-
-                    {!sidebarDemoCollapsed && (
-                      <div className="pt-2">
-                        <div className="px-1 text-[9px] font-mono text-[var(--text-muted)] uppercase tracking-wider pb-1">
-                          Categories
-                        </div>
-                        <div className="space-y-0.5">
-                          <div className="flex items-center gap-2 px-1.5 py-1 rounded text-[11px] text-[var(--accent-green)] bg-[var(--surface-secondary)]/50 font-medium">
-                            <VectorCategoryIcon category="Actions" isActive={true} className="h-3 w-3 text-[var(--accent-green)]" />
-                            <span>Actions</span>
-                          </div>
-                          <div className="flex items-center gap-2 px-1.5 py-1 rounded text-[11px] text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
-                            <VectorCategoryIcon category="Forms & Inputs" className="h-3 w-3 text-[var(--text-primary)]" />
-                            <span>Forms & Inputs</span>
-                          </div>
-                          <div className="flex items-center gap-2 px-1.5 py-1 rounded text-[11px] text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
-                            <VectorCategoryIcon category="Overlays" className="h-3 w-3 text-[var(--text-primary)]" />
-                            <span>Overlays</span>
-                          </div>
+                        <div className="flex items-center gap-2 p-1.5 rounded text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] text-[11px] transition-colors cursor-pointer">
+                          <VectorLayersIcon className="h-3.5 w-3.5 text-[var(--text-primary)] shrink-0" />
+                          {!sidebarDemoCollapsed && (
+                            <div className="flex items-center justify-between flex-1">
+                              <span>Components</span>
+                              <span className="font-mono text-[9px] text-[var(--text-muted)]">10</span>
+                            </div>
+                          )}
                         </div>
                       </div>
-                    )}
-                  </div>
+
+                      {/* Independently Scrollable Categories */}
+                      <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-2 space-y-1">
+                        {!sidebarDemoCollapsed && (
+                          <div className="px-1 text-[9px] font-mono text-[var(--text-muted)] uppercase tracking-wider pb-1 flex items-center justify-between">
+                            <span>Scrollable Categories</span>
+                            <span className="text-[8px] text-[var(--accent-green)]">scroll ↓</span>
+                          </div>
+                        )}
+                        <div className="space-y-0.5">
+                          {[
+                            { name: "Actions", count: 4, active: true },
+                            { name: "Forms & Inputs", count: 6 },
+                            { name: "Overlays", count: 3 },
+                            { name: "Data Display", count: 5 },
+                            { name: "Navigation", count: 4 },
+                            { name: "Media & Layout", count: 6 },
+                            { name: "Motion Primitives", count: 5 },
+                            { name: "Feedback & Status", count: 3 },
+                          ].map((cat) => (
+                            <div
+                              key={cat.name}
+                              className={cn(
+                                "flex items-center gap-2 px-1.5 py-1 rounded text-[11px] transition-colors",
+                                cat.active
+                                  ? "text-[var(--accent-green)] bg-[var(--surface-secondary)]/60 font-medium"
+                                  : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                              )}
+                            >
+                              <VectorCategoryIcon
+                                category={cat.name}
+                                isActive={cat.active}
+                                className={cn("h-3 w-3 shrink-0", cat.active ? "text-[var(--accent-green)]" : "text-[var(--text-primary)]")}
+                              />
+                              {!sidebarDemoCollapsed && (
+                                <div className="flex items-center justify-between flex-1">
+                                  <span className="truncate">{cat.name}</span>
+                                  <span className="text-[9px] font-mono text-[var(--text-muted)]">{cat.count}</span>
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    /* Unified full scroll */
+                    <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-2 space-y-1">
+                      <div className="flex items-center gap-2 p-1.5 rounded bg-[var(--surface-secondary)] text-[var(--text-primary)] font-medium text-[11px]">
+                        <VectorFolderIcon isActive={true} className="h-3.5 w-3.5 text-[var(--accent-green)] shrink-0" />
+                        {!sidebarDemoCollapsed && <span>Overview</span>}
+                      </div>
+                      <div className="flex items-center gap-2 p-1.5 rounded text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] text-[11px] transition-colors cursor-pointer">
+                        <VectorLayersIcon className="h-3.5 w-3.5 text-[var(--text-primary)] shrink-0" />
+                        {!sidebarDemoCollapsed && (
+                          <div className="flex items-center justify-between flex-1">
+                            <span>Components</span>
+                            <span className="font-mono text-[9px] text-[var(--text-muted)]">10</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="pt-2">
+                        {!sidebarDemoCollapsed && (
+                          <div className="px-1 text-[9px] font-mono text-[var(--text-muted)] uppercase tracking-wider pb-1">
+                            Categories
+                          </div>
+                        )}
+                        <div className="space-y-0.5">
+                          {[
+                            { name: "Actions", count: 4, active: true },
+                            { name: "Forms & Inputs", count: 6 },
+                            { name: "Overlays", count: 3 },
+                            { name: "Data Display", count: 5 },
+                            { name: "Navigation", count: 4 },
+                            { name: "Media & Layout", count: 6 },
+                            { name: "Motion Primitives", count: 5 },
+                            { name: "Feedback & Status", count: 3 },
+                          ].map((cat) => (
+                            <div
+                              key={cat.name}
+                              className={cn(
+                                "flex items-center gap-2 px-1.5 py-1 rounded text-[11px] transition-colors",
+                                cat.active
+                                  ? "text-[var(--accent-green)] bg-[var(--surface-secondary)]/60 font-medium"
+                                  : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                              )}
+                            >
+                              <VectorCategoryIcon
+                                category={cat.name}
+                                isActive={cat.active}
+                                className={cn("h-3 w-3 shrink-0", cat.active ? "text-[var(--accent-green)]" : "text-[var(--text-primary)]")}
+                              />
+                              {!sidebarDemoCollapsed && (
+                                <div className="flex items-center justify-between flex-1">
+                                  <span className="truncate">{cat.name}</span>
+                                  <span className="text-[9px] font-mono text-[var(--text-muted)]">{cat.count}</span>
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Footer */}
                   <div className="p-2 border-t border-[var(--border)] shrink-0 text-[10px] font-mono text-[var(--text-muted)] flex items-center justify-between">
@@ -1039,6 +2147,33 @@ export function ComponentPreviewStage({
                   </div>
                 </div>
               </div>
+            ) : interactive ? (
+              <div className="w-full max-w-[280px] h-32 rounded-lg border border-[var(--border)] overflow-hidden flex bg-[var(--bg-sidebar)] shadow-md select-none">
+                <div className="w-10 border-r border-[var(--border)] flex flex-col items-center py-2.5 gap-1.5 shrink-0 bg-[var(--bg-main)]">
+                  <VectorKiloLogo className="h-4 w-4" />
+                  <div className="h-px w-5 bg-[var(--border)] my-0.5" />
+                  <div className="w-6 h-5 rounded bg-[var(--surface-secondary)] flex items-center justify-center">
+                    <VectorFolderIcon isActive className="h-3 w-3 text-[var(--accent-green)]" />
+                  </div>
+                  <div className="w-6 h-5 rounded flex items-center justify-center">
+                    <VectorLayersIcon className="h-3 w-3 text-[var(--text-secondary)]" />
+                  </div>
+                </div>
+                <div className="flex-1 p-3 flex flex-col justify-between bg-[var(--surface-elevated)]/40">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="h-2 w-20 rounded bg-[var(--surface-secondary)]" />
+                      <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent-green)]" />
+                    </div>
+                    <div className="h-1.5 w-28 rounded bg-[var(--surface-secondary)]/60" />
+                    <div className="h-1.5 w-16 rounded bg-[var(--surface-secondary)]/40" />
+                  </div>
+                  <div className="flex items-center justify-between pt-1 border-t border-[var(--border)]/50 text-[9px] font-mono text-[var(--text-muted)]">
+                    <span>⌘B to toggle</span>
+                    <span className="text-[var(--accent-green)]">64px / 256px</span>
+                  </div>
+                </div>
+              </div>
             ) : (
               <div className="w-full max-w-[210px] h-20 rounded-md border border-[var(--border)] overflow-hidden flex bg-[var(--bg-sidebar)] select-none">
                 <div className="w-8 border-r border-[var(--border)] flex flex-col items-center py-2 gap-1 shrink-0 bg-[var(--bg-main)]">
@@ -1058,6 +2193,477 @@ export function ComponentPreviewStage({
                 </div>
               </div>
             )
+          )}
+
+          {/* Expanding Card */}
+          {item.name === "expanding-card" && (
+            showKnobs ? (
+              <div className="w-full flex items-center justify-center py-4">
+                <ExpandingCard
+                  title={expandingTitle}
+                  subtitle={expandingSubtitle}
+                  badge="Featured"
+                  forcedHover={expandingForced}
+                />
+              </div>
+            ) : interactive ? (
+              <div className="w-full max-w-sm flex items-center justify-center py-1">
+                <ExpandingCard
+                  title="Components"
+                  subtitle="Hover to expand"
+                  className="w-full"
+                />
+              </div>
+            ) : (
+              <div className="w-full max-w-[210px] pointer-events-none scale-70 origin-center -my-9">
+                <ExpandingCard
+                  title="Components"
+                  subtitle="Hover to expand"
+                  className="p-2 max-w-[210px]"
+                />
+              </div>
+            )
+          )}
+
+          {/* Blurred Edge Carousel */}
+          {item.name === "blurred-carousel" && (
+            showKnobs ? (
+              <div className="w-full py-2">
+                <BlurredCarousel
+                  title={carouselTitle}
+                  autoPlay={carouselAutoplay}
+                />
+              </div>
+            ) : interactive ? (
+              <div className="w-full py-2">
+                <BlurredCarousel
+                  title="Featured Templates"
+                  className="w-full"
+                />
+              </div>
+            ) : (
+              <div className="w-full max-w-[270px] pointer-events-none scale-65 origin-center -my-8">
+                <BlurredCarousel
+                  title="Templates"
+                  className="max-w-[270px]"
+                />
+              </div>
+            )
+          )}
+
+          {/* TOC Content Slider */}
+          {item.name === "content-slider" && (
+            showKnobs ? (
+              <div className="w-full flex items-center justify-center py-4">
+                <ContentSlider
+                  activeId={tocActiveId}
+                  onSelect={setTocActiveId}
+                  rubberBandEffect={tocRubberBand}
+                />
+              </div>
+            ) : interactive ? (
+              <div className="w-full max-w-[260px] py-1">
+                <ContentSlider
+                  className="max-w-[260px] p-2 text-xs"
+                  items={[
+                    { id: "installation", label: "Installation", level: 1 },
+                    { id: "usage", label: "Usage", level: 1 },
+                    { id: "animation", label: "Animation", level: 1 },
+                    { id: "api-reference", label: "API Reference", level: 1 },
+                  ]}
+                />
+              </div>
+            ) : (
+              <div className="w-full max-w-[220px] pointer-events-none scale-90 origin-top -my-2">
+                <ContentSlider
+                  className="max-w-[220px] p-2 text-[10px]"
+                  items={[
+                    { id: "installation", label: "Installation", level: 1 },
+                    { id: "usage", label: "Usage", level: 1 },
+                    { id: "animation", label: "Animation", level: 1 },
+                    { id: "api-reference", label: "API Reference", level: 1 },
+                  ]}
+                />
+              </div>
+            )
+          )}
+
+          {/* Overflown Blended Footer */}
+          {item.name === "footer" && (
+            showKnobs ? (
+              <div className="w-full rounded-xl border border-[var(--border)] overflow-hidden shadow-xs">
+                <Footer
+                  brandText={footerBrandText}
+                  blurBlend={footerBlurBlend}
+                  showNewsletter={footerShowNewsletter}
+                />
+              </div>
+            ) : interactive ? (
+              <div className="w-full rounded-xl border border-[var(--border)] overflow-hidden max-h-[380px] overflow-y-auto">
+                <Footer brandText="kilo/ui" blurBlend={true} />
+              </div>
+            ) : (
+              <div className="w-full pointer-events-none scale-75 origin-top -my-6 rounded-lg border border-[var(--border)] overflow-hidden">
+                <Footer brandText="kilo/ui" blurBlend={true} showNewsletter={false} />
+              </div>
+            )
+          )}
+
+          {/* Scroll Marquee */}
+          {item.name === "scroll-marquee" && (
+            showKnobs ? (
+              <div className="w-full flex flex-col items-center">
+                <div className="w-full h-80 sm:h-96 overflow-y-auto overflow-x-hidden relative flex flex-col justify-between py-6 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)]/25 custom-scrollbar px-2">
+                  <div className="text-center font-mono text-[11px] text-[var(--text-muted)] py-2.5 select-none border-b border-[var(--border)]/40 mb-6 bg-[var(--surface-secondary)]/30 rounded-md">
+                    ↓ Scroll down inside this preview box or scroll wheel to drive motion ↓
+                  </div>
+                  <div className="my-auto py-4 w-full">
+                    <ScrollMarquee
+                      text={marqueeText}
+                      variant={marqueeVariant}
+                      outlineText={marqueeOutline}
+                      textColor={marqueeTextColor || undefined}
+                      blurColor={marqueeBlurColor}
+                    />
+                  </div>
+                  <div className="text-center font-mono text-[11px] text-[var(--text-muted)] py-2.5 select-none border-t border-[var(--border)]/40 mt-6 bg-[var(--surface-secondary)]/30 rounded-md">
+                    ↑ Scroll up to reverse direction or release to spring back ↑
+                  </div>
+                </div>
+              </div>
+            ) : interactive ? (
+              <div className="w-full py-2">
+                <ScrollMarquee
+                  text="ENGINEERED FOR HIGH VELOCITY • MINIMAL BY DESIGN • HARDWARE ACCELERATED •"
+                  variant="scroll-left"
+                  textColor={marqueeTextColor || undefined}
+                  blurColor={marqueeBlurColor}
+                />
+              </div>
+            ) : (
+              <div className="w-full pointer-events-none scale-85 origin-center -my-2">
+                <ScrollMarquee
+                  text="KILO / UI • MOTION PRIMITIVES •"
+                  variant="scroll-left"
+                />
+              </div>
+            )
+          )}
+
+          {/* Directional Marquee */}
+          {item.name === "directional-marquee" && (
+            showKnobs ? (
+              <div className="w-full flex flex-col items-center">
+                <div className="w-full h-80 sm:h-96 overflow-y-auto overflow-x-hidden relative flex flex-col justify-between py-6 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)]/25 custom-scrollbar px-2">
+                  <div className="text-center font-mono text-[11px] text-[var(--text-muted)] py-2.5 select-none border-b border-[var(--border)]/40 mb-6 bg-[var(--surface-secondary)]/30 rounded-md">
+                    ↓ Scroll down with mouse wheel to drive Track 1 ➔ / Track 2 ⬅ ↓
+                  </div>
+                  <div className="my-auto py-4 w-full">
+                    <DirectionalMarquee
+                      manualDirection={dirMarqueeDir}
+                      showHud={dirMarqueeHud}
+                      textColor={dirMarqueeTextColor || undefined}
+                      blurColor={dirMarqueeBlurColor}
+                    />
+                  </div>
+                  <div className="text-center font-mono text-[11px] text-[var(--text-muted)] py-2.5 select-none border-t border-[var(--border)]/40 mt-6 bg-[var(--surface-secondary)]/30 rounded-md">
+                    ↑ Scroll up with mouse wheel to drive Track 1 ⬅ / Track 2 ➔ ↑
+                  </div>
+                </div>
+              </div>
+            ) : interactive ? (
+              <div className="w-full py-2">
+                <DirectionalMarquee
+                  manualDirection="auto"
+                  showHud={true}
+                  textColor={dirMarqueeTextColor || undefined}
+                  blurColor={dirMarqueeBlurColor}
+                />
+              </div>
+            ) : (
+              <div className="w-full pointer-events-none scale-85 origin-center -my-2">
+                <DirectionalMarquee
+                  manualDirection="auto"
+                  showHud={false}
+                />
+              </div>
+            )
+          )}
+
+          {/* Kinetic Motion Text */}
+          {item.name === "kinetic-text" && (
+            showKnobs ? (
+              <div className="w-full flex items-center justify-center py-8">
+                <KineticText
+                  text={kineticText}
+                  variant={kineticVariant}
+                />
+              </div>
+            ) : interactive ? (
+              <div className="w-full flex items-center justify-center py-6">
+                <KineticText
+                  text="KILO / MOTION UI"
+                  variant="rubber-band"
+                />
+              </div>
+            ) : (
+              <div className="w-full flex items-center justify-center pointer-events-none scale-80 origin-center py-2">
+                <KineticText
+                  text="KILO / UI"
+                  variant="rubber-band"
+                />
+              </div>
+            )
+          )}
+
+          {/* Liquid Glass Search Bar */}
+          {(item.name === "search-bar" || item.name === "liquid-glass-search-bar") && (
+            showKnobs ? (
+              <div className="w-full flex flex-col items-center">
+                {/* Showcase Canvas: optical glass canvas for liquid glass, direct stage canvas for normal minimal variants */}
+                {(() => {
+                  const isLiquidGlass =
+                    searchBarVariant === "downward-expand" ||
+                    searchBarVariant === "circle-popout" ||
+                    searchBarVariant === "liquid-glass" ||
+                    searchBarVariant === "popout";
+
+                  if (!isLiquidGlass) {
+                    return (
+                      <div className="w-full flex flex-col items-center justify-center py-12 min-h-[260px]">
+                        <div className="relative z-30 flex flex-col items-center w-full">
+                          <SearchBar
+                            placeholder={searchBarPlaceholder}
+                            value={searchBarQuery}
+                            onChange={setSearchBarQuery}
+                            expanded={searchBarExpanded}
+                            onExpandedChange={setSearchBarExpanded}
+                            variant={searchBarVariant as any}
+                            onSelectResult={(selected) => {
+                              setSearchBarSelectedTitle(selected.title);
+                              setTimeout(() => setSearchBarSelectedTitle(null), 3500);
+                            }}
+                            onSearch={(q) => {
+                              setSearchBarSelectedTitle(`"${q}"`);
+                              setTimeout(() => setSearchBarSelectedTitle(null), 3500);
+                            }}
+                          />
+                        </div>
+
+                        {/* Toast notification on selection */}
+                        {searchBarSelectedTitle && (
+                          <div className="relative z-30 mt-6 animate-in fade-in slide-in-from-bottom-2 duration-200 px-3 py-1.5 rounded-full text-xs font-mono font-medium bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 backdrop-blur-md flex items-center gap-2 shadow-xs">
+                            <Check className="w-3.5 h-3.5" />
+                            <span>Selected: <strong>{searchBarSelectedTitle}</strong></span>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <div
+                      className={cn(
+                        "w-full rounded-2xl border relative overflow-hidden flex flex-col items-center justify-start p-8 sm:p-14 min-h-[460px] transition-colors duration-200",
+                        "bg-white border-slate-200/90 shadow-sm dark:bg-[#090c12] dark:border-white/10 dark:shadow-2xl"
+                      )}
+                    >
+                      {/* Only render tactile grain and refractive light pools for authentic liquid-glass */}
+                      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:20px_20px] opacity-40 dark:opacity-40" />
+                      <div
+                        className="absolute inset-0 pointer-events-none opacity-40 mix-blend-multiply dark:opacity-25 dark:mix-blend-overlay"
+                        style={{
+                          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+                          backgroundRepeat: "repeat",
+                        }}
+                      />
+                      <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-[420px] h-72 rounded-full pointer-events-none blur-3xl opacity-60 bg-gradient-to-b from-blue-100/70 via-indigo-100/40 to-transparent dark:opacity-30 dark:from-blue-600 dark:via-indigo-800 dark:to-transparent" />
+                      <div className="absolute -bottom-24 right-10 w-80 h-80 rounded-full pointer-events-none blur-3xl opacity-40 bg-gradient-to-tr from-cyan-100/60 to-transparent dark:opacity-20 dark:from-cyan-600 dark:to-blue-900" />
+
+                      {/* Clean Search Bar Container */}
+                      <div className="relative z-30 flex flex-col items-center w-full pt-8">
+                        <SearchBar
+                          placeholder={searchBarPlaceholder}
+                          value={searchBarQuery}
+                          onChange={setSearchBarQuery}
+                          expanded={searchBarExpanded}
+                          onExpandedChange={setSearchBarExpanded}
+                          variant={searchBarVariant as any}
+                          onSelectResult={(selected) => {
+                            setSearchBarSelectedTitle(selected.title);
+                            setTimeout(() => setSearchBarSelectedTitle(null), 3500);
+                          }}
+                          onSearch={(q) => {
+                            setSearchBarSelectedTitle(`"${q}"`);
+                            setTimeout(() => setSearchBarSelectedTitle(null), 3500);
+                          }}
+                        />
+                      </div>
+
+                      {/* Toast notification on selection */}
+                      {searchBarSelectedTitle && (
+                        <div className="relative z-30 mt-6 animate-in fade-in slide-in-from-bottom-2 duration-200 px-3 py-1.5 rounded-full text-xs font-mono font-medium bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 backdrop-blur-md flex items-center gap-2 shadow-xs">
+                          <Check className="w-3.5 h-3.5" />
+                          <span>Selected: <strong>{searchBarSelectedTitle}</strong></span>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
+          </div>
+            ) : (
+              <div className="w-full flex items-center justify-center py-6">
+                <SearchBar
+                  placeholder="Search components..."
+                  variant={searchBarVariant as any}
+                  showShortcut={true}
+                />
+              </div>
+            )
+          )}
+
+          {/* Minimalist Login Live Preview */}
+          {item.name === "minimalist-login" && (
+            <div className="w-full flex items-center justify-center py-4">
+              <MinimalistLogin
+                variant={loginVariant}
+                borderRadius={loginRadius}
+                sphereMotion={loginSphereMotion}
+                interactiveDots={loginInteractiveDots}
+                rotationSpeed={loginRotationSpeed}
+              />
+            </div>
+          )}
+
+          {/* Concave Carousel Live Preview matching Images 2 and 3 */}
+          {item.name === "concave-carousel" && (
+            <div className="w-full rounded-2xl overflow-hidden border border-[var(--border)] shadow-2xl">
+              <ConcaveCarousel
+                preset={concavePreset}
+                autoplay={concaveAutoplay}
+                background={concaveBg}
+                aspect={concaveAspect}
+                size={concaveSize}
+                curvature={concaveCurvature}
+                distance={concaveDistance}
+                tilt={concaveTilt}
+                gap={concaveGap}
+                radius={concaveRadius}
+                reflection={concaveReflection}
+                dim={concaveDim}
+                speed={concaveSpeed}
+                interval={concaveInterval}
+                inertia={concaveInertia}
+                snap={concaveSnap}
+                wheel={concaveWheel}
+                draggable={concaveDraggable}
+                pauseOnHover={concavePauseOnHover}
+                captions={concaveCaptions}
+                controls={concaveControls}
+                paused={concavePaused}
+                className={showKnobs ? "h-[440px] sm:h-[500px]" : "h-full min-h-[160px]"}
+              />
+            </div>
+          )}
+
+          {/* Prismatic Slats Background Live Preview matching Images 4 and 5 */}
+          {item.name === "prismatic-slats-bg" && (
+            <div
+              className="w-full rounded-2xl overflow-hidden border border-[var(--border)] shadow-2xl"
+              style={{ height: showKnobs ? 440 : 160 }}
+            >
+              <PrismaticSlatsBg
+                preset={slatPreset}
+                background={slatBg}
+                primary={slatPrimary}
+                secondary={slatSecondary}
+                angle={slatAngle}
+                flutes={slatFlutes}
+                refraction={slatRefraction}
+                aberration={slatAberration}
+                softness={slatSoftness}
+                wave={slatWave}
+                waveFrequency={slatWaveFreq}
+                drift={slatDrift}
+                highlight={slatHighlight}
+                highlightSoftness={slatHighlightSoft}
+                lightAngle={slatLightAngle}
+                radius={slatRadius}
+                momentum={slatMomentum}
+                swirl={slatSwirl}
+                intensity={slatIntensity}
+                trail={slatTrail}
+                texture={slatTexture}
+                grain={slatGrainVal}
+                speed={slatSpeed}
+                interactive={slatInteractive}
+                paused={slatPaused}
+                autoplay={slatAutoplay}
+              >
+                <div className="flex flex-col items-center justify-center h-full gap-3 pointer-events-none select-none">
+                  <span className="font-mono text-xs uppercase tracking-widest text-white/50 px-3 py-1 rounded-full bg-black/40 border border-white/10 backdrop-blur-sm">
+                    Interactive Prismatic Slats Shader
+                  </span>
+                </div>
+              </PrismaticSlatsBg>
+            </div>
+          )}
+
+          {/* Grainy Grid Shader Live Preview */}
+          {item.name === "grainy-grid-shader" && (
+            <div
+              className="w-full rounded-2xl overflow-hidden border border-[var(--border)] shadow-2xl"
+              style={{ height: showKnobs ? 440 : 200 }}
+            >
+              <GrainyGridShader
+                variant={gridVariant}
+                grain={gridGrain}
+                roughness={gridRoughness}
+                columns={gridColumns}
+                rows={gridRows}
+                cellSize={gridCellSize}
+                speed={gridSpeed}
+                interactiveRadius={gridRadius}
+                autoWave={gridAutoWave}
+                interactive={gridInteractive}
+                showBoxes={gridShowBoxes}
+              >
+                <div className="flex flex-col items-center justify-center h-full gap-3 pointer-events-none select-none">
+                  <span className="font-mono text-xs uppercase tracking-widest text-white/50 px-3.5 py-1.5 rounded-full bg-black/60 border border-white/10 backdrop-blur-md shadow-lg">
+                    2x2 Matrix • Rough Grain Shader
+                  </span>
+                  <p className="text-xs text-white/40 font-mono">Move cursor or click to pulse wave</p>
+                </div>
+              </GrainyGridShader>
+            </div>
+          )}
+
+          {/* Grainy Horizon Shader Live Preview matching media_1792862001252.png */}
+          {item.name === "grainy-horizon-shader" && (
+            <div
+              className="w-full rounded-2xl overflow-hidden border border-[var(--border)] shadow-2xl"
+              style={{ height: showKnobs ? 440 : 200 }}
+            >
+              <GrainyHorizonShader
+                variant={horizonVariant}
+                grain={horizonGrain}
+                roughness={horizonRoughness}
+                glowIntensity={horizonGlowIntensity}
+                curvature={horizonCurvature}
+                glowSpread={horizonGlowSpread}
+                speed={horizonSpeed}
+                drift={horizonDrift}
+                interactive={horizonInteractive}
+                inverted={horizonInverted}
+              >
+                <div className="flex flex-col items-center justify-center h-full gap-3 pointer-events-none select-none">
+                  <span className="font-mono text-xs uppercase tracking-widest text-white/50 px-3.5 py-1.5 rounded-full bg-black/60 border border-white/10 backdrop-blur-md shadow-lg">
+                    Luminous Horizon • Rough Grain
+                  </span>
+                  <p className="text-xs text-white/40 font-mono">Hover cursor to pull radiance • Click for shockwave</p>
+                </div>
+              </GrainyHorizonShader>
+            </div>
           )}
         </div>
       </div>
@@ -1176,6 +2782,177 @@ export function ComponentPreviewStage({
                     checked={inputDisabled}
                     onChange={setInputDisabled}
                     label="Toggle disabled"
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Checkbox Controls */}
+            {item.name === "checkbox" && (
+              <>
+                <CustomizeTile label="Variant">
+                  <CustomizeSelect
+                    value={checkboxVariant}
+                    onChange={(val) => {
+                      setCheckboxVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={["motion", "lineart", "default", "strike", "card", "chip"]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Size">
+                  <CustomizeSelect
+                    value={checkboxSize}
+                    onChange={(val) => setCheckboxSize(val as any)}
+                    options={["sm", "default", "lg"]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Label">
+                  <CustomizeInput
+                    value={checkboxLabel}
+                    onChange={setCheckboxLabel}
+                    placeholder="Checkbox label"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Description">
+                  <CustomizeInput
+                    value={checkboxDesc}
+                    onChange={setCheckboxDesc}
+                    placeholder="Checkbox description"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Badge">
+                  <CustomizeInput
+                    value={checkboxBadge}
+                    onChange={setCheckboxBadge}
+                    placeholder="Optional badge"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Checked State">
+                  <CustomizeSwitch
+                    checked={checkboxChecked}
+                    onChange={setCheckboxChecked}
+                    label="Toggle checked"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Indeterminate (Tri-state)">
+                  <CustomizeSwitch
+                    checked={checkboxIndeterminate}
+                    onChange={setCheckboxIndeterminate}
+                    label="Toggle indeterminate"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Disabled">
+                  <CustomizeSwitch
+                    checked={checkboxDisabled}
+                    onChange={setCheckboxDisabled}
+                    label="Toggle disabled"
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Notched Navbar Controls */}
+            {item.name === "notched-navbar" && (
+              <>
+                <CustomizeTile label="Variant Preset">
+                  <CustomizeSelect
+                    value={notchedVariant}
+                    onChange={(val) => {
+                      setNotchedVariant(val);
+                      onVariantChange?.(val);
+                      if (val === "down" || val === "bottom") {
+                        setNotchedWidth(540);
+                        setNotchedHeight(42);
+                        setNotchedBorderPadding(8);
+                        setNotchedFrameBg("#222326");
+                      } else if (val === "left" || val === "right") {
+                        setNotchedWidth(260);
+                        setNotchedHeight(56);
+                        setNotchedBorderPadding(8);
+                        setNotchedFrameBg("#222326");
+                      } else if (val === "compact") {
+                        setNotchedWidth(300);
+                        setNotchedHeight(38);
+                        setNotchedBorderPadding(6);
+                        setNotchedFrameBg("#222326");
+                      } else if (val === "deep-notch") {
+                        setNotchedWidth(560);
+                        setNotchedHeight(52);
+                        setNotchedBorderPadding(10);
+                        setNotchedFrameBg("#1c1d21");
+                      } else if (val === "dark-slate") {
+                        setNotchedWidth(540);
+                        setNotchedHeight(42);
+                        setNotchedBorderPadding(8);
+                        setNotchedFrameBg("#0f172a");
+                      } else {
+                        setNotchedWidth(540);
+                        setNotchedHeight(42);
+                        setNotchedBorderPadding(8);
+                        setNotchedFrameBg("#222326");
+                      }
+                    }}
+                    options={item.variants || ["default", "down", "left", "right"]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label={`White Border Padding: ${notchedBorderPadding}px`}>
+                  <input
+                    type="range"
+                    min="0"
+                    max="16"
+                    step="2"
+                    value={notchedBorderPadding}
+                    onChange={(e) => setNotchedBorderPadding(Number(e.target.value))}
+                    className="w-full accent-[var(--accent-green)] cursor-pointer"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label={`${notchedVariant === "left" || notchedVariant === "right" ? "Notch Span" : "Notch Width"}: ${notchedWidth}px`}>
+                  <input
+                    type="range"
+                    min={notchedVariant === "left" || notchedVariant === "right" ? 140 : 240}
+                    max={notchedVariant === "left" || notchedVariant === "right" ? 420 : 640}
+                    step="10"
+                    value={notchedWidth}
+                    onChange={(e) => setNotchedWidth(Number(e.target.value))}
+                    className="w-full accent-[var(--accent-green)] cursor-pointer"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label={`Notch Depth: ${notchedHeight}px`}>
+                  <input
+                    type="range"
+                    min="28"
+                    max="64"
+                    step="2"
+                    value={notchedHeight}
+                    onChange={(e) => setNotchedHeight(Number(e.target.value))}
+                    className="w-full accent-[var(--accent-green)] cursor-pointer"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Active Tab">
+                  <CustomizeSelect
+                    value={notchedActiveTab}
+                    onChange={(val) => setNotchedActiveTab(val)}
+                    options={["home", "experience", "contact", "settings"]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Frame Background">
+                  <CustomizeSelect
+                    value={notchedFrameBg}
+                    onChange={(val) => setNotchedFrameBg(val)}
+                    options={["#222326", "#18181b", "#0f172a", "#1a1a2e"]}
                   />
                 </CustomizeTile>
               </>
@@ -1363,13 +3140,28 @@ export function ComponentPreviewStage({
 
             {/* Sidebar Controls */}
             {item.name === "sidebar" && (
-              <CustomizeTile label="Collapsed Mode">
-                <CustomizeSwitch
-                  checked={sidebarDemoCollapsed}
-                  onChange={setSidebarDemoCollapsed}
-                  label="Toggle sidebar collapse"
-                />
-              </CustomizeTile>
+              <>
+                <CustomizeTile label="Sidebar Variant">
+                  <CustomizeSelect
+                    value={sidebarVariant}
+                    onChange={(v) => {
+                      setSidebarVariant(v as any);
+                      onVariantChange?.(v);
+                    }}
+                    options={[
+                      { label: "Scrollable Categories (Fixed Overview)", value: "scrollable-categories" },
+                      { label: "Default (Unified Scroll)", value: "default" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Collapsed Mode">
+                  <CustomizeSwitch
+                    checked={sidebarDemoCollapsed}
+                    onChange={setSidebarDemoCollapsed}
+                    label="Toggle sidebar collapse"
+                  />
+                </CustomizeTile>
+              </>
             )}
 
             {/* Tabs Controls */}
@@ -1379,17 +3171,1109 @@ export function ComponentPreviewStage({
                   <CustomizeSelect
                     value={tabVariant}
                     onChange={(v) => {
-                      setTabVariant(v as "default" | "slide");
+                      setTabVariant(v as any);
                       onVariantChange?.(v);
                     }}
-                    options={["default", "slide"]}
+                    options={["default", "slide", "liquid-pill", "island", "minimal"]}
                   />
                 </CustomizeTile>
+                {(tabVariant === "liquid-pill" || tabVariant === "island") && (
+                  <CustomizeTile label="Pill Style">
+                    <CustomizeSelect
+                      value={tabPillStyle}
+                      onChange={(v) => setTabPillStyle(v as any)}
+                      options={["liquid-glow", "solid", "glass", "accent"]}
+                    />
+                  </CustomizeTile>
+                )}
                 <CustomizeTile label="Active Tab">
                   <CustomizeSelect
                     value={tabValue}
                     onChange={setTabValue}
-                    options={["overview", "metrics", "logs"]}
+                    options={["overview", "metrics", "logs", "settings"]}
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Expanding Card Controls */}
+            {item.name === "expanding-card" && (
+              <>
+                <CustomizeTile label="Title">
+                  <CustomizeInput
+                    value={expandingTitle}
+                    onChange={setExpandingTitle}
+                    placeholder="Card Title"
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Subtitle">
+                  <CustomizeInput
+                    value={expandingSubtitle}
+                    onChange={setExpandingSubtitle}
+                    placeholder="Subtitle description"
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Force Expanded">
+                  <CustomizeSwitch
+                    checked={expandingForced}
+                    onChange={setExpandingForced}
+                    label="Preview 4x full card state"
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Blurred Carousel Controls */}
+            {item.name === "blurred-carousel" && (
+              <>
+                <CustomizeTile label="Title">
+                  <CustomizeInput
+                    value={carouselTitle}
+                    onChange={setCarouselTitle}
+                    placeholder="Featured Templates"
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="AutoPlay">
+                  <CustomizeSwitch
+                    checked={carouselAutoplay}
+                    onChange={setCarouselAutoplay}
+                    label="Automated slide transition"
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Content Slider Controls */}
+            {item.name === "content-slider" && (
+              <>
+                <CustomizeTile label="Active Section">
+                  <CustomizeSelect
+                    value={tocActiveId}
+                    onChange={setTocActiveId}
+                    options={[
+                      { label: "Installation", value: "installation" },
+                      { label: "Usage", value: "usage" },
+                      { label: "Check animation", value: "check-animation" },
+                      { label: "Animation", value: "animation" },
+                      { label: "API Reference", value: "api-reference" },
+                      { label: "API Primitives", value: "api-primitives" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Rubber Band Motion">
+                  <CustomizeSwitch
+                    checked={tocRubberBand}
+                    onChange={setTocRubberBand}
+                    label="Enable rubber band physics"
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Footer Controls */}
+            {item.name === "footer" && (
+              <>
+                <CustomizeTile label="Brand Text">
+                  <CustomizeInput
+                    value={footerBrandText}
+                    onChange={setFooterBrandText}
+                    placeholder="kilo/ui"
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Frosted Blur Blend">
+                  <CustomizeSwitch
+                    checked={footerBlurBlend}
+                    onChange={setFooterBlurBlend}
+                    label="Soft bottom blur blend"
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Newsletter Subscribe">
+                  <CustomizeSwitch
+                    checked={footerShowNewsletter}
+                    onChange={setFooterShowNewsletter}
+                    label="Render newsletter input"
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Scroll Marquee Controls */}
+            {item.name === "scroll-marquee" && (
+              <>
+                <CustomizeTile label="Motion Variant">
+                  <CustomizeSelect
+                    value={marqueeVariant}
+                    onChange={(val) => {
+                      setMarqueeVariant(val as any);
+                      onVariantChange?.(val);
+                    }}
+                    options={[
+                      { label: "Scroll Left (Slide Left)", value: "scroll-left" },
+                      { label: "Scroll Right (Slide Right)", value: "scroll-right" },
+                      { label: "Dual Scroll (Counter Slide)", value: "dual-scroll" },
+                      { label: "Velocity Skew (Elastic Tilt)", value: "velocity-skew" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Text Color">
+                  <CustomizeColorPicker
+                    value={marqueeTextColor}
+                    onChange={setMarqueeTextColor}
+                    presets={[
+                      { label: "Default", color: "" },
+                      { label: "Pure White", color: "#ffffff" },
+                      { label: "Neon Lime", color: "#4ade80" },
+                      { label: "Electric Cyan", color: "#22d3ee" },
+                      { label: "Bright Violet", color: "#c084fc" },
+                      { label: "Amber Sun", color: "#fbbf24" },
+                      { label: "Muted Gray", color: "#71717a" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Edge Blur Color">
+                  <CustomizeColorPicker
+                    value={marqueeBlurColor}
+                    onChange={setMarqueeBlurColor}
+                    presets={[
+                      { label: "Transparent Mask (Default)", color: "mask" },
+                      { label: "Theme BG (#0a0a0c)", color: "#0a0a0c" },
+                      { label: "Surface (#141418)", color: "#141418" },
+                      { label: "Midnight (#020617)", color: "#020617" },
+                      { label: "Forest (#051e15)", color: "#051e15" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Stroke Outline">
+                  <CustomizeSwitch
+                    checked={marqueeOutline}
+                    onChange={setMarqueeOutline}
+                    label="Outline text styling"
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Headline Text">
+                  <CustomizeInput
+                    value={marqueeText}
+                    onChange={setMarqueeText}
+                    placeholder="Headline text..."
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Directional Marquee Controls */}
+            {item.name === "directional-marquee" && (
+              <>
+                <CustomizeTile label="Direction Mode">
+                  <CustomizeSelect
+                    value={dirMarqueeDir}
+                    onChange={(val) => setDirMarqueeDir(val as any)}
+                    options={[
+                      { label: "Auto (Detect Page Scroll)", value: "auto" },
+                      { label: "Simulate Down (T1 ➔ / T2 ⬅)", value: "down" },
+                      { label: "Simulate Up (T1 ⬅ / T2 ➔)", value: "up" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Text Color">
+                  <CustomizeColorPicker
+                    value={dirMarqueeTextColor}
+                    onChange={setDirMarqueeTextColor}
+                    presets={[
+                      { label: "Default", color: "" },
+                      { label: "Pure White", color: "#ffffff" },
+                      { label: "Neon Lime", color: "#4ade80" },
+                      { label: "Electric Cyan", color: "#22d3ee" },
+                      { label: "Bright Violet", color: "#c084fc" },
+                      { label: "Amber Sun", color: "#fbbf24" },
+                      { label: "Muted Gray", color: "#71717a" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Edge Blur Color">
+                  <CustomizeColorPicker
+                    value={dirMarqueeBlurColor}
+                    onChange={setDirMarqueeBlurColor}
+                    presets={[
+                      { label: "Transparent Mask (Default)", color: "mask" },
+                      { label: "Theme BG (#0a0a0c)", color: "#0a0a0c" },
+                      { label: "Surface (#141418)", color: "#141418" },
+                      { label: "Midnight (#020617)", color: "#020617" },
+                      { label: "Forest (#051e15)", color: "#051e15" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Direction HUD">
+                  <CustomizeSwitch
+                    checked={dirMarqueeHud}
+                    onChange={setDirMarqueeHud}
+                    label="Show directional status badge"
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Kinetic Text Controls */}
+            {item.name === "kinetic-text" && (
+              <>
+                <CustomizeTile label="Motion Variant">
+                  <CustomizeSelect
+                    value={kineticVariant}
+                    onChange={(val) => {
+                      setKineticVariant(val as any);
+                      onVariantChange?.(val);
+                    }}
+                    options={[
+                      { label: "Rubber Band (Hover Spring)", value: "rubber-band" },
+                      { label: "Wave Ripple (Harmonic Sine)", value: "wave-ripple" },
+                      { label: "Scramble Decode (Cyber Glyphs)", value: "scramble-decode" },
+                      { label: "Magnetic Tilt (3D Angular)", value: "magnetic-tilt" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Text Content">
+                  <CustomizeInput
+                    value={kineticText}
+                    onChange={setKineticText}
+                    placeholder="KILO / MOTION UI"
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Search Bar Controls */}
+            {(item.name === "search-bar" || item.name === "liquid-glass-search-bar") && (
+              <>
+                <CustomizeTile label="Variant">
+                  <CustomizeSelect
+                    value={searchBarVariant}
+                    onChange={(val) => {
+                      setSearchBarVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={[
+                      { label: "Downward Expand (Liquid Glass)", value: "downward-expand" },
+                      { label: "Circle Pop-out (Liquid Glass)", value: "circle-popout" },
+                      { label: "Minimal SaaS (Command Pill)", value: "minimal-pill" },
+                      { label: "Minimal SaaS (Expand Trigger)", value: "minimal-expand" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Expanded State">
+                  <CustomizeSwitch
+                    checked={searchBarExpanded}
+                    onChange={setSearchBarExpanded}
+                    label="Toggle expanded search state (⌘K / Esc)"
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Placeholder Text">
+                  <CustomizeInput
+                    value={searchBarPlaceholder}
+                    onChange={setSearchBarPlaceholder}
+                    placeholder="Search components..."
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Minimalist Login Controls */}
+            {item.name === "minimalist-login" && (
+              <>
+                <CustomizeTile label="Variant">
+                  <CustomizeSelect
+                    value={loginVariant}
+                    onChange={(val) => {
+                      const v = val as "sharp-edges" | "rounded-corners";
+                      setLoginVariant(v);
+                      onVariantChange?.(v);
+                    }}
+                    options={[
+                      { label: "Sharp Edges", value: "sharp-edges" },
+                      { label: "Rounded Corners", value: "rounded-corners" },
+                    ]}
+                  />
+                </CustomizeTile>
+
+                {loginVariant === "rounded-corners" && (
+                  <CustomizeTile label={`Border Radius: ${loginRadius}px`}>
+                    <input
+                      type="range"
+                      min="4"
+                      max="36"
+                      step="2"
+                      value={loginRadius}
+                      onChange={(e) => setLoginRadius(Number(e.target.value))}
+                      className="w-28 sm:w-32 accent-[var(--accent-green)] cursor-pointer"
+                      title="Adjust border radius"
+                    />
+                  </CustomizeTile>
+                )}
+
+                <CustomizeTile label="Sphere Motion">
+                  <Switch
+                    checked={loginSphereMotion}
+                    onCheckedChange={setLoginSphereMotion}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Hover Dot Reaction">
+                  <Switch
+                    checked={loginInteractiveDots}
+                    onCheckedChange={setLoginInteractiveDots}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label={`Rotation Speed: ${loginRotationSpeed}x`}>
+                  <input
+                    type="range"
+                    min="0.5"
+                    max="2.5"
+                    step="0.5"
+                    value={loginRotationSpeed}
+                    onChange={(e) => setLoginRotationSpeed(Number(e.target.value))}
+                    className="w-28 sm:w-32 accent-[var(--accent-green)] cursor-pointer"
+                    title="Adjust rotation speed"
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Concave Carousel Controls matching Image 3 */}
+            {item.name === "concave-carousel" && (
+              <>
+                {/* Row 1 */}
+                <CustomizeTile label="Preset">
+                  <CustomizeSelect
+                    value={concavePreset}
+                    onChange={(val) => handleConcavePresetChange(val as any)}
+                    options={["Rotunda", "Tunnel", "Flat", "Panoramic", "Convex"]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Autoplay">
+                  <CustomizeSelect
+                    value={concaveAutoplay}
+                    onChange={(val) => setConcaveAutoplay(val as any)}
+                    options={["Drift", "None", "Step"]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Background">
+                  <CustomizeHexColorPicker
+                    value={concaveBg}
+                    onChange={setConcaveBg}
+                  />
+                </CustomizeTile>
+
+                {/* Row 2 */}
+                <CustomizeTile label="Aspect">
+                  <CustomizeSlider
+                    value={concaveAspect}
+                    onChange={setConcaveAspect}
+                    min={0.5}
+                    max={2.5}
+                    step={0.05}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Size">
+                  <CustomizeSlider
+                    value={concaveSize}
+                    onChange={setConcaveSize}
+                    min={0.2}
+                    max={1.0}
+                    step={0.02}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Curvature">
+                  <CustomizeSlider
+                    value={concaveCurvature}
+                    onChange={setConcaveCurvature}
+                    min={-2.0}
+                    max={2.0}
+                    step={0.02}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                {/* Row 3 */}
+                <CustomizeTile label="Distance">
+                  <CustomizeSlider
+                    value={concaveDistance}
+                    onChange={setConcaveDistance}
+                    min={1.0}
+                    max={10.0}
+                    step={0.2}
+                    formatValue={(v) => v.toFixed(1)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Tilt">
+                  <CustomizeSlider
+                    value={concaveTilt}
+                    onChange={setConcaveTilt}
+                    min={-30}
+                    max={30}
+                    step={1}
+                    unit="°"
+                    formatValue={(v) => `${v.toFixed(1)}°`}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Gap">
+                  <CustomizeSlider
+                    value={concaveGap}
+                    onChange={setConcaveGap}
+                    min={0}
+                    max={60}
+                    step={2}
+                    unit="px"
+                    formatValue={(v) => `${Math.round(v)}px`}
+                  />
+                </CustomizeTile>
+
+                {/* Row 4 */}
+                <CustomizeTile label="Radius">
+                  <CustomizeSlider
+                    value={concaveRadius}
+                    onChange={setConcaveRadius}
+                    min={0}
+                    max={40}
+                    step={2}
+                    unit="px"
+                    formatValue={(v) => `${Math.round(v)}px`}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Reflection">
+                  <CustomizeSlider
+                    value={concaveReflection}
+                    onChange={setConcaveReflection}
+                    min={0}
+                    max={0.5}
+                    step={0.01}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Dim">
+                  <CustomizeSlider
+                    value={concaveDim}
+                    onChange={setConcaveDim}
+                    min={0}
+                    max={1.0}
+                    step={0.05}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                {/* Row 5 */}
+                <CustomizeTile label="Speed">
+                  <CustomizeSlider
+                    value={concaveSpeed}
+                    onChange={setConcaveSpeed}
+                    min={0.01}
+                    max={1.0}
+                    step={0.01}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Interval">
+                  <CustomizeSlider
+                    value={concaveInterval}
+                    onChange={setConcaveInterval}
+                    min={1.0}
+                    max={10.0}
+                    step={0.5}
+                    unit="s"
+                    formatValue={(v) => `${v.toFixed(1)}s`}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Inertia">
+                  <CustomizeSlider
+                    value={concaveInertia}
+                    onChange={setConcaveInertia}
+                    min={0.1}
+                    max={0.95}
+                    step={0.05}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                {/* Row 6 */}
+                <CustomizeTile label="Snap">
+                  <CustomizeSwitch
+                    checked={concaveSnap}
+                    onChange={setConcaveSnap}
+                    label="Snap"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Pause On Hover">
+                  <CustomizeSwitch
+                    checked={concavePauseOnHover}
+                    onChange={setConcavePauseOnHover}
+                    label="Pause On Hover"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Draggable">
+                  <CustomizeSwitch
+                    checked={concaveDraggable}
+                    onChange={setConcaveDraggable}
+                    label="Draggable"
+                  />
+                </CustomizeTile>
+
+                {/* Row 7 */}
+                <CustomizeTile label="Wheel">
+                  <CustomizeSwitch
+                    checked={concaveWheel}
+                    onChange={setConcaveWheel}
+                    label="Wheel"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Captions">
+                  <CustomizeSwitch
+                    checked={concaveCaptions}
+                    onChange={setConcaveCaptions}
+                    label="Captions"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Controls">
+                  <CustomizeSwitch
+                    checked={concaveControls}
+                    onChange={setConcaveControls}
+                    label="Controls"
+                  />
+                </CustomizeTile>
+
+                {/* Row 8 */}
+                <CustomizeTile label="Paused">
+                  <CustomizeSwitch
+                    checked={concavePaused}
+                    onChange={setConcavePaused}
+                    label="Paused"
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Prismatic Slats Controls matching Image 5 */}
+            {item.name === "prismatic-slats-bg" && (
+              <>
+                {/* Row 1 */}
+                <CustomizeTile label="Preset">
+                  <CustomizeSelect
+                    value={slatPreset}
+                    onChange={(val) => handleSlatPresetChange(val as any)}
+                    options={["Violet", "Cyan", "Sunset", "Emerald"]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Background">
+                  <CustomizeHexColorPicker
+                    value={slatBg}
+                    onChange={setSlatBg}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Primary">
+                  <CustomizeHexColorPicker
+                    value={slatPrimary}
+                    onChange={setSlatPrimary}
+                  />
+                </CustomizeTile>
+
+                {/* Row 2 */}
+                <CustomizeTile label="Secondary">
+                  <CustomizeHexColorPicker
+                    value={slatSecondary}
+                    onChange={setSlatSecondary}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Angle">
+                  <CustomizeSlider
+                    value={slatAngle}
+                    onChange={setSlatAngle}
+                    min={-90}
+                    max={90}
+                    step={1}
+                    unit="°"
+                    formatValue={(v) => `${Math.round(v)}°`}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Flutes">
+                  <CustomizeSlider
+                    value={slatFlutes}
+                    onChange={setSlatFlutes}
+                    min={2}
+                    max={30}
+                    step={1}
+                    formatValue={(v) => `${Math.round(v)}`}
+                  />
+                </CustomizeTile>
+
+                {/* Row 3 */}
+                <CustomizeTile label="Refraction">
+                  <CustomizeSlider
+                    value={slatRefraction}
+                    onChange={setSlatRefraction}
+                    min={0}
+                    max={10}
+                    step={0.1}
+                    formatValue={(v) => v.toFixed(1)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Aberration">
+                  <CustomizeSlider
+                    value={slatAberration}
+                    onChange={setSlatAberration}
+                    min={0}
+                    max={2}
+                    step={0.01}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Softness">
+                  <CustomizeSlider
+                    value={slatSoftness}
+                    onChange={setSlatSoftness}
+                    min={0}
+                    max={1}
+                    step={0.02}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                {/* Row 4 */}
+                <CustomizeTile label="Wave">
+                  <CustomizeSlider
+                    value={slatWave}
+                    onChange={setSlatWave}
+                    min={0}
+                    max={0.5}
+                    step={0.01}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Wave Frequency">
+                  <CustomizeSlider
+                    value={slatWaveFreq}
+                    onChange={setSlatWaveFreq}
+                    min={0.1}
+                    max={5}
+                    step={0.1}
+                    formatValue={(v) => v.toFixed(1)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Drift">
+                  <CustomizeSlider
+                    value={slatDrift}
+                    onChange={setSlatDrift}
+                    min={-1}
+                    max={1}
+                    step={0.05}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                {/* Row 5 */}
+                <CustomizeTile label="Highlight">
+                  <CustomizeSlider
+                    value={slatHighlight}
+                    onChange={setSlatHighlight}
+                    min={0}
+                    max={1}
+                    step={0.02}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Highlight Softness">
+                  <CustomizeSlider
+                    value={slatHighlightSoft}
+                    onChange={setSlatHighlightSoft}
+                    min={0}
+                    max={1}
+                    step={0.02}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Light Angle">
+                  <CustomizeSlider
+                    value={slatLightAngle}
+                    onChange={setSlatLightAngle}
+                    min={-180}
+                    max={180}
+                    step={5}
+                    unit="°"
+                    formatValue={(v) => `${Math.round(v)}°`}
+                  />
+                </CustomizeTile>
+
+                {/* Row 6 */}
+                <CustomizeTile label="Radius">
+                  <CustomizeSlider
+                    value={slatRadius}
+                    onChange={setSlatRadius}
+                    min={1}
+                    max={20}
+                    step={0.5}
+                    formatValue={(v) => v.toFixed(1)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Momentum">
+                  <CustomizeSlider
+                    value={slatMomentum}
+                    onChange={setSlatMomentum}
+                    min={0}
+                    max={50}
+                    step={1}
+                    formatValue={(v) => `${Math.round(v)}`}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Swirl">
+                  <CustomizeSlider
+                    value={slatSwirl}
+                    onChange={setSlatSwirl}
+                    min={-10}
+                    max={10}
+                    step={1}
+                    formatValue={(v) => `${Math.round(v)}`}
+                  />
+                </CustomizeTile>
+
+                {/* Row 7 */}
+                <CustomizeTile label="Intensity">
+                  <CustomizeSlider
+                    value={slatIntensity}
+                    onChange={setSlatIntensity}
+                    min={0}
+                    max={2}
+                    step={0.05}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Trail">
+                  <CustomizeSlider
+                    value={slatTrail}
+                    onChange={setSlatTrail}
+                    min={0}
+                    max={3}
+                    step={0.1}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Texture">
+                  <CustomizeSlider
+                    value={slatTexture}
+                    onChange={setSlatTexture}
+                    min={0}
+                    max={1}
+                    step={0.05}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                {/* Row 8 */}
+                <CustomizeTile label="Grain">
+                  <CustomizeSlider
+                    value={slatGrainVal}
+                    onChange={setSlatGrainVal}
+                    min={0}
+                    max={0.2}
+                    step={0.005}
+                    formatValue={(v) => v.toFixed(3)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Speed">
+                  <CustomizeSlider
+                    value={slatSpeed}
+                    onChange={setSlatSpeed}
+                    min={0}
+                    max={3}
+                    step={0.1}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Autoplay">
+                  <CustomizeSwitch
+                    checked={slatAutoplay}
+                    onChange={setSlatAutoplay}
+                    label="Autoplay"
+                  />
+                </CustomizeTile>
+
+                {/* Row 9 */}
+                <CustomizeTile label="Interactive">
+                  <CustomizeSwitch
+                    checked={slatInteractive}
+                    onChange={setSlatInteractive}
+                    label="Interactive"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Paused">
+                  <CustomizeSwitch
+                    checked={slatPaused}
+                    onChange={setSlatPaused}
+                    label="Paused"
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Grainy Grid Shader Controls */}
+            {item.name === "grainy-grid-shader" && (
+              <>
+                {/* Row 1: Variant, Grain, Roughness */}
+                <CustomizeTile label="Variant">
+                  <CustomizeSelect
+                    value={gridVariant}
+                    onChange={(val) => handleGridVariantChange(val as any)}
+                    options={["rough-matte", "tactile-kraft", "cyber-mesh"]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Grain">
+                  <CustomizeSlider
+                    value={gridGrain}
+                    onChange={setGridGrain}
+                    min={0}
+                    max={0.6}
+                    step={0.02}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Roughness">
+                  <CustomizeSlider
+                    value={gridRoughness}
+                    onChange={setGridRoughness}
+                    min={0.2}
+                    max={3.0}
+                    step={0.1}
+                    formatValue={(v) => v.toFixed(1)}
+                  />
+                </CustomizeTile>
+
+                {/* Row 2: Columns, Rows, Cell Size */}
+                <CustomizeTile label="Columns">
+                  <CustomizeSlider
+                    value={gridColumns}
+                    onChange={setGridColumns}
+                    min={3}
+                    max={12}
+                    step={1}
+                    formatValue={(v) => `${Math.round(v)}`}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Rows">
+                  <CustomizeSlider
+                    value={gridRows}
+                    onChange={setGridRows}
+                    min={2}
+                    max={8}
+                    step={1}
+                    formatValue={(v) => `${Math.round(v)}`}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Cell Size">
+                  <CustomizeSlider
+                    value={gridCellSize}
+                    onChange={setGridCellSize}
+                    min={32}
+                    max={80}
+                    step={2}
+                    unit="px"
+                    formatValue={(v) => `${Math.round(v)}px`}
+                  />
+                </CustomizeTile>
+
+                {/* Row 3: Speed, Cursor Radius */}
+                <CustomizeTile label="Wave Speed">
+                  <CustomizeSlider
+                    value={gridSpeed}
+                    onChange={setGridSpeed}
+                    min={0.2}
+                    max={3.0}
+                    step={0.1}
+                    formatValue={(v) => v.toFixed(1)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Cursor Radius">
+                  <CustomizeSlider
+                    value={gridRadius}
+                    onChange={setGridRadius}
+                    min={60}
+                    max={260}
+                    step={10}
+                    unit="px"
+                    formatValue={(v) => `${Math.round(v)}px`}
+                  />
+                </CustomizeTile>
+
+                {/* Row 4: Auto Wave, Interactive */}
+                <CustomizeTile label="Auto Wave">
+                  <CustomizeSwitch
+                    checked={gridAutoWave}
+                    onChange={setGridAutoWave}
+                    label="Auto Wave"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Interactive">
+                  <CustomizeSwitch
+                    checked={gridInteractive}
+                    onChange={setGridInteractive}
+                    label="Interactive"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Show Boxes">
+                  <CustomizeSwitch
+                    checked={gridShowBoxes}
+                    onChange={setGridShowBoxes}
+                    label="Show Boxes"
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Grainy Horizon Shader Controls matching media_1792862001252.png */}
+            {item.name === "grainy-horizon-shader" && (
+              <>
+                {/* Row 1: Variant, Grain, Roughness */}
+                <CustomizeTile label="Variant">
+                  <CustomizeSelect
+                    value={horizonVariant}
+                    onChange={(val) => handleHorizonVariantChange(val as any)}
+                    options={[
+                      "ultraviolet",
+                      "aurora-green",
+                      "solar-amber",
+                      "cyber-cyan",
+                      "monochrome",
+                    ]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Grain">
+                  <CustomizeSlider
+                    value={horizonGrain}
+                    onChange={setHorizonGrain}
+                    min={0}
+                    max={0.6}
+                    step={0.02}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Roughness">
+                  <CustomizeSlider
+                    value={horizonRoughness}
+                    onChange={setHorizonRoughness}
+                    min={0.4}
+                    max={3.0}
+                    step={0.1}
+                    formatValue={(v) => v.toFixed(1)}
+                  />
+                </CustomizeTile>
+
+                {/* Row 2: Glow Intensity, Curvature, Glow Spread */}
+                <CustomizeTile label="Glow Intensity">
+                  <CustomizeSlider
+                    value={horizonGlowIntensity}
+                    onChange={setHorizonGlowIntensity}
+                    min={0.2}
+                    max={2.5}
+                    step={0.1}
+                    formatValue={(v) => v.toFixed(1)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Curvature">
+                  <CustomizeSlider
+                    value={horizonCurvature}
+                    onChange={setHorizonCurvature}
+                    min={0.0}
+                    max={1.0}
+                    step={0.05}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Glow Spread">
+                  <CustomizeSlider
+                    value={horizonGlowSpread}
+                    onChange={setHorizonGlowSpread}
+                    min={0.4}
+                    max={2.0}
+                    step={0.1}
+                    formatValue={(v) => v.toFixed(1)}
+                  />
+                </CustomizeTile>
+
+                {/* Row 3: Wave Speed, Drift Speed */}
+                <CustomizeTile label="Wave Speed">
+                  <CustomizeSlider
+                    value={horizonSpeed}
+                    onChange={setHorizonSpeed}
+                    min={0.1}
+                    max={3.0}
+                    step={0.1}
+                    formatValue={(v) => v.toFixed(1)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Drift Speed">
+                  <CustomizeSlider
+                    value={horizonDrift}
+                    onChange={setHorizonDrift}
+                    min={0.0}
+                    max={1.5}
+                    step={0.05}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                {/* Row 4: Interactive, Invert Curve */}
+                <CustomizeTile label="Interactive">
+                  <CustomizeSwitch
+                    checked={horizonInteractive}
+                    onChange={setHorizonInteractive}
+                    label="Interactive"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Invert Curve">
+                  <CustomizeSwitch
+                    checked={horizonInverted}
+                    onChange={setHorizonInverted}
+                    label="Inverted"
                   />
                 </CustomizeTile>
               </>

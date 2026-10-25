@@ -132,53 +132,83 @@ function ComponentsDiscoveryContent() {
             <div className="font-mono text-xs text-[var(--text-muted)]">
               Found {filteredItems.length} {filteredItems.length === 1 ? "component" : "components"} matching &quot;{filterQuery}&quot;
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {filteredItems.map((item) => (
-                <div
-                  key={item.name}
-                  className="rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)]/40 hover:border-[var(--border-hover)] transition-all flex flex-col overflow-hidden"
-                >
-                  <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border)] bg-[var(--surface-secondary)]/30">
-                    <Link
-                      href={`/components/${item.name}`}
-                      className="flex items-center gap-2 group/link"
-                    >
-                      <VectorComponentIcon
-                        name={item.name}
-                        className="h-4 w-4 text-[var(--text-primary)] group-hover/link:text-[var(--accent-green)] transition-colors"
-                      />
-                      <span className="font-mono text-sm font-semibold text-[var(--text-primary)] group-hover/link:text-[var(--accent-green)] transition-colors">
-                        {item.title}
-                      </span>
-                    </Link>
-                    <span className="font-mono text-[10px] text-[var(--text-muted)] rounded bg-[var(--surface-secondary)] px-1.5 py-0.5">
-                      {item.category}
-                    </span>
-                  </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+              {filteredItems.map((item) => {
+                const isWide =
+                  item.name === "blurred-carousel" ||
+                  item.name === "footer" ||
+                  item.name === "scroll-marquee" ||
+                  item.name === "directional-marquee";
+                const isFeatured = item.name === "expanding-card";
+                const isSlider = item.name === "content-slider";
+                const isAtom = item.name === "button" || item.name === "badge" || item.name === "switch";
+
+                return (
                   <div
-                    className="p-6 flex items-center justify-center min-h-[180px] bg-[var(--bg-main)]/60"
-                    onClick={(e) => e.stopPropagation()}
+                    key={item.name}
+                    className={cn(
+                      "rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)]/40 hover:border-[var(--border-hover)] transition-all flex flex-col overflow-hidden",
+                      isWide && "col-span-1 md:col-span-2"
+                    )}
                   >
-                    <div className="w-full max-w-sm flex items-center justify-center">
-                      <ComponentPreviewStage
-                        item={item}
-                        interactive={true}
-                        showKnobs={false}
-                        className="border-none bg-transparent p-0 shadow-none"
-                      />
+                    <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border)] bg-[var(--surface-secondary)]/30">
+                      <Link
+                        href={`/components/${item.name}`}
+                        className="flex items-center gap-2 group/link"
+                      >
+                        <VectorComponentIcon
+                          name={item.name}
+                          className="h-4 w-4 text-[var(--text-primary)] group-hover/link:text-[var(--accent-green)] transition-colors"
+                        />
+                        <span className="font-mono text-sm font-semibold text-[var(--text-primary)] group-hover/link:text-[var(--accent-green)] transition-colors">
+                          {item.title}
+                        </span>
+                      </Link>
+                      <span className="font-mono text-[10px] text-[var(--text-muted)] rounded bg-[var(--surface-secondary)] px-1.5 py-0.5">
+                        {item.category}
+                      </span>
+                    </div>
+                    <div
+                      className={cn(
+                        "flex items-center justify-center bg-[var(--bg-main)]/60 relative",
+                        isWide
+                          ? "p-4 sm:p-6 min-h-[300px]"
+                          : isFeatured
+                          ? "p-4 sm:p-6 min-h-[290px]"
+                          : isSlider
+                          ? "p-4 min-h-[220px]"
+                          : isAtom
+                          ? "p-4 min-h-[140px]"
+                          : "p-5 min-h-[180px]"
+                      )}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <div
+                        className={cn(
+                          "w-full flex items-center justify-center",
+                          isWide ? "max-w-4xl" : isFeatured ? "max-w-md" : isSlider ? "max-w-[260px]" : "max-w-sm"
+                        )}
+                      >
+                        <ComponentPreviewStage
+                          item={item}
+                          interactive={true}
+                          showKnobs={false}
+                          className="border-none bg-transparent p-0 shadow-none w-full"
+                        />
+                      </div>
+                    </div>
+                    <div className="px-4 py-2.5 border-t border-[var(--border)] bg-[var(--surface-secondary)]/20 text-xs text-[var(--text-secondary)] flex items-center justify-between">
+                      <span className="line-clamp-1">{item.description}</span>
+                      <Link
+                        href={`/components/${item.name}`}
+                        className="font-mono text-xs text-[var(--accent-green)] hover:underline shrink-0 ml-2"
+                      >
+                        Inspect →
+                      </Link>
                     </div>
                   </div>
-                  <div className="px-4 py-2.5 border-t border-[var(--border)] bg-[var(--surface-secondary)]/20 text-xs text-[var(--text-secondary)] flex items-center justify-between">
-                    <span className="line-clamp-1">{item.description}</span>
-                    <Link
-                      href={`/components/${item.name}`}
-                      className="font-mono text-xs text-[var(--accent-green)] hover:underline shrink-0 ml-2"
-                    >
-                      Inspect →
-                    </Link>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         ) : activeCategoryParam && categories.includes(activeCategoryParam as any) ? (
@@ -205,59 +235,89 @@ function ComponentsDiscoveryContent() {
               </Link>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
               {allItems
                 .filter((i) => i.category === activeCategoryParam)
-                .map((item) => (
-                  <div
-                    key={item.name}
-                    className="rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)]/40 hover:border-[var(--border-hover)] transition-all flex flex-col overflow-hidden group"
-                  >
-                    <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border)] bg-[var(--surface-secondary)]/30">
-                      <Link
-                        href={`/components/${item.name}`}
-                        className="flex items-center gap-2.5 group/link"
-                      >
-                        <VectorComponentIcon
-                          name={item.name}
-                          className="h-4 w-4 text-[var(--text-primary)] group-hover/link:text-[var(--accent-green)] transition-colors"
-                        />
-                        <span className="font-mono text-sm font-semibold text-[var(--text-primary)] group-hover/link:text-[var(--accent-green)] transition-colors">
-                          {item.title}
-                        </span>
-                      </Link>
+                .map((item) => {
+                  const isWide =
+                    item.name === "blurred-carousel" ||
+                    item.name === "footer" ||
+                    item.name === "scroll-marquee" ||
+                    item.name === "directional-marquee";
+                  const isFeatured = item.name === "expanding-card";
+                  const isSlider = item.name === "content-slider";
+                  const isAtom = item.name === "button" || item.name === "badge" || item.name === "switch";
 
-                      <Link
-                        href={`/components/${item.name}`}
-                        className="inline-flex items-center gap-1 font-mono text-xs text-[var(--accent-green)] hover:underline"
-                      >
-                        <span>Docs & Code</span>
-                        <ArrowRight className="h-3 w-3" />
-                      </Link>
-                    </div>
-
+                  return (
                     <div
-                      className="p-6 flex items-center justify-center min-h-[200px] bg-[var(--bg-main)]/60 relative"
-                      onClick={(e) => e.stopPropagation()}
+                      key={item.name}
+                      className={cn(
+                        "rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)]/40 hover:border-[var(--border-hover)] transition-all flex flex-col overflow-hidden group",
+                        isWide && "col-span-1 md:col-span-2"
+                      )}
                     >
-                      <div className="w-full max-w-sm flex items-center justify-center">
-                        <ComponentPreviewStage
-                          item={item}
-                          interactive={true}
-                          showKnobs={false}
-                          className="border-none bg-transparent p-0 shadow-none"
-                        />
+                      <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border)] bg-[var(--surface-secondary)]/30">
+                        <Link
+                          href={`/components/${item.name}`}
+                          className="flex items-center gap-2.5 group/link"
+                        >
+                          <VectorComponentIcon
+                            name={item.name}
+                            className="h-4 w-4 text-[var(--text-primary)] group-hover/link:text-[var(--accent-green)] transition-colors"
+                          />
+                          <span className="font-mono text-sm font-semibold text-[var(--text-primary)] group-hover/link:text-[var(--accent-green)] transition-colors">
+                            {item.title}
+                          </span>
+                        </Link>
+
+                        <Link
+                          href={`/components/${item.name}`}
+                          className="inline-flex items-center gap-1 font-mono text-xs text-[var(--accent-green)] hover:underline"
+                        >
+                          <span>Docs & Code</span>
+                          <ArrowRight className="h-3 w-3" />
+                        </Link>
+                      </div>
+
+                      <div
+                        className={cn(
+                          "flex items-center justify-center bg-[var(--bg-main)]/60 relative",
+                          isWide
+                            ? "p-4 sm:p-6 min-h-[300px]"
+                            : isFeatured
+                            ? "p-4 sm:p-6 min-h-[290px]"
+                            : isSlider
+                            ? "p-4 min-h-[220px]"
+                            : isAtom
+                            ? "p-4 min-h-[140px]"
+                            : "p-5 min-h-[180px]"
+                        )}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <div
+                          className={cn(
+                            "w-full flex items-center justify-center",
+                            isWide ? "max-w-4xl" : isFeatured ? "max-w-md" : isSlider ? "max-w-[260px]" : "max-w-sm"
+                          )}
+                        >
+                          <ComponentPreviewStage
+                            item={item}
+                            interactive={true}
+                            showKnobs={false}
+                            className="border-none bg-transparent p-0 shadow-none w-full"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="px-4 py-2.5 border-t border-[var(--border)] bg-[var(--surface-secondary)]/20 text-xs text-[var(--text-secondary)] flex items-center justify-between">
+                        <span className="line-clamp-1">{item.description}</span>
+                        <span className="font-mono text-[10px] text-[var(--text-muted)] shrink-0 ml-2">
+                          {item.files[0]?.name}
+                        </span>
                       </div>
                     </div>
-
-                    <div className="px-4 py-2.5 border-t border-[var(--border)] bg-[var(--surface-secondary)]/20 text-xs text-[var(--text-secondary)] flex items-center justify-between">
-                      <span className="line-clamp-1">{item.description}</span>
-                      <span className="font-mono text-[10px] text-[var(--text-muted)] shrink-0 ml-2">
-                        {item.files[0]?.name}
-                      </span>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
             </div>
           </div>
         ) : (

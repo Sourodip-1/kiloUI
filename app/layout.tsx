@@ -44,8 +44,39 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${googleSans.variable} ${googleSansCode.variable} h-full antialiased`}
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var saved = localStorage.getItem('kilo-theme');
+                  var isLight = false;
+                  if (saved === 'light') {
+                    isLight = true;
+                  } else if (saved === 'system') {
+                    isLight = !window.matchMedia('(prefers-color-scheme: dark)').matches;
+                  }
+                  if (isLight) {
+                    document.documentElement.classList.add('light');
+                    document.documentElement.classList.remove('dark');
+                  } else {
+                    document.documentElement.classList.remove('light');
+                    document.documentElement.classList.add('dark');
+                  }
+                  var accent = localStorage.getItem('kilo-accent');
+                  if (accent) {
+                    document.documentElement.setAttribute('data-accent', accent);
+                  }
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
+      </head>
       <body className="min-h-full flex flex-col bg-[var(--bg-main)] text-[var(--text-primary)]">
         <AppShell>{children}</AppShell>
       </body>

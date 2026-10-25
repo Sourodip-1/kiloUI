@@ -52,17 +52,35 @@ export function SidebarHoverPreview({
     }
   }, [hoverState]);
 
+  const [measuredHeight, setMeasuredHeight] = React.useState<number>(310);
+  const [viewportHeight, setViewportHeight] = React.useState<number>(() =>
+    typeof window !== "undefined" ? window.innerHeight : 900
+  );
+
+  React.useEffect(() => {
+    const handleResize = () => setViewportHeight(window.innerHeight);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  React.useLayoutEffect(() => {
+    if (cardRef.current) {
+      const height = cardRef.current.offsetHeight;
+      if (height > 0) {
+        setMeasuredHeight(height);
+      }
+    }
+  }, [current]);
+
   const handleMouseLeave = () => {
     onMouseLeavePreview?.();
   };
 
   if (!mounted || !current) return null;
 
-  // Viewport vertical clamping
-  const cardHeight = 290;
-  const viewportHeight = typeof window !== "undefined" ? window.innerHeight : 900;
-  const rawTop = current.top - cardHeight / 2;
-  const clampedTop = Math.max(16, Math.min(viewportHeight - cardHeight - 16, rawTop));
+  // Viewport vertical clamping ensures the card NEVER overflows the screen bottom or top
+  const rawTop = current.top - measuredHeight / 2;
+  const clampedTop = Math.max(16, Math.min(viewportHeight - measuredHeight - 16, rawTop));
 
   const item = current.item;
   const leftPosition = current.sidebarRight + 12;
@@ -83,7 +101,7 @@ export function SidebarHoverPreview({
           "top 260ms cubic-bezier(0.16, 1, 0.3, 1), transform 200ms cubic-bezier(0.16, 1, 0.3, 1), opacity 180ms ease",
       }}
       className={cn(
-        "z-50 w-[310px] rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/95 shadow-2xl backdrop-blur-xl overflow-hidden select-none",
+        "z-50 w-[310px] max-h-[calc(100vh-32px)] flex flex-col rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/95 shadow-2xl backdrop-blur-xl overflow-hidden select-none",
         "ring-1 ring-white/10 dark:ring-white/5",
         "shadow-[0_20px_50px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,255,255,0.06)]"
       )}
@@ -126,7 +144,7 @@ export function SidebarHoverPreview({
       </div>
 
       {/* 2. Interactive Live Physics Preview Canvas */}
-      <div className="p-3 bg-[var(--canvas-bg)] flex items-center justify-center min-h-[140px] relative border-b border-[var(--border)] overflow-hidden">
+      <div className="p-3 bg-[var(--canvas-bg)] flex items-center justify-center h-[150px] max-h-[150px] relative border-b border-[var(--border)] overflow-hidden shrink-0">
         {/* Subtle grid pattern background */}
         <div
           className="absolute inset-0 pointer-events-none opacity-40"

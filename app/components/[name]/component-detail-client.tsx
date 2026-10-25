@@ -29,6 +29,7 @@ import { CodeBlock } from "@/components/code-block";
 import { ComponentCarousel } from "@/components/component-carousel";
 import { useAppShell } from "@/components/app-shell";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/registry/ui/tabs";
+import { SlidingHighlightContainer } from "@/components/sliding-highlight";
 import { cn } from "@/lib/utils";
 
 function OpenAILogo({ className }: { className?: string }) {
@@ -74,13 +75,13 @@ export function ComponentDetailClient({ item, initialVariant }: ComponentDetailC
     [router, searchParams, item.name]
   );
 
-  const { showToast } = useAppShell();
+  const { showToast, isFavorited: checkFavorited, toggleFavorite } = useAppShell();
+  const isFavorited = checkFavorited(item.name);
   const [activeTab, setActiveTab] = React.useState<"preview" | "code">("preview");
   const [viewport, setViewport] = React.useState<"desktop" | "tablet" | "mobile">("desktop");
   const [showGrid, setShowGrid] = React.useState(false);
   const [isFullscreen, setIsFullscreen] = React.useState(false);
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
-  const [isFavorited, setIsFavorited] = React.useState(false);
   const [configuredCode, setConfiguredCode] = React.useState("");
 
   const dropdownRef = React.useRef<HTMLDivElement>(null);
@@ -88,19 +89,20 @@ export function ComponentDetailClient({ item, initialVariant }: ComponentDetailC
   const mainFile = item.files[0];
   const sourceCode = mainFile?.content || "";
 
-  // Synchronize favorites from localStorage
+  // Guarantee page always opens at the top when navigating between components
   React.useEffect(() => {
-    try {
-      const raw = localStorage.getItem("kiloui_favorites");
-      if (raw) {
-        const favs = JSON.parse(raw);
-        if (Array.isArray(favs) && favs.includes(item.name)) {
-          setIsFavorited(true);
-        }
-      }
-    } catch {
-      // ignore localStorage errors
-    }
+    const scrollToTop = () => {
+      const mainEl = document.getElementById("main-scroll-container");
+      if (mainEl) mainEl.scrollTop = 0;
+      window.scrollTo(0, 0);
+    };
+    scrollToTop();
+    const raf = requestAnimationFrame(scrollToTop);
+    const timer = setTimeout(scrollToTop, 50);
+    return () => {
+      cancelAnimationFrame(raf);
+      clearTimeout(timer);
+    };
   }, [item.name]);
 
   // Click outside to close dropdown
@@ -150,23 +152,7 @@ ${(configuredCode || item.usage || "").trim()}
 ` : ""}`.trim();
 
   const handleToggleFavorite = () => {
-    try {
-      const raw = localStorage.getItem("kiloui_favorites");
-      let favs: string[] = raw ? JSON.parse(raw) : [];
-      if (!Array.isArray(favs)) favs = [];
-      const next = !isFavorited;
-      if (next) {
-        if (!favs.includes(item.name)) favs.push(item.name);
-        showToast(`Saved "${item.title}" to favorites`);
-      } else {
-        favs = favs.filter((f) => f !== item.name);
-        showToast(`Removed from favorites`);
-      }
-      localStorage.setItem("kiloui_favorites", JSON.stringify(favs));
-      setIsFavorited(next);
-    } catch {
-      // ignore
-    }
+    toggleFavorite(item.name, item.title);
   };
 
   const handleShare = async () => {
@@ -261,10 +247,8 @@ ${(configuredCode || item.usage || "").trim()}
         {/* Title & Quick Install Row */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1">
-            <div className="flex items-center gap-3">
-              <div className="h-8 w-8 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] flex items-center justify-center shrink-0">
-                <VectorComponentIcon name={item.name} className="h-4 w-4 text-[var(--accent-green)]" />
-              </div>
+            <div className="flex items-center gap-2.5">
+              <VectorComponentIcon name={item.name} className="h-5 w-5 text-[var(--accent-green)] shrink-0" />
               <h1 className="font-mono text-2xl sm:text-3xl font-bold tracking-tight text-[var(--text-primary)]">
                 {item.title}
               </h1>
@@ -302,230 +286,283 @@ ${(configuredCode || item.usage || "").trim()}
         >
           {/* Toolbar with Slide Switcher */}
           <div className="flex flex-wrap items-center justify-between gap-3">
-            {/* Left: View Switcher (Preview / Code) */}
-            <TabsList variant="slide" className="h-9 p-1">
-              <TabsTrigger
-                value="preview"
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono font-semibold"
+            {/* Left: View Switcher (Preview / Code) with smooth spring highlight */}
+            <SlidingHighlightContainer
+              activeSelector='[data-state="active"]'
+              activeKey={activeTab}
+              className="flex items-center rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] p-1 shadow-xs select-none"
+              pillClassName="bg-[var(--surface-secondary)] border border-[var(--border)] rounded-md shadow-xs"
+            >
+              <button
+                type="button"
+                data-hover-item="true"
+                data-state={activeTab === "preview" ? "active" : "inactive"}
+                onClick={() => setActiveTab("preview")}
+                className={cn(
+                  "group relative z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-mono font-medium transition-colors cursor-pointer select-none",
+                  activeTab === "preview"
+                    ? "text-[var(--text-primary)] font-semibold"
+                    : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                )}
               >
                 <Eye className="h-3.5 w-3.5" />
                 <span>Preview</span>
-              </TabsTrigger>
-              <TabsTrigger
-                value="code"
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono font-semibold"
+              </button>
+              <button
+                type="button"
+                data-hover-item="true"
+                data-state={activeTab === "code" ? "active" : "inactive"}
+                onClick={() => setActiveTab("code")}
+                className={cn(
+                  "group relative z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-mono font-medium transition-colors cursor-pointer select-none",
+                  activeTab === "code"
+                    ? "text-[var(--text-primary)] font-semibold"
+                    : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                )}
               >
                 <Code className="h-3.5 w-3.5" />
                 <span>Code</span>
-              </TabsTrigger>
-            </TabsList>
+              </button>
+            </SlidingHighlightContainer>
 
-          {/* Right: Viewport Sizing + Favorites + Share + Copy for AI */}
-          <div className="flex items-center gap-2">
-            {/* Viewport size buttons (active in preview mode) */}
-            {activeTab === "preview" && (
-              <div className="flex items-center rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] p-1 shadow-xs">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setViewport("desktop");
-                    setIsFullscreen(false);
-                  }}
-                  className={cn(
-                    "p-1.5 rounded-md transition-all cursor-pointer",
-                    viewport === "desktop" && !isFullscreen
-                      ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] shadow-xs"
-                      : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
-                  )}
-                  title="Desktop viewport (100%)"
-                  aria-label="Desktop viewport"
+            {/* Right: Viewport Sizing + Favorites + Share + Copy for AI */}
+            <div className="flex items-center gap-2">
+              {/* Viewport size buttons (active in preview mode) */}
+              {activeTab === "preview" && (
+                <SlidingHighlightContainer
+                  activeSelector='[data-state="active"]'
+                  activeKey={`${viewport}-${isFullscreen}-${showGrid}`}
+                  className="flex items-center rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] p-1 shadow-xs select-none"
+                  pillClassName="bg-[var(--surface-secondary)] border border-[var(--border)]/70 rounded-md shadow-2xs"
                 >
-                  <Square className="h-4 w-4" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setViewport("tablet");
-                    setIsFullscreen(false);
-                  }}
-                  className={cn(
-                    "p-1.5 rounded-md transition-all cursor-pointer",
-                    viewport === "tablet" && !isFullscreen
-                      ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] shadow-xs"
-                      : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
-                  )}
-                  title="Tablet viewport (768px)"
-                  aria-label="Tablet viewport"
-                >
-                  <Laptop className="h-4 w-4" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setViewport("mobile");
-                    setIsFullscreen(false);
-                  }}
-                  className={cn(
-                    "p-1.5 rounded-md transition-all cursor-pointer",
-                    viewport === "mobile" && !isFullscreen
-                      ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] shadow-xs"
-                      : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
-                  )}
-                  title="Mobile viewport (375px)"
-                  aria-label="Mobile viewport"
-                >
-                  <Smartphone className="h-4 w-4" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setShowGrid(!showGrid)}
-                  className={cn(
-                    "p-1.5 rounded-md transition-all cursor-pointer",
-                    showGrid
-                      ? "bg-[var(--surface-secondary)] text-[var(--accent-green)] shadow-xs"
-                      : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
-                  )}
-                  title="Toggle canvas grid"
-                  aria-label="Toggle canvas grid"
-                >
-                  <LayoutGrid className="h-4 w-4" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setIsFullscreen(!isFullscreen)}
-                  className={cn(
-                    "p-1.5 rounded-md transition-all cursor-pointer",
-                    isFullscreen
-                      ? "bg-[var(--surface-secondary)] text-[var(--accent-green)] shadow-xs"
-                      : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
-                  )}
-                  title="Toggle fullscreen preview"
-                  aria-label="Toggle fullscreen preview"
-                >
-                  <Maximize2 className="h-4 w-4" />
-                </button>
-              </div>
-            )}
-
-            {/* Favorite Button */}
-            <button
-              type="button"
-              onClick={handleToggleFavorite}
-              className={cn(
-                "p-2 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] transition-all cursor-pointer shadow-xs",
-                isFavorited
-                  ? "text-rose-500 border-rose-500/40 bg-rose-500/10"
-                  : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)]"
+                  <button
+                    type="button"
+                    data-hover-item="true"
+                    data-state={viewport === "desktop" && !isFullscreen ? "active" : "inactive"}
+                    onClick={() => {
+                      setViewport("desktop");
+                      setIsFullscreen(false);
+                    }}
+                    className={cn(
+                      "group relative z-10 p-1.5 rounded-md transition-colors cursor-pointer",
+                      viewport === "desktop" && !isFullscreen
+                        ? "text-[var(--text-primary)]"
+                        : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                    )}
+                    title="Desktop viewport (100%)"
+                    aria-label="Desktop viewport"
+                  >
+                    <Square className="h-4 w-4" />
+                  </button>
+                  <button
+                    type="button"
+                    data-hover-item="true"
+                    data-state={viewport === "tablet" && !isFullscreen ? "active" : "inactive"}
+                    onClick={() => {
+                      setViewport("tablet");
+                      setIsFullscreen(false);
+                    }}
+                    className={cn(
+                      "group relative z-10 p-1.5 rounded-md transition-colors cursor-pointer",
+                      viewport === "tablet" && !isFullscreen
+                        ? "text-[var(--text-primary)]"
+                        : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                    )}
+                    title="Tablet viewport (768px)"
+                    aria-label="Tablet viewport"
+                  >
+                    <Laptop className="h-4 w-4" />
+                  </button>
+                  <button
+                    type="button"
+                    data-hover-item="true"
+                    data-state={viewport === "mobile" && !isFullscreen ? "active" : "inactive"}
+                    onClick={() => {
+                      setViewport("mobile");
+                      setIsFullscreen(false);
+                    }}
+                    className={cn(
+                      "group relative z-10 p-1.5 rounded-md transition-colors cursor-pointer",
+                      viewport === "mobile" && !isFullscreen
+                        ? "text-[var(--text-primary)]"
+                        : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                    )}
+                    title="Mobile viewport (375px)"
+                    aria-label="Mobile viewport"
+                  >
+                    <Smartphone className="h-4 w-4" />
+                  </button>
+                  <button
+                    type="button"
+                    data-hover-item="true"
+                    data-state={showGrid ? "active" : "inactive"}
+                    onClick={() => setShowGrid(!showGrid)}
+                    className={cn(
+                      "group relative z-10 p-1.5 rounded-md transition-colors cursor-pointer",
+                      showGrid
+                        ? "text-[var(--accent-green)]"
+                        : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                    )}
+                    title="Toggle canvas grid"
+                    aria-label="Toggle canvas grid"
+                  >
+                    <LayoutGrid className="h-4 w-4" />
+                  </button>
+                  <button
+                    type="button"
+                    data-hover-item="true"
+                    data-state={isFullscreen ? "active" : "inactive"}
+                    onClick={() => setIsFullscreen(!isFullscreen)}
+                    className={cn(
+                      "group relative z-10 p-1.5 rounded-md transition-colors cursor-pointer",
+                      isFullscreen
+                        ? "text-[var(--accent-green)]"
+                        : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                    )}
+                    title="Toggle fullscreen preview"
+                    aria-label="Toggle fullscreen preview"
+                  >
+                    <Maximize2 className="h-4 w-4" />
+                  </button>
+                </SlidingHighlightContainer>
               )}
-              title={isFavorited ? "Saved in favorites" : "Add to favorites"}
-              aria-label="Favorite component"
-            >
-              <Heart className={cn("h-4 w-4", isFavorited && "fill-rose-500 text-rose-500")} />
-            </button>
 
-            {/* Share Button */}
-            <button
-              type="button"
-              onClick={handleShare}
-              className="p-2 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] transition-all cursor-pointer shadow-xs"
-              title="Copy component link"
-              aria-label="Share component"
-            >
-              <Share2 className="h-4 w-4" />
-            </button>
-
-            {/* Copy for AI Dropdown */}
-            <div className="relative" ref={dropdownRef}>
+              {/* Favorite Button */}
               <button
                 type="button"
-                onClick={() => setDropdownOpen(!dropdownOpen)}
+                onClick={handleToggleFavorite}
                 className={cn(
-                  "flex items-center gap-2 h-9 px-3.5 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] hover:bg-[var(--surface-secondary)] text-[var(--text-primary)] text-xs font-mono font-medium transition-all cursor-pointer active:scale-98 shadow-xs",
-                  dropdownOpen && "border-[var(--accent-green)]/60 ring-1 ring-[var(--accent-green)]/30"
+                  "p-2 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] transition-all cursor-pointer shadow-xs active:scale-95",
+                  isFavorited
+                    ? "text-rose-500 border-rose-500/40 bg-rose-500/10"
+                    : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)]"
                 )}
-                aria-expanded={dropdownOpen}
-                aria-haspopup="true"
+                title={isFavorited ? "Saved in favorites" : "Add to favorites"}
+                aria-label="Favorite component"
               >
-                <Copy className="h-3.5 w-3.5 text-[var(--text-secondary)]" />
-                <span>Copy for AI</span>
-                <ChevronDown
-                  className={cn(
-                    "h-3.5 w-3.5 text-[var(--text-muted)] transition-transform duration-200",
-                    dropdownOpen && "rotate-180"
-                  )}
-                />
+                <Heart className={cn("h-4 w-4", isFavorited && "fill-rose-500 text-rose-500")} />
               </button>
 
-              {/* Dropdown Menu matching Screenshot */}
-              {dropdownOpen && (
-                <div className="absolute right-0 top-full mt-1.5 w-64 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)]/98 backdrop-blur-md shadow-2xl p-1.5 z-50 animate-in fade-in zoom-in-95 duration-150">
-                  <div className="px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider text-[var(--text-muted)] font-semibold">
-                    Copy
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => handleCopyAction("prompt")}
-                    className="flex items-center gap-2.5 w-full px-2.5 py-2 rounded-lg text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] transition-colors text-left cursor-pointer group"
-                  >
-                    <Sparkles className="h-4 w-4 text-[var(--accent-green)] shrink-0 group-hover:scale-110 transition-transform" />
-                    <span className="font-medium">Copy prompt</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleCopyAction("configured")}
-                    className="flex items-center gap-2.5 w-full px-2.5 py-2 rounded-lg text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] transition-colors text-left cursor-pointer group"
-                  >
-                    <Code className="h-4 w-4 text-[var(--text-secondary)] shrink-0 group-hover:text-[var(--accent-green)] transition-colors" />
-                    <span className="font-medium">Copy configured code</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleCopyAction("source")}
-                    className="flex items-center gap-2.5 w-full px-2.5 py-2 rounded-lg text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] transition-colors text-left cursor-pointer group"
-                  >
-                    <FileCode className="h-4 w-4 text-[var(--text-secondary)] shrink-0 group-hover:text-[var(--accent-green)] transition-colors" />
-                    <span className="font-medium">Copy component source</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleCopyAction("cli")}
-                    className="flex items-center gap-2.5 w-full px-2.5 py-2 rounded-lg text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] transition-colors text-left cursor-pointer group"
-                  >
-                    <Terminal className="h-4 w-4 text-[var(--text-secondary)] shrink-0 group-hover:text-[var(--accent-green)] transition-colors" />
-                    <span className="font-medium">Copy install command</span>
-                  </button>
+              {/* Share Button */}
+              <button
+                type="button"
+                onClick={handleShare}
+                className="p-2 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] transition-all cursor-pointer shadow-xs active:scale-95"
+                title="Copy component link"
+                aria-label="Share component"
+              >
+                <Share2 className="h-4 w-4" />
+              </button>
 
-                  <div className="h-px bg-[var(--border)] my-1.5" />
+              {/* Copy for AI Dropdown */}
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  type="button"
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  className={cn(
+                    "flex items-center gap-2 h-9 px-3.5 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] hover:bg-[var(--surface-secondary)] text-[var(--text-primary)] text-xs font-mono font-medium transition-all cursor-pointer active:scale-98 shadow-xs",
+                    dropdownOpen && "border-[var(--accent-green)]/60 ring-1 ring-[var(--accent-green)]/30"
+                  )}
+                  aria-expanded={dropdownOpen}
+                  aria-haspopup="true"
+                >
+                  <Copy className="h-3.5 w-3.5 text-[var(--text-secondary)]" />
+                  <span>Copy for AI</span>
+                  <ChevronDown
+                    className={cn(
+                      "h-3.5 w-3.5 text-[var(--text-muted)] transition-transform duration-200",
+                      dropdownOpen && "rotate-180"
+                    )}
+                  />
+                </button>
 
-                  <div className="px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider text-[var(--text-muted)] font-semibold">
-                    Open in
+                {/* Dropdown Menu matching Screenshot */}
+                {dropdownOpen && (
+                  <div className="absolute right-0 top-full mt-1.5 w-64 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)]/98 backdrop-blur-md shadow-2xl p-1.5 z-50 animate-in fade-in zoom-in-95 duration-150">
+                    <div className="px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider text-[var(--text-muted)] font-semibold">
+                      Copy
+                    </div>
+                    <SlidingHighlightContainer
+                      className="space-y-0.5"
+                      pillClassName="bg-[var(--surface-secondary)]/90 border border-[var(--border)]/40 rounded-lg shadow-2xs"
+                    >
+                      <button
+                        type="button"
+                        data-hover-item="true"
+                        onClick={() => handleCopyAction("prompt")}
+                        className="group relative z-10 flex items-center gap-2.5 w-full px-2.5 py-2 rounded-lg text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors text-left cursor-pointer"
+                      >
+                        <Sparkles className="h-4 w-4 text-[var(--accent-green)] shrink-0 group-hover:scale-110 transition-transform" />
+                        <span className="font-medium">Copy prompt</span>
+                      </button>
+                      <button
+                        type="button"
+                        data-hover-item="true"
+                        onClick={() => handleCopyAction("configured")}
+                        className="group relative z-10 flex items-center gap-2.5 w-full px-2.5 py-2 rounded-lg text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors text-left cursor-pointer"
+                      >
+                        <Code className="h-4 w-4 text-[var(--text-secondary)] shrink-0 group-hover:text-[var(--accent-green)] transition-colors" />
+                        <span className="font-medium">Copy configured code</span>
+                      </button>
+                      <button
+                        type="button"
+                        data-hover-item="true"
+                        onClick={() => handleCopyAction("source")}
+                        className="group relative z-10 flex items-center gap-2.5 w-full px-2.5 py-2 rounded-lg text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors text-left cursor-pointer"
+                      >
+                        <FileCode className="h-4 w-4 text-[var(--text-secondary)] shrink-0 group-hover:text-[var(--accent-green)] transition-colors" />
+                        <span className="font-medium">Copy component source</span>
+                      </button>
+                      <button
+                        type="button"
+                        data-hover-item="true"
+                        onClick={() => handleCopyAction("cli")}
+                        className="group relative z-10 flex items-center gap-2.5 w-full px-2.5 py-2 rounded-lg text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors text-left cursor-pointer"
+                      >
+                        <Terminal className="h-4 w-4 text-[var(--text-secondary)] shrink-0 group-hover:text-[var(--accent-green)] transition-colors" />
+                        <span className="font-medium">Copy install command</span>
+                      </button>
+                    </SlidingHighlightContainer>
+
+                    <div className="h-px bg-[var(--border)] my-1.5" />
+
+                    <div className="px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider text-[var(--text-muted)] font-semibold">
+                      Open in
+                    </div>
+                    <SlidingHighlightContainer
+                      className="space-y-0.5"
+                      pillClassName="bg-[var(--surface-secondary)]/90 border border-[var(--border)]/40 rounded-lg shadow-2xs"
+                    >
+                      <button
+                        type="button"
+                        data-hover-item="true"
+                        onClick={() => handleOpenIn("chatgpt")}
+                        className="group relative z-10 flex items-center gap-2.5 w-full px-2.5 py-2 rounded-lg text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors text-left cursor-pointer"
+                      >
+                        <OpenAILogo className="h-4 w-4 text-[var(--text-primary)] shrink-0 group-hover:scale-110 transition-transform" />
+                        <span className="font-medium">Open in ChatGPT</span>
+                      </button>
+                      <button
+                        type="button"
+                        data-hover-item="true"
+                        onClick={() => handleOpenIn("claude")}
+                        className="group relative z-10 flex items-center gap-2.5 w-full px-2.5 py-2 rounded-lg text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors text-left cursor-pointer"
+                      >
+                        <ClaudeLogo className="h-4 w-4 text-[#d97706] shrink-0 group-hover:scale-110 transition-transform" />
+                        <span className="font-medium">Open in Claude</span>
+                      </button>
+                      <button
+                        type="button"
+                        data-hover-item="true"
+                        onClick={() => handleOpenIn("v0")}
+                        className="group relative z-10 flex items-center gap-2.5 w-full px-2.5 py-2 rounded-lg text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors text-left cursor-pointer"
+                      >
+                        <V0Logo className="h-4 w-4 text-[var(--text-primary)] shrink-0 group-hover:scale-110 transition-transform" />
+                        <span className="font-medium">Open in v0</span>
+                      </button>
+                    </SlidingHighlightContainer>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => handleOpenIn("chatgpt")}
-                    className="flex items-center gap-2.5 w-full px-2.5 py-2 rounded-lg text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] transition-colors text-left cursor-pointer group"
-                  >
-                    <OpenAILogo className="h-4 w-4 text-[var(--text-primary)] shrink-0 group-hover:scale-110 transition-transform" />
-                    <span className="font-medium">Open in ChatGPT</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleOpenIn("claude")}
-                    className="flex items-center gap-2.5 w-full px-2.5 py-2 rounded-lg text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] transition-colors text-left cursor-pointer group"
-                  >
-                    <ClaudeLogo className="h-4 w-4 text-[#d97706] shrink-0 group-hover:scale-110 transition-transform" />
-                    <span className="font-medium">Open in Claude</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleOpenIn("v0")}
-                    className="flex items-center gap-2.5 w-full px-2.5 py-2 rounded-lg text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] transition-colors text-left cursor-pointer group"
-                  >
-                    <V0Logo className="h-4 w-4 text-[var(--text-primary)] shrink-0 group-hover:scale-110 transition-transform" />
-                    <span className="font-medium">Open in v0</span>
-                  </button>
-                </div>
-              )}
+                )}
             </div>
           </div>
         </div>

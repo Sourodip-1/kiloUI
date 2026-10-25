@@ -27,6 +27,95 @@ const PROPS_MAP = {
     { name: "description", type: "string", defaultValue: "undefined", description: "Optional description caption beneath the label." },
     { name: "disabled", type: "boolean", defaultValue: "false", description: "Disables toggle interaction." }
   ],
+  checkbox: [
+    { name: "checked", type: "boolean", defaultValue: "false", description: "Controlled checked state." },
+    { name: "defaultChecked", type: "boolean", defaultValue: "false", description: "Default initial checked state." },
+    { name: "onCheckedChange", type: "(checked: boolean) => void", description: "Callback fired when checked state changes." },
+    { name: "indeterminate", type: "boolean", defaultValue: "false", description: "Displays an indeterminate dash state." },
+    { name: "variant", type: "'default' | 'motion' | 'lineart' | 'strike' | 'card' | 'chip'", defaultValue: "'default'", description: "Visual and interaction animation aesthetic." },
+    { name: "size", type: "'sm' | 'default' | 'lg'", defaultValue: "'default'", description: "Dimensions of checkbox element." },
+    { name: "label", type: "React.ReactNode", description: "Primary text label next to the checkbox." },
+    { name: "description", type: "React.ReactNode", description: "Secondary helper context below the label." },
+    { name: "badge", type: "string", description: "Optional metadata badge tag." },
+    { name: "disabled", type: "boolean", defaultValue: "false", description: "Disables interaction and reduces opacity." },
+    { name: "error", type: "string", description: "Validation error message that tints border red." }
+  ],
+  "search-bar": [
+    { name: "placeholder", type: "string", defaultValue: "'Search components...'", description: "Placeholder text rendered inside the search input." },
+    { name: "value", type: "string", description: "Controlled search query string." },
+    { name: "defaultValue", type: "string", defaultValue: "''", description: "Initial search query in uncontrolled mode." },
+    { name: "onChange", type: "(value: string) => void", description: "Callback triggered when search query text changes." },
+    { name: "onSearch", type: "(query: string) => void", description: "Callback fired when user submits search or chooses a result." },
+    { name: "items", type: "SearchBarItem[]", description: "Array of searchable items with id, title, description, and category." },
+    { name: "onSelectResult", type: "(item: SearchBarItem) => void", description: "Callback invoked when a result item is selected." },
+    { name: "expanded", type: "boolean", description: "Controlled boolean flag for expanded state." },
+    { name: "defaultExpanded", type: "boolean", defaultValue: "false", description: "Whether the search panel begins in the expanded state." },
+    { name: "onExpandedChange", type: "(expanded: boolean) => void", description: "Callback fired when expanding or collapsing." },
+    { name: "variant", type: "'downward-expand' | 'circle-popout'", defaultValue: "'downward-expand'", description: "Visual presentation variant: 'downward-expand' (anchored pill with downward results expansion) or 'circle-popout' (circular search orb with pop-out pill extension)." },
+    { name: "disabled", type: "boolean", defaultValue: "false", description: "Disables interaction and reduces opacity." },
+    { name: "showShortcut", type: "boolean", defaultValue: "true", description: "Whether to display the keyboard shortcut hint (Cmd+K)." }
+  ],
+  "minimalist-login": [
+    { name: "variant", type: "'sharp-edges' | 'rounded-corners'", defaultValue: "'sharp-edges'", description: "Visual geometry variant: 'sharp-edges' for 0px corners or 'rounded-corners' for curved frames." },
+    { name: "borderRadius", type: "number", defaultValue: "20", description: "Radius in pixels applied to container cards and elements when in rounded-corners variant." },
+    { name: "sphereMotion", type: "boolean", defaultValue: "true", description: "Enables continuous 3D rotation and orbital physics on the particle sphere." },
+    { name: "rotationSpeed", type: "number", defaultValue: "1", description: "Rotation velocity multiplier for the 3D particle sphere." },
+    { name: "interactiveDots", type: "boolean", defaultValue: "true", description: "Enables interactive cursor tracking with dot bulge and radar rings." },
+    { name: "portalTitle", type: "string", defaultValue: "'// ACCESS PORTAL'", description: "Technical tag displayed in the top bar of the spatial portal card." },
+    { name: "portalSubtitle", type: "string", defaultValue: "'SPATIAL LOGIN'", description: "Sub-branding text adjacent to the animated audio equalizer." },
+    { name: "welcomeTitle", type: "string", defaultValue: "'WELCOME BACK'", description: "Uppercase subtitle on the sign-in form card." },
+    { name: "title", type: "string", defaultValue: "'Sign in'", description: "Primary heading on the sign-in form card." },
+    { name: "emailLabel", type: "string", defaultValue: "'EMAIL'", description: "Field label for the email address input." },
+    { name: "passwordLabel", type: "string", defaultValue: "'PASSWORD'", description: "Field label for the password input." },
+    { name: "submitLabel", type: "string", defaultValue: "'Sign in'", description: "Text content for the high-contrast sign-in button." },
+    { name: "forgotPasswordLabel", type: "string", defaultValue: "'Forgot password?'", description: "Text for the password recovery link." },
+    { name: "createAccountLabel", type: "string", defaultValue: "'Create account'", description: "Text for the registration action link." },
+    { name: "onSubmit", type: "(data: { email: string; password: string }) => void", description: "Callback invoked upon login form submission." },
+    { name: "onSignUp", type: "(data: { name: string; email: string; password: string }) => void", description: "Callback invoked upon sign-up form submission." }
+  ],
+  "prismatic-slats-bg": [
+    { name: "preset", type: "'Violet' | 'Cyan' | 'Sunset' | 'Emerald'", defaultValue: "'Violet'", description: "Color and lighting preset treatment." },
+    { name: "background", type: "string", defaultValue: "'#050505'", description: "Base dark background CSS color." },
+    { name: "primary", type: "string", defaultValue: "'#5227FF'", description: "Primary violet beam color hex." },
+    { name: "secondary", type: "string", defaultValue: "'#FF9FFC'", description: "Secondary magenta chromatic fringe hex." },
+    { name: "angle", type: "number", defaultValue: "28", description: "Angle in degrees of the diagonal fluted slats." },
+    { name: "flutes", type: "number", defaultValue: "8", description: "Number of parallel fluted slats." },
+    { name: "refraction", type: "number", defaultValue: "4.0", description: "Refraction dispersion strength across flutes." },
+    { name: "aberration", type: "number", defaultValue: "0.61", description: "Chromatic aberration spatial separation." },
+    { name: "softness", type: "number", defaultValue: "0.50", description: "Falloff softness of the refracted light beam." },
+    { name: "wave", type: "number", defaultValue: "0.06", description: "Wave undulation amplitude." },
+    { name: "waveFrequency", type: "number", defaultValue: "1.5", description: "Frequency of wave undulation." },
+    { name: "drift", type: "number", defaultValue: "0.00", description: "Autonomous light sweep drift speed." },
+    { name: "highlight", type: "number", defaultValue: "0.12", description: "Specular bevel edge highlight intensity." },
+    { name: "highlightSoftness", type: "number", defaultValue: "0.30", description: "Softness of specular rim highlights." },
+    { name: "lightAngle", type: "number", defaultValue: "-90", description: "Angular direction of the light beam in degrees." },
+    { name: "radius", type: "number", defaultValue: "6.5", description: "Radius scale multiplier of the light field." },
+    { name: "momentum", type: "number", defaultValue: "13", description: "Physics inertia of cursor light tracking." },
+    { name: "swirl", type: "number", defaultValue: "0", description: "Swirl distortion factor." },
+    { name: "intensity", type: "number", defaultValue: "1.00", description: "Overall illumination intensity." },
+    { name: "trail", type: "number", defaultValue: "1.00", description: "Trailing persistence of the light beam." },
+    { name: "texture", type: "number", defaultValue: "0.60", description: "Surface texture roughness." },
+    { name: "grain", type: "number", defaultValue: "0.050", description: "Film grain opacity overlay." },
+    { name: "speed", type: "number", defaultValue: "1.00", description: "Animation time progression speed." },
+    { name: "interactive", type: "boolean", defaultValue: "true", description: "Whether slats react to pointer movement." },
+    { name: "paused", type: "boolean", defaultValue: "false", description: "Pauses all time-based animations." },
+    { name: "autoplay", type: "boolean", defaultValue: "false", description: "Enables continuous automatic light sweep across slats." }
+  ],
+  "notched-navbar": [
+    { name: "variant", type: "'default' | 'down' | 'bottom' | 'left' | 'right' | 'compact' | 'deep-notch' | 'dark-slate'", defaultValue: "'default'", description: "Visual variant and notch position preset (default/top, down, left, right)." },
+    { name: "position", type: "'top' | 'down' | 'bottom' | 'left' | 'right'", defaultValue: "'top'", description: "Explicit placement of the notch cutout along the frame edge." },
+    { name: "notchWidth", type: "number", defaultValue: "540", description: "Width or span in pixels of the recessed notch opening (540 horizontal, 280 vertical)." },
+    { name: "notchHeight", type: "number", defaultValue: "42", description: "Vertical depth or inset in pixels of the notch cutout (42 horizontal, 54 vertical)." },
+    { name: "filletWidth", type: "number", defaultValue: "24", description: "Span of the continuous cubic bezier S-curve fillet." },
+    { name: "borderRadius", type: "number", defaultValue: "14", description: "Corner radius of the framed canvas." },
+    { name: "whiteBoxPadding", type: "number", defaultValue: "8", description: "Inset padding around the dark frame exposing the backdrop." },
+    { name: "frameBg", type: "string", defaultValue: "'#222326'", description: "Background color of the dark framed canvas." },
+    { name: "backdropBg", type: "string", defaultValue: "'#ffffff'", description: "Background color of the container backdrop visible in the notch." },
+    { name: "links", type: "NotchedNavbarLink[]", description: "Navigation links rendered in the notch cutout area." },
+    { name: "activeLink", type: "string", description: "Controlled active tab identifier." },
+    { name: "onLinkClick", type: "(id: string, link: NotchedNavbarLink) => void", description: "Callback triggered when a tab is selected." },
+    { name: "children", type: "React.ReactNode", description: "Content rendered inside the dark canvas below/beside the notch." }
+  ],
   dialog: [
     { name: "open", type: "boolean", defaultValue: "undefined", description: "Controlled open state of the modal dialog." },
     { name: "onOpenChange", type: "(open: boolean) => void", defaultValue: "undefined", description: "Callback invoked when modal opens or closes." },
@@ -43,6 +132,8 @@ const PROPS_MAP = {
     { name: "children", type: "React.ReactNode", required: true, description: "CardHeader, CardTitle, CardContent, CardFooter." }
   ],
   tabs: [
+    { name: "variant", type: "'default' | 'slide' | 'liquid-pill' | 'island' | 'minimal'", defaultValue: "'default'", description: "Visual navigation architecture and indicator animation style." },
+    { name: "pillStyle", type: "'liquid-glow' | 'solid' | 'glass' | 'accent'", defaultValue: "'liquid-glow'", description: "Color and glass treatment for liquid-pill and island variants." },
     { name: "defaultValue", type: "string", defaultValue: "undefined", description: "Default active tab for uncontrolled usage." },
     { name: "value", type: "string", defaultValue: "undefined", description: "Controlled active tab key." },
     { name: "onValueChange", type: "(value: string) => void", defaultValue: "undefined", description: "Event fired on tab selection change." },
@@ -63,6 +154,7 @@ const PROPS_MAP = {
     { name: "chartData", type: "number[]", defaultValue: "undefined", description: "Array of numeric values rendered as an SVG sparkline." }
   ],
   sidebar: [
+    { name: "variant", type: "'scrollable-categories' | 'default'", defaultValue: "'scrollable-categories'", description: "Controls whether categories scroll independently while top nav stays fixed ('scrollable-categories') or entire sidebar scrolls together ('default')." },
     { name: "collapsed", type: "boolean", defaultValue: "false", description: "Controls whether the sidebar is collapsed (64px) or expanded (256px)." },
     { name: "onCollapsedChange", type: "(collapsed: boolean) => void", defaultValue: "undefined", description: "Callback fired when the user toggles the sidebar (also supports ⌘B)." },
     { name: "mobileOpen", type: "boolean", defaultValue: "false", description: "Controls visibility of the mobile overlay navigation drawer." },
@@ -70,6 +162,114 @@ const PROPS_MAP = {
     { name: "activeComponent", type: "string", defaultValue: "undefined", description: "Name of the component currently active in documentation." },
     { name: "activeCategory", type: "string", defaultValue: "undefined", description: "Category currently active or filtered." },
     { name: "theme", type: "'dark' | 'light' | 'system'", defaultValue: "'dark'", description: "Controls logo and icon theme rendering." }
+  ],
+  "expanding-card": [
+    { name: "title", type: "string", defaultValue: "'Components'", description: "Header title displayed at the bottom of the card." },
+    { name: "subtitle", type: "string", defaultValue: "'Hover to reveal full showcase view'", description: "Secondary description text." },
+    { name: "badge", type: "string", defaultValue: "undefined", description: "Optional pill badge in the card title." },
+    { name: "forcedHover", type: "boolean", defaultValue: "false", description: "Forces the expanded full 4-card state without requiring user cursor hover." },
+    { name: "images", type: "ExpandingCardImage[]", defaultValue: "DEFAULT_IMAGES", description: "Array of 4 image objects with src, alt, title, and tags." }
+  ],
+  "blurred-carousel": [
+    { name: "title", type: "string", defaultValue: "'Featured Templates'", description: "Section title displayed above the carousel." },
+    { name: "subtitle", type: "string", defaultValue: "undefined", description: "Optional subtitle description." },
+    { name: "autoPlay", type: "boolean", defaultValue: "false", description: "Enables automated periodic sliding between cards." },
+    { name: "intervalMs", type: "number", defaultValue: "4500", description: "Interval in milliseconds between automated slides." },
+    { name: "items", type: "CarouselItem[]", defaultValue: "DEFAULT_CAROUSEL_ITEMS", description: "List of slide cards containing cover image, title, and stats." }
+  ],
+  "concave-carousel": [
+    { name: "preset", type: "'Rotunda' | 'Tunnel' | 'Flat' | 'Panoramic' | 'Convex'", defaultValue: "'Rotunda'", description: "Geometry preset shaping the 3D curve (including forward-bending Convex)." },
+    { name: "autoplay", type: "'Drift' | 'None' | 'Step'", defaultValue: "'Drift'", description: "Autonomous motion behavior: continuous fluid drift or timed discrete stepping." },
+    { name: "background", type: "string", defaultValue: "'#0A0A0A'", description: "Background canvas CSS color." },
+    { name: "aspect", type: "number", defaultValue: "1.25", description: "Aspect ratio width/height of the carousel cards." },
+    { name: "size", type: "number", defaultValue: "0.46", description: "Scale multiplier factor governing card dimensions." },
+    { name: "curvature", type: "number", defaultValue: "0.72", description: "Depth of the cylindrical curve arc (positive for concave, negative for forward-bending convex)." },
+    { name: "distance", type: "number", defaultValue: "4.0", description: "3D camera perspective distance factor." },
+    { name: "tilt", type: "number", defaultValue: "0.0", description: "X-axis angular pitch tilt in degrees." },
+    { name: "gap", type: "number", defaultValue: "16", description: "Spacing in pixels between adjacent cards." },
+    { name: "radius", type: "number", defaultValue: "14", description: "Border radius in pixels applied to cards." },
+    { name: "reflection", type: "number", defaultValue: "0.06", description: "Opacity factor of the floor mirror reflection." },
+    { name: "dim", type: "number", defaultValue: "0.35", description: "Distance falloff opacity factor for peripheral cards." },
+    { name: "speed", type: "number", defaultValue: "0.16", description: "Continuous drift speed multiplier." },
+    { name: "interval", type: "number", defaultValue: "4.0", description: "Step interval in seconds when autoplay is set to Step." },
+    { name: "inertia", type: "number", defaultValue: "0.50", description: "Physics momentum and friction dampening." },
+    { name: "snap", type: "boolean", defaultValue: "false", description: "Enables magnetic snapping to nearest card." },
+    { name: "wheel", type: "boolean", defaultValue: "true", description: "Enables trackpad and mouse wheel scrolling along the 3D arc." },
+    { name: "draggable", type: "boolean", defaultValue: "true", description: "Enables direct touch and pointer dragging." },
+    { name: "pauseOnHover", type: "boolean", defaultValue: "true", description: "Pauses autoplay drift while pointer is over carousel." },
+    { name: "captions", type: "boolean", defaultValue: "true", description: "Displays title and subtitle captions under active center card." },
+    { name: "controls", type: "boolean", defaultValue: "true", description: "Displays minimal pagination controls." },
+    { name: "items", type: "ConcaveCarouselItem[]", defaultValue: "DEFAULT_CONCAVE_ITEMS", description: "Array of items with title, subtitle, and gradient or image." }
+  ],
+  "content-slider": [
+    { name: "title", type: "string", defaultValue: "'On this page'", description: "Table of contents header label." },
+    { name: "activeId", type: "string", defaultValue: "undefined", description: "Controlled active section identifier." },
+    { name: "rubberBandEffect", type: "boolean", defaultValue: "true", description: "Enables cubic-bezier rubber band overshoot animation on sliders and text." },
+    { name: "items", type: "TOCItem[]", defaultValue: "DEFAULT_TOC_ITEMS", description: "Hierarchical array of sections and sub-sections." },
+    { name: "onSelect", type: "(id: string) => void", defaultValue: "undefined", description: "Callback triggered when a section is clicked." }
+  ],
+  footer: [
+    { name: "brandText", type: "string", defaultValue: "'kilo/ui'", description: "Large brand signature typography overflowing at the bottom." },
+    { name: "tagline", type: "string", defaultValue: "undefined", description: "Sub-headline description positioned under the brand badge." },
+    { name: "blurBlend", type: "boolean", defaultValue: "true", description: "Controls whether the soft frosted-glass gradient blur blend is active at the bottom." },
+    { name: "blurHeight", type: "'sm' | 'md' | 'lg'", defaultValue: "'md'", description: "Height extent of the feathered bottom blur gradient." },
+    { name: "showNewsletter", type: "boolean", defaultValue: "true", description: "Renders the interactive email subscription form." },
+    { name: "columns", type: "FooterColumn[]", defaultValue: "DEFAULT_COLUMNS", description: "Hierarchical columns of navigation links." }
+  ],
+  "scroll-marquee": [
+    { name: "text", type: "string", defaultValue: "undefined", description: "Primary continuous headline text." },
+    { name: "textSecondary", type: "string", defaultValue: "undefined", description: "Secondary text used for dual-scroll variant." },
+    { name: "variant", type: "'scroll-left' | 'scroll-right' | 'dual-scroll' | 'velocity-skew'", defaultValue: "'scroll-left'", description: "Directional and kinetic deformation style on scroll." },
+    { name: "textColor", type: "string", defaultValue: "undefined", description: "Custom CSS text color or hex code for the marquee typography." },
+    { name: "blurColor", type: "string", defaultValue: "'mask'", description: "Color of the edge gradient fade, or 'mask' for background-matching transparent fade." },
+    { name: "speed", type: "number", defaultValue: "1.2", description: "Scroll multiplier factor governing translation speed." },
+    { name: "baseVelocity", type: "number", defaultValue: "0.4", description: "Idle continuous cruise speed when not scrolling." },
+    { name: "skewIntensity", type: "number", defaultValue: "6", description: "Maximum angular skew deformation during fast scroll." },
+    { name: "outlineText", type: "boolean", defaultValue: "false", description: "Renders outlined stroke typography instead of solid fill." },
+    { name: "interactiveWheel", type: "boolean", defaultValue: "true", description: "Enables direct scroll wheel interaction over the marquee container." }
+  ],
+  "directional-marquee": [
+    { name: "track1Text", type: "string", defaultValue: "undefined", description: "Text content for top continuous track." },
+    { name: "track2Text", type: "string", defaultValue: "undefined", description: "Text content for bottom continuous track." },
+    { name: "manualDirection", type: "'up' | 'down' | 'auto'", defaultValue: "'auto'", description: "Direction override: down (T1 ➔ / T2 ⬅) or up (T1 ⬅ / T2 ➔), or auto scroll detection." },
+    { name: "textColor", type: "string", defaultValue: "undefined", description: "Custom CSS text color or hex code for the marquee typography." },
+    { name: "blurColor", type: "string", defaultValue: "'mask'", description: "Color of the edge gradient fade, or 'mask' for background-matching transparent fade." },
+    { name: "baseSpeed", type: "number", defaultValue: "1.2", description: "Base continuous revolving velocity." },
+    { name: "scrollMultiplier", type: "number", defaultValue: "2.4", description: "Velocity acceleration factor during page scroll." },
+    { name: "showHud", type: "boolean", defaultValue: "true", description: "Displays directional compass HUD with live scroll indicator." },
+    { name: "interactiveWheel", type: "boolean", defaultValue: "true", description: "Enables direct scroll wheel interaction over the marquee container." }
+  ],
+  "kinetic-text": [
+    { name: "text", type: "string", defaultValue: "'KILO / MOTION UI'", description: "The string content rendered with kinetic physics." },
+    { name: "variant", type: "'rubber-band' | 'wave-ripple' | 'scramble-decode' | 'magnetic-tilt'", defaultValue: "'rubber-band'", description: "Character motion physics style." },
+    { name: "as", type: "'h1' | 'h2' | 'h3' | 'p' | 'span' | 'div'", defaultValue: "'div'", description: "Semantic HTML tag used for text wrapper." }
+  ],
+  "grainy-grid-shader": [
+    { name: "variant", type: "'rough-matte' | 'tactile-kraft' | 'cyber-mesh'", defaultValue: "'rough-matte'", description: "Visual material style and color palette." },
+    { name: "grain", type: "number", defaultValue: "0.22", description: "Procedural film grain and noise intensity (0.0 to 0.6)." },
+    { name: "roughness", type: "number", defaultValue: "1.0", description: "Tactile noise grit scale and frequency." },
+    { name: "columns", type: "number", defaultValue: "6", description: "Number of 2x2 grid modules along horizontal axis." },
+    { name: "rows", type: "number", defaultValue: "4", description: "Number of 2x2 grid modules along vertical axis." },
+    { name: "cellSize", type: "number", defaultValue: "52", description: "Dimensions in pixels of each 2x2 morphing unit." },
+    { name: "speed", type: "number", defaultValue: "1.0", description: "Rotation and wave animation velocity multiplier." },
+    { name: "influenceRadius", type: "number", defaultValue: "140", description: "Cursor interaction reach in pixels." },
+    { name: "autoWave", type: "boolean", defaultValue: "true", description: "Enables continuous ambient traveling wave morphing." },
+    { name: "interactive", type: "boolean", defaultValue: "true", description: "Enables cursor tracking and click shockwave ripples." },
+    { name: "showBoxes", type: "boolean", defaultValue: "true", description: "Whether to render 2x2 grid boxes (false for pure grainy backdrop)." },
+    { name: "children", type: "React.ReactNode", description: "Optional content rendered directly on the shader canvas." }
+  ],
+  "grainy-horizon-shader": [
+    { name: "variant", type: "'ultraviolet' | 'aurora-green' | 'solar-amber' | 'cyber-cyan' | 'monochrome'", defaultValue: "'ultraviolet'", description: "Curated ambient color palette and radiant chromatic glow." },
+    { name: "grain", type: "number", defaultValue: "0.26", description: "Procedural noise & analog film grain density (0.0 to 0.6)." },
+    { name: "roughness", type: "number", defaultValue: "1.2", description: "Tactile noise roughness and grit scale." },
+    { name: "glowIntensity", type: "number", defaultValue: "1.2", description: "Brightness multiplier of the radiant horizon backlighting." },
+    { name: "curvature", type: "number", defaultValue: "0.52", description: "Depth of the dark eclipse horizon curve." },
+    { name: "glowSpread", type: "number", defaultValue: "1.1", description: "Vertical reach and spread of the radiant backlight." },
+    { name: "speed", type: "number", defaultValue: "0.8", description: "Wave undulation and breathing rhythm velocity." },
+    { name: "drift", type: "number", defaultValue: "0.35", description: "Lateral ambient horizon swaying speed." },
+    { name: "interactive", type: "boolean", defaultValue: "true", description: "Whether cursor proximity attracts the light and tilts the horizon." },
+    { name: "inverted", type: "boolean", defaultValue: "false", description: "Inverts curve orientation (crescent dome vs bowl)." },
+    { name: "children", type: "React.ReactNode", description: "Optional content rendered directly on the shader canvas." }
   ]
 };
 
@@ -96,6 +296,98 @@ export function InputDemo() {
       startIcon={<Search className="h-4 w-4" />}
       helperText="Specify relative path to file"
     />
+  );
+}`,
+  checkbox: `import { Checkbox } from "@/components/ui/checkbox";
+import * as React from "react";
+
+export function CheckboxDemo() {
+  const [checked, setChecked] = React.useState(true);
+
+  return (
+    <div className="flex flex-col gap-4">
+      {/* Physics bounce motion */}
+      <Checkbox
+        variant="motion"
+        checked={checked}
+        onCheckedChange={setChecked}
+        label="Spring Motion Checkbox"
+        description="Dynamic bounce with micro-spring easing"
+        badge="Motion"
+      />
+
+      {/* Blueprint CAD lineart tick animation */}
+      <Checkbox
+        variant="lineart"
+        defaultChecked
+        label="CAD Lineart Checkbox"
+        description="Calculated SVG path tracing animation"
+        badge="Lineart"
+      />
+    </div>
+  );
+}`,
+  "search-bar": `import { SearchBar } from "@/registry/ui/search-bar";
+import * as React from "react";
+
+export function SearchBarDemo() {
+  const [query, setQuery] = React.useState("");
+
+  return (
+    <div className="flex items-center justify-center p-8">
+      <SearchBar
+        placeholder="Search components..."
+        variant="downward-expand"
+        value={query}
+        onChange={setQuery}
+        onSelectResult={(item) => console.log("Selected:", item)}
+      />
+    </div>
+  );
+}`,
+  "minimalist-login": `import { MinimalistLogin } from "@/registry/ui/minimalist-login";
+
+export function MinimalistLoginDemo() {
+  return (
+    <MinimalistLogin
+      variant="sharp-edges"
+      onSubmit={(data) => console.log("Login submitted:", data)}
+    />
+  );
+}`,
+  "notched-navbar": `import { NotchedNavbar } from "@/components/ui/notched-navbar";
+import * as React from "react";
+
+export function NotchedNavbarDemo() {
+  const [activeTab, setActiveTab] = React.useState("home");
+
+  return (
+    <NotchedNavbar
+      activeLink={activeTab}
+      onLinkClick={(id) => setActiveTab(id)}
+      variant="default"
+    >
+      <div className="p-6 space-y-4">
+        <div className="flex items-center justify-between border-b border-white/10 pb-3">
+          <h3 className="text-base font-semibold text-white">Infrastructure Telemetry</h3>
+          <span className="text-[11px] font-mono text-emerald-400">Operational</span>
+        </div>
+        <div className="grid grid-cols-3 gap-3">
+          <div className="p-3 rounded-lg bg-white/5 border border-white/10">
+            <span className="text-[10px] text-neutral-400 uppercase">Requests</span>
+            <div className="text-lg font-bold text-white">1.4M</div>
+          </div>
+          <div className="p-3 rounded-lg bg-white/5 border border-white/10">
+            <span className="text-[10px] text-neutral-400 uppercase">Latency</span>
+            <div className="text-lg font-bold text-white">24ms</div>
+          </div>
+          <div className="p-3 rounded-lg bg-white/5 border border-white/10">
+            <span className="text-[10px] text-neutral-400 uppercase">Uptime</span>
+            <div className="text-lg font-bold text-white">99.9%</div>
+          </div>
+        </div>
+      </div>
+    </NotchedNavbar>
   );
 }`,
   switch: `import { Switch } from "@/components/ui/switch";
@@ -191,20 +483,24 @@ export function CardDemo() {
 
 export function TabsDemo() {
   return (
-    <Tabs defaultValue="overview">
+    <Tabs defaultValue="overview" variant="liquid-pill" pillStyle="liquid-glow">
       <TabsList>
         <TabsTrigger value="overview">Overview</TabsTrigger>
         <TabsTrigger value="metrics">Metrics</TabsTrigger>
-        <TabsTrigger value="logs">Logs</TabsTrigger>
+        <TabsTrigger value="logs" badge="Live">Logs</TabsTrigger>
+        <TabsTrigger value="settings">Settings</TabsTrigger>
       </TabsList>
       <TabsContent value="overview">
-        <p className="text-xs p-3 text-[var(--text-secondary)]">Cluster healthy</p>
+        <p className="text-xs p-4 text-[var(--text-secondary)]">Cluster healthy and operational across 8 zones.</p>
       </TabsContent>
       <TabsContent value="metrics">
-        <p className="text-xs p-3 text-[var(--text-secondary)]">CPU: 14%</p>
+        <p className="text-xs p-4 text-[var(--text-secondary)]">CPU: 12% • Memory: 1.4GB / 4GB</p>
       </TabsContent>
       <TabsContent value="logs">
-        <p className="text-xs p-3 text-[var(--text-secondary)]">Listening on 0.0.0.0:3000</p>
+        <p className="text-xs p-4 font-mono text-[var(--text-muted)]">[14:22:04] Ready on 0.0.0.0:3000</p>
+      </TabsContent>
+      <TabsContent value="settings">
+        <p className="text-xs p-4 text-[var(--text-secondary)]">Workspace environment settings.</p>
       </TabsContent>
     </Tabs>
   );
@@ -266,6 +562,150 @@ export function SidebarDemo() {
       </div>
     </div>
   );
+}`,
+  "expanding-card": `import { ExpandingCard } from "@/components/ui/expanding-card";
+
+export function ExpandingCardDemo() {
+  return (
+    <ExpandingCard
+      title="Components"
+      subtitle="Hover to reveal full showcase view"
+      badge="Featured"
+    />
+  );
+}`,
+  "blurred-carousel": `import { BlurredCarousel } from "@/components/ui/blurred-carousel";
+
+export function BlurredCarouselDemo() {
+  return (
+    <BlurredCarousel
+      title="Featured Templates"
+      subtitle="Explore curated templates with smooth edge blur"
+    />
+  );
+}`,
+  "concave-carousel": `import { ConcaveCarousel } from "@/components/ui/concave-carousel";
+
+export function ConcaveCarouselDemo() {
+  return (
+    <ConcaveCarousel
+      preset="Rotunda"
+      curvature={0.72}
+      aspect={1.25}
+      wheel={true}
+      draggable={true}
+      captions={true}
+    />
+  );
+}`,
+  "content-slider": `import { ContentSlider } from "@/components/ui/content-slider";
+
+export function ContentSliderDemo() {
+  return (
+    <ContentSlider
+      title="On this page"
+    />
+  );
+}`,
+  footer: `import { Footer } from "@/components/ui/footer";
+
+export function FooterDemo() {
+  return (
+    <Footer
+      brandText="kilo/ui"
+      blurBlend={true}
+    />
+  );
+}`,
+  "scroll-marquee": `import { ScrollMarquee } from "@/components/ui/scroll-marquee";
+
+export function ScrollMarqueeDemo() {
+  return (
+    <ScrollMarquee
+      text="HIGH PERFORMANCE • ZERO DEPENDENCY • MINIMAL"
+      variant="scroll-left"
+    />
+  );
+}`,
+  "directional-marquee": `import { DirectionalMarquee } from "@/components/ui/directional-marquee";
+
+export function DirectionalMarqueeDemo() {
+  return (
+    <DirectionalMarquee
+      manualDirection="auto"
+      showHud={true}
+    />
+  );
+}`,
+  "kinetic-text": `import { KineticText } from "@/components/ui/kinetic-text";
+
+export function KineticTextDemo() {
+  return (
+    <KineticText
+      text="KILO / MOTION UI"
+      variant="rubber-band"
+    />
+  );
+}`,
+  "prismatic-slats-bg": `import { PrismaticSlatsBg } from "@/registry/ui/prismatic-slats-bg";
+
+export function PrismaticSlatsBgDemo() {
+  return (
+    <div style={{ width: "100%", height: 420, borderRadius: 8, overflow: "hidden" }}>
+      <PrismaticSlatsBg
+        slatCount={14}
+        slatAngle={35}
+        prismIntensity={0.7}
+        interactive={true}
+      >
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%" }}>
+          <p style={{ color: "white", fontFamily: "monospace", fontSize: 13, opacity: 0.6 }}>Move cursor to interact</p>
+        </div>
+      </PrismaticSlatsBg>
+    </div>
+  );
+}`,
+  "grainy-grid-shader": `import { GrainyGridShader } from "@/registry/ui/grainy-grid-shader";
+
+export function GrainyGridShaderDemo() {
+  return (
+    <div style={{ width: "100%", height: 420, borderRadius: 12, overflow: "hidden" }}>
+      <GrainyGridShader
+        variant="rough-matte"
+        grain={0.25}
+        roughness={1.0}
+        columns={6}
+        rows={4}
+        interactive={true}
+      >
+        <div style={{ textAlign: "center", color: "white" }}>
+          <h2 style={{ fontSize: 28, fontWeight: 500, letterSpacing: "-0.02em" }}>Rough Grid Shader</h2>
+          <p style={{ fontSize: 13, opacity: 0.6, marginTop: 4 }}>Tactile noise • 2x2 App Grid Spin to X</p>
+        </div>
+      </GrainyGridShader>
+    </div>
+  );
+}`,
+  "grainy-horizon-shader": `import { GrainyHorizonShader } from "@/registry/ui/grainy-horizon-shader";
+
+export function GrainyHorizonShaderDemo() {
+  return (
+    <div style={{ width: "100%", height: 440, borderRadius: 16, overflow: "hidden" }}>
+      <GrainyHorizonShader
+        variant="ultraviolet"
+        grain={0.26}
+        roughness={1.2}
+        glowIntensity={1.2}
+        curvature={0.52}
+        interactive={true}
+      >
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", gap: 12 }}>
+          <h2 style={{ color: "white", fontSize: 26, fontWeight: 600, letterSpacing: "-0.02em" }}>Grainy Horizon Shader</h2>
+          <p style={{ color: "rgba(255,255,255,0.6)", fontSize: 13, fontFamily: "monospace" }}>Tactile analog film grain • Luminous horizon glow</p>
+        </div>
+      </GrainyHorizonShader>
+    </div>
+  );
 }`
 };
 
@@ -290,6 +730,30 @@ const METADATA_MAP = {
     title: "Switch",
     description: "Accessible toggle switch with green accent active state, labels, and description.",
     dependencies: ["clsx", "tailwind-merge"],
+    registryDependencies: ["utils"]
+  },
+  checkbox: {
+    category: "Forms & Inputs",
+    title: "Checkbox",
+    description: "Multi-style accessible checkbox featuring physics-driven motion bounce, blueprint CAD lineart path drawing, strikethrough tasks, selectable card tiles, and interactive chips.",
+    variants: ["default", "motion", "lineart", "strike", "card", "chip"],
+    dependencies: ["clsx", "tailwind-merge"],
+    registryDependencies: ["utils"]
+  },
+  "search-bar": {
+    category: "Forms & Inputs",
+    title: "Search Bars",
+    description: "Refractive optical liquid-glass search bar and clean minimal SaaS search components. Features 4 variants: downward-expand (liquid glass pill expanding downwards into a command palette), circle-popout (liquid glass orb extending into a pill), minimal-pill (Linear-style minimal SaaS pill), and minimal-expand (compact minimal SaaS expand trigger).",
+    variants: ["downward-expand", "circle-popout", "minimal-pill", "minimal-expand"],
+    dependencies: ["clsx", "tailwind-merge", "lucide-react"],
+    registryDependencies: ["utils"]
+  },
+  "minimalist-login": {
+    category: "Forms & Inputs",
+    title: "Minimalist Login",
+    description: "Spatial minimalist login form featuring a high-performance interactive 3D particle wireframe sphere with real-time motion and cursor hover radar reaction, minimal underline inputs, and customizable sharp or rounded corner geometry.",
+    variants: ["sharp-edges", "rounded-corners"],
+    dependencies: ["clsx", "tailwind-merge", "lucide-react"],
     registryDependencies: ["utils"]
   },
   dialog: {
@@ -317,7 +781,16 @@ const METADATA_MAP = {
   tabs: {
     category: "Navigation",
     title: "Tabs",
-    description: "Segmented tab controls with keyboard arrow navigation and responsive layout.",
+    description: "Segmented tab controls supporting default, slide, liquid-pill, island, and minimal styles with subpixel indicator physics.",
+    variants: ["default", "slide", "liquid-pill", "island", "minimal"],
+    dependencies: ["clsx", "tailwind-merge"],
+    registryDependencies: ["utils"]
+  },
+  "notched-navbar": {
+    category: "Navigation",
+    title: "Notched Navbar",
+    description: "Signature parametric S-curve notched navigation frame with contrast backdrop, continuous bezier fillets, and top, down, left, and right notch positions.",
+    variants: ["default", "down", "left", "right"],
     dependencies: ["clsx", "tailwind-merge"],
     registryDependencies: ["utils"]
   },
@@ -338,9 +811,92 @@ const METADATA_MAP = {
   sidebar: {
     category: "Navigation",
     title: "Sidebar",
-    description: "Production-grade navigation sidebar with collapse physics (⌘B), white-by-default icons, and mobile drawer.",
+    description: "Production-grade navigation sidebar with collapse physics (⌘B), white-by-default icons, scrollable categories variant, and mobile drawer.",
+    variants: ["scrollable-categories", "default"],
     dependencies: ["clsx", "tailwind-merge", "lucide-react"],
     registryDependencies: ["utils", "vector-icons"]
+  },
+  "expanding-card": {
+    category: "Media & Layout",
+    title: "Expanding Card",
+    description: "Interactive 4-image showcase card where hovering smoothly expands the primary image to acquire the entire 4-card space with an animated bottom-right action arrow.",
+    dependencies: ["clsx", "tailwind-merge", "lucide-react"],
+    registryDependencies: ["utils"]
+  },
+  "blurred-carousel": {
+    category: "Media & Layout",
+    title: "Blurred Edge Carousel",
+    description: "Hardware-accelerated horizontal template carousel with frosted glass blurred edge masks, minimal navigation controls, and 0.6s cubic-bezier sliding physics.",
+    dependencies: ["clsx", "tailwind-merge", "lucide-react"],
+    registryDependencies: ["utils"]
+  },
+  "concave-carousel": {
+    category: "Media & Layout",
+    title: "Concave Carousel",
+    description: "Hardware-accelerated 3D cylindrical carousel featuring smooth scroll-wheel and drag inertia, floor mirror reflections, dynamic active captions, and rotunda geometry with positive (concave) and negative (forward-bending convex) curvature.",
+    variants: ["Rotunda", "Tunnel", "Flat", "Panoramic", "Convex"],
+    dependencies: ["clsx", "tailwind-merge", "lucide-react"],
+    registryDependencies: ["utils"]
+  },
+  "content-slider": {
+    category: "Navigation",
+    title: "TOC Content Slider",
+    description: "Table of contents content slider with active section indicator rail, cursor-following hover slider with rubber band physics, and text translation on hover.",
+    dependencies: ["clsx", "tailwind-merge", "lucide-react"],
+    registryDependencies: ["utils"]
+  },
+  footer: {
+    category: "Media & Layout",
+    title: "Overflown Blended Footer",
+    description: "Production-ready footer component with huge overflown brand typography and feathered frosted-glass bottom blur blend that can be toggled or removed.",
+    dependencies: ["clsx", "tailwind-merge", "lucide-react"],
+    registryDependencies: ["utils"]
+  },
+  "scroll-marquee": {
+    category: "Media & Layout",
+    title: "Scroll Marquee",
+    description: "High-performance scroll-driven marquee component that translates text horizontally based on scroll speed, with left, right, dual, and velocity skew variants.",
+    variants: ["scroll-left", "scroll-right", "dual-scroll", "velocity-skew"],
+    dependencies: ["clsx", "tailwind-merge"],
+    registryDependencies: ["utils"]
+  },
+  "directional-marquee": {
+    category: "Media & Layout",
+    title: "Directional Marquee",
+    description: "Continuous dual-track revolving marquee that dynamically reverses slider directions when scrolling up versus scrolling down, with inertial velocity physics.",
+    dependencies: ["clsx", "tailwind-merge", "lucide-react"],
+    registryDependencies: ["utils"]
+  },
+  "kinetic-text": {
+    category: "Media & Layout",
+    title: "Kinetic Motion Text",
+    description: "Interactive text and motion UI component featuring character spring mechanics, rubber band bounce, wave ripple, magnetic tilt, and cyberpunk scramble decoding.",
+    variants: ["rubber-band", "wave-ripple", "scramble-decode", "magnetic-tilt"],
+    dependencies: ["clsx", "tailwind-merge"],
+    registryDependencies: ["utils"]
+  },
+  "prismatic-slats-bg": {
+    category: "Backgrounds & Shaders",
+    title: "Reactive Slates",
+    description: "Cursor-reactive prismatic diagonal slats background rendered on a high-performance Canvas. Features smooth colour-shifting iridescent slat bands that respond to cursor proximity with glow, specular highlights, ambient drift, and a cinematic radial vignette.",
+    dependencies: ["clsx", "tailwind-merge"],
+    registryDependencies: ["utils"]
+  },
+  "grainy-grid-shader": {
+    category: "Backgrounds & Shaders",
+    title: "Grainy Grid Shader",
+    description: "Cursor-reactive 2x2 App Grid matrix that spins 90° and morphs into geometric crosshairs. Textured with procedural turbulent noise and analog film grain for a rough, tactile matte finish.",
+    variants: ["rough-matte", "tactile-kraft", "cyber-mesh"],
+    dependencies: ["clsx", "tailwind-merge"],
+    registryDependencies: ["utils"]
+  },
+  "grainy-horizon-shader": {
+    category: "Backgrounds & Shaders",
+    title: "Grainy Horizon Shader",
+    description: "Cinematic curved dark eclipse horizon shader illuminated by deep radiant chromatic glow and enveloped in tactile analog film grain and procedural noise.",
+    variants: ["ultraviolet", "aurora-green", "solar-amber", "cyber-cyan", "monochrome"],
+    dependencies: ["clsx", "tailwind-merge"],
+    registryDependencies: ["utils"]
   }
 };
 
@@ -385,7 +941,7 @@ const outContent = `export interface PropDefinition {
 export interface RegistryItem {
   name: string;
   type?: "components:ui" | "components:lib";
-  category: "Actions" | "Forms & Inputs" | "Overlays" | "Data Display" | "Navigation" | "Media & Layout";
+  category: "Actions" | "Forms & Inputs" | "Overlays" | "Data Display" | "Navigation" | "Media & Layout" | "Backgrounds & Shaders";
   title: string;
   description: string;
   variants?: string[];
@@ -405,4 +961,4 @@ export const REGISTRY_DATA: Record<string, RegistryItem> = ${JSON.stringify(item
 `;
 
 fs.writeFileSync(path.join(__dirname, "../registry/registry-data.ts"), outContent, "utf-8");
-console.log("Successfully synchronized registry-data.ts with all 11 components and exact source code!");
+console.log(`Successfully synchronized registry-data.ts with all ${Object.keys(items).length} components and exact source code!`);

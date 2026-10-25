@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight, ArrowRight, ExternalLink } from "lucide-reac
 import { RegistryItem } from "@/registry/registry-data";
 import { VectorComponentIcon } from "@/components/vector-icons";
 import { ComponentPreviewStage } from "@/components/component-preview-stage";
+import { cn } from "@/lib/utils";
 
 interface ComponentCarouselProps {
   title?: string;
@@ -109,10 +110,10 @@ export function ComponentCarousel({
         </div>
       </div>
 
-      {/* Horizontal Carousel Container */}
+      {/* Horizontal Carousel Container with bottom-aligned cards */}
       <div
         ref={scrollContainerRef}
-        className="flex gap-4 overflow-x-auto pb-2 scrollbar-none snap-x snap-mandatory scroll-smooth"
+        className="flex gap-4 overflow-x-auto pb-2 scrollbar-none snap-x snap-mandatory scroll-smooth items-end"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         {items.map((item) => (
@@ -123,9 +124,62 @@ export function ComponentCarousel({
   );
 }
 
+function getCarouselCardConfig(name: string): {
+  widthClass: string;
+  previewHeightClass: string;
+  previewMaxWidthClass: string;
+} {
+  if (
+    name === "blurred-carousel" ||
+    name === "footer" ||
+    name === "scroll-marquee" ||
+    name === "directional-marquee"
+  ) {
+    return {
+      widthClass: "w-[440px] sm:w-[520px]",
+      previewHeightClass: "h-56",
+      previewMaxWidthClass: "max-w-none w-full",
+    };
+  }
+  if (name === "expanding-card" || name === "kinetic-text") {
+    return {
+      widthClass: "w-[330px] sm:w-[370px]",
+      previewHeightClass: "h-56",
+      previewMaxWidthClass: "max-w-xs sm:max-w-sm",
+    };
+  }
+  if (name === "content-slider") {
+    return {
+      widthClass: "w-[290px] sm:w-[310px]",
+      previewHeightClass: "h-48",
+      previewMaxWidthClass: "max-w-[260px]",
+    };
+  }
+  if (name === "sidebar" || name === "tabs" || name === "card" || name === "stat-card" || name === "accordion" || name === "notched-navbar") {
+    return {
+      widthClass: "w-[280px] sm:w-[310px]",
+      previewHeightClass: "h-36",
+      previewMaxWidthClass: "max-w-[270px]",
+    };
+  }
+  // Compact default (button, input, switch, badge, dialog)
+  return {
+    widthClass: "w-[250px] sm:w-[270px]",
+    previewHeightClass: "h-32",
+    previewMaxWidthClass: "max-w-[220px]",
+  };
+}
+
 function CarouselItem({ item }: { item: RegistryItem }) {
+  const config = getCarouselCardConfig(item.name);
+
   return (
-    <div className="w-[280px] sm:w-[300px] shrink-0 snap-start rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)]/60 hover:border-[var(--border-hover)] transition-all flex flex-col group overflow-hidden">
+    <div
+      className={cn(
+        "shrink-0 snap-start rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)]/60 hover:border-[var(--border-hover)] transition-all flex flex-col group overflow-hidden",
+        config.widthClass
+      )}
+    >
       {/* Top Header */}
       <div className="flex items-center justify-between px-3 py-2 border-b border-[var(--border)] bg-[var(--surface-secondary)]/30">
         <Link
@@ -157,13 +211,16 @@ function CarouselItem({ item }: { item: RegistryItem }) {
 
       {/* Live Compact Preview */}
       <div
-        className="p-2.5 flex items-center justify-center h-28 bg-[var(--bg-main)]/40 relative overflow-hidden"
+        className={cn(
+          "p-3 flex items-center justify-center bg-[var(--bg-main)]/40 relative overflow-hidden",
+          config.previewHeightClass
+        )}
         onClick={(e) => {
           // Prevent click inside preview from navigating
           e.stopPropagation();
         }}
       >
-        <div className="w-full max-w-[260px] pointer-events-auto flex items-center justify-center">
+        <div className={cn("pointer-events-auto flex items-center justify-center w-full", config.previewMaxWidthClass)}>
           <ComponentPreviewStage
             item={item}
             interactive={true}

@@ -4,643 +4,1255 @@ import * as React from "react";
 import Link from "next/link";
 import {
   Search,
-  Copy,
+  ChevronDown,
   Check,
-  Code2,
-  SlidersHorizontal,
-  RotateCw,
-  X,
-  Layers,
-  ArrowRight,
-  Download,
+  Copy,
   Sparkles,
-  Maximize2,
-  Palette,
-  Terminal,
-  ChevronRight,
-  Filter,
+  Layers,
+  Box,
+  RotateCcw,
+  SlidersHorizontal,
+  Play,
+  MousePointer,
+  Repeat,
 } from "lucide-react";
-import { ICONS_DATA, ICON_CATEGORIES, AnimatedIcon, IconCategory } from "@/registry/icons-data";
-import { useAppShell } from "@/components/app-shell";
-import { SlidingHighlightContainer } from "@/components/sliding-highlight";
+import { ICONS_LIST, IconItem } from "@/registry/icons-data";
 import { cn } from "@/lib/utils";
 
-const ACCENT_PRESETS = [
-  { name: "Sage Mint (Default)", hex: "#8bc49a" },
-  { name: "Terminal Emerald", hex: "#4ade80" },
-  { name: "Ice Cyan", hex: "#38bdf8" },
-  { name: "Studio Violet", hex: "#a78bfa" },
-  { name: "Solar Amber", hex: "#fbbf24" },
-  { name: "Rose Coral", hex: "#fb7185" },
-  { name: "Monochrome Slate", hex: "#e2e8f0" },
-];
+/** Master keyframe CSS ensuring all 41 SVG loaders animate smoothly at 60fps */
+const MASTER_LOADER_CSS = `
+  .ui-ldr {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    display: block;
+  }
+  .ui-ldr * {
+    transform-box: view-box;
+    transform-origin: 32px 32px;
+  }
+  .ui-ldr .origin-self {
+    transform-box: fill-box !important;
+    transform-origin: center !important;
+  }
+  .ui-ldr .origin-bottom {
+    transform-box: fill-box !important;
+    transform-origin: bottom center !important;
+  }
+  .ui-ldr .origin-top {
+    transform-box: fill-box !important;
+    transform-origin: top center !important;
+  }
 
-export default function IconPackPage() {
-  const { theme } = useAppShell();
-  const [searchQuery, setSearchQuery] = React.useState("");
-  const [selectedCategory, setSelectedCategory] = React.useState<string>("all");
-  const [triggerMode, setTriggerMode] = React.useState<"hover" | "loop">("hover");
-  const [accentColor, setAccentColor] = React.useState("#8bc49a");
-  const [strokeWidth, setStrokeWidth] = React.useState<number>(1.5);
-  const [previewSize, setPreviewSize] = React.useState<number>(24);
-  const [selectedIcon, setSelectedIcon] = React.useState<AnimatedIcon>(ICONS_DATA[0]);
-  const [inspectorTab, setInspectorTab] = React.useState<"tsx" | "svg" | "css">("tsx");
-  const [inspectorZoom, setInspectorZoom] = React.useState<number>(3);
-  const [copiedId, setCopiedId] = React.useState<string | null>(null);
-  const [localToast, setLocalToast] = React.useState<string | null>(null);
+  /* Rotations */
+  @keyframes u-spin {
+    to { transform: rotate(360deg); }
+  }
+  @keyframes u-spin-rev {
+    to { transform: rotate(-360deg); }
+  }
+  @keyframes u-spin-elastic {
+    0% { transform: rotate(0deg); }
+    50% { transform: rotate(220deg); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes u-flip-step {
+    0%, 25% { transform: rotate(0deg); }
+    50%, 75% { transform: rotate(180deg); }
+    100% { transform: rotate(360deg); }
+  }
 
-  const toastTimerRef = React.useRef<NodeJS.Timeout | null>(null);
+  /* Stroke Dash Sweeps */
+  @keyframes u-sweep {
+    0% { stroke-dasharray: 1, 150; stroke-dashoffset: 0; }
+    50% { stroke-dasharray: 90, 150; stroke-dashoffset: -35; }
+    100% { stroke-dasharray: 90, 150; stroke-dashoffset: -125; }
+  }
+  @keyframes u-dash-flow {
+    to { stroke-dashoffset: -128; }
+  }
+  @keyframes u-trace-io {
+    0% { stroke-dashoffset: 140; }
+    50% { stroke-dashoffset: 0; }
+    100% { stroke-dashoffset: -140; }
+  }
 
-  const showToast = React.useCallback(
-    (msg: string) => {
-      if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
-      setLocalToast(msg);
-      toastTimerRef.current = setTimeout(() => {
-        setLocalToast(null);
-      }, 2000);
-    },
-    []
-  );
+  /* Bounces, Squash & Stretch */
+  @keyframes u-bounce-y {
+    0%, 100% { transform: translateY(8px) scale(1.12, 0.88); }
+    50% { transform: translateY(-10px) scale(0.92, 1.08); }
+  }
+  @keyframes u-dot-wave {
+    0%, 60%, 100% { transform: translateY(0); }
+    30% { transform: translateY(-10px); }
+  }
+  @keyframes u-shadow-scale {
+    0%, 100% { transform: scaleX(1.15); opacity: 0.45; }
+    50% { transform: scaleX(0.5); opacity: 0.12; }
+  }
+  @keyframes u-cradle-left {
+    0%, 50%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(28deg); }
+  }
+  @keyframes u-cradle-right {
+    0%, 50%, 100% { transform: rotate(0deg); }
+    75% { transform: rotate(-28deg); }
+  }
+  @keyframes u-leap-a {
+    0% { transform: translate(0, 0); }
+    25% { transform: translate(11px, -11px); }
+    50% { transform: translate(22px, 0); }
+    75% { transform: translate(11px, 11px); }
+    100% { transform: translate(0, 0); }
+  }
+  @keyframes u-leap-b {
+    0% { transform: translate(0, 0); }
+    25% { transform: translate(-11px, 11px); }
+    50% { transform: translate(-22px, 0); }
+    75% { transform: translate(-11px, -11px); }
+    100% { transform: translate(0, 0); }
+  }
 
-  // Filtered icons
-  const filteredIcons = React.useMemo(() => {
-    const q = searchQuery.toLowerCase().trim();
-    return ICONS_DATA.filter((icon) => {
-      const matchesCat = selectedCategory === "all" || icon.category === selectedCategory;
-      if (!matchesCat) return false;
-      if (!q) return true;
-      return (
-        icon.name.toLowerCase().includes(q) ||
-        icon.id.toLowerCase().includes(q) ||
-        icon.animType.toLowerCase().includes(q) ||
-        icon.tags?.some((t) => t.toLowerCase().includes(q)) ||
-        String(icon.num) === q ||
-        `#${icon.num}`.includes(q)
-      );
-    });
-  }, [searchQuery, selectedCategory]);
+  /* Scales, Pulses & Ripples */
+  @keyframes u-pulse {
+    0%, 100% { transform: scale(0.78); opacity: 0.45; }
+    50% { transform: scale(1.06); opacity: 1; }
+  }
+  @keyframes u-ripple {
+    0% { transform: scale(0.15); opacity: 1; }
+    100% { transform: scale(1.15); opacity: 0; }
+  }
+  @keyframes u-bar-eq {
+    0%, 100% { transform: scaleY(0.28); }
+    50% { transform: scaleY(1); }
+  }
 
-  const copyToClipboard = async (text: string, message: string, key?: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      if (key) {
-        setCopiedId(key);
-        setTimeout(() => setCopiedId(null), 1800);
+  /* Squares, Rolls & Shuffles */
+  @keyframes u-roll-box {
+    0% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-8px) rotate(45deg); }
+    50% { transform: translateY(0) rotate(90deg); }
+    75% { transform: translateY(-8px) rotate(135deg); }
+    100% { transform: translateY(0) rotate(180deg); }
+  }
+  @keyframes u-grid-shuffle {
+    0%, 100% { transform: translate(0, 0); }
+    25% { transform: translate(20px, 0); }
+    50% { transform: translate(20px, 20px); }
+    75% { transform: translate(0, 20px); }
+  }
+  @keyframes u-corners {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.22); }
+  }
+
+  /* Wipes & Indeterminate Bars */
+  @keyframes u-wipe-x {
+    0% { transform: translateX(-100%) scaleX(0.2); }
+    50% { transform: translateX(0%) scaleX(0.65); }
+    100% { transform: translateX(100%) scaleX(0.2); }
+  }
+  @keyframes u-pill-toggle {
+    0%, 100% { transform: translateX(-9px); }
+    50% { transform: translateX(9px); }
+  }
+  @keyframes u-curtain-y {
+    0% { transform: scaleY(0); transform-origin: bottom; }
+    45% { transform: scaleY(1); transform-origin: bottom; }
+    55% { transform: scaleY(1); transform-origin: top; }
+    100% { transform: scaleY(0); transform-origin: top; }
+  }
+  @keyframes u-pendulum {
+    0%, 100% { transform: rotate(-30deg); }
+    50% { transform: rotate(30deg); }
+  }
+  @keyframes u-fade-step {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.15; }
+  }
+`;
+
+/**
+ * VectrMenuIconCard: Isolated card component for interactive state-morphing menu icons.
+ * Crucial: Keeps the SVG permanently in the DOM and toggles `.is-open` via classList mutation,
+ * allowing CSS cubic-bezier transitions to smoothly animate without DOM destruction/re-render glitch.
+ */
+function VectrMenuIconCard({
+  icon,
+  triggerMode,
+  speed,
+  color,
+  size,
+  autoplayPhase,
+  onCopy,
+}: {
+  icon: any;
+  triggerMode: "click" | "hover" | "loop";
+  speed: number;
+  color: string;
+  size: number;
+  autoplayPhase: boolean;
+  onCopy: (name: string, snippet: string) => void;
+}) {
+  const [internalOpen, setInternalOpen] = React.useState(false);
+  const containerRef = React.useRef<HTMLDivElement>(null);
+
+  const effectiveOpen = triggerMode === "loop" ? autoplayPhase : internalOpen;
+
+  // Memoized SVG string — re-rendered ONLY when color, speed, or size customization changes
+  const svgHtml = React.useMemo(() => {
+    let raw = icon.standaloneSvg || icon.htmlSnippet || "";
+    // Strip inline onclick attribute so it won't conflict with our handler
+    raw = raw.replace(/onclick="[^"]*"/g, "");
+    if (color) {
+      raw = raw.replaceAll("#6366f1", color);
+    }
+    if (speed !== 1) {
+      raw = raw.replaceAll("0.38s", `${(0.38 / speed).toFixed(2)}s`);
+    }
+    raw = raw
+      .replace(/width="[0-9]+"/, `width="${size}"`)
+      .replace(/height="[0-9]+"/, `height="${size}"`);
+    return raw;
+  }, [icon.standaloneSvg, icon.htmlSnippet, color, speed, size]);
+
+  // Direct DOM class toggle preserves CSS keyframe & cubic-bezier transitions!
+  React.useEffect(() => {
+    const svgEl = containerRef.current?.querySelector(".vm-icon");
+    if (svgEl) {
+      if (effectiveOpen) {
+        svgEl.classList.add("is-open");
+      } else {
+        svgEl.classList.remove("is-open");
       }
-      showToast(message);
-    } catch {
-      showToast("Unable to copy to clipboard");
+    }
+  }, [effectiveOpen]);
+
+  const handleClick = () => {
+    if (triggerMode === "click") {
+      setInternalOpen((prev) => !prev);
     }
   };
 
-  const getCleanSvgSnippet = React.useCallback(
-    (icon: AnimatedIcon) => {
-      return icon.svg
-        .replace('class="kilo-icon dev-icon"', `width="${previewSize}" height="${previewSize}" fill="none" stroke="currentColor" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round"`)
-        .replace(/class="dev-icon"/g, `width="${previewSize}" height="${previewSize}" fill="none" stroke="currentColor" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round"`);
-    },
-    [previewSize, strokeWidth]
-  );
+  const handleMouseEnter = () => {
+    if (triggerMode === "hover") {
+      setInternalOpen(true);
+    }
+  };
 
-  const getReactTsxSnippet = React.useCallback(
-    (icon: AnimatedIcon) => {
-      const compName = icon.name
-        .replace(/[^a-zA-Z0-9]/g, " ")
-        .split(" ")
-        .filter(Boolean)
-        .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
-        .join("") + "Icon";
+  const handleMouseLeave = () => {
+    if (triggerMode === "hover") {
+      setInternalOpen(false);
+    }
+  };
 
-      return `"use client";
-
-import * as React from "react";
-
-export interface ${compName}Props extends React.SVGProps<SVGSVGElement> {
-  size?: number | string;
-  strokeWidth?: number;
-  primaryColor?: string;
-  accentColor?: string;
-  animate?: "hover" | "always" | "never";
-}
-
-export function ${compName}({
-  size = ${previewSize},
-  strokeWidth = ${strokeWidth},
-  primaryColor = "currentColor",
-  accentColor = "${accentColor}",
-  animate = "hover",
-  className,
-  ...props
-}: ${compName}Props) {
-  return (
-    <div
-      data-trigger={animate === "always" ? "loop" : animate === "hover" ? "hover" : "none"}
-      className="inline-flex dev-card"
-      style={{
-        "--icon-primary": primaryColor,
-        "--icon-accent": accentColor,
-        "--icon-stroke-width": \`\${strokeWidth}px\`,
-      } as React.CSSProperties}
-    >
-      <div style={{ width: size, height: size }}>
-        ${icon.svg}
-      </div>
-    </div>
-  );
-}`;
-    },
-    [previewSize, strokeWidth, accentColor]
-  );
-
-  const getCssKeyframeSnippet = React.useCallback((icon: AnimatedIcon) => {
-    return `/* kilo/icons — Pure CSS Keyframe Animation for ${icon.name} */
-:root {
-  --icon-primary: var(--text-primary, #ffffff);
-  --icon-accent: var(--accent-green, #8bc49a);
-  --icon-stroke-width: 1.5px;
-}
-
-.kilo-icon {
-  width: 24px;
-  height: 24px;
-  overflow: visible;
-}
-
-.kilo-icon .stroke-primary {
-  stroke: var(--icon-primary);
-  stroke-width: var(--icon-stroke-width);
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  fill: none;
-}
-
-.kilo-icon .stroke-accent {
-  stroke: var(--icon-accent);
-  stroke-width: var(--icon-stroke-width);
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  fill: none;
-}
-
-/* Interaction: ${icon.animType} */
-.dev-card:hover .kilo-icon {
-  /* GPU keyframes active */
-}`;
-  }, []);
-
-  const downloadSvgFile = (icon: AnimatedIcon) => {
-    const svgCode = getCleanSvgSnippet(icon);
-    const blob = new Blob([svgCode], { type: "image/svg+xml;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `${icon.id}-icon.svg`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-    showToast(`Downloaded ${icon.id}-icon.svg`);
+  const handleCopyClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onCopy(icon.name, icon.standaloneSvg || icon.htmlSnippet);
   };
 
   return (
     <div
-      data-trigger={triggerMode}
-      style={
-        {
-          "--icon-primary": theme === "light" ? "#0f172a" : "#ededed",
-          "--primary-color": theme === "light" ? "#0f172a" : "#ededed",
-          "--icon-accent": accentColor,
-          "--accent-color": accentColor,
-          "--icon-stroke-width": `${strokeWidth}px`,
-          "--stroke-width": `${strokeWidth}px`,
-        } as React.CSSProperties
+      onClick={handleClick}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      className={cn(
+        "group relative flex flex-col items-center justify-center p-3.5 rounded-xl border transition-all text-center select-none cursor-pointer",
+        effectiveOpen
+          ? "border-[var(--accent-green)]/70 bg-[var(--surface-secondary)] shadow-sm"
+          : "border-[var(--border)] bg-[var(--surface-secondary)]/40 hover:bg-[var(--surface-secondary)] hover:border-[var(--border-hover)]"
+      )}
+      title={
+        triggerMode === "click"
+          ? "Click to morph & toggle"
+          : triggerMode === "hover"
+          ? "Hover to morph"
+          : "Continuous loop"
       }
-      className="flex-1 w-full h-[calc(100vh-3.5rem)] flex flex-col overflow-hidden"
     >
-      {/* 1. Slim Studio Header Bar (Anchored at Top, No Scrolling) */}
-      <div className="shrink-0 px-4 sm:px-6 py-3 border-b border-[var(--border)] bg-[var(--surface-elevated)]/90 backdrop-blur-md flex flex-wrap items-center justify-between gap-3">
-        {/* Left: Brand & Count */}
-        <div className="flex items-center gap-3">
-          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 font-mono text-xs text-[var(--text-muted)]">
-            <Link href="/" className="hover:text-[var(--text-primary)] transition-colors flex items-center gap-0.5">
-              <span>kilo</span>
-              <span className="text-[var(--accent-green)] font-semibold">/</span>
-              <span>ui</span>
-            </Link>
-            <span>/</span>
-            <span className="text-[var(--text-primary)] font-semibold">icons</span>
-          </nav>
+      {/* Copy Button on Hover */}
+      <button
+        type="button"
+        onClick={handleCopyClick}
+        title="Copy standalone SVG"
+        className="absolute top-2 right-2 p-1 rounded-md opacity-0 group-hover:opacity-100 hover:bg-[var(--surface-tertiary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-all cursor-pointer z-10"
+      >
+        <Copy className="h-3 w-3" />
+      </button>
 
-          <div className="h-4 w-px bg-[var(--border)] hidden sm:block" />
+      {/* Persistent SVG element */}
+      <div
+        ref={containerRef}
+        dangerouslySetInnerHTML={{ __html: svgHtml }}
+        className="flex items-center justify-center transition-transform group-hover:scale-105 pointer-events-none"
+        style={{ width: size, height: size }}
+      />
 
-          <div className="flex items-center gap-2">
-            <span className="font-mono text-xs font-bold text-[var(--text-primary)] flex items-center gap-1.5">
-              <span>kilo/icons</span>
-              <span className="text-[10px] font-normal px-1.5 py-0.2 rounded border border-[var(--border)] text-[var(--accent-green)]">
-                v1.0
+      <span className="mt-2 text-xs font-sans font-medium text-[var(--text-primary)] line-clamp-1">
+        {icon.name}
+      </span>
+      <div className="flex items-center gap-1.5 mt-0.5">
+        <span className="text-[10px] font-mono text-[var(--text-muted)]">
+          {icon.category}
+        </span>
+        {effectiveOpen && (
+          <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent-green)] animate-pulse" />
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default function IconsPage() {
+  // Global Tab: Standard Clean Icons (Image 1) vs Animated Motion & Loaders
+  const [activeTab, setActiveTab] = React.useState<"standard" | "animated">("standard");
+
+  /* ─────────────────────────────────────────────────────────────────── */
+  /* 1. Interface Icons State (Matching Image 1)                          */
+  /* ─────────────────────────────────────────────────────────────────── */
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const [selectedCategories, setSelectedCategories] = React.useState<string[]>([
+    "Navigation",
+    "Actions",
+    "Interface",
+    "Media",
+    "Status",
+  ]);
+  const [isCategoriesOpen, setIsCategoriesOpen] = React.useState(true);
+  const [strokeWidth, setStrokeWidth] = React.useState<1 | 1.5 | 2>(1.5);
+  const [styleMode, setStyleMode] = React.useState<"outline" | "solid">("outline");
+  const [selectedIconId, setSelectedIconId] = React.useState<string>("search");
+  const [copiedId, setCopiedId] = React.useState<string | null>(null);
+  const [toastMessage, setToastMessage] = React.useState<string | null>(null);
+
+  /* ─────────────────────────────────────────────────────────────────── */
+  /* 2. Motion Icons & Loaders State (Right-side customization)          */
+  /* ─────────────────────────────────────────────────────────────────── */
+  const [animatedIcons, setAnimatedIcons] = React.useState<any[]>([]);
+  const [animatedLoaders, setAnimatedLoaders] = React.useState<any[]>([]);
+  const [motionSearchQuery, setMotionSearchQuery] = React.useState("");
+  const [motionTypeFilter, setMotionTypeFilter] = React.useState<"all" | "menu" | "loaders">("all");
+  const [motionTriggerMode, setMotionTriggerMode] = React.useState<"click" | "hover" | "loop">("click");
+  const [motionSpeed, setMotionSpeed] = React.useState<number>(1.0);
+  const [motionColor, setMotionColor] = React.useState<string>("#6366f1");
+  const [motionSize, setMotionSize] = React.useState<number>(44);
+  const [autoplayPhase, setAutoplayPhase] = React.useState<boolean>(false);
+
+  const [selectedMenuCats, setSelectedMenuCats] = React.useState<string[]>([
+    "Hamburger to X",
+    "Grid, Bento & Dots",
+    "Sidebar & Layout",
+    "Filter, Sort & UI",
+  ]);
+  const [selectedLoaderCats, setSelectedLoaderCats] = React.useState<string[]>([
+    "Circles & Rings",
+    "Ball Bounces & Dots",
+    "Squares & Polygons",
+    "Wipes, Bars & Lines",
+    "Minimal Morphs & UI",
+  ]);
+  const [isMenuCatsOpen, setIsMenuCatsOpen] = React.useState(true);
+  const [isLoaderCatsOpen, setIsLoaderCatsOpen] = React.useState(true);
+
+  // Fetch datasets from public/icons
+  React.useEffect(() => {
+    fetch("/icons/vectr-menu-icons-26.json")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data?.icons) {
+          setAnimatedIcons(data.icons);
+          const allCats = Array.from(
+            new Set(data.icons.map((i: any) => i.category).filter(Boolean))
+          ) as string[];
+          if (allCats.length > 0) setSelectedMenuCats(allCats);
+        }
+      })
+      .catch(() => {});
+
+    fetch("/icons/vectr-ui-loaders-41.json")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data?.loaders) {
+          setAnimatedLoaders(data.loaders);
+          const allCats = Array.from(
+            new Set(data.loaders.map((l: any) => l.category).filter(Boolean))
+          ) as string[];
+          if (allCats.length > 0) setSelectedLoaderCats(allCats);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  // Continuous loop toggle when trigger mode is "loop"
+  React.useEffect(() => {
+    if (motionTriggerMode !== "loop") return;
+    const interval = setInterval(() => {
+      setAutoplayPhase((prev) => !prev);
+    }, 1600);
+    return () => clearInterval(interval);
+  }, [motionTriggerMode]);
+
+  /* ─────────────────────────────────────────────────────────────────── */
+  /* Filtering Logic                                                     */
+  /* ─────────────────────────────────────────────────────────────────── */
+  const toggleCategory = (cat: string) => {
+    setSelectedCategories((prev) =>
+      prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]
+    );
+  };
+
+  const toggleMenuCat = (cat: string) => {
+    setSelectedMenuCats((prev) =>
+      prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]
+    );
+  };
+
+  const toggleLoaderCat = (cat: string) => {
+    setSelectedLoaderCats((prev) =>
+      prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]
+    );
+  };
+
+  // Filtered standard icons
+  const filteredIcons = React.useMemo(() => {
+    return ICONS_LIST.filter((icon) => {
+      const matchesSearch =
+        icon.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        icon.tags.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase()));
+      const matchesCategory = selectedCategories.includes(icon.category);
+      return matchesSearch && matchesCategory;
+    });
+  }, [searchQuery, selectedCategories]);
+
+  // Filtered animated menu icons
+  const filteredAnimatedIcons = React.useMemo(() => {
+    if (motionTypeFilter === "loaders") return [];
+    return animatedIcons.filter((icon) => {
+      const matchesSearch =
+        icon.name.toLowerCase().includes(motionSearchQuery.toLowerCase()) ||
+        icon.slug?.toLowerCase().includes(motionSearchQuery.toLowerCase()) ||
+        (icon.tags && icon.tags.some((t: string) => t.toLowerCase().includes(motionSearchQuery.toLowerCase())));
+      const matchesCat = selectedMenuCats.includes(icon.category);
+      return matchesSearch && matchesCat;
+    });
+  }, [animatedIcons, motionSearchQuery, motionTypeFilter, selectedMenuCats]);
+
+  // Filtered animated loaders
+  const filteredAnimatedLoaders = React.useMemo(() => {
+    if (motionTypeFilter === "menu") return [];
+    return animatedLoaders.filter((ldr) => {
+      const matchesSearch =
+        ldr.name.toLowerCase().includes(motionSearchQuery.toLowerCase()) ||
+        ldr.slug?.toLowerCase().includes(motionSearchQuery.toLowerCase()) ||
+        (ldr.tags && ldr.tags.some((t: string) => t.toLowerCase().includes(motionSearchQuery.toLowerCase())));
+      const matchesCat = selectedLoaderCats.includes(ldr.category);
+      return matchesSearch && matchesCat;
+    });
+  }, [animatedLoaders, motionSearchQuery, motionTypeFilter, selectedLoaderCats]);
+
+  /* ─────────────────────────────────────────────────────────────────── */
+  /* Copy & Toast Handlers                                               */
+  /* ─────────────────────────────────────────────────────────────────── */
+  const handleCopyIcon = (icon: IconItem) => {
+    setSelectedIconId(icon.id);
+    const svgCode = `<svg viewBox="0 0 24 24" fill="${styleMode === "solid" ? "currentColor" : "none"}" stroke="currentColor" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round">\n  <!-- ${icon.name} icon -->\n</svg>`;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(svgCode);
+      setCopiedId(icon.id);
+      setToastMessage(`Copied <${icon.name} /> SVG code to clipboard`);
+      setTimeout(() => setCopiedId(null), 1800);
+      setTimeout(() => setToastMessage(null), 2400);
+    }
+  };
+
+  const handleCopyMotionItem = (name: string, snippet: string) => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(snippet);
+      setToastMessage(`Copied "${name}" animated SVG to clipboard`);
+      setTimeout(() => setToastMessage(null), 2400);
+    }
+  };
+
+  /* ─────────────────────────────────────────────────────────────────── */
+  /* SVG String Transformers for Loaders & Menu Icons                    */
+  /* ─────────────────────────────────────────────────────────────────── */
+  const processLoaderSvg = (ldr: any) => {
+    // Using svgString gives full keyframe rules and styling
+    let raw = ldr.svgString || ldr.htmlSnippet || "";
+    if (motionColor) {
+      raw = raw.replaceAll("#6366f1", motionColor);
+    }
+    if (motionSpeed !== 1) {
+      raw = raw.replaceAll("/ 1)", `/ ${motionSpeed})`);
+      raw = raw.replaceAll("/ 1s", `/ ${motionSpeed}s`);
+    }
+    // Update width & height
+    raw = raw.replace(/width="[0-9]+"/, `width="${motionSize}"`).replace(/height="[0-9]+"/, `height="${motionSize}"`);
+    return raw;
+  };
+
+  const categories = [
+    { name: "Navigation", count: ICONS_LIST.filter((i) => i.category === "Navigation").length },
+    { name: "Actions", count: ICONS_LIST.filter((i) => i.category === "Actions").length },
+    { name: "Interface", count: ICONS_LIST.filter((i) => i.category === "Interface").length },
+    { name: "Media", count: ICONS_LIST.filter((i) => i.category === "Media").length },
+    { name: "Status", count: ICONS_LIST.filter((i) => i.category === "Status").length },
+  ];
+
+  const menuCategoryList = React.useMemo(() => {
+    const defaults = ["Hamburger to X", "Grid, Bento & Dots", "Sidebar & Layout", "Filter, Sort & UI"];
+    const foundCats = animatedIcons.length > 0 
+      ? Array.from(new Set(animatedIcons.map((i: any) => i.category).filter(Boolean))) as string[]
+      : defaults;
+    return foundCats.map((name) => ({
+      name,
+      count: animatedIcons.filter((i: any) => i.category === name).length,
+    }));
+  }, [animatedIcons]);
+
+  const loaderCategoryList = React.useMemo(() => {
+    const defaults = ["Circles & Rings", "Ball Bounces & Dots", "Squares & Polygons", "Wipes, Bars & Lines", "Minimal Morphs & UI"];
+    const foundCats = animatedLoaders.length > 0
+      ? Array.from(new Set(animatedLoaders.map((l: any) => l.category).filter(Boolean))) as string[]
+      : defaults;
+    return foundCats.map((name) => ({
+      name,
+      count: animatedLoaders.filter((l: any) => l.category === name).length,
+    }));
+  }, [animatedLoaders]);
+
+  return (
+    <div className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 select-none">
+      {/* Global CSS injection for SVG keyframe animations */}
+      <style dangerouslySetInnerHTML={{ __html: MASTER_LOADER_CSS }} />
+
+      {/* 1. Header with Breadcrumbs & Title — Branded as Kilo/Icons */}
+      <div className="space-y-2 border-b border-[var(--border)] pb-6">
+        <div className="flex items-center gap-2 text-xs font-mono text-[var(--text-muted)]">
+          <Link href="/" className="hover:text-[var(--text-primary)] transition-colors">
+            kilo/ui
+          </Link>
+          <span>/</span>
+          <Link href="/components" className="hover:text-[var(--text-primary)] transition-colors">
+            All Components
+          </Link>
+          <span>/</span>
+          <span className="text-[var(--text-primary)] font-semibold">Kilo/Icons</span>
+        </div>
+
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pt-2">
+          <div>
+            <div className="flex items-center gap-3">
+              <h1 className="text-3xl sm:text-4xl font-normal tracking-tight text-[var(--text-primary)] font-mono">
+                Kilo<span className="text-[var(--accent-green)]">/</span>Icons
+              </h1>
+              <span className="px-2 py-0.5 rounded text-[10px] font-mono uppercase tracking-wider bg-[var(--surface-secondary)] border border-[var(--border)] text-[var(--accent-green)] font-semibold">
+                Collection
               </span>
-            </span>
-            <span className="font-mono text-[11px] text-[var(--text-muted)] hidden md:inline">
-              • 100 Animated Vector Primitives
+            </div>
+            <p className="text-xs sm:text-sm text-[var(--text-secondary)] mt-1">
+              A crafted collection of clean vector icons, morphing menu actions, and responsive SVG loaders.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-4">
+            {/* View Mode Tabs */}
+            <div className="inline-flex items-center p-1 rounded-lg bg-[var(--surface-elevated)] border border-[var(--border)] text-xs font-mono">
+              <button
+                type="button"
+                onClick={() => setActiveTab("standard")}
+                className={cn(
+                  "px-3 py-1.5 rounded-md transition-colors cursor-pointer",
+                  activeTab === "standard"
+                    ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] font-semibold shadow-2xs"
+                    : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                )}
+              >
+                Interface Icons ({ICONS_LIST.length})
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("animated")}
+                className={cn(
+                  "px-3 py-1.5 rounded-md transition-colors cursor-pointer flex items-center gap-1.5",
+                  activeTab === "animated"
+                    ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] font-semibold shadow-2xs"
+                    : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                )}
+              >
+                <Sparkles className="h-3.5 w-3.5 text-[var(--accent-green)]" />
+                <span>Motion & Loaders ({animatedIcons.length + animatedLoaders.length || 67})</span>
+              </button>
+            </div>
+
+            <span className="text-xs font-mono text-[var(--text-muted)] tabular-nums">
+              {activeTab === "standard"
+                ? `${filteredIcons.length} icons`
+                : `${filteredAnimatedIcons.length + filteredAnimatedLoaders.length} icons`}
             </span>
           </div>
-        </div>
-
-        {/* Center: Real-Time Fuzzy Search Input */}
-        <div className="relative w-full sm:w-80 order-3 sm:order-2">
-          <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-[var(--text-muted)]" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search icons (e.g. terminal, git, lock)..."
-            className="w-full h-7.5 rounded-md border border-[var(--border)] bg-[var(--surface-secondary)]/50 pl-8 pr-7 text-xs font-mono text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--accent-green)] transition-colors"
-          />
-          {searchQuery && (
-            <button
-              type="button"
-              onClick={() => setSearchQuery("")}
-              className="absolute right-2 top-2 text-[var(--text-muted)] hover:text-[var(--text-primary)]"
-            >
-              <X className="h-3.5 w-3.5" />
-            </button>
-          )}
-        </div>
-
-        {/* Right: Quick Actions */}
-        <div className="flex items-center gap-2 order-2 sm:order-3">
-          <span className="font-mono text-[11px] text-[var(--text-muted)] hidden lg:inline">
-            Showing <strong className="text-[var(--text-primary)]">{filteredIcons.length}</strong> / 100
-          </span>
-          <button
-            type="button"
-            onClick={() => {
-              const bundle = ICONS_DATA.map((i) => `<!-- ${i.name} (${i.id}) -->\n${i.svg}`).join("\n\n");
-              copyToClipboard(bundle, "Copied all 100 SVGs to clipboard!");
-            }}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-[var(--border)] bg-[var(--surface-secondary)] hover:bg-[var(--surface-secondary)]/80 text-xs font-mono text-[var(--text-primary)] transition-all active:scale-95 shadow-2xs"
-          >
-            <Copy className="h-3 w-3 text-[var(--accent-green)]" />
-            <span>Copy All SVGs</span>
-          </button>
         </div>
       </div>
 
-      {/* 2. Studio Body (Left: Icons Canvas Above-The-Fold | Right: Studio Panel) */}
-      <div className="flex-1 flex overflow-hidden min-h-0">
-        {/* LEFT STAGE: The Icons Grid (Immediate View Above-the-Fold, Zero Required Scroll) */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 min-h-0">
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-2.5">
-            {filteredIcons.map((icon) => {
-              const isSelected = selectedIcon?.id === icon.id;
-              return (
-                <div
-                  key={icon.id}
-                  onClick={() => setSelectedIcon(icon)}
-                  className={cn(
-                    "kilo-icon-tile dev-card group relative flex flex-col items-center justify-between p-3 rounded-xl border transition-all duration-150 cursor-pointer aspect-square select-none",
-                    isSelected
-                      ? "border-[var(--accent-green)] bg-[var(--surface-secondary)]/80 ring-1 ring-[var(--accent-green)]/30 shadow-md scale-[1.02]"
-                      : "border-[var(--border)] bg-[var(--surface-elevated)] hover:bg-[var(--surface-secondary)]/60 hover:border-[var(--border-hover)]"
-                  )}
-                >
-                  {/* Top Bar of Tile: Number + Micro Indicator */}
-                  <div className="w-full flex items-center justify-between">
-                    <span className="font-mono text-[9px] text-[var(--text-muted)] group-hover:text-[var(--text-secondary)]">
-                      #{icon.num}
-                    </span>
-                    {isSelected && (
-                      <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-green)]" />
-                    )}
-                  </div>
-
-                  {/* Center: The Precision Icon Preview */}
-                  <div
-                    className="flex-1 flex items-center justify-center w-full my-1 transition-transform duration-200 group-hover:scale-110"
-                    style={{
-                      width: `${Math.max(previewSize, 24)}px`,
-                      height: `${Math.max(previewSize, 24)}px`,
-                    }}
-                  >
-                    <div
-                      className="w-full h-full flex items-center justify-center"
-                      dangerouslySetInnerHTML={{ __html: icon.svg }}
-                    />
-                  </div>
-
-                  {/* Bottom: Icon Label */}
-                  <div className="w-full text-center">
-                    <span className="font-mono text-[11px] text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] font-medium truncate block max-w-full">
-                      {icon.name}
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {filteredIcons.length === 0 && (
-            <div className="p-12 text-center rounded-xl border border-dashed border-[var(--border)] bg-[var(--surface-elevated)] space-y-3 mt-8">
-              <Search className="h-8 w-8 text-[var(--text-muted)] mx-auto opacity-50" />
-              <h3 className="font-mono text-sm font-semibold text-[var(--text-primary)]">
-                No primitives found
-              </h3>
-              <p className="font-mono text-xs text-[var(--text-muted)]">
-                No icons matching &quot;{searchQuery}&quot; in category &quot;{selectedCategory}&quot;.
-              </p>
-              <button
-                type="button"
-                onClick={() => {
-                  setSearchQuery("");
-                  setSelectedCategory("all");
-                }}
-                className="px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--surface-secondary)] font-mono text-xs text-[var(--text-primary)] hover:border-[var(--accent-green)] transition-colors"
-              >
-                Reset Filters
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* RIGHT SIDE PANEL: Categories, Customizers & Live Icon Inspector */}
-        <aside className="w-80 lg:w-96 shrink-0 border-l border-[var(--border)] bg-[var(--surface-elevated)]/60 flex flex-col overflow-y-auto p-4 sm:p-5 space-y-5">
-          {/* Section A: Selected Icon Live Stage & Quick Export */}
-          <div className="space-y-3.5 p-4 rounded-xl border border-[var(--border)] bg-[var(--bg-main)] shadow-sm">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-[var(--surface-secondary)] text-[var(--accent-green)] border border-[var(--border)] font-semibold">
-                  #{selectedIcon.num}
-                </span>
-                <h2 className="font-mono text-sm font-bold text-[var(--text-primary)]">
-                  {selectedIcon.name}
-                </h2>
-              </div>
-              <span className="font-mono text-[10px] text-[var(--text-muted)] uppercase tracking-wider">
-                {selectedIcon.category}
-              </span>
-            </div>
-
-            {/* Live Interactive Canvas */}
-            <div className="flex flex-col items-center justify-center p-6 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] dev-card relative group">
-              <div
-                style={{
-                  width: `${24 * inspectorZoom}px`,
-                  height: `${24 * inspectorZoom}px`,
-                }}
-                className="transition-transform duration-200"
-                dangerouslySetInnerHTML={{ __html: selectedIcon.svg }}
-              />
-
-              {/* Zoom Controls Overlay */}
-              <div className="absolute bottom-2 right-2 flex items-center gap-1 font-mono text-[10px] bg-[var(--surface-secondary)]/90 backdrop-blur-xs border border-[var(--border)] rounded px-1.5 py-0.5">
-                {[1, 2, 3, 4].map((z) => (
-                  <button
-                    key={z}
-                    type="button"
-                    onClick={() => setInspectorZoom(z)}
-                    className={cn(
-                      "px-1 rounded transition-colors select-none",
-                      inspectorZoom === z
-                        ? "text-[var(--accent-green)] font-bold"
-                        : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
-                    )}
-                  >
-                    {z}x
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="text-[11px] font-mono text-[var(--text-muted)] flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-green)]" />
-              <span>{selectedIcon.animType}</span>
-            </div>
-
-            {/* Quick Export Buttons */}
-            <div className="grid grid-cols-2 gap-2 pt-1">
-              <button
-                type="button"
-                onClick={() =>
-                  copyToClipboard(
-                    getReactTsxSnippet(selectedIcon),
-                    `Copied ${selectedIcon.name} React Component!`,
-                    "panel-tsx"
-                  )
-                }
-                className="inline-flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--surface-secondary)] hover:bg-[var(--surface-secondary)]/80 text-xs font-mono text-[var(--text-primary)] transition-all cursor-pointer shadow-2xs active:scale-95"
-              >
-                {copiedId === "panel-tsx" ? (
-                  <Check className="h-3.5 w-3.5 text-[var(--accent-green)]" />
-                ) : (
-                  <Code2 className="h-3.5 w-3.5 text-[var(--accent-green)]" />
-                )}
-                <span>React TSX</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() =>
-                  copyToClipboard(
-                    getCleanSvgSnippet(selectedIcon),
-                    `Copied ${selectedIcon.name} SVG!`,
-                    "panel-svg"
-                  )
-                }
-                className="inline-flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--surface-secondary)] hover:bg-[var(--surface-secondary)]/80 text-xs font-mono text-[var(--text-primary)] transition-all cursor-pointer shadow-2xs active:scale-95"
-              >
-                {copiedId === "panel-svg" ? (
-                  <Check className="h-3.5 w-3.5 text-[var(--accent-green)]" />
-                ) : (
-                  <Copy className="h-3.5 w-3.5 text-[var(--accent-green)]" />
-                )}
-                <span>Copy SVG</span>
-              </button>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => downloadSvgFile(selectedIcon)}
-              className="w-full inline-flex items-center justify-center gap-1.5 px-2.5 py-1 rounded-md border border-[var(--border)] bg-[var(--surface-elevated)] hover:bg-[var(--surface-secondary)] text-[11px] font-mono text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all cursor-pointer"
-            >
-              <Download className="h-3 w-3" />
-              <span>Download .svg file</span>
-            </button>
-          </div>
-
-          {/* Section B: Studio Customizer Controls */}
-          <div className="space-y-3 p-4 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)]">
-            <h3 className="font-mono text-xs font-bold text-[var(--text-primary)] flex items-center gap-1.5">
-              <SlidersHorizontal className="h-3.5 w-3.5 text-[var(--accent-green)]" />
-              <span>Studio Properties</span>
-            </h3>
-
-            {/* Stroke Width Toggle */}
-            <div className="flex items-center justify-between text-xs font-mono">
-              <span className="text-[var(--text-muted)]">Stroke Width:</span>
-              <div className="inline-flex items-center p-0.5 rounded-md border border-[var(--border)] bg-[var(--surface-secondary)]/60 text-[11px]">
+      {/* 2. Main Content Layout: Icons Canvas (Left 3 cols) + Customization & Filters (Right 1 col) */}
+      {activeTab === "standard" ? (
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
+          {/* LEFT 3 COLS: Standard Interface Icon Grid Container */}
+          <div className="lg:col-span-3 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] p-6 sm:p-8 min-h-[520px]">
+            {filteredIcons.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-64 text-center space-y-2">
+                <Box className="h-8 w-8 text-[var(--text-muted)] opacity-50" />
+                <p className="text-sm font-mono text-[var(--text-secondary)]">No icons match your search</p>
                 <button
                   type="button"
-                  onClick={() => setStrokeWidth(1.5)}
-                  className={cn(
-                    "px-2 py-0.5 rounded transition-all select-none",
-                    strokeWidth === 1.5
-                      ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] font-semibold shadow-2xs"
-                      : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
-                  )}
+                  onClick={() => {
+                    setSearchQuery("");
+                    setSelectedCategories(["Navigation", "Actions", "Interface", "Media", "Status"]);
+                  }}
+                  className="text-xs font-mono text-[var(--accent-green)] hover:underline cursor-pointer"
                 >
-                  1.5px
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setStrokeWidth(2.0)}
-                  className={cn(
-                    "px-2 py-0.5 rounded transition-all select-none",
-                    strokeWidth === 2.0
-                      ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] font-semibold shadow-2xs"
-                      : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
-                  )}
-                >
-                  2.0px
+                  Reset filters
                 </button>
               </div>
-            </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-y-7 gap-x-3">
+                {filteredIcons.map((icon) => {
+                  const isSelected = selectedIconId === icon.id;
+                  const isCopied = copiedId === icon.id;
 
-            {/* Size Switcher */}
-            <div className="flex items-center justify-between text-xs font-mono">
-              <span className="text-[var(--text-muted)]">Grid Size:</span>
-              <div className="inline-flex items-center p-0.5 rounded-md border border-[var(--border)] bg-[var(--surface-secondary)]/60 text-[11px]">
-                {[16, 20, 24, 32].map((s) => (
-                  <button
-                    key={s}
-                    type="button"
-                    onClick={() => setPreviewSize(s)}
-                    className={cn(
-                      "px-1.5 py-0.5 rounded transition-all select-none",
-                      previewSize === s
-                        ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] font-semibold shadow-2xs"
-                        : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
-                    )}
-                  >
-                    {s}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Trigger Mode */}
-            <div className="flex items-center justify-between text-xs font-mono">
-              <span className="text-[var(--text-muted)]">Animation:</span>
-              <div className="inline-flex items-center p-0.5 rounded-md border border-[var(--border)] bg-[var(--surface-secondary)]/60 text-[11px]">
-                <button
-                  type="button"
-                  onClick={() => setTriggerMode("hover")}
-                  className={cn(
-                    "px-2 py-0.5 rounded transition-all select-none",
-                    triggerMode === "hover"
-                      ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] font-semibold shadow-2xs"
-                      : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
-                  )}
-                >
-                  Hover
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTriggerMode("loop")}
-                  className={cn(
-                    "px-2 py-0.5 rounded transition-all select-none flex items-center gap-1",
-                    triggerMode === "loop"
-                      ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] font-semibold shadow-2xs"
-                      : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
-                  )}
-                >
-                  <RotateCw className="h-2.5 w-2.5 text-[var(--accent-green)]" />
-                  <span>Loop</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Theme Accent Swatches */}
-            <div className="pt-2 border-t border-[var(--border)] space-y-2">
-              <div className="flex items-center justify-between text-xs font-mono">
-                <span className="text-[var(--text-muted)]">Theme Accent:</span>
-                <button
-                  type="button"
-                  onClick={() => setAccentColor("#8bc49a")}
-                  className="text-[10px] text-[var(--accent-green)] hover:underline"
-                >
-                  Reset
-                </button>
-              </div>
-              <div className="flex items-center gap-1.5">
-                {ACCENT_PRESETS.map((preset) => {
-                  const isSelected = accentColor.toLowerCase() === preset.hex.toLowerCase();
                   return (
                     <button
-                      key={preset.hex}
+                      key={icon.id}
                       type="button"
-                      onClick={() => setAccentColor(preset.hex)}
+                      onClick={() => handleCopyIcon(icon)}
                       className={cn(
-                        "w-5 h-5 rounded-full transition-all cursor-pointer flex items-center justify-center relative",
+                        "group relative flex flex-col items-center justify-center p-3 rounded-xl transition-all cursor-pointer text-center",
+                        "focus:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent-green)]",
                         isSelected
-                          ? "ring-2 ring-offset-2 ring-offset-[var(--surface-elevated)] scale-110 shadow-xs"
-                          : "opacity-60 hover:opacity-100 hover:scale-105"
+                          ? "bg-[var(--surface-secondary)] border border-[var(--border)] shadow-xs"
+                          : "hover:bg-[var(--surface-secondary)]/50 border border-transparent"
                       )}
-                      style={
-                        {
-                          backgroundColor: preset.hex,
-                          "--tw-ring-color": preset.hex,
-                        } as React.CSSProperties
-                      }
-                      title={preset.name}
-                      aria-label={preset.name}
+                      title={`Click to copy <${icon.name} />`}
                     >
-                      {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-black/60 shadow-xs" />}
+                      {/* Icon Glyph Container */}
+                      <div className="h-10 w-10 flex items-center justify-center text-[var(--text-primary)] group-hover:scale-110 transition-transform duration-200">
+                        {icon.render({
+                          strokeWidth,
+                          isSolid: styleMode === "solid",
+                          className: "h-6 w-6 text-[var(--text-primary)]",
+                        })}
+                      </div>
+
+                      {/* Icon Name Label */}
+                      <span className="mt-2 text-xs font-sans font-normal text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] truncate max-w-[95px] transition-colors">
+                        {icon.name}
+                      </span>
+
+                      {/* Floating copy feedback */}
+                      {isCopied && (
+                        <span className="absolute -top-2 right-2 px-1.5 py-0.5 rounded text-[9px] font-mono bg-[var(--accent-green)] text-[var(--bg-main)] font-semibold shadow-xs animate-in fade-in">
+                          Copied!
+                        </span>
+                      )}
                     </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* RIGHT COL: Interface Filters Panel matching Image 1 */}
+          <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] p-5 space-y-6">
+            <h3 className="font-mono text-xs font-bold uppercase tracking-wider text-[var(--text-primary)]">
+              Filters
+            </h3>
+
+            {/* 1. Search Box */}
+            <div className="relative">
+              <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-[var(--text-muted)] pointer-events-none" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search icons..."
+                className="w-full h-8.5 rounded-lg border border-[var(--border)] bg-[var(--surface-secondary)]/60 pl-9 pr-3 text-xs text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--accent-green)] transition-colors font-mono"
+              />
+            </div>
+
+            {/* 2. Categories Accordion with counts & checkboxes */}
+            <div className="space-y-3 pt-1">
+              <button
+                type="button"
+                onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
+                className="flex items-center justify-between w-full text-xs font-sans font-medium text-[var(--text-primary)] cursor-pointer"
+              >
+                <span>Categories</span>
+                <ChevronDown
+                  className={cn(
+                    "h-3.5 w-3.5 text-[var(--text-muted)] transition-transform duration-200",
+                    isCategoriesOpen ? "rotate-0" : "-rotate-90"
+                  )}
+                />
+              </button>
+
+              {isCategoriesOpen && (
+                <div className="space-y-2 pt-1 pl-0.5">
+                  {categories.map((cat) => {
+                    const isChecked = selectedCategories.includes(cat.name);
+                    return (
+                      <label
+                        key={cat.name}
+                        onClick={() => toggleCategory(cat.name)}
+                        className="flex items-center justify-between text-xs font-sans text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer select-none py-0.5"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <div
+                            className={cn(
+                              "h-4 w-4 rounded border flex items-center justify-center transition-colors",
+                              isChecked
+                                ? "bg-[var(--text-primary)] border-[var(--text-primary)] text-[var(--bg-main)]"
+                                : "border-[var(--border)] bg-transparent"
+                            )}
+                          >
+                            {isChecked && <Check className="h-3 w-3 stroke-[3]" />}
+                          </div>
+                          <span>{cat.name}</span>
+                        </div>
+                        <span className="text-[11px] font-mono text-[var(--text-muted)] tabular-nums">
+                          {cat.count}
+                        </span>
+                      </label>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* 3. Stroke Width Selector */}
+            <div className="space-y-3 pt-3 border-t border-[var(--border)]">
+              <span className="block text-xs font-sans font-medium text-[var(--text-primary)]">
+                Stroke
+              </span>
+              <div className="space-y-2 pl-0.5">
+                {[1, 1.5, 2].map((sw) => {
+                  const isChecked = strokeWidth === sw;
+                  return (
+                    <label
+                      key={sw}
+                      onClick={() => setStrokeWidth(sw as any)}
+                      className="flex items-center gap-2.5 text-xs font-sans text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer select-none"
+                    >
+                      <div
+                        className={cn(
+                          "h-4 w-4 rounded border flex items-center justify-center transition-colors",
+                          isChecked
+                            ? "bg-[var(--text-primary)] border-[var(--text-primary)] text-[var(--bg-main)]"
+                            : "border-[var(--border)] bg-transparent"
+                        )}
+                      >
+                        {isChecked && <Check className="h-3 w-3 stroke-[3]" />}
+                      </div>
+                      <span>{sw} px</span>
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* 4. Style Selector (Outline vs Solid) */}
+            <div className="space-y-3 pt-3 border-t border-[var(--border)]">
+              <span className="block text-xs font-sans font-medium text-[var(--text-primary)]">
+                Style
+              </span>
+              <div className="space-y-2 pl-0.5">
+                {[
+                  { id: "outline", label: "Outline" },
+                  { id: "solid", label: "Solid" },
+                ].map((st) => {
+                  const isChecked = styleMode === st.id;
+                  return (
+                    <label
+                      key={st.id}
+                      onClick={() => setStyleMode(st.id as any)}
+                      className="flex items-center gap-2.5 text-xs font-sans text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer select-none"
+                    >
+                      <div
+                        className={cn(
+                          "h-4 w-4 rounded border flex items-center justify-center transition-colors",
+                          isChecked
+                            ? "bg-[var(--text-primary)] border-[var(--text-primary)] text-[var(--bg-main)]"
+                            : "border-[var(--border)] bg-transparent"
+                        )}
+                      >
+                        {isChecked && <Check className="h-3 w-3 stroke-[3]" />}
+                      </div>
+                      <span>{st.label}</span>
+                    </label>
                   );
                 })}
               </div>
             </div>
           </div>
+        </div>
+      ) : (
+        /* ─────────────────────────────────────────────────────────────────── */
+        /* MOTION & LOADERS TAB: Left Grid (3 cols) + Right Customization Panel */
+        /* ─────────────────────────────────────────────────────────────────── */
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
+          {/* LEFT 3 COLS: Motion Icons & Animated Loaders */}
+          <div className="lg:col-span-3 space-y-6">
+            {/* 1. Animated Menu Icons Card */}
+            {(motionTypeFilter === "all" || motionTypeFilter === "menu") && (
+              <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] p-6 sm:p-7 space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[var(--border)] pb-3 gap-2">
+                  <div>
+                    <h3 className="font-mono text-sm font-bold text-[var(--text-primary)] flex items-center gap-2">
+                      <Sparkles className="h-4 w-4 text-[var(--accent-green)]" />
+                      <span>VECTR Menu Icons ({filteredAnimatedIcons.length})</span>
+                    </h3>
+                    <p className="text-xs text-[var(--text-secondary)] mt-0.5">
+                      State-morphing navigation triggers. Mode:{" "}
+                      <span className="font-mono text-[var(--accent-green)] font-semibold uppercase">
+                        {motionTriggerMode === "click"
+                          ? "Click to Toggle"
+                          : motionTriggerMode === "hover"
+                          ? "Hover to Morph"
+                          : "Continuous Loop"}
+                      </span>
+                    </p>
+                  </div>
+                  <span className="text-[11px] font-mono text-[var(--text-muted)] shrink-0">
+                    Click to morph • Copy icon on hover
+                  </span>
+                </div>
 
-          {/* Section C: Category Navigation */}
-          <div className="space-y-2.5 p-4 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)]">
-            <h3 className="font-mono text-xs font-bold text-[var(--text-primary)] flex items-center gap-1.5">
-              <Layers className="h-3.5 w-3.5 text-[var(--accent-green)]" />
-              <span>Categories</span>
-            </h3>
+                {filteredAnimatedIcons.length === 0 ? (
+                  <div className="py-12 text-center font-mono text-xs text-[var(--text-muted)]">
+                    No menu icons match your filters
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3.5">
+                    {filteredAnimatedIcons.map((icon: any) => (
+                      <VectrMenuIconCard
+                        key={icon.id}
+                        icon={icon}
+                        triggerMode={motionTriggerMode}
+                        speed={motionSpeed}
+                        color={motionColor}
+                        size={motionSize}
+                        autoplayPhase={autoplayPhase}
+                        onCopy={handleCopyMotionItem}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
 
-            <div className="space-y-1">
-              {ICON_CATEGORIES.map((cat) => {
-                const isSelected = selectedCategory === cat.id;
-                return (
-                  <button
-                    key={cat.id}
-                    type="button"
-                    onClick={() => setSelectedCategory(cat.id)}
+            {/* 2. Animated UI Loaders Card */}
+            {(motionTypeFilter === "all" || motionTypeFilter === "loaders") && (
+              <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] p-6 sm:p-7 space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[var(--border)] pb-3 gap-2">
+                  <div>
+                    <h3 className="font-mono text-sm font-bold text-[var(--text-primary)] flex items-center gap-2">
+                      <Sparkles className="h-4 w-4 text-[var(--accent-green)]" />
+                      <span>Minimal UI Loaders & Spinners ({filteredAnimatedLoaders.length})</span>
+                    </h3>
+                    <p className="text-xs text-[var(--text-secondary)] mt-0.5">
+                      Continuously running 60fps SVG spinners, elastic sweeps, and harmonic ripples.
+                    </p>
+                  </div>
+                  <span className="text-[11px] font-mono text-[var(--text-muted)] shrink-0">
+                    Click loader to copy SVG
+                  </span>
+                </div>
+
+                {filteredAnimatedLoaders.length === 0 ? (
+                  <div className="py-12 text-center font-mono text-xs text-[var(--text-muted)]">
+                    No UI loaders match your filters
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3.5">
+                    {filteredAnimatedLoaders.map((ldr: any) => (
+                      <div
+                        key={ldr.id}
+                        onClick={() => handleCopyMotionItem(ldr.name, ldr.svgString || ldr.htmlSnippet)}
+                        className="group flex flex-col items-center justify-center p-3.5 rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)]/40 hover:bg-[var(--surface-secondary)] hover:border-[var(--border-hover)] transition-all text-center cursor-pointer select-none"
+                        title="Click to copy loader SVG"
+                      >
+                        <div
+                          dangerouslySetInnerHTML={{
+                            __html: processLoaderSvg(ldr),
+                          }}
+                          className="flex items-center justify-center h-12 w-12 transition-transform group-hover:scale-110"
+                        />
+                        <span className="mt-2 text-xs font-sans font-medium text-[var(--text-primary)] line-clamp-1">
+                          {ldr.name}
+                        </span>
+                        <span className="text-[10px] font-mono text-[var(--text-muted)] mt-0.5">
+                          {ldr.category}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* RIGHT COL: Motion Customization & Filters Panel */}
+          <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] p-5 space-y-6">
+            <div className="flex items-center justify-between pb-1 border-b border-[var(--border)]">
+              <h3 className="font-mono text-xs font-bold uppercase tracking-wider text-[var(--text-primary)]">
+                Filters & Motion
+              </h3>
+              <span className="text-[10px] font-mono text-[var(--text-muted)] uppercase">
+                Reactive
+              </span>
+            </div>
+
+            {/* 1. Motion Search Box */}
+            <div className="relative">
+              <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-[var(--text-muted)] pointer-events-none" />
+              <input
+                type="text"
+                value={motionSearchQuery}
+                onChange={(e) => setMotionSearchQuery(e.target.value)}
+                placeholder="Search motion & loaders..."
+                className="w-full h-8.5 rounded-lg border border-[var(--border)] bg-[var(--surface-secondary)]/60 pl-9 pr-3 text-xs text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--accent-green)] transition-colors font-mono"
+              />
+            </div>
+
+            {/* 2. Content Type Switcher */}
+            <div className="space-y-2.5">
+              <span className="block text-xs font-sans font-medium text-[var(--text-primary)]">
+                Content Type
+              </span>
+              <div className="grid grid-cols-3 gap-1 p-1 rounded-lg bg-[var(--surface-secondary)] border border-[var(--border)]">
+                {[
+                  { id: "all", label: "All" },
+                  { id: "menu", label: "Menu" },
+                  { id: "loaders", label: "Loaders" },
+                ].map((item) => {
+                  const isSelected = motionTypeFilter === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => setMotionTypeFilter(item.id as any)}
+                      className={cn(
+                        "py-1 rounded text-xs font-mono transition-colors cursor-pointer",
+                        isSelected
+                          ? "bg-[var(--surface-elevated)] text-[var(--text-primary)] font-semibold shadow-xs"
+                          : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                      )}
+                    >
+                      {item.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* 3. Trigger Mode (Menu Icons) */}
+            <div className="space-y-2.5 pt-2 border-t border-[var(--border)]">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-sans font-medium text-[var(--text-primary)]">
+                  Trigger Mode
+                </span>
+                <span className="text-[10px] font-mono text-[var(--text-muted)]">
+                  Menu Icons
+                </span>
+              </div>
+              <div className="space-y-1.5">
+                {[
+                  { id: "click", label: "Click to Toggle", icon: MousePointer },
+                  { id: "hover", label: "Hover to Morph", icon: Play },
+                  { id: "loop", label: "Continuous Loop", icon: Repeat },
+                ].map((mode) => {
+                  const isSelected = motionTriggerMode === mode.id;
+                  const IconComp = mode.icon;
+                  return (
+                    <button
+                      key={mode.id}
+                      type="button"
+                      onClick={() => setMotionTriggerMode(mode.id as any)}
+                      className={cn(
+                        "flex items-center justify-between w-full px-3 py-1.5 rounded-lg border text-xs font-mono transition-colors cursor-pointer text-left",
+                        isSelected
+                          ? "bg-[var(--surface-secondary)] border-[var(--accent-green)] text-[var(--text-primary)] font-medium"
+                          : "border-[var(--border)] hover:bg-[var(--surface-secondary)]/50 text-[var(--text-secondary)]"
+                      )}
+                    >
+                      <div className="flex items-center gap-2">
+                        <IconComp className={cn("h-3.5 w-3.5", isSelected ? "text-[var(--accent-green)]" : "text-[var(--text-muted)]")} />
+                        <span>{mode.label}</span>
+                      </div>
+                      {isSelected && <Check className="h-3 w-3 text-[var(--accent-green)]" />}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* 4. Animation Speed Multiplier */}
+            <div className="space-y-2.5 pt-2 border-t border-[var(--border)]">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-sans font-medium text-[var(--text-primary)]">
+                  Animation Speed
+                </span>
+                <span className="text-xs font-mono text-[var(--accent-green)]">
+                  {motionSpeed}x
+                </span>
+              </div>
+              <div className="grid grid-cols-4 gap-1.5">
+                {[0.5, 1.0, 1.5, 2.0].map((spd) => {
+                  const isSelected = motionSpeed === spd;
+                  return (
+                    <button
+                      key={spd}
+                      type="button"
+                      onClick={() => setMotionSpeed(spd)}
+                      className={cn(
+                        "py-1 rounded-md text-xs font-mono border transition-colors cursor-pointer text-center",
+                        isSelected
+                          ? "bg-[var(--text-primary)] border-[var(--text-primary)] text-[var(--bg-main)] font-bold shadow-xs"
+                          : "border-[var(--border)] bg-[var(--surface-secondary)]/50 text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                      )}
+                    >
+                      {spd}x
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* 5. Accent Color Tint */}
+            <div className="space-y-2.5 pt-2 border-t border-[var(--border)]">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-sans font-medium text-[var(--text-primary)]">
+                  Color Accent
+                </span>
+                <span className="text-[11px] font-mono text-[var(--text-muted)] uppercase">
+                  {motionColor}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                {[
+                  { color: "#6366f1", label: "Indigo" },
+                  { color: "#8bc49a", label: "Sage Green" },
+                  { color: "#ffffff", label: "Pure White" },
+                  { color: "#22d3ee", label: "Cyan" },
+                  { color: "#fb7185", label: "Rose" },
+                  { color: "#fbbf24", label: "Amber" },
+                ].map((item) => {
+                  const isSelected = motionColor.toLowerCase() === item.color.toLowerCase();
+                  return (
+                    <button
+                      key={item.color}
+                      type="button"
+                      onClick={() => setMotionColor(item.color)}
+                      title={item.label}
+                      className={cn(
+                        "h-6 w-6 rounded-full border transition-transform cursor-pointer relative",
+                        isSelected
+                          ? "scale-125 border-white ring-2 ring-[var(--accent-green)]"
+                          : "border-transparent opacity-80 hover:opacity-100 hover:scale-110"
+                      )}
+                      style={{ backgroundColor: item.color }}
+                    />
+                  );
+                })}
+                <label className="relative flex items-center cursor-pointer ml-auto" title="Custom color">
+                  <input
+                    type="color"
+                    value={motionColor}
+                    onChange={(e) => setMotionColor(e.target.value)}
+                    className="sr-only"
+                  />
+                  <div
+                    className="h-6 w-6 rounded-md border border-[var(--border)] hover:border-white transition-colors"
+                    style={{ backgroundColor: motionColor }}
+                  />
+                </label>
+              </div>
+            </div>
+
+            {/* 6. Size Scale */}
+            <div className="space-y-2.5 pt-2 border-t border-[var(--border)]">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-sans font-medium text-[var(--text-primary)]">
+                  Icon Size
+                </span>
+                <span className="text-xs font-mono text-[var(--text-muted)]">
+                  {motionSize}px
+                </span>
+              </div>
+              <div className="grid grid-cols-3 gap-1.5">
+                {[36, 44, 52].map((sz) => {
+                  const isSelected = motionSize === sz;
+                  return (
+                    <button
+                      key={sz}
+                      type="button"
+                      onClick={() => setMotionSize(sz)}
+                      className={cn(
+                        "py-1 rounded-md text-xs font-mono border transition-colors cursor-pointer text-center",
+                        isSelected
+                          ? "bg-[var(--text-primary)] border-[var(--text-primary)] text-[var(--bg-main)] font-bold shadow-xs"
+                          : "border-[var(--border)] bg-[var(--surface-secondary)]/50 text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                      )}
+                    >
+                      {sz}px
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* 7. Menu Categories Accordion */}
+            {(motionTypeFilter === "all" || motionTypeFilter === "menu") && (
+              <div className="space-y-3 pt-2 border-t border-[var(--border)]">
+                <button
+                  type="button"
+                  onClick={() => setIsMenuCatsOpen(!isMenuCatsOpen)}
+                  className="flex items-center justify-between w-full text-xs font-sans font-medium text-[var(--text-primary)] cursor-pointer"
+                >
+                  <span>Menu Icon Categories</span>
+                  <ChevronDown
                     className={cn(
-                      "w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg font-mono text-xs transition-colors cursor-pointer text-left",
-                      isSelected
-                        ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] font-semibold border border-[var(--border)] shadow-2xs"
-                        : "text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)]/50"
+                      "h-3.5 w-3.5 text-[var(--text-muted)] transition-transform duration-200",
+                      isMenuCatsOpen ? "rotate-0" : "-rotate-90"
                     )}
-                  >
-                    <span>{cat.label}</span>
-                    <span className="text-[10px] text-[var(--text-muted)] rounded bg-[var(--surface-elevated)] border border-[var(--border)] px-1.5 py-0.2">
-                      {cat.count}
-                    </span>
-                  </button>
-                );
-              })}
+                  />
+                </button>
+
+                {isMenuCatsOpen && (
+                  <div className="space-y-2 pt-1 pl-0.5">
+                    {menuCategoryList.map((cat) => {
+                      const isChecked = selectedMenuCats.includes(cat.name);
+                      return (
+                        <label
+                          key={cat.name}
+                          onClick={() => toggleMenuCat(cat.name)}
+                          className="flex items-center justify-between text-xs font-sans text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer select-none py-0.5"
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <div
+                              className={cn(
+                                "h-4 w-4 rounded border flex items-center justify-center transition-colors",
+                                isChecked
+                                  ? "bg-[var(--text-primary)] border-[var(--text-primary)] text-[var(--bg-main)]"
+                                  : "border-[var(--border)] bg-transparent"
+                              )}
+                            >
+                              {isChecked && <Check className="h-3 w-3 stroke-[3]" />}
+                            </div>
+                            <span>{cat.name}</span>
+                          </div>
+                          <span className="text-[11px] font-mono text-[var(--text-muted)] tabular-nums">
+                            {cat.count}
+                          </span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* 8. Loader Categories Accordion */}
+            {(motionTypeFilter === "all" || motionTypeFilter === "loaders") && (
+              <div className="space-y-3 pt-2 border-t border-[var(--border)]">
+                <button
+                  type="button"
+                  onClick={() => setIsLoaderCatsOpen(!isLoaderCatsOpen)}
+                  className="flex items-center justify-between w-full text-xs font-sans font-medium text-[var(--text-primary)] cursor-pointer"
+                >
+                  <span>Loader Categories</span>
+                  <ChevronDown
+                    className={cn(
+                      "h-3.5 w-3.5 text-[var(--text-muted)] transition-transform duration-200",
+                      isLoaderCatsOpen ? "rotate-0" : "-rotate-90"
+                    )}
+                  />
+                </button>
+
+                {isLoaderCatsOpen && (
+                  <div className="space-y-2 pt-1 pl-0.5">
+                    {loaderCategoryList.map((cat) => {
+                      const isChecked = selectedLoaderCats.includes(cat.name);
+                      return (
+                        <label
+                          key={cat.name}
+                          onClick={() => toggleLoaderCat(cat.name)}
+                          className="flex items-center justify-between text-xs font-sans text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer select-none py-0.5"
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <div
+                              className={cn(
+                                "h-4 w-4 rounded border flex items-center justify-center transition-colors",
+                                isChecked
+                                  ? "bg-[var(--text-primary)] border-[var(--text-primary)] text-[var(--bg-main)]"
+                                  : "border-[var(--border)] bg-transparent"
+                              )}
+                            >
+                              {isChecked && <Check className="h-3 w-3 stroke-[3]" />}
+                            </div>
+                            <span>{cat.name}</span>
+                          </div>
+                          <span className="text-[11px] font-mono text-[var(--text-muted)] tabular-nums">
+                            {cat.count}
+                          </span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Reset All Motion Settings */}
+            <div className="pt-2 border-t border-[var(--border)]">
+              <button
+                type="button"
+                onClick={() => {
+                  setMotionSearchQuery("");
+                  setMotionTypeFilter("all");
+                  setMotionTriggerMode("click");
+                  setMotionSpeed(1.0);
+                  setMotionColor("#6366f1");
+                  setMotionSize(44);
+                  setSelectedMenuCats([
+                    "Hamburger to X",
+                    "Grid, Bento & Dots",
+                    "Sidebar & Layout",
+                    "Media & Controls",
+                    "More & Actions",
+                  ]);
+                  setSelectedLoaderCats([
+                    "Circles & Rings",
+                    "Bars & Progress",
+                    "Dots & Grids",
+                    "Waves & Ripples",
+                    "Flip & Spin",
+                  ]);
+                }}
+                className="flex items-center justify-center gap-1.5 w-full py-1.5 rounded-lg border border-[var(--border)] text-xs font-mono text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] transition-colors cursor-pointer"
+              >
+                <RotateCcw className="h-3 w-3" />
+                <span>Reset Motion Controls</span>
+              </button>
             </div>
           </div>
-        </aside>
-      </div>
+        </div>
+      )}
 
       {/* Floating Toast Notification */}
-      {localToast && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-3.5 py-2 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)]/95 backdrop-blur-md text-xs font-mono text-[var(--text-primary)] shadow-xl animate-fade-rise">
+      {toastMessage && (
+        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-2.5 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)]/95 backdrop-blur-md text-xs font-mono text-[var(--text-primary)] shadow-2xl animate-in fade-in slide-in-from-bottom-2">
           <Check className="h-3.5 w-3.5 text-[var(--accent-green)] shrink-0" />
-          <span>{localToast}</span>
+          <span>{toastMessage}</span>
         </div>
       )}
     </div>
