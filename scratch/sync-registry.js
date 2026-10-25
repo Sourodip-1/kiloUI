@@ -251,25 +251,62 @@ const PROPS_MAP = {
     { name: "columns", type: "number", defaultValue: "6", description: "Number of 2x2 grid modules along horizontal axis." },
     { name: "rows", type: "number", defaultValue: "4", description: "Number of 2x2 grid modules along vertical axis." },
     { name: "cellSize", type: "number", defaultValue: "52", description: "Dimensions in pixels of each 2x2 morphing unit." },
-    { name: "speed", type: "number", defaultValue: "1.0", description: "Rotation and wave animation velocity multiplier." },
+    { name: "speed", type: "number", defaultValue: "1.0", description: "Wave pulse and ripple animation velocity multiplier." },
     { name: "influenceRadius", type: "number", defaultValue: "140", description: "Cursor interaction reach in pixels." },
-    { name: "autoWave", type: "boolean", defaultValue: "true", description: "Enables continuous ambient traveling wave morphing." },
+    { name: "autoWave", type: "boolean", defaultValue: "true", description: "Enables continuous ambient traveling wave illumination." },
     { name: "interactive", type: "boolean", defaultValue: "true", description: "Enables cursor tracking and click shockwave ripples." },
-    { name: "showBoxes", type: "boolean", defaultValue: "true", description: "Whether to render 2x2 grid boxes (false for pure grainy backdrop)." },
     { name: "children", type: "React.ReactNode", description: "Optional content rendered directly on the shader canvas." }
   ],
   "grainy-horizon-shader": [
     { name: "variant", type: "'ultraviolet' | 'aurora-green' | 'solar-amber' | 'cyber-cyan' | 'monochrome'", defaultValue: "'ultraviolet'", description: "Curated ambient color palette and radiant chromatic glow." },
-    { name: "grain", type: "number", defaultValue: "0.26", description: "Procedural noise & analog film grain density (0.0 to 0.6)." },
-    { name: "roughness", type: "number", defaultValue: "1.2", description: "Tactile noise roughness and grit scale." },
-    { name: "glowIntensity", type: "number", defaultValue: "1.2", description: "Brightness multiplier of the radiant horizon backlighting." },
-    { name: "curvature", type: "number", defaultValue: "0.52", description: "Depth of the dark eclipse horizon curve." },
-    { name: "glowSpread", type: "number", defaultValue: "1.1", description: "Vertical reach and spread of the radiant backlight." },
-    { name: "speed", type: "number", defaultValue: "0.8", description: "Wave undulation and breathing rhythm velocity." },
-    { name: "drift", type: "number", defaultValue: "0.35", description: "Lateral ambient horizon swaying speed." },
-    { name: "interactive", type: "boolean", defaultValue: "true", description: "Whether cursor proximity attracts the light and tilts the horizon." },
-    { name: "inverted", type: "boolean", defaultValue: "false", description: "Inverts curve orientation (crescent dome vs bowl)." },
+    { name: "color", type: "string", defaultValue: "undefined", description: "Custom primary color hex overriding the preset variant." },
+    { name: "secondaryColor", type: "string", defaultValue: "undefined", description: "Custom secondary / cooling aura tint color hex." },
+    { name: "grain", type: "number", defaultValue: "0", description: "Procedural noise & analog film grain density (0 for smooth shader)." },
+    { name: "glowIntensity", type: "number", defaultValue: "1.0", description: "Brightness multiplier of the radiant horizon backlighting." },
+    { name: "glowSpread", type: "number", defaultValue: "1.25", description: "Vertical reach and spread of the radiant backlight." },
+    { name: "liquidCursor", type: "boolean", defaultValue: "true", description: "Enables interactive WebGL2 Navier-Stokes fluid physics cursor matching the aura color." },
+    { name: "cursorIntensity", type: "number", defaultValue: "0.6", description: "Luminance intensity of the embedded liquid cursor." },
+    { name: "cursorTrailWidth", type: "number", defaultValue: "3", description: "Stroke width in pixels of the fluid cursor trail." },
     { name: "children", type: "React.ReactNode", description: "Optional content rendered directly on the shader canvas." }
+  ],
+  "firefly-cursor": [
+    { name: "preset", type: "'comet' | 'firefly' | 'nebula' | 'plasma' | 'aurora'", defaultValue: "'comet'", description: "Curated fluid physics and color preset." },
+    { name: "color", type: "string", defaultValue: "'#5f8bff'", description: "Primary fluid dye color hex." },
+    { name: "secondaryColor", type: "string", defaultValue: "undefined", description: "Secondary cooling/halo dye color hex." },
+    { name: "intensity", type: "number", defaultValue: "0.6", description: "Shading luminance intensity multiplier." },
+    { name: "trailWidth", type: "number", defaultValue: "3", description: "Fluid emitter trail thickness in pixels." },
+    { name: "linger", type: "number", defaultValue: "1.4", description: "Dissipation duration factor in seconds." },
+    { name: "glow", type: "number", defaultValue: "1.2", description: "Multi-stage bloom glow radiance multiplier." },
+    { name: "hotspot", type: "number", defaultValue: "0.8", description: "Core specular heat concentration." },
+    { name: "followSpeed", type: "number", defaultValue: "0.6", description: "Physics spring-mass cursor tracking responsiveness (0 to 1)." },
+    { name: "grain", type: "number", defaultValue: "0", description: "Analog film grain noise overlay amount." },
+    { name: "quality", type: "'low' | 'medium' | 'high'", defaultValue: "'high'", description: "Simulation and dye grid resolution preset." },
+    { name: "clickBurst", type: "boolean", defaultValue: "true", description: "Whether clicking triggers outward radial fluid pressure bursts." },
+    { name: "enabled", type: "boolean", defaultValue: "true", description: "Whether the fluid simulation actively spawns dye." },
+    { name: "children", type: "React.ReactNode", description: "Optional content wrapped inside the fluid canvas viewport." }
+  ],
+  "ethereal-smoke-shader": [
+    { name: "preset", type: "'chai-blue' | 'ethereal-violet' | 'solar-flare' | 'emerald-mist' | 'spectral-white'", defaultValue: "'chai-blue'", description: "Color and atmospheric scattering preset theme." },
+    { name: "origin", type: "'right' | 'left' | 'center' | 'bottom'", defaultValue: "'right'", description: "Location where the incandescent smoke plume originates." },
+    { name: "originX", type: "number", defaultValue: "0.98", description: "Precise horizontal source position (supports off-screen values e.g. -0.5 to 1.5)." },
+    { name: "originY", type: "number", defaultValue: "0.50", description: "Precise vertical source position (supports off-screen values e.g. -0.5 to 1.5)." },
+    { name: "coreColor", type: "string", defaultValue: "'#ffffff'", description: "Incandescent center source burst color hex." },
+    { name: "smokeColor", type: "string", defaultValue: "'#5a88e5'", description: "Primary billowing volumetric smoke color hex." },
+    { name: "atmoColor", type: "string", defaultValue: "'#171a3d'", description: "Ambient deep nebula wash / scatter color hex." },
+    { name: "bgColor", type: "string", defaultValue: "'#05060a'", description: "Base dark background void color hex." },
+    { name: "intensity", type: "number", defaultValue: "1.15", description: "Luminance and emission brightness multiplier." },
+    { name: "spread", type: "number", defaultValue: "1.4", description: "Volumetric plume expansion across the screen." },
+    { name: "turbulence", type: "number", defaultValue: "1.0", description: "Domain-warped curl noise and swirl complexity." },
+    { name: "speed", type: "number", defaultValue: "0.8", description: "Flow and billowing progression velocity." },
+    { name: "mouseStrength", type: "number", defaultValue: "0.85", description: "Mouse dispersion force that spreads the smoke." },
+    { name: "mouseSpread", type: "number", defaultValue: "0.95", description: "Interactive mouse dispersion and smoke parting factor." },
+    { name: "trailWidth", type: "number", defaultValue: "24", description: "Slim liquid trailing wake diameter in pixels (6 to 120)." },
+    { name: "trailLinger", type: "number", defaultValue: "1.6", description: "Duration in seconds that the trailing wake advects and ripples." },
+    { name: "mouseRadius", type: "number", defaultValue: "24", description: "Legacy alias for trailWidth in pixels." },
+    { name: "grain", type: "number", defaultValue: "0.04", description: "Procedural film grain noise overlay amount." },
+    { name: "vignette", type: "number", defaultValue: "0.45", description: "Vignette edge darkening falloff intensity." },
+    { name: "interactive", type: "boolean", defaultValue: "true", description: "Whether mouse proximity actively spreads the smoke." },
+    { name: "children", type: "React.ReactNode", description: "Optional content rendered on top of the smoke canvas." }
   ]
 };
 
@@ -679,8 +716,8 @@ export function GrainyGridShaderDemo() {
         interactive={true}
       >
         <div style={{ textAlign: "center", color: "white" }}>
-          <h2 style={{ fontSize: 28, fontWeight: 500, letterSpacing: "-0.02em" }}>Rough Grid Shader</h2>
-          <p style={{ fontSize: 13, opacity: 0.6, marginTop: 4 }}>Tactile noise • 2x2 App Grid Spin to X</p>
+          <h2 style={{ fontSize: 28, fontWeight: 500, letterSpacing: "-0.02em" }}>Tactile Grid Shader</h2>
+          <p style={{ fontSize: 13, opacity: 0.6, marginTop: 4 }}>Tactile noise • Dynamic coordinate grid illumination</p>
         </div>
       </GrainyGridShader>
     </div>
@@ -693,17 +730,64 @@ export function GrainyHorizonShaderDemo() {
     <div style={{ width: "100%", height: 440, borderRadius: 16, overflow: "hidden" }}>
       <GrainyHorizonShader
         variant="ultraviolet"
-        grain={0.26}
-        roughness={1.2}
-        glowIntensity={1.2}
-        curvature={0.52}
-        interactive={true}
+        grain={0}
+        glowIntensity={1.0}
+        glowSpread={1.25}
+        liquidCursor={true}
+        cursorIntensity={0.6}
+        cursorTrailWidth={3}
       >
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", gap: 12 }}>
-          <h2 style={{ color: "white", fontSize: 26, fontWeight: 600, letterSpacing: "-0.02em" }}>Grainy Horizon Shader</h2>
-          <p style={{ color: "rgba(255,255,255,0.6)", fontSize: 13, fontFamily: "monospace" }}>Tactile analog film grain • Luminous horizon glow</p>
+          <h2 style={{ color: "white", fontSize: 26, fontWeight: 600, letterSpacing: "-0.02em" }}>Radiant Horizon Shader</h2>
+          <p style={{ color: "rgba(255,255,255,0.6)", fontSize: 13, fontFamily: "monospace" }}>Smooth gradient radiance • [radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]</p>
         </div>
       </GrainyHorizonShader>
+    </div>
+  );
+}`,
+  "firefly-cursor": `import { FireflyCursor } from "@/registry/ui/firefly-cursor";
+
+export function FireflyCursorDemo() {
+  return (
+    <div style={{ width: "100%", height: 440, borderRadius: 16, overflow: "hidden", position: "relative" }}>
+      <FireflyCursor
+        preset="comet"
+        color="#5f8bff"
+        intensity={0.6}
+        trailWidth={3}
+        linger={1.4}
+        glow={1.2}
+        hotspot={0.8}
+        followSpeed={0.6}
+        quality="high"
+        clickBurst={true}
+        enabled={true}
+      >
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", gap: 12 }}>
+          <h2 style={{ color: "white", fontSize: 26, fontWeight: 600, letterSpacing: "-0.02em" }}>Firefly Cursor</h2>
+          <p style={{ color: "rgba(255,255,255,0.6)", fontSize: 13, fontFamily: "monospace" }}>Move cursor & click • WebGL2 Navier-Stokes liquid physics</p>
+        </div>
+      </FireflyCursor>
+    </div>
+  );
+}`,
+  "ethereal-smoke-shader": `import { EtherealSmokeShader } from "@/registry/ui/ethereal-smoke-shader";
+
+export function EtherealSmokeShaderDemo() {
+  return (
+    <div style={{ width: "100%", height: 440, borderRadius: 16, overflow: "hidden", position: "relative" }}>
+      <EtherealSmokeShader
+        preset="chai-blue"
+        origin="right"
+        intensity={1.15}
+        spread={1.4}
+        turbulence={1.0}
+        speed={0.8}
+        mouseSpread={0.95}
+        trailWidth={24}
+        trailLinger={1.6}
+        interactive={true}
+      />
     </div>
   );
 }`
@@ -885,7 +969,7 @@ const METADATA_MAP = {
   "grainy-grid-shader": {
     category: "Backgrounds & Shaders",
     title: "Grainy Grid Shader",
-    description: "Cursor-reactive 2x2 App Grid matrix that spins 90° and morphs into geometric crosshairs. Textured with procedural turbulent noise and analog film grain for a rough, tactile matte finish.",
+    description: "Cursor-reactive tactile coordinate grid shader featuring responsive illumination, intersection crosshairs, and shockwave pulses. Textured with procedural turbulent noise and analog film grain for a rough, tactile matte finish.",
     variants: ["rough-matte", "tactile-kraft", "cyber-mesh"],
     dependencies: ["clsx", "tailwind-merge"],
     registryDependencies: ["utils"]
@@ -893,8 +977,24 @@ const METADATA_MAP = {
   "grainy-horizon-shader": {
     category: "Backgrounds & Shaders",
     title: "Grainy Horizon Shader",
-    description: "Cinematic curved dark eclipse horizon shader illuminated by deep radiant chromatic glow and enveloped in tactile analog film grain and procedural noise.",
+    description: "Cinematic curved dark eclipse horizon shader featuring a softly blurred atmospheric boundary illuminated by deep radiant chromatic glow, dynamic color tinting, and embedded fluid aura physics.",
     variants: ["ultraviolet", "aurora-green", "solar-amber", "cyber-cyan", "monochrome"],
+    dependencies: ["clsx", "tailwind-merge"],
+    registryDependencies: ["utils"]
+  },
+  "firefly-cursor": {
+    category: "Cursors",
+    title: "Firefly Cursor",
+    description: "GPU-accelerated Navier-Stokes fluid dynamics cursor simulation featuring MacCormack advection, 5-stage bloom, pressure projection, and organic particle physics.",
+    variants: ["comet", "firefly", "nebula", "plasma", "aurora"],
+    dependencies: ["clsx", "tailwind-merge"],
+    registryDependencies: ["utils"]
+  },
+  "ethereal-smoke-shader": {
+    category: "Backgrounds & Shaders",
+    title: "Ethereal Smoke Shader",
+    description: "Cinematic volumetric organic smoke shader inspired by Chai AI. Features incandescent source emission, domain-warped fractal curl noise, deep atmospheric scattering, and fluid mouse dispersion.",
+    variants: ["chai-blue", "ethereal-violet", "solar-flare", "emerald-mist", "spectral-white"],
     dependencies: ["clsx", "tailwind-merge"],
     registryDependencies: ["utils"]
   }
@@ -941,7 +1041,7 @@ const outContent = `export interface PropDefinition {
 export interface RegistryItem {
   name: string;
   type?: "components:ui" | "components:lib";
-  category: "Actions" | "Forms & Inputs" | "Overlays" | "Data Display" | "Navigation" | "Media & Layout" | "Backgrounds & Shaders";
+  category: "Actions" | "Forms & Inputs" | "Overlays" | "Data Display" | "Navigation" | "Media & Layout" | "Backgrounds & Shaders" | "Cursors";
   title: string;
   description: string;
   variants?: string[];

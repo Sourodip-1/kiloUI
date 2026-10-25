@@ -229,6 +229,7 @@ function SidebarBase({
     Navigation: true,
     "Media & Layout": true,
     "Backgrounds & Shaders": true,
+    Cursors: true,
   });
 
   const [expandedVariants, setExpandedVariants] = React.useState<Record<string, boolean>>({
@@ -382,9 +383,9 @@ function SidebarBase({
               <VectorFolderIcon
                 isActive={isOverview}
                 className={cn(
-                  "h-4 w-4 transition-colors duration-150",
+                  "h-4 w-4 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-115 group-hover:-translate-y-0.5",
                   isOverview
-                    ? "text-[var(--accent-green)]"
+                    ? "text-[var(--accent-green)] scale-105"
                     : "text-[var(--text-primary)] group-hover:text-[var(--accent-green)]"
                 )}
               />
@@ -416,9 +417,9 @@ function SidebarBase({
               <VectorLayersIcon
                 isActive={isAllComponents}
                 className={cn(
-                  "h-4 w-4 transition-colors duration-150",
+                  "h-4 w-4 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-115 group-hover:-translate-y-0.5",
                   isAllComponents
-                    ? "text-[var(--accent-green)]"
+                    ? "text-[var(--accent-green)] scale-105"
                     : "text-[var(--text-primary)] group-hover:text-[var(--accent-green)]"
                 )}
               />
@@ -452,9 +453,9 @@ function SidebarBase({
               <VectorCubeIcon
                 isActive={isIcons}
                 className={cn(
-                  "h-4 w-4 transition-colors duration-150",
+                  "h-4 w-4 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-115 group-hover:rotate-6",
                   isIcons
-                    ? "text-[var(--accent-green)]"
+                    ? "text-[var(--accent-green)] scale-105"
                     : "text-[var(--text-primary)] group-hover:text-[var(--accent-green)]"
                 )}
               />
@@ -563,9 +564,9 @@ function SidebarBase({
                       category={cat}
                       isActive={isCategoryActive}
                       className={cn(
-                        "h-4 w-4 shrink-0 transition-colors",
+                        "h-4 w-4 shrink-0 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/cat:scale-115 group-hover/cat:-translate-y-0.5",
                         isCategoryActive
-                          ? "text-[var(--accent-green)]"
+                          ? "text-[var(--accent-green)] scale-105"
                           : "text-[var(--text-primary)] group-hover/cat:text-[var(--accent-green)]"
                       )}
                     />
@@ -649,9 +650,9 @@ function SidebarBase({
                               <VectorComponentIcon
                                 name={comp.name}
                                 className={cn(
-                                  "h-3 w-3 shrink-0 transition-colors",
+                                  "h-3 w-3 shrink-0 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/comp:scale-120 group-hover/comp:translate-x-0.5 group-hover/comp:rotate-3",
                                   isCompActive
-                                    ? "text-[var(--accent-green)]"
+                                    ? "text-[var(--accent-green)] scale-105"
                                     : "text-[var(--text-primary)] group-hover/comp:text-[var(--accent-green)]"
                                 )}
                               />
@@ -731,7 +732,7 @@ function SidebarBase({
           title={isCollapsed ? "Expand sidebar (⌘B)" : "kilo/ui"}
         >
           <div className="h-6 w-6 shrink-0 flex items-center justify-center">
-            <VectorKiloLogo theme={theme} className="h-6 w-6" />
+            <VectorKiloLogo theme={theme} className="h-6 w-6 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/brand:scale-115 group-hover/brand:rotate-6" />
           </div>
           <span
             className={cn(
@@ -754,7 +755,7 @@ function SidebarBase({
           aria-label="Collapse sidebar"
           title="Collapse sidebar (⌘B)"
         >
-          <VectorPanelLeftIcon isCollapsed={false} className="h-3.5 w-3.5" />
+          <VectorPanelLeftIcon isCollapsed={false} className="h-3.5 w-3.5 transition-transform duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-120" />
         </button>
 
         {/* Mobile Close Button */}

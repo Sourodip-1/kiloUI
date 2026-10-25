@@ -35,7 +35,7 @@ type ThemeMode = "dark" | "light" | "system";
 export type AccentColor = "green" | "violet" | "blue" | "amber" | "rose" | "cyan";
 
 export const ACCENT_PALETTES: { id: AccentColor; name: string; hex: string; lightHex: string }[] = [
-  { id: "green", name: "Sage Green", hex: "#8bc49a", lightHex: "#1b7337" },
+  { id: "green", name: "Lime Green", hex: "#5CA904", lightHex: "#5CA904" },
   { id: "violet", name: "Violet", hex: "#a78bfa", lightHex: "#6d28d9" },
   { id: "blue", name: "Cobalt Blue", hex: "#60a5fa", lightHex: "#1d4ed8" },
   { id: "amber", name: "Amber Gold", hex: "#fbbf24", lightHex: "#b45309" },

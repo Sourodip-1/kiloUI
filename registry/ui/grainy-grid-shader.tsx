@@ -14,40 +14,28 @@ export interface GrainyGridShaderProps extends React.HTMLAttributes<HTMLDivEleme
   columns?: number;
   /** Number of grid rows */
   rows?: number;
-  /** Size in pixels of each 2x2 grid cell */
+  /** Size in pixels of each grid cell */
   cellSize?: number;
   /** Base background matte color */
   bgColor?: string;
-  /** Idle stroke & block color */
+  /** Idle stroke & grid line color */
   primaryColor?: string;
-  /** Active morphed spin color */
+  /** Active highlight & interaction color */
   accentColor?: string;
   /** Cursor influence radius in pixels */
   influenceRadius?: number;
   /** Cursor influence radius alias */
   interactiveRadius?: number;
-  /** Speed of rotational transitions and waves */
+  /** Speed of wave pulses and ripple transitions */
   speed?: number;
-  /** Whether idle cells exhibit ambient traveling wave ripples */
+  /** Whether grid exhibits ambient traveling wave illumination */
   autoWave?: boolean;
-  /** Whether cells react to cursor proximity and clicks */
+  /** Whether grid reacts to cursor proximity and clicks */
   interactive?: boolean;
-  /** Whether to render the 2x2 grid boxes (set to false for pure grainy backdrop) */
+  /** @deprecated Moving boxes have been removed in favor of pure tactile grid */
   showBoxes?: boolean;
   /** Content rendered above the grainy grid shader */
   children?: React.ReactNode;
-}
-
-interface GridCell {
-  col: number;
-  row: number;
-  x: number;
-  y: number;
-  currentMorph: number;
-  targetMorph: number;
-  rotation: number;
-  targetRotation: number;
-  waveOffset: number;
 }
 
 interface Ripple {
@@ -58,19 +46,27 @@ interface Ripple {
   strength: number;
 }
 
+interface GridIntersection {
+  x: number;
+  y: number;
+  col: number;
+  row: number;
+  waveOffset: number;
+}
+
 /**
  * GrainyGridShader:
- * An interactive canvas background featuring a matrix of 2x2 App Grid units
- * that spin 90° and morph between rounded app tiles and diagonal X crosshairs.
+ * An interactive canvas background featuring a tactile tactical coordinate grid
+ * with responsive cursor lighting, ripple pulses, and ambient waves.
  * Coated in procedural film grain and turbulent noise for a rough, brutalist, tactile matte surface.
  */
 export function GrainyGridShader({
   variant = "rough-matte",
   grain = 0.22,
   roughness = 1.0,
-  columns = 6,
-  rows = 4,
-  cellSize = 52,
+  columns = 8,
+  rows = 6,
+  cellSize = 54,
   bgColor,
   primaryColor,
   accentColor,
@@ -79,7 +75,7 @@ export function GrainyGridShader({
   speed = 1.0,
   autoWave = true,
   interactive = true,
-  showBoxes = true,
+  showBoxes = false,
   children,
   className,
   style,
@@ -98,12 +94,14 @@ export function GrainyGridShader({
           bg: bgColor || "#121110",
           primary: primaryColor || "#d4af37",
           accent: accentColor || "#f59e0b",
+          lineBase: "rgba(212, 175, 55, 0.08)",
         };
       case "cyber-mesh":
         return {
           bg: bgColor || "#050608",
           primary: primaryColor || "#00f0ff",
           accent: accentColor || "#ec4899",
+          lineBase: "rgba(0, 240, 255, 0.08)",
         };
       case "rough-matte":
       default:
@@ -111,6 +109,7 @@ export function GrainyGridShader({
           bg: bgColor || "#090a0a",
           primary: primaryColor || "#f4f4f5",
           accent: accentColor || "#8bc49a",
+          lineBase: "rgba(255, 255, 255, 0.07)",
         };
     }
   }, [variant, bgColor, primaryColor, accentColor]);
@@ -122,12 +121,12 @@ export function GrainyGridShader({
   });
 
   const ripplesRef = React.useRef<Ripple[]>([]);
-  const cellsRef = React.useRef<GridCell[]>([]);
+  const intersectionsRef = React.useRef<GridIntersection[]>([]);
   const timeRef = React.useRef<number>(0);
 
-  // Initialize procedural noise pattern canvas
+  // Initialize procedural noise pattern canvas (authentic analog grain without sine artifacts)
   React.useEffect(() => {
-    const size = 128;
+    const size = 160;
     const nCanvas = document.createElement("canvas");
     nCanvas.width = size;
     nCanvas.height = size;
@@ -139,12 +138,12 @@ export function GrainyGridShader({
     const freq = Math.max(0.2, roughness);
 
     for (let i = 0; i < data.length; i += 4) {
-      // High-frequency turbulent noise
-      const n = Math.random() * 255;
-      data[i] = n;     // R
-      data[i + 1] = n; // G
-      data[i + 2] = n; // B
-      data[i + 3] = Math.floor(grain * 140 * Math.min(1.5, freq)); // Alpha
+      // Stochastic turbulent grain noise
+      const n = (Math.random() * 0.8 + Math.random() * 0.2) * 255;
+      data[i] = n;
+      data[i + 1] = n;
+      data[i + 2] = n;
+      data[i + 3] = Math.floor(grain * 150 * Math.min(1.5, freq));
     }
     nCtx.putImageData(imgData, 0, 0);
     noiseCanvasRef.current = nCanvas;
@@ -171,31 +170,28 @@ export function GrainyGridShader({
       canvas.height = Math.floor(height * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      // Re-initialize cells layout
-      const cells: GridCell[] = [];
-      const totalWidth = columns * cellSize;
-      const totalHeight = rows * cellSize;
-      const startX = (width - totalWidth) / 2 + cellSize / 2;
-      const startY = (height - totalHeight) / 2 + cellSize / 2;
+      // Precalculate grid intersection crosshairs
+      const intersections: GridIntersection[] = [];
+      const step = cellSize;
+      const startX = (width % step) / 2;
+      const startY = (height % step) / 2;
 
-      for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < columns; c++) {
-          const cx = startX + c * cellSize;
-          const cy = startY + r * cellSize;
-          cells.push({
+      let c = 0;
+      for (let x = startX; x <= width + 1; x += step) {
+        let r = 0;
+        for (let y = startY; y <= height + 1; y += step) {
+          intersections.push({
+            x,
+            y,
             col: c,
             row: r,
-            x: cx,
-            y: cy,
-            currentMorph: 0,
-            targetMorph: 0,
-            rotation: 0,
-            targetRotation: 0,
-            waveOffset: (c + r) * 0.45,
+            waveOffset: (c + r) * 0.35,
           });
+          r++;
         }
+        c++;
       }
-      cellsRef.current = cells;
+      intersectionsRef.current = intersections;
     };
 
     resize();
@@ -206,22 +202,97 @@ export function GrainyGridShader({
       timeRef.current += 0.02 * speed;
       const t = timeRef.current;
 
-      // 1. Background Fill
+      // 1. Base Matte Background
       ctx.fillStyle = themeColors.bg;
       ctx.fillRect(0, 0, width, height);
 
-      // 2. Subtle ambient grid background lines
-      ctx.save();
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.035)";
-      ctx.lineWidth = 1;
+      // 2. Active shockwave ripples update
+      const activeRipples = ripplesRef.current;
+      for (let i = activeRipples.length - 1; i >= 0; i--) {
+        const rp = activeRipples[i];
+        rp.radius += 6.0 * speed;
+        rp.strength *= 0.955;
+        if (rp.radius > rp.maxRadius || rp.strength < 0.01) {
+          activeRipples.splice(i, 1);
+        }
+      }
+
+      const mouse = mouseRef.current;
       const step = cellSize;
-      for (let x = 0; x <= width; x += step) {
+      const startX = (width % step) / 2;
+      const startY = (height % step) / 2;
+
+      // 3. Subtle Cursor Spotlight Glow
+      if (interactive && mouse.isOver) {
+        ctx.save();
+        const spot = ctx.createRadialGradient(
+          mouse.x,
+          mouse.y,
+          0,
+          mouse.x,
+          mouse.y,
+          effectiveRadius * 1.4
+        );
+        spot.addColorStop(0, "rgba(255, 255, 255, 0.04)");
+        spot.addColorStop(0.5, "rgba(255, 255, 255, 0.015)");
+        spot.addColorStop(1, "rgba(0, 0, 0, 0)");
+        ctx.fillStyle = spot;
+        ctx.fillRect(0, 0, width, height);
+        ctx.restore();
+      }
+
+      // 4. Draw Tactile Grid Lines with Dynamic Illumination
+      ctx.save();
+      ctx.lineWidth = 1;
+
+      // Vertical grid lines
+      for (let x = startX; x <= width + 1; x += step) {
+        let lineGlow = 0;
+        if (interactive && mouse.isOver) {
+          const dx = Math.abs(x - mouse.x);
+          if (dx < effectiveRadius) {
+            lineGlow = Math.max(lineGlow, (1 - dx / effectiveRadius) * 0.18);
+          }
+        }
+        activeRipples.forEach((rp) => {
+          const dx = Math.abs(x - rp.x);
+          const ringDist = Math.abs(dx - rp.radius);
+          if (ringDist < 40) {
+            lineGlow = Math.max(lineGlow, (1 - ringDist / 40) * 0.25 * rp.strength);
+          }
+        });
+
+        ctx.strokeStyle = lineGlow > 0.02
+          ? `rgba(255, 255, 255, ${0.07 + lineGlow})`
+          : themeColors.lineBase;
+
         ctx.beginPath();
         ctx.moveTo(x, 0);
         ctx.lineTo(x, height);
         ctx.stroke();
       }
-      for (let y = 0; y <= height; y += step) {
+
+      // Horizontal grid lines
+      for (let y = startY; y <= height + 1; y += step) {
+        let lineGlow = 0;
+        if (interactive && mouse.isOver) {
+          const dy = Math.abs(y - mouse.y);
+          if (dy < effectiveRadius) {
+            lineGlow = Math.max(lineGlow, (1 - dy / effectiveRadius) * 0.18);
+          }
+        }
+        activeRipples.forEach((rp) => {
+          const dy = Math.abs(y - rp.y);
+          const ringDist = Math.abs(dy - rp.radius);
+          if (ringDist < 40) {
+            lineGlow = Math.max(lineGlow, (1 - ringDist / 40) * 0.25 * rp.strength);
+          }
+        });
+
+        ctx.strokeStyle = lineGlow > 0.02
+          ? `rgba(255, 255, 255, ${0.07 + lineGlow})`
+          : themeColors.lineBase;
+
         ctx.beginPath();
         ctx.moveTo(0, y);
         ctx.lineTo(width, y);
@@ -229,149 +300,78 @@ export function GrainyGridShader({
       }
       ctx.restore();
 
-      // 3. Update ripples
-      const activeRipples = ripplesRef.current;
-      for (let i = activeRipples.length - 1; i >= 0; i--) {
-        const rp = activeRipples[i];
-        rp.radius += 5.5 * speed;
-        rp.strength *= 0.95;
-        if (rp.radius > rp.maxRadius || rp.strength < 0.01) {
-          activeRipples.splice(i, 1);
-        }
-      }
+      // 5. Draw Tactical Coordinate Markers & Intersections (+ crosshairs)
+      const intersections = intersectionsRef.current;
+      ctx.save();
+      ctx.lineCap = "round";
 
-      // 4. Update & Draw Grid Cells
-      const mouse = mouseRef.current;
-      const cells = cellsRef.current;
-      const baseSize = cellSize * 0.68;
-      const halfSize = baseSize / 2;
-
-      cells.forEach((cell) => {
-        // Calculate interaction influence
-        let hoverInfluence = 0;
+      intersections.forEach((pt) => {
+        let hoverInf = 0;
         if (interactive && mouse.isOver) {
-          const dx = cell.x - mouse.x;
-          const dy = cell.y - mouse.y;
+          const dx = pt.x - mouse.x;
+          const dy = pt.y - mouse.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < effectiveRadius) {
-            hoverInfluence = 1 - dist / effectiveRadius;
-            // Ease in cubic
-            hoverInfluence = hoverInfluence * hoverInfluence * (3 - 2 * hoverInfluence);
+            hoverInf = 1 - dist / effectiveRadius;
+            hoverInf = hoverInf * hoverInf * (3 - 2 * hoverInf);
           }
         }
 
-        // Calculate ripple impulses
-        let rippleInfluence = 0;
+        let rippleInf = 0;
         activeRipples.forEach((rp) => {
-          const dx = cell.x - rp.x;
-          const dy = cell.y - rp.y;
+          const dx = pt.x - rp.x;
+          const dy = pt.y - rp.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
           const ringDist = Math.abs(dist - rp.radius);
-          if (ringDist < 60) {
-            const inf = (1 - ringDist / 60) * rp.strength;
-            rippleInfluence = Math.max(rippleInfluence, inf);
+          if (ringDist < 50) {
+            rippleInf = Math.max(rippleInf, (1 - ringDist / 50) * rp.strength);
           }
         });
 
-        // Ambient traveling wave
         let wave = 0;
         if (autoWave) {
-          wave = (Math.sin(t + cell.waveOffset) + 1) * 0.5;
-          // Only subtle morph pulse
-          wave = Math.max(0, wave - 0.7) * 0.7;
+          wave = (Math.sin(t + pt.waveOffset) + 1) * 0.5;
+          wave = Math.max(0, wave - 0.6) * 0.5;
         }
 
-        // Determine target morph state (0 = 2x2 grid, 1 = X cross)
-        cell.targetMorph = Math.min(1, hoverInfluence * 1.3 + rippleInfluence * 1.5 + wave);
-        cell.targetRotation = (cell.targetMorph * Math.PI) / 2 + (rippleInfluence * Math.PI);
+        const activeTotal = Math.min(1, hoverInf * 1.4 + rippleInf * 1.6 + wave);
 
-        // Spring interpolation
-        cell.currentMorph += (cell.targetMorph - cell.currentMorph) * (0.14 * speed);
-        cell.rotation += (cell.targetRotation - cell.rotation) * (0.14 * speed);
+        // Draw tactical crosshair at intersection
+        const armLength = 3.5 + activeTotal * 3.0;
+        const alpha = 0.18 + activeTotal * 0.72;
 
-        if (!showBoxes) return;
+        ctx.lineWidth = activeTotal > 0.3 ? 1.5 : 1;
+        ctx.strokeStyle = activeTotal > 0.2
+          ? themeColors.accent
+          : themeColors.primary;
+        ctx.globalAlpha = alpha;
 
-        const morph = cell.currentMorph;
-        const rot = cell.rotation;
-
-        ctx.save();
-        ctx.translate(cell.x, cell.y);
-        ctx.rotate(rot);
-
-        // Compute dynamic colors between primary and accent
-        const strokeColor = morph > 0.15 ? themeColors.accent : themeColors.primary;
-        const fillAlpha = morph * 0.12;
-
-        ctx.strokeStyle = strokeColor;
-        ctx.fillStyle = morph > 0.15 ? `rgba(139, 196, 154, ${fillAlpha})` : "transparent";
-        ctx.lineWidth = 1.75;
-        ctx.lineCap = "round";
-        ctx.lineJoin = "round";
-
-        /* ── Part A: 4 Rectangles (.b1, .b2, .b3, .b4) ── */
-        // In idle state: full size. As morph -> 1: scale drops to 0.2 and opacity drops to 0
-        const boxOpacity = Math.max(0, 1 - morph * 1.3);
-        if (boxOpacity > 0.01) {
-          ctx.save();
-          ctx.globalAlpha = boxOpacity;
-
-          const boxSize = halfSize * 0.76;
-          const offset = halfSize * 0.52;
-          const r = Math.max(1, boxSize * 0.26);
-
-          // Helper to draw rounded rectangle
-          const drawRoundRect = (x: number, y: number, w: number, h: number, radius: number) => {
-            ctx.beginPath();
-            ctx.moveTo(x + radius, y);
-            ctx.lineTo(x + w - radius, y);
-            ctx.arcTo(x + w, y, x + w, y + radius, radius);
-            ctx.lineTo(x + w, y + h - radius);
-            ctx.arcTo(x + w, y + h, x + w - radius, y + h, radius);
-            ctx.lineTo(x + radius, y + h);
-            ctx.arcTo(x, y + h, x, y + h - radius, radius);
-            ctx.lineTo(x, y + radius);
-            ctx.arcTo(x, y, x + radius, y, radius);
-            ctx.closePath();
-            ctx.stroke();
-          };
-
-          // b1: Top-Left
-          drawRoundRect(-offset - boxSize / 2, -offset - boxSize / 2, boxSize, boxSize, r);
-          // b2: Top-Right
-          drawRoundRect(offset - boxSize / 2, -offset - boxSize / 2, boxSize, boxSize, r);
-          // b3: Bottom-Left
-          drawRoundRect(-offset - boxSize / 2, offset - boxSize / 2, boxSize, boxSize, r);
-          // b4: Bottom-Right
-          drawRoundRect(offset - boxSize / 2, offset - boxSize / 2, boxSize, boxSize, r);
-
-          ctx.restore();
-        }
-
-        /* ── Part B: X Crosshair Lines (.x) ── */
-        // In idle state: opacity 0, scale 0.4. As morph -> 1: scale 1, opacity 1
-        const xOpacity = Math.min(1, Math.max(0, (morph - 0.15) * 1.3));
-        if (xOpacity > 0.01) {
-          ctx.save();
-          ctx.globalAlpha = xOpacity;
-          const xSpan = halfSize * 0.85 * (0.4 + 0.6 * morph);
-
-          ctx.beginPath();
-          ctx.moveTo(-xSpan, -xSpan);
-          ctx.lineTo(xSpan, xSpan);
-          ctx.stroke();
-
-          ctx.beginPath();
-          ctx.moveTo(xSpan, -xSpan);
-          ctx.lineTo(-xSpan, xSpan);
-          ctx.stroke();
-
-          ctx.restore();
-        }
-
-        ctx.restore();
+        ctx.beginPath();
+        // Horizontal arm
+        ctx.moveTo(pt.x - armLength, pt.y);
+        ctx.lineTo(pt.x + armLength, pt.y);
+        // Vertical arm
+        ctx.moveTo(pt.x, pt.y - armLength);
+        ctx.lineTo(pt.x, pt.y + armLength);
+        ctx.stroke();
       });
+      ctx.restore();
 
-      // 5. Procedural Grain & Rough Texture Overlay
+      // 6. Draw Shockwave Ripple Rings
+      if (activeRipples.length > 0) {
+        ctx.save();
+        activeRipples.forEach((rp) => {
+          ctx.beginPath();
+          ctx.arc(rp.x, rp.y, rp.radius, 0, Math.PI * 2);
+          ctx.strokeStyle = themeColors.accent;
+          ctx.globalAlpha = rp.strength * 0.35;
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+        });
+        ctx.restore();
+      }
+
+      // 7. Procedural Grain & Rough Texture Overlay
       const noise = noiseCanvasRef.current;
       if (noise && grain > 0) {
         ctx.save();
@@ -384,7 +384,7 @@ export function GrainyGridShader({
         ctx.restore();
       }
 
-      // 6. Tactical Vignette Mask
+      // 8. Tactical Vignette Mask
       ctx.save();
       const vignette = ctx.createRadialGradient(
         width / 2,
@@ -420,7 +420,6 @@ export function GrainyGridShader({
     speed,
     autoWave,
     interactive,
-    showBoxes,
   ]);
 
   // Mouse move handler
@@ -470,7 +469,7 @@ export function GrainyGridShader({
       style={style}
       {...props}
     >
-      {/* High performance 60fps Morphing Grid Canvas */}
+      {/* High performance 60fps Tactical Grid Canvas */}
       <canvas
         ref={canvasRef}
         onMouseMove={handleMouseMove}

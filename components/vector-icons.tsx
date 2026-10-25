@@ -709,6 +709,27 @@ export function VectorCategoryIcon({
     );
   }
 
+  // 8. Cursors -> Fluid Liquid Pointer
+  if (norm.includes("cursor") || norm.includes("pointer") || norm.includes("firefly")) {
+    return (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={`${className} transition-colors ${
+          isActive ? "stroke-[var(--accent-green)]" : "group-hover:stroke-[var(--accent-green)]"
+        }`}
+      >
+        <path d="M4 4l7.07 17 2.51-7.39L21 11.07 4 4z" />
+        <path d="M14 14l6 6" />
+        <circle cx="19" cy="19" r="1.5" className={isActive ? "fill-[var(--accent-green)]" : ""} />
+      </svg>
+    );
+  }
+
   // Fallback / Foundation
   return (
     <svg
@@ -742,6 +763,25 @@ export function VectorComponentIcon({
   className?: string;
 }) {
   const norm = name.toLowerCase();
+
+  // Firefly Cursor
+  if (norm.includes("cursor") || norm.includes("firefly")) {
+    return (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={`${className} ${isActive ? "stroke-[var(--accent-green)]" : ""}`}
+      >
+        <path d="M4 4l7.07 17 2.51-7.39L21 11.07 4 4z" />
+        <path d="M14 14l6 6" />
+        <circle cx="19" cy="19" r="1.5" className={isActive ? "fill-[var(--accent-green)]" : ""} />
+      </svg>
+    );
+  }
 
   // Button
   if (norm.includes("button")) {
@@ -1247,6 +1287,25 @@ export function VectorComponentIcon({
         <path d="M2 9c4 4 16 4 20 0" className={isActive ? "stroke-[#c084fc]" : "stroke-current"} />
         <path d="M4 14c3.5 3 12.5 3 16 0" className="stroke-[#7c3aed] opacity-80" />
         <circle cx="12" cy="18" r="1.5" fill="#c084fc" />
+      </svg>
+    );
+  }
+
+  // Ethereal Smoke Shader (wispy swirling smoke plumes)
+  if (norm.includes("smoke") || norm.includes("ethereal-smoke")) {
+    return (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={`${className} ${isActive ? "stroke-[#38bdf8]" : ""}`}
+      >
+        <path d="M18 10c0-3.3-2.7-6-6-6-2.6 0-4.8 1.7-5.6 4C3.8 8.4 2 10.5 2 13c0 2.8 2.2 5 5 5h11c2.2 0 4-1.8 4-4 0-1.8-1.2-3.3-2.8-3.8-.1-.1-.1-.1-.2-.2z" />
+        <path d="M8 15c1-1 2.5-1 3.5 0" strokeDasharray="1 1" opacity="0.6" />
+        <circle cx="17" cy="13" r="1.5" fill="#38bdf8" />
       </svg>
     );
   }

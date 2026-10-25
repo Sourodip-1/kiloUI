@@ -47,6 +47,8 @@ import { PrismaticSlatsBg } from "@/registry/ui/prismatic-slats-bg";
 import { ConcaveCarousel } from "@/registry/ui/concave-carousel";
 import { GrainyGridShader } from "@/registry/ui/grainy-grid-shader";
 import { GrainyHorizonShader } from "@/registry/ui/grainy-horizon-shader";
+import { FireflyCursor } from "@/registry/ui/firefly-cursor";
+import { EtherealSmokeShader, ETHEREAL_SMOKE_PRESETS } from "@/registry/ui/ethereal-smoke-shader";
 import { RegistryItem } from "@/registry/registry-data";
 import {
   VectorKiloLogo,
@@ -686,21 +688,165 @@ export function ComponentPreviewStage({
 
   // 21. Grainy Horizon Shader state
   const [horizonVariant, setHorizonVariant] = React.useState<
-    "ultraviolet" | "aurora-green" | "solar-amber" | "cyber-cyan" | "monochrome"
+    "ultraviolet" | "aurora-green" | "solar-amber" | "cyber-cyan" | "monochrome" | "custom"
   >("ultraviolet");
-  const [horizonGrain, setHorizonGrain] = React.useState<number>(0.26);
-  const [horizonRoughness, setHorizonRoughness] = React.useState<number>(1.2);
-  const [horizonGlowIntensity, setHorizonGlowIntensity] = React.useState<number>(1.2);
-  const [horizonCurvature, setHorizonCurvature] = React.useState<number>(0.52);
-  const [horizonGlowSpread, setHorizonGlowSpread] = React.useState<number>(1.1);
-  const [horizonSpeed, setHorizonSpeed] = React.useState<number>(0.8);
-  const [horizonDrift, setHorizonDrift] = React.useState<number>(0.35);
-  const [horizonInteractive, setHorizonInteractive] = React.useState<boolean>(true);
-  const [horizonInverted, setHorizonInverted] = React.useState<boolean>(false);
+  const [horizonColor, setHorizonColor] = React.useState<string>("#6633ee");
+  const [horizonSecondaryColor, setHorizonSecondaryColor] = React.useState<string>("#8b5cf6");
+  const [horizonGlowIntensity, setHorizonGlowIntensity] = React.useState<number>(1.0);
+  const [horizonGlowSpread, setHorizonGlowSpread] = React.useState<number>(1.25);
+  const [horizonLiquidCursor, setHorizonLiquidCursor] = React.useState<boolean>(true);
+  const [horizonCursorIntensity, setHorizonCursorIntensity] = React.useState<number>(0.75);
 
   const handleHorizonVariantChange = React.useCallback(
-    (v: "ultraviolet" | "aurora-green" | "solar-amber" | "cyber-cyan" | "monochrome") => {
+    (v: "ultraviolet" | "aurora-green" | "solar-amber" | "cyber-cyan" | "monochrome" | "custom") => {
       setHorizonVariant(v);
+      if (v === "aurora-green") {
+        setHorizonColor("#059669");
+        setHorizonSecondaryColor("#10b981");
+      } else if (v === "solar-amber") {
+        setHorizonColor("#ea580c");
+        setHorizonSecondaryColor("#f59e0b");
+      } else if (v === "cyber-cyan") {
+        setHorizonColor("#0284c7");
+        setHorizonSecondaryColor("#06b6d4");
+      } else if (v === "monochrome") {
+        setHorizonColor("#52525b");
+        setHorizonSecondaryColor("#a1a1aa");
+      } else if (v === "ultraviolet") {
+        setHorizonColor("#6633ee");
+        setHorizonSecondaryColor("#8b5cf6");
+      }
+    },
+    []
+  );
+
+  // 22. Firefly Cursor state
+  const [cursorPreset, setCursorPreset] = React.useState<
+    "comet" | "firefly" | "nebula" | "plasma" | "aurora"
+  >("comet");
+  const [cursorColor, setCursorColor] = React.useState<string>("#5f8bff");
+  const [cursorCoolingColor, setCursorCoolingColor] = React.useState<string>("#5f8bff");
+  const [cursorIntensity, setCursorIntensity] = React.useState<number>(0.6);
+  const [cursorTrailWidth, setCursorTrailWidth] = React.useState<number>(3);
+  const [cursorLinger, setCursorLinger] = React.useState<number>(1.4);
+  const [cursorGlow, setCursorGlow] = React.useState<number>(1.2);
+  const [cursorHotspot, setCursorHotspot] = React.useState<number>(0.8);
+  const [cursorFollowSpeed, setCursorFollowSpeed] = React.useState<number>(0.6);
+  const [cursorGrain, setCursorGrain] = React.useState<number>(0);
+  const [cursorQuality, setCursorQuality] = React.useState<"low" | "medium" | "high">("high");
+  const [cursorClickBurst, setCursorClickBurst] = React.useState<boolean>(true);
+  const [cursorEnabled, setCursorEnabled] = React.useState<boolean>(true);
+
+  const handleCursorPresetChange = React.useCallback(
+    (p: "comet" | "firefly" | "nebula" | "plasma" | "aurora") => {
+      setCursorPreset(p);
+      if (p === "comet") {
+        setCursorColor("#5f8bff");
+        setCursorCoolingColor("#5f8bff");
+        setCursorIntensity(0.6);
+        setCursorTrailWidth(3);
+        setCursorLinger(1.4);
+        setCursorGlow(1.2);
+        setCursorHotspot(0.8);
+        setCursorFollowSpeed(0.6);
+      } else if (p === "firefly") {
+        setCursorColor("#f59e0b");
+        setCursorCoolingColor("#fbbf24");
+        setCursorIntensity(0.8);
+        setCursorTrailWidth(2.5);
+        setCursorLinger(1.2);
+        setCursorGlow(1.5);
+        setCursorHotspot(1.0);
+        setCursorFollowSpeed(0.7);
+      } else if (p === "nebula") {
+        setCursorColor("#7c3aed");
+        setCursorCoolingColor("#ec4899");
+        setCursorIntensity(0.75);
+        setCursorTrailWidth(3.5);
+        setCursorLinger(1.8);
+        setCursorGlow(1.4);
+        setCursorHotspot(0.7);
+        setCursorFollowSpeed(0.55);
+      } else if (p === "plasma") {
+        setCursorColor("#06b6d4");
+        setCursorCoolingColor("#10b981");
+        setCursorIntensity(0.7);
+        setCursorTrailWidth(3);
+        setCursorLinger(1.5);
+        setCursorGlow(1.3);
+        setCursorHotspot(0.8);
+        setCursorFollowSpeed(0.65);
+      } else if (p === "aurora") {
+        setCursorColor("#6366f1");
+        setCursorCoolingColor("#a855f7");
+        setCursorIntensity(0.7);
+        setCursorTrailWidth(3);
+        setCursorLinger(1.6);
+        setCursorGlow(1.3);
+        setCursorHotspot(0.8);
+        setCursorFollowSpeed(0.6);
+      }
+    },
+    []
+  );
+
+  // 23. Ethereal Smoke Shader state
+  const [smokePreset, setSmokePreset] = React.useState<
+    "chai-blue" | "ethereal-violet" | "solar-flare" | "emerald-mist" | "spectral-white"
+  >("chai-blue");
+  const [smokeOrigin, setSmokeOrigin] = React.useState<"right" | "left" | "center" | "bottom">("right");
+  const [smokeOriginX, setSmokeOriginX] = React.useState<number>(0.98);
+  const [smokeOriginY, setSmokeOriginY] = React.useState<number>(0.50);
+  const [smokeCoreColor, setSmokeCoreColor] = React.useState<string>("#ffffff");
+  const [smokeColor, setSmokeColor] = React.useState<string>("#5a88e5");
+  const [smokeAtmoColor, setSmokeAtmoColor] = React.useState<string>("#171a3d");
+  const [smokeBgColor, setSmokeBgColor] = React.useState<string>("#05060a");
+  const [smokeIntensity, setSmokeIntensity] = React.useState<number>(1.15);
+  const [smokeSpread, setSmokeSpread] = React.useState<number>(1.4);
+  const [smokeTurbulence, setSmokeTurbulence] = React.useState<number>(1.0);
+  const [smokeSpeed, setSmokeSpeed] = React.useState<number>(0.8);
+  const [smokeMouseStrength, setSmokeMouseStrength] = React.useState<number>(0.85);
+  const [smokeMouseSpread, setSmokeMouseSpread] = React.useState<number>(0.95);
+  const [smokeTrailWidth, setSmokeTrailWidth] = React.useState<number>(24);
+  const [smokeTrailLinger, setSmokeTrailLinger] = React.useState<number>(1.6);
+  const [smokeGrain, setSmokeGrain] = React.useState<number>(0.04);
+  const [smokeVignette, setSmokeVignette] = React.useState<number>(0.45);
+  const [smokeInteractive, setSmokeInteractive] = React.useState<boolean>(true);
+
+  const handleSmokeOriginChange = React.useCallback(
+    (orig: "right" | "left" | "center" | "bottom") => {
+      setSmokeOrigin(orig);
+      if (orig === "right") {
+        setSmokeOriginX(0.98);
+        setSmokeOriginY(0.50);
+      } else if (orig === "left") {
+        setSmokeOriginX(0.02);
+        setSmokeOriginY(0.50);
+      } else if (orig === "center") {
+        setSmokeOriginX(0.50);
+        setSmokeOriginY(0.50);
+      } else if (orig === "bottom") {
+        setSmokeOriginX(0.50);
+        setSmokeOriginY(0.95);
+      }
+    },
+    []
+  );
+
+  const handleSmokePresetChange = React.useCallback(
+    (p: "chai-blue" | "ethereal-violet" | "solar-flare" | "emerald-mist" | "spectral-white") => {
+      setSmokePreset(p);
+      const conf = ETHEREAL_SMOKE_PRESETS[p];
+      if (conf) {
+        setSmokeCoreColor(conf.coreColor);
+        setSmokeColor(conf.smokeColor);
+        setSmokeAtmoColor(conf.atmoColor);
+        setSmokeBgColor(conf.bgColor);
+        setSmokeIntensity(conf.intensity);
+        setSmokeSpread(conf.spread);
+        setSmokeTurbulence(conf.turbulence);
+        setSmokeSpeed(conf.speed);
+      }
     },
     []
   );
@@ -719,6 +865,10 @@ export function ComponentPreviewStage({
     if (item.name === "grainy-grid-shader") return ["rough-matte", "tactile-kraft", "cyber-mesh"];
     if (item.name === "grainy-horizon-shader")
       return ["ultraviolet", "aurora-green", "solar-amber", "cyber-cyan", "monochrome"];
+    if (item.name === "firefly-cursor")
+      return ["comet", "firefly", "nebula", "plasma", "aurora"];
+    if (item.name === "ethereal-smoke-shader")
+      return ["chai-blue", "ethereal-violet", "solar-flare", "emerald-mist", "spectral-white"];
     return [];
   }, [item.variants, item.name]);
 
@@ -813,6 +963,12 @@ export function ComponentPreviewStage({
       else if (item.name === "grainy-horizon-shader") {
         handleHorizonVariantChange(v as any);
       }
+      else if (item.name === "firefly-cursor") {
+        handleCursorPresetChange(v as any);
+      }
+      else if (item.name === "ethereal-smoke-shader") {
+        handleSmokePresetChange(v as any);
+      }
     },
     [
       item.name,
@@ -820,6 +976,8 @@ export function ComponentPreviewStage({
       handleSlatPresetChange,
       handleGridVariantChange,
       handleHorizonVariantChange,
+      handleCursorPresetChange,
+      handleSmokePresetChange,
     ]
   );
 
@@ -858,6 +1016,8 @@ export function ComponentPreviewStage({
       ? gridVariant
       : item.name === "grainy-horizon-shader"
       ? horizonVariant
+      : item.name === "firefly-cursor"
+      ? cursorPreset
       : item.name === "expanding-card"
       ? (expandingForced ? "expanded" : "default")
       : item.name === "blurred-carousel"
@@ -1079,20 +1239,51 @@ export function ComponentPreviewStage({
   interactiveRadius={${gridRadius}}
   autoWave={${gridAutoWave}}
   interactive={${gridInteractive}}
-  showBoxes={${gridShowBoxes}}
 />`;
     } else if (item.name === "grainy-horizon-shader") {
       code = `<GrainyHorizonShader
-  variant="${horizonVariant}"
-  grain={${horizonGrain}}
-  roughness={${horizonRoughness}}
+  color="${horizonColor}"
+  secondaryColor="${horizonSecondaryColor}"
   glowIntensity={${horizonGlowIntensity}}
-  curvature={${horizonCurvature}}
   glowSpread={${horizonGlowSpread}}
-  speed={${horizonSpeed}}
-  drift={${horizonDrift}}
-  interactive={${horizonInteractive}}
-  inverted={${horizonInverted}}
+  liquidCursor={${horizonLiquidCursor}}
+  cursorIntensity={${horizonCursorIntensity}}
+/>`;
+    } else if (item.name === "firefly-cursor") {
+      code = `<FireflyCursor
+  preset="${cursorPreset}"
+  color="${cursorColor}"
+  coolingColor="${cursorCoolingColor}"
+  intensity={${cursorIntensity}}
+  trailWidth={${cursorTrailWidth}}
+  linger={${cursorLinger}}
+  glow={${cursorGlow}}
+  hotspot={${cursorHotspot}}
+  followSpeed={${cursorFollowSpeed}}
+  grain={${cursorGrain}}
+  quality="${cursorQuality}"
+  clickBurst={${cursorClickBurst}}
+  enabled={${cursorEnabled}}
+/>`;
+    } else if (item.name === "ethereal-smoke-shader") {
+      code = `<EtherealSmokeShader
+  preset="${smokePreset}"
+  origin="${smokeOrigin}"
+  originX={${smokeOriginX}}
+  originY={${smokeOriginY}}
+  coreColor="${smokeCoreColor}"
+  smokeColor="${smokeColor}"
+  atmoColor="${smokeAtmoColor}"
+  intensity={${smokeIntensity}}
+  spread={${smokeSpread}}
+  turbulence={${smokeTurbulence}}
+  speed={${smokeSpeed}}
+  mouseSpread={${smokeMouseSpread}}
+  trailWidth={${smokeTrailWidth}}
+  trailLinger={${smokeTrailLinger}}
+  grain={${smokeGrain}}
+  vignette={${smokeVignette}}
+  interactive={${smokeInteractive}}
 />`;
     }
     onConfiguredCodeChange(code);
@@ -1225,17 +1416,44 @@ export function ComponentPreviewStage({
     gridRadius,
     gridAutoWave,
     gridInteractive,
-    gridShowBoxes,
     horizonVariant,
-    horizonGrain,
-    horizonRoughness,
+    horizonColor,
+    horizonSecondaryColor,
     horizonGlowIntensity,
-    horizonCurvature,
     horizonGlowSpread,
-    horizonSpeed,
-    horizonDrift,
-    horizonInteractive,
-    horizonInverted,
+    horizonLiquidCursor,
+    horizonCursorIntensity,
+    cursorPreset,
+    cursorColor,
+    cursorCoolingColor,
+    cursorIntensity,
+    cursorTrailWidth,
+    cursorLinger,
+    cursorGlow,
+    cursorHotspot,
+    cursorFollowSpeed,
+    cursorGrain,
+    cursorQuality,
+    cursorClickBurst,
+    cursorEnabled,
+    smokePreset,
+    smokeOrigin,
+    smokeOriginX,
+    smokeOriginY,
+    smokeCoreColor,
+    smokeColor,
+    smokeAtmoColor,
+    smokeIntensity,
+    smokeSpread,
+    smokeTurbulence,
+    smokeSpeed,
+    smokeMouseStrength,
+    smokeMouseSpread,
+    smokeTrailWidth,
+    smokeTrailLinger,
+    smokeGrain,
+    smokeVignette,
+    smokeInteractive,
     onConfiguredCodeChange,
   ]);
 
@@ -2599,13 +2817,7 @@ export function ComponentPreviewStage({
                 interactive={slatInteractive}
                 paused={slatPaused}
                 autoplay={slatAutoplay}
-              >
-                <div className="flex flex-col items-center justify-center h-full gap-3 pointer-events-none select-none">
-                  <span className="font-mono text-xs uppercase tracking-widest text-white/50 px-3 py-1 rounded-full bg-black/40 border border-white/10 backdrop-blur-sm">
-                    Interactive Prismatic Slats Shader
-                  </span>
-                </div>
-              </PrismaticSlatsBg>
+              />
             </div>
           )}
 
@@ -2626,43 +2838,80 @@ export function ComponentPreviewStage({
                 interactiveRadius={gridRadius}
                 autoWave={gridAutoWave}
                 interactive={gridInteractive}
-                showBoxes={gridShowBoxes}
-              >
-                <div className="flex flex-col items-center justify-center h-full gap-3 pointer-events-none select-none">
-                  <span className="font-mono text-xs uppercase tracking-widest text-white/50 px-3.5 py-1.5 rounded-full bg-black/60 border border-white/10 backdrop-blur-md shadow-lg">
-                    2x2 Matrix • Rough Grain Shader
-                  </span>
-                  <p className="text-xs text-white/40 font-mono">Move cursor or click to pulse wave</p>
-                </div>
-              </GrainyGridShader>
+              />
             </div>
           )}
 
-          {/* Grainy Horizon Shader Live Preview matching media_1792862001252.png */}
+          {/* Grainy Horizon Shader Live Preview (Smooth Static Radiant Shader with Liquid Aura Cursor) */}
           {item.name === "grainy-horizon-shader" && (
             <div
-              className="w-full rounded-2xl overflow-hidden border border-[var(--border)] shadow-2xl"
-              style={{ height: showKnobs ? 440 : 200 }}
+              className="w-full rounded-2xl overflow-hidden border border-[var(--border)] shadow-2xl relative"
+              style={{ height: showKnobs ? 440 : 220 }}
             >
               <GrainyHorizonShader
-                variant={horizonVariant}
-                grain={horizonGrain}
-                roughness={horizonRoughness}
+                color={horizonColor}
+                secondaryColor={horizonSecondaryColor}
                 glowIntensity={horizonGlowIntensity}
-                curvature={horizonCurvature}
                 glowSpread={horizonGlowSpread}
-                speed={horizonSpeed}
-                drift={horizonDrift}
-                interactive={horizonInteractive}
-                inverted={horizonInverted}
-              >
-                <div className="flex flex-col items-center justify-center h-full gap-3 pointer-events-none select-none">
-                  <span className="font-mono text-xs uppercase tracking-widest text-white/50 px-3.5 py-1.5 rounded-full bg-black/60 border border-white/10 backdrop-blur-md shadow-lg">
-                    Luminous Horizon • Rough Grain
-                  </span>
-                  <p className="text-xs text-white/40 font-mono">Hover cursor to pull radiance • Click for shockwave</p>
-                </div>
-              </GrainyHorizonShader>
+                liquidCursor={horizonLiquidCursor}
+                cursorIntensity={horizonCursorIntensity}
+              />
+            </div>
+          )}
+
+          {/* Firefly Cursor Live Interactive Simulation Preview */}
+          {item.name === "firefly-cursor" && (
+            <div
+              className="w-full rounded-2xl overflow-hidden border border-[var(--border)] shadow-2xl bg-black relative"
+              style={{ height: showKnobs ? 440 : 220 }}
+            >
+              <FireflyCursor
+                preset={cursorPreset}
+                color={cursorColor}
+                coolingColor={cursorCoolingColor}
+                intensity={cursorIntensity}
+                trailWidth={cursorTrailWidth}
+                linger={cursorLinger}
+                glow={cursorGlow}
+                hotspot={cursorHotspot}
+                followSpeed={cursorFollowSpeed}
+                grain={cursorGrain}
+                quality={cursorQuality}
+                clickBurst={cursorClickBurst}
+                enabled={cursorEnabled}
+                className="w-full h-full"
+              />
+            </div>
+          )}
+
+          {/* Ethereal Smoke Shader Live Interactive Preview (Chai AI type Volumetric Smoke) */}
+          {item.name === "ethereal-smoke-shader" && (
+            <div
+              className="w-full rounded-2xl overflow-hidden border border-[var(--border)] shadow-2xl bg-[#05060a] relative"
+              style={{ height: showKnobs ? 440 : 220 }}
+            >
+              <EtherealSmokeShader
+                preset={smokePreset}
+                origin={smokeOrigin}
+                originX={smokeOriginX}
+                originY={smokeOriginY}
+                coreColor={smokeCoreColor}
+                smokeColor={smokeColor}
+                atmoColor={smokeAtmoColor}
+                bgColor={smokeBgColor}
+                intensity={smokeIntensity}
+                spread={smokeSpread}
+                turbulence={smokeTurbulence}
+                speed={smokeSpeed}
+                mouseStrength={smokeMouseStrength}
+                mouseSpread={smokeMouseSpread}
+                trailWidth={smokeTrailWidth}
+                trailLinger={smokeTrailLinger}
+                grain={smokeGrain}
+                vignette={smokeVignette}
+                interactive={smokeInteractive}
+                className="w-full h-full"
+              />
             </div>
           )}
         </div>
@@ -4152,22 +4401,38 @@ export function ComponentPreviewStage({
                     label="Interactive"
                   />
                 </CustomizeTile>
-
-                <CustomizeTile label="Show Boxes">
-                  <CustomizeSwitch
-                    checked={gridShowBoxes}
-                    onChange={setGridShowBoxes}
-                    label="Show Boxes"
-                  />
-                </CustomizeTile>
               </>
             )}
 
-            {/* Grainy Horizon Shader Controls matching media_1792862001252.png */}
+            {/* Grainy Horizon Shader Controls with Color Changing & Liquid Cursor */}
             {item.name === "grainy-horizon-shader" && (
               <>
-                {/* Row 1: Variant, Grain, Roughness */}
-                <CustomizeTile label="Variant">
+                <CustomizeTile label="Color Theme">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      value={horizonColor}
+                      onChange={(e) => {
+                        setHorizonColor(e.target.value);
+                        setHorizonVariant("custom");
+                      }}
+                      className="h-8 w-8 rounded-lg border border-[var(--border)] cursor-pointer bg-transparent p-0 shrink-0"
+                      title="Custom Aura Color"
+                    />
+                    <input
+                      type="text"
+                      value={horizonColor}
+                      onChange={(e) => {
+                        setHorizonColor(e.target.value);
+                        setHorizonVariant("custom");
+                      }}
+                      className="h-8 flex-1 rounded-md border border-[var(--border)] bg-[var(--surface-secondary)] px-2.5 font-mono text-xs text-[var(--text-primary)]"
+                      placeholder="#6633ee"
+                    />
+                  </div>
+                </CustomizeTile>
+
+                <CustomizeTile label="Preset Palette">
                   <CustomizeSelect
                     value={horizonVariant}
                     onChange={(val) => handleHorizonVariantChange(val as any)}
@@ -4181,29 +4446,6 @@ export function ComponentPreviewStage({
                   />
                 </CustomizeTile>
 
-                <CustomizeTile label="Grain">
-                  <CustomizeSlider
-                    value={horizonGrain}
-                    onChange={setHorizonGrain}
-                    min={0}
-                    max={0.6}
-                    step={0.02}
-                    formatValue={(v) => v.toFixed(2)}
-                  />
-                </CustomizeTile>
-
-                <CustomizeTile label="Roughness">
-                  <CustomizeSlider
-                    value={horizonRoughness}
-                    onChange={setHorizonRoughness}
-                    min={0.4}
-                    max={3.0}
-                    step={0.1}
-                    formatValue={(v) => v.toFixed(1)}
-                  />
-                </CustomizeTile>
-
-                {/* Row 2: Glow Intensity, Curvature, Glow Spread */}
                 <CustomizeTile label="Glow Intensity">
                   <CustomizeSlider
                     value={horizonGlowIntensity}
@@ -4212,17 +4454,6 @@ export function ComponentPreviewStage({
                     max={2.5}
                     step={0.1}
                     formatValue={(v) => v.toFixed(1)}
-                  />
-                </CustomizeTile>
-
-                <CustomizeTile label="Curvature">
-                  <CustomizeSlider
-                    value={horizonCurvature}
-                    onChange={setHorizonCurvature}
-                    min={0.0}
-                    max={1.0}
-                    step={0.05}
-                    formatValue={(v) => v.toFixed(2)}
                   />
                 </CustomizeTile>
 
@@ -4237,11 +4468,76 @@ export function ComponentPreviewStage({
                   />
                 </CustomizeTile>
 
-                {/* Row 3: Wave Speed, Drift Speed */}
-                <CustomizeTile label="Wave Speed">
+                <CustomizeTile label="Liquid Aura Cursor">
+                  <CustomizeSwitch
+                    checked={horizonLiquidCursor}
+                    onChange={setHorizonLiquidCursor}
+                    label="Liquid Cursor"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Cursor Intensity">
                   <CustomizeSlider
-                    value={horizonSpeed}
-                    onChange={setHorizonSpeed}
+                    value={horizonCursorIntensity}
+                    onChange={setHorizonCursorIntensity}
+                    min={0.2}
+                    max={2.0}
+                    step={0.05}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Firefly Cursor Controls matching user React Bits customize panel */}
+            {item.name === "firefly-cursor" && (
+              <>
+                <CustomizeTile label="Preset">
+                  <CustomizeSelect
+                    value={cursorPreset}
+                    onChange={(val) => handleCursorPresetChange(val as any)}
+                    options={["comet", "firefly", "nebula", "plasma", "aurora"]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Color">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      value={cursorColor}
+                      onChange={(e) => setCursorColor(e.target.value)}
+                      className="h-8 w-8 rounded-lg border border-[var(--border)] cursor-pointer bg-transparent p-0 shrink-0"
+                    />
+                    <input
+                      type="text"
+                      value={cursorColor}
+                      onChange={(e) => setCursorColor(e.target.value)}
+                      className="h-8 flex-1 rounded-md border border-[var(--border)] bg-[var(--surface-secondary)] px-2.5 font-mono text-xs text-[var(--text-primary)]"
+                    />
+                  </div>
+                </CustomizeTile>
+
+                <CustomizeTile label="Cooling Color">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      value={cursorCoolingColor}
+                      onChange={(e) => setCursorCoolingColor(e.target.value)}
+                      className="h-8 w-8 rounded-lg border border-[var(--border)] cursor-pointer bg-transparent p-0 shrink-0"
+                    />
+                    <input
+                      type="text"
+                      value={cursorCoolingColor}
+                      onChange={(e) => setCursorCoolingColor(e.target.value)}
+                      className="h-8 flex-1 rounded-md border border-[var(--border)] bg-[var(--surface-secondary)] px-2.5 font-mono text-xs text-[var(--text-primary)]"
+                    />
+                  </div>
+                </CustomizeTile>
+
+                <CustomizeTile label="Intensity">
+                  <CustomizeSlider
+                    value={cursorIntensity}
+                    onChange={setCursorIntensity}
                     min={0.1}
                     max={3.0}
                     step={0.1}
@@ -4249,31 +4545,298 @@ export function ComponentPreviewStage({
                   />
                 </CustomizeTile>
 
-                <CustomizeTile label="Drift Speed">
+                <CustomizeTile label="Trail Width">
                   <CustomizeSlider
-                    value={horizonDrift}
-                    onChange={setHorizonDrift}
-                    min={0.0}
+                    value={cursorTrailWidth}
+                    onChange={setCursorTrailWidth}
+                    min={1}
+                    max={20}
+                    step={1}
+                    unit="px"
+                    formatValue={(v) => `${Math.round(v)}px`}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Linger">
+                  <CustomizeSlider
+                    value={cursorLinger}
+                    onChange={setCursorLinger}
+                    min={0.2}
+                    max={4.0}
+                    step={0.1}
+                    unit="s"
+                    formatValue={(v) => `${v.toFixed(1)}s`}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Glow">
+                  <CustomizeSlider
+                    value={cursorGlow}
+                    onChange={setCursorGlow}
+                    min={0}
+                    max={2.5}
+                    step={0.1}
+                    formatValue={(v) => v.toFixed(1)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Hotspot">
+                  <CustomizeSlider
+                    value={cursorHotspot}
+                    onChange={setCursorHotspot}
+                    min={0}
                     max={1.5}
+                    step={0.1}
+                    formatValue={(v) => v.toFixed(1)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Follow Speed">
+                  <CustomizeSlider
+                    value={cursorFollowSpeed}
+                    onChange={setCursorFollowSpeed}
+                    min={0.1}
+                    max={1.0}
                     step={0.05}
                     formatValue={(v) => v.toFixed(2)}
                   />
                 </CustomizeTile>
 
-                {/* Row 4: Interactive, Invert Curve */}
-                <CustomizeTile label="Interactive">
-                  <CustomizeSwitch
-                    checked={horizonInteractive}
-                    onChange={setHorizonInteractive}
-                    label="Interactive"
+                <CustomizeTile label="Grain">
+                  <CustomizeSlider
+                    value={cursorGrain}
+                    onChange={setCursorGrain}
+                    min={0}
+                    max={0.5}
+                    step={0.02}
+                    formatValue={(v) => v.toFixed(2)}
                   />
                 </CustomizeTile>
 
-                <CustomizeTile label="Invert Curve">
+                <CustomizeTile label="Quality">
+                  <CustomizeSelect
+                    value={cursorQuality}
+                    onChange={(val) => setCursorQuality(val as any)}
+                    options={["low", "medium", "high"]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Click Burst">
                   <CustomizeSwitch
-                    checked={horizonInverted}
-                    onChange={setHorizonInverted}
-                    label="Inverted"
+                    checked={cursorClickBurst}
+                    onChange={setCursorClickBurst}
+                    label="Click Burst"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Enabled">
+                  <CustomizeSwitch
+                    checked={cursorEnabled}
+                    onChange={setCursorEnabled}
+                    label="Enabled"
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Ethereal Smoke Shader Controls (Chai AI type Volumetric Smoke) */}
+            {item.name === "ethereal-smoke-shader" && (
+              <>
+                <CustomizeTile label="Preset">
+                  <CustomizeSelect
+                    value={smokePreset}
+                    onChange={(val) => handleSmokePresetChange(val as any)}
+                    options={["chai-blue", "ethereal-violet", "solar-flare", "emerald-mist", "spectral-white"]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Origin Preset">
+                  <CustomizeSelect
+                    value={smokeOrigin}
+                    onChange={(val) => handleSmokeOriginChange(val as any)}
+                    options={["right", "left", "center", "bottom"]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Origin X (Panels & Offscreen)">
+                  <CustomizeSlider
+                    value={smokeOriginX}
+                    onChange={setSmokeOriginX}
+                    min={-0.5}
+                    max={1.5}
+                    step={0.02}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Origin Y (Panels & Offscreen)">
+                  <CustomizeSlider
+                    value={smokeOriginY}
+                    onChange={setSmokeOriginY}
+                    min={-0.5}
+                    max={1.5}
+                    step={0.02}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Core Color">
+                  <div className="flex items-center gap-2 w-full">
+                    <input
+                      type="color"
+                      value={smokeCoreColor}
+                      onChange={(e) => setSmokeCoreColor(e.target.value)}
+                      className="w-8 h-8 rounded border border-[var(--border)] bg-transparent cursor-pointer p-0.5"
+                    />
+                    <input
+                      type="text"
+                      value={smokeCoreColor}
+                      onChange={(e) => setSmokeCoreColor(e.target.value)}
+                      className="flex-1 px-2.5 py-1 text-xs font-mono rounded border border-[var(--border)] bg-[var(--surface-secondary)] text-[var(--text-primary)] focus:outline-none"
+                    />
+                  </div>
+                </CustomizeTile>
+
+                <CustomizeTile label="Smoke Color">
+                  <div className="flex items-center gap-2 w-full">
+                    <input
+                      type="color"
+                      value={smokeColor}
+                      onChange={(e) => setSmokeColor(e.target.value)}
+                      className="w-8 h-8 rounded border border-[var(--border)] bg-transparent cursor-pointer p-0.5"
+                    />
+                    <input
+                      type="text"
+                      value={smokeColor}
+                      onChange={(e) => setSmokeColor(e.target.value)}
+                      className="flex-1 px-2.5 py-1 text-xs font-mono rounded border border-[var(--border)] bg-[var(--surface-secondary)] text-[var(--text-primary)] focus:outline-none"
+                    />
+                  </div>
+                </CustomizeTile>
+
+                <CustomizeTile label="Atmosphere Color">
+                  <div className="flex items-center gap-2 w-full">
+                    <input
+                      type="color"
+                      value={smokeAtmoColor}
+                      onChange={(e) => setSmokeAtmoColor(e.target.value)}
+                      className="w-8 h-8 rounded border border-[var(--border)] bg-transparent cursor-pointer p-0.5"
+                    />
+                    <input
+                      type="text"
+                      value={smokeAtmoColor}
+                      onChange={(e) => setSmokeAtmoColor(e.target.value)}
+                      className="flex-1 px-2.5 py-1 text-xs font-mono rounded border border-[var(--border)] bg-[var(--surface-secondary)] text-[var(--text-primary)] focus:outline-none"
+                    />
+                  </div>
+                </CustomizeTile>
+
+                <CustomizeTile label="Intensity">
+                  <CustomizeSlider
+                    value={smokeIntensity}
+                    onChange={setSmokeIntensity}
+                    min={0.2}
+                    max={2.5}
+                    step={0.05}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Volumetric Spread">
+                  <CustomizeSlider
+                    value={smokeSpread}
+                    onChange={setSmokeSpread}
+                    min={0.5}
+                    max={2.5}
+                    step={0.05}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Turbulence">
+                  <CustomizeSlider
+                    value={smokeTurbulence}
+                    onChange={setSmokeTurbulence}
+                    min={0.2}
+                    max={2.5}
+                    step={0.05}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Flow Speed">
+                  <CustomizeSlider
+                    value={smokeSpeed}
+                    onChange={setSmokeSpeed}
+                    min={0.1}
+                    max={2.0}
+                    step={0.05}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Mouse Hover Spread Force">
+                  <CustomizeSlider
+                    value={smokeMouseSpread}
+                    onChange={setSmokeMouseSpread}
+                    min={0.0}
+                    max={2.5}
+                    step={0.05}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Trail Width (Slim Wake)">
+                  <CustomizeSlider
+                    value={smokeTrailWidth}
+                    onChange={setSmokeTrailWidth}
+                    min={6}
+                    max={80}
+                    step={2}
+                    unit="px"
+                    formatValue={(v) => `${Math.round(v)}px`}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Trail Linger Duration">
+                  <CustomizeSlider
+                    value={smokeTrailLinger}
+                    onChange={setSmokeTrailLinger}
+                    min={0.4}
+                    max={4.0}
+                    step={0.1}
+                    unit="s"
+                    formatValue={(v) => `${v.toFixed(1)}s`}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Film Grain">
+                  <CustomizeSlider
+                    value={smokeGrain}
+                    onChange={setSmokeGrain}
+                    min={0.0}
+                    max={0.12}
+                    step={0.01}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Vignette">
+                  <CustomizeSlider
+                    value={smokeVignette}
+                    onChange={setSmokeVignette}
+                    min={0.0}
+                    max={1.0}
+                    step={0.05}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Interactive Spread">
+                  <CustomizeSwitch
+                    checked={smokeInteractive}
+                    onChange={setSmokeInteractive}
+                    label="Mouse Spreading"
                   />
                 </CustomizeTile>
               </>

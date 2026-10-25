@@ -2,58 +2,53 @@
 
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import { FireflyCursor } from "@/registry/ui/firefly-cursor";
 
 export interface GrainyHorizonShaderProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Visual preset color palette */
-  variant?: "ultraviolet" | "aurora-green" | "solar-amber" | "cyber-cyan" | "monochrome";
-  /** Procedural noise & film grain density (0.0 to 0.6) */
-  grain?: number;
-  /** Roughness texture frequency / grit scale (0.5 to 3.0) */
-  roughness?: number;
+  variant?: "ultraviolet" | "aurora-green" | "solar-amber" | "cyber-cyan" | "monochrome" | "custom";
+  /** Primary aura & gradient glow color (e.g. hex #6633ee, #5f8bff) */
+  color?: string;
+  /** Primary glow illumination color (alias for color) */
+  primaryColor?: string;
+  /** Secondary cooling color stop */
+  secondaryColor?: string;
+  /** Base dark background color (hex) */
+  bgColor?: string;
   /** Brightness multiplier of the radiant glow (0.2 to 2.5) */
   glowIntensity?: number;
-  /** Curvature depth of the dark eclipse horizon (-1.0 to 1.0) */
-  curvature?: number;
-  /** Vertical spread and reach of the backlighting glow (0.2 to 2.0) */
+  /** Vertical reach and spread of the radiant backlight (0.4 to 2.0) */
   glowSpread?: number;
-  /** Primary glow illumination color (hex) */
-  primaryColor?: string;
-  /** Secondary rim light / aberration color (hex) */
-  secondaryColor?: string;
-  /** Dark base background color (hex) */
-  bgColor?: string;
-  /** Wave undulation & breathing speed (0.1 to 3.0) */
-  speed?: number;
-  /** Ambient lateral drift speed (0.0 to 2.0) */
-  drift?: number;
-  /** Whether the horizon reacts to pointer proximity and clicks */
-  interactive?: boolean;
-  /** Invert curve orientation (crescent dome vs bowl) */
-  inverted?: boolean;
+  /** Procedural noise & film grain density (0.0 for clean smooth shader) */
+  grain?: number;
+  /** Whether to enable the liquid physics glow cursor simulation */
+  liquidCursor?: boolean;
+  /** Liquid physics cursor trail intensity (0.1 to 3.0) */
+  cursorIntensity?: number;
+  /** Liquid physics cursor trail width (1 to 20) */
+  cursorTrailWidth?: number;
   /** Optional children overlay (hero text, CTA, badges) */
   children?: React.ReactNode;
 }
 
 /**
- * GrainyHorizonShader:
- * A cinematic background shader featuring an organic curved dark horizon / eclipse silhouette
- * illuminated by a deep radiant chromatic glow and enveloped in tactile analog film grain and noise.
- * Inspired by modern brutalist aesthetics and high-end lighting documentation.
+ * GrainyHorizonShader (Luminous Gradient Shader with Liquid Aura Cursor):
+ * A smooth, modern radiant atmospheric gradient shader.
+ * Features a static, calm, non-parallax radial gradient (#000 to user-selected color)
+ * coupled with a real-time WebGL2 liquid physics Navier-Stokes fluid cursor matching the same aura.
  */
 export function GrainyHorizonShader({
   variant = "ultraviolet",
-  grain = 0.26,
-  roughness = 1.2,
-  glowIntensity = 1.2,
-  curvature = 0.52,
-  glowSpread = 1.1,
+  color,
   primaryColor,
   secondaryColor,
-  bgColor,
-  speed = 0.8,
-  drift = 0.35,
-  interactive = true,
-  inverted = false,
+  bgColor = "#000000",
+  glowIntensity = 1.0,
+  glowSpread = 1.25,
+  grain = 0,
+  liquidCursor = true,
+  cursorIntensity = 0.75,
+  cursorTrailWidth = 3.5,
   children,
   className,
   style,
@@ -61,128 +56,53 @@ export function GrainyHorizonShader({
 }: GrainyHorizonShaderProps) {
   const containerRef = React.useRef<HTMLDivElement>(null);
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
-  const noiseCanvasRef = React.useRef<HTMLCanvasElement | null>(null);
 
-  // Preset color mappings matching reference image aesthetics
-  const theme = React.useMemo(() => {
+  // Resolved primary and secondary colors
+  const resolvedColor = React.useMemo(() => {
+    if (color || primaryColor) return color || primaryColor || "#6633ee";
     switch (variant) {
       case "aurora-green":
-        return {
-          bg: bgColor || "#040907",
-          primary: primaryColor || "#10b981",
-          secondary: secondaryColor || "#34d399",
-          highlight: "#6ee7b7",
-          darkBody: "#020705",
-        };
+        return "#059669";
       case "solar-amber":
-        return {
-          bg: bgColor || "#090503",
-          primary: primaryColor || "#f59e0b",
-          secondary: secondaryColor || "#f43f5e",
-          highlight: "#fcd34d",
-          darkBody: "#060302",
-        };
+        return "#ea580c";
       case "cyber-cyan":
-        return {
-          bg: bgColor || "#03080c",
-          primary: primaryColor || "#06b6d4",
-          secondary: secondaryColor || "#3b82f6",
-          highlight: "#67e8f9",
-          darkBody: "#020508",
-        };
+        return "#0284c7";
       case "monochrome":
-        return {
-          bg: bgColor || "#08080a",
-          primary: primaryColor || "#d4d4d8",
-          secondary: secondaryColor || "#71717a",
-          highlight: "#f4f4f5",
-          darkBody: "#040405",
-        };
+        return "#52525b";
       case "ultraviolet":
       default:
-        // Deep purple / ultraviolet matching media_1792862001252.png
-        return {
-          bg: bgColor || "#05040a",
-          primary: primaryColor || "#7c3aed",
-          secondary: secondaryColor || "#4f46e5",
-          highlight: "#c084fc",
-          darkBody: "#020106",
-        };
+        return "#6633ee";
     }
-  }, [variant, bgColor, primaryColor, secondaryColor]);
+  }, [variant, color, primaryColor]);
 
-  // Pointer state & physics tracking
-  const mouseRef = React.useRef<{ x: number; y: number; isOver: boolean }>({
-    x: -9999,
-    y: -9999,
-    isOver: false,
-  });
-
-  const smoothPosRef = React.useRef<{
-    x: number;
-    y: number;
-    vx: number;
-    vy: number;
-    glowEnergy: number;
-  }>({
-    x: 0,
-    y: 0,
-    vx: 0,
-    vy: 0,
-    glowEnergy: 1.0,
-  });
-
-  const shockwaveRef = React.useRef<number>(0);
-
-  // Generate procedural noise tile
-  React.useEffect(() => {
-    const size = 320;
-    const noiseCanvas = document.createElement("canvas");
-    noiseCanvas.width = size;
-    noiseCanvas.height = size;
-    const nctx = noiseCanvas.getContext("2d");
-    if (!nctx) return;
-
-    const imgData = nctx.createImageData(size, size);
-    const data = imgData.data;
-
-    // Multi-frequency noise synthesis
-    const freq = Math.max(0.4, roughness);
-    for (let i = 0; i < data.length; i += 4) {
-      const px = (i / 4) % size;
-      const py = Math.floor(i / 4 / size);
-
-      // Pseudo-random high-frequency white noise + gradient modulation
-      const r1 = Math.random();
-      const r2 = Math.sin(px * 0.12 * freq) * Math.cos(py * 0.12 * freq) * 0.5 + 0.5;
-      const combined = r1 * 0.75 + r2 * 0.25;
-
-      const val = Math.floor(combined * 255);
-      data[i] = val;
-      data[i + 1] = val;
-      data[i + 2] = val;
-      data[i + 3] = 255;
+  const resolvedSecondary = React.useMemo(() => {
+    if (secondaryColor) return secondaryColor;
+    switch (variant) {
+      case "aurora-green":
+        return "#10b981";
+      case "solar-amber":
+        return "#f59e0b";
+      case "cyber-cyan":
+        return "#06b6d4";
+      case "monochrome":
+        return "#a1a1aa";
+      case "ultraviolet":
+      default:
+        return "#8b5cf6";
     }
+  }, [variant, secondaryColor]);
 
-    nctx.putImageData(imgData, 0, 0);
-    noiseCanvasRef.current = noiseCanvas;
-  }, [roughness]);
-
-  // Main Render Loop
+  // Static calm gradient render (NO parallax interactivity - background stays perfectly still)
   React.useEffect(() => {
     const canvas = canvasRef.current;
     const container = containerRef.current;
     if (!canvas || !container) return;
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d", { alpha: false });
     if (!ctx) return;
-
-    let animId: number;
-    let time = 0;
-    let lastStamp = performance.now();
 
     const dpr = typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1;
 
-    const resize = () => {
+    const drawBackground = () => {
       const rect = container.getBoundingClientRect();
       const w = Math.max(300, Math.floor(rect.width));
       const h = Math.max(200, Math.floor(rect.height));
@@ -192,320 +112,122 @@ export function GrainyHorizonShader({
       canvas.style.width = `${w}px`;
       canvas.style.height = `${h}px`;
 
-      if (smoothPosRef.current.x === 0 && smoothPosRef.current.y === 0) {
-        smoothPosRef.current.x = w * 0.5;
-        smoothPosRef.current.y = h * 0.72;
-      }
-    };
-
-    resize();
-    const ro = new ResizeObserver(resize);
-    ro.observe(container);
-
-    const render = (timestamp: number) => {
-      const dt = Math.min((timestamp - lastStamp) * 0.001, 0.1);
-      lastStamp = timestamp;
-      time += dt * speed;
-
-      const W = canvas.width;
-      const H = canvas.height;
-      const w = W / dpr;
-      const h = H / dpr;
-
       ctx.save();
       ctx.scale(dpr, dpr);
-      ctx.clearRect(0, 0, w, h);
 
-      // Shockwave decay
-      if (shockwaveRef.current > 0) {
-        shockwaveRef.current = Math.max(0, shockwaveRef.current - dt * 2.5);
-      }
-
-      // Physics momentum & smoothing
-      const isOver = interactive && mouseRef.current.isOver;
-      let targetX = w * 0.5;
-      let targetY = h * 0.74;
-
-      if (isOver) {
-        targetX = mouseRef.current.x;
-        targetY = mouseRef.current.y;
-      } else {
-        // Natural hypnotic drift
-        targetX = w * 0.5 + Math.sin(time * 0.5 * (drift || 0.35)) * (w * 0.16);
-        targetY = h * 0.72 + Math.cos(time * 0.4 * (drift || 0.35)) * (h * 0.06);
-      }
-
-      const cur = smoothPosRef.current;
-      const springK = isOver ? 0.08 : 0.035;
-      const damping = 0.86;
-
-      const ax = (targetX - cur.x) * springK;
-      const ay = (targetY - cur.y) * springK;
-
-      cur.vx = (cur.vx + ax) * damping;
-      cur.vy = (cur.vy + ay) * damping;
-      cur.x += cur.vx;
-      cur.y += cur.vy;
-
-      const targetEnergy = isOver ? 1.35 : 1.0;
-      cur.glowEnergy += (targetEnergy - cur.glowEnergy) * 0.06;
-
-      const lx = cur.x;
-      const ly = cur.y;
-      const effIntensity = glowIntensity * cur.glowEnergy * (1.0 + shockwaveRef.current * 0.6);
-
-      /* ============================================================ */
-      /* 1. LAYER 1: BASE MATTE BACKGROUND                            */
-      /* ============================================================ */
-      ctx.fillStyle = theme.bg;
+      // 1. Base Dark Background
+      ctx.fillStyle = bgColor;
       ctx.fillRect(0, 0, w, h);
 
-      /* ============================================================ */
-      /* 2. LAYER 2: CHROMATIC RADIANT BACKLIGHT GLOW                 */
-      /* ============================================================ */
-      // Base glow radius modulated by spread prop
-      const glowR = Math.max(w, h) * 0.65 * glowSpread;
+      // 2. Fixed Smooth Radial Gradient Shader (#000 at top 40% -> user color at 100%)
+      // Static origin at top center (50% w, 10% h) without parallax shift
+      const originX = w * 0.5;
+      const originY = h * 0.10;
+      const gradR = Math.max(w, h) * 1.25 * glowSpread;
 
-      // Primary radiant core gradient
-      const coreGrad = ctx.createRadialGradient(lx, ly, 0, lx, ly, glowR);
-      coreGrad.addColorStop(0.0, `${theme.primary}e6`);
-      coreGrad.addColorStop(0.2, `${theme.primary}aa`);
-      coreGrad.addColorStop(0.5, `${theme.secondary}55`);
-      coreGrad.addColorStop(0.8, `${theme.secondary}15`);
-      coreGrad.addColorStop(1.0, "rgba(0, 0, 0, 0)");
+      const radial = ctx.createRadialGradient(originX, originY, 0, originX, originY, gradR);
+      radial.addColorStop(0.0, bgColor);
+      radial.addColorStop(0.38, bgColor);
+      radial.addColorStop(0.70, `${resolvedColor}88`);
+      radial.addColorStop(1.0, resolvedColor);
 
       ctx.save();
-      ctx.globalAlpha = Math.min(1, effIntensity * 0.95);
-      ctx.fillStyle = coreGrad;
+      ctx.globalAlpha = Math.min(1, glowIntensity);
+      ctx.fillStyle = radial;
       ctx.fillRect(0, 0, w, h);
       ctx.restore();
 
-      // Secondary wide ambient aura along lower base
-      const auraGrad = ctx.createLinearGradient(0, h * 0.35, 0, h);
-      auraGrad.addColorStop(0.0, "rgba(0, 0, 0, 0)");
-      auraGrad.addColorStop(0.6, `${theme.secondary}30`);
-      auraGrad.addColorStop(1.0, `${theme.primary}66`);
+      // 3. Volumetric diffuse bottom aura
+      const bottomAura = ctx.createLinearGradient(0, h * 0.45, 0, h);
+      bottomAura.addColorStop(0.0, "rgba(0, 0, 0, 0)");
+      bottomAura.addColorStop(0.65, `${resolvedColor}40`);
+      bottomAura.addColorStop(1.0, `${resolvedColor}aa`);
 
       ctx.save();
-      ctx.globalAlpha = Math.min(1, effIntensity * 0.85);
-      ctx.fillStyle = auraGrad;
+      ctx.globalAlpha = Math.min(1, glowIntensity * 0.85);
+      ctx.fillStyle = bottomAura;
       ctx.fillRect(0, 0, w, h);
       ctx.restore();
 
-      /* ============================================================ */
-      /* 3. LAYER 3: DARK SILHOUETTE HORIZON / ECLIPSE DOME           */
-      /* ============================================================ */
-      // Calculate horizon curve control points
-      // In reference image: upper portion is a large dark body dipping downward into the purple glow
-      const baseApexY = inverted ? h * 0.35 : h * 0.68;
-      const curveDepth = curvature * (h * 0.38);
-
-      // Lateral shift influenced by light tracking
-      const apexX = w * 0.5 + (lx - w * 0.5) * 0.35;
-      const apexY = baseApexY + (ly - h * 0.7) * 0.25 + Math.sin(time * 0.8) * 8 + (inverted ? -curveDepth : curveDepth);
-
-      const leftY = inverted ? h * 0.75 : h * 0.22;
-      const rightY = inverted ? h * 0.75 : h * 0.22;
-
-      ctx.save();
-      ctx.beginPath();
-
-      if (!inverted) {
-        // Curve: Top edges curve downward in center, covering the top half
-        ctx.moveTo(0, 0);
-        ctx.lineTo(0, leftY);
-        ctx.bezierCurveTo(
-          w * 0.25, leftY + curveDepth * 0.8,
-          w * 0.38, apexY,
-          apexX, apexY
-        );
-        ctx.bezierCurveTo(
-          w * 0.62, apexY,
-          w * 0.75, rightY + curveDepth * 0.8,
-          w, rightY
-        );
-        ctx.lineTo(w, 0);
-        ctx.closePath();
-      } else {
-        // Inverted: Bottom upward dome
-        ctx.moveTo(0, h);
-        ctx.lineTo(0, leftY);
-        ctx.bezierCurveTo(
-          w * 0.25, leftY - curveDepth * 0.8,
-          w * 0.38, apexY,
-          apexX, apexY
-        );
-        ctx.bezierCurveTo(
-          w * 0.62, apexY,
-          w * 0.75, rightY - curveDepth * 0.8,
-          w, rightY
-        );
-        ctx.lineTo(w, h);
-        ctx.closePath();
-      }
-
-      // Fill dark occluding body with rich velvety charcoal-black gradient
-      const bodyGrad = ctx.createLinearGradient(0, 0, 0, h);
-      bodyGrad.addColorStop(0.0, theme.darkBody);
-      bodyGrad.addColorStop(0.7, `${theme.darkBody}f5`);
-      bodyGrad.addColorStop(1.0, theme.darkBody);
-
-      ctx.fillStyle = bodyGrad;
-      ctx.fill();
-
-      // Shadow depth & ambient occlusion cast onto the horizon rim
-      ctx.restore();
-
-      /* ============================================================ */
-      /* 4. LAYER 4: HORIZON RIM ILLUMINATION (EDGE GLOW)             */
-      /* ============================================================ */
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(0, leftY);
-      if (!inverted) {
-        ctx.bezierCurveTo(
-          w * 0.25, leftY + curveDepth * 0.8,
-          w * 0.38, apexY,
-          apexX, apexY
-        );
-        ctx.bezierCurveTo(
-          w * 0.62, apexY,
-          w * 0.75, rightY + curveDepth * 0.8,
-          w, rightY
-        );
-      } else {
-        ctx.bezierCurveTo(
-          w * 0.25, leftY - curveDepth * 0.8,
-          w * 0.38, apexY,
-          apexX, apexY
-        );
-        ctx.bezierCurveTo(
-          w * 0.62, apexY,
-          w * 0.75, rightY - curveDepth * 0.8,
-          w, rightY
-        );
-      }
-
-      // Soft rim glow stroke
-      ctx.strokeStyle = `${theme.highlight}40`;
-      ctx.lineWidth = 4.5;
-      ctx.lineCap = "round";
-      ctx.stroke();
-
-      // Razor sharp central edge
-      ctx.strokeStyle = `${theme.highlight}99`;
-      ctx.lineWidth = 1.25;
-      ctx.stroke();
-      ctx.restore();
-
-      /* ============================================================ */
-      /* 5. LAYER 5: TACTILE ANALOG FILM GRAIN & PROCEDURAL NOISE    */
-      /* ============================================================ */
-      const noise = noiseCanvasRef.current;
-      if (noise && grain > 0) {
-        ctx.save();
-        // Multi-pass noise blending for rough texture without digital banding
-        const pat = ctx.createPattern(noise, "repeat");
-        if (pat) {
-          // Pass 1: Overlay for midtone tactile roughness
-          ctx.globalCompositeOperation = "overlay";
-          ctx.globalAlpha = Math.min(1, grain * 1.6);
-          ctx.fillStyle = pat;
-          ctx.fillRect(0, 0, w, h);
-
-          // Pass 2: Screen for luminous micro-grain specks in the glow
-          ctx.globalCompositeOperation = "screen";
-          ctx.globalAlpha = Math.min(1, grain * 0.75);
-          ctx.fillStyle = pat;
-          ctx.fillRect(0, 0, w, h);
+      // 4. Optional subtle film grain (only if grain > 0)
+      if (grain > 0) {
+        const size = 160;
+        const nCanvas = document.createElement("canvas");
+        nCanvas.width = size;
+        nCanvas.height = size;
+        const nctx = nCanvas.getContext("2d");
+        if (nctx) {
+          const imgData = nctx.createImageData(size, size);
+          for (let i = 0; i < imgData.data.length; i += 4) {
+            const v = Math.random() * 255;
+            imgData.data[i] = v;
+            imgData.data[i + 1] = v;
+            imgData.data[i + 2] = v;
+            imgData.data[i + 3] = Math.floor(grain * 120);
+          }
+          nctx.putImageData(imgData, 0, 0);
+          const pat = ctx.createPattern(nCanvas, "repeat");
+          if (pat) {
+            ctx.save();
+            ctx.globalCompositeOperation = "screen";
+            ctx.fillStyle = pat;
+            ctx.fillRect(0, 0, w, h);
+            ctx.restore();
+          }
         }
-        ctx.restore();
       }
 
-      /* ============================================================ */
-      /* 6. LAYER 6: CINEMATIC RADIAL VIGNETTE                         */
-      /* ============================================================ */
-      const vig = ctx.createRadialGradient(
-        w * 0.5,
-        h * 0.5,
-        Math.min(w, h) * 0.28,
-        w * 0.5,
-        h * 0.5,
-        Math.max(w, h) * 0.78
-      );
-      vig.addColorStop(0.0, "rgba(0, 0, 0, 0)");
-      vig.addColorStop(0.7, "rgba(0, 0, 0, 0.42)");
-      vig.addColorStop(1.0, "rgba(0, 0, 0, 0.88)");
-
-      ctx.fillStyle = vig;
-      ctx.fillRect(0, 0, w, h);
-
       ctx.restore();
-      animId = requestAnimationFrame(render);
     };
 
-    animId = requestAnimationFrame(render);
+    drawBackground();
+    const ro = new ResizeObserver(drawBackground);
+    ro.observe(container);
 
     return () => {
-      cancelAnimationFrame(animId);
       ro.disconnect();
     };
-  }, [
-    theme,
-    grain,
-    roughness,
-    glowIntensity,
-    curvature,
-    glowSpread,
-    speed,
-    drift,
-    interactive,
-    inverted,
-  ]);
-
-  // Mouse tracking handlers
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const rect = canvas.getBoundingClientRect();
-    mouseRef.current = {
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-      isOver: true,
-    };
-  };
-
-  const handleMouseEnter = () => {
-    mouseRef.current.isOver = true;
-  };
-
-  const handleMouseLeave = () => {
-    mouseRef.current.isOver = false;
-  };
-
-  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    shockwaveRef.current = 1.0;
-    props.onClick?.(e);
-  };
+  }, [bgColor, resolvedColor, glowIntensity, glowSpread, grain]);
 
   return (
     <div
       ref={containerRef}
       className={cn("relative w-full h-full overflow-hidden select-none bg-black", className)}
-      style={{ background: theme.bg, ...style }}
-      onMouseMove={handleMouseMove}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      onClick={handleClick}
+      style={style}
       {...props}
     >
+      {/* Calm, fixed radiant gradient canvas */}
       <canvas
         ref={canvasRef}
         className="absolute inset-0 w-full h-full pointer-events-none z-0 block"
         aria-hidden="true"
       />
-      {children && (
-        <div className="relative z-10 w-full h-full pointer-events-auto">
+
+      {/* Embedded Liquid Physics Simulation Cursor in the same aura color */}
+      {liquidCursor && (
+        <FireflyCursor
+          color={resolvedColor}
+          coolingColor={resolvedSecondary}
+          intensity={cursorIntensity}
+          trailWidth={cursorTrailWidth}
+          glow={1.3}
+          hotspot={0.8}
+          linger={1.5}
+          followSpeed={0.65}
+          clickBurst={true}
+          className="absolute inset-0 z-10 pointer-events-auto"
+        >
+          {children && (
+            <div className="relative z-20 w-full h-full flex items-center justify-center p-6">
+              {children}
+            </div>
+          )}
+        </FireflyCursor>
+      )}
+
+      {/* Fallback children slot if liquidCursor is disabled */}
+      {!liquidCursor && children && (
+        <div className="relative z-20 w-full h-full flex items-center justify-center p-6">
           {children}
         </div>
       )}
@@ -516,3 +238,4 @@ export function GrainyHorizonShader({
 // Aliases for convenience
 export const GrainyGlowShader = GrainyHorizonShader;
 export const GrainyAuraBg = GrainyHorizonShader;
+export const RadiantHorizonShader = GrainyHorizonShader;
