@@ -83,7 +83,7 @@ function ComponentsDiscoveryContent() {
 
         {/* Category Pill Filters with Smooth Rubbery Sliding Highlight */}
         <SlidingHighlightContainer
-          className="inline-flex flex-wrap items-center gap-1 p-1 rounded-lg bg-[var(--surface-elevated)] border border-[var(--border)] max-w-full"
+          className="flex w-full max-w-full flex-nowrap items-center gap-1 overflow-x-auto overscroll-x-contain scroll-smooth rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] p-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           pillClassName="bg-[var(--surface-secondary)] border border-[var(--border)] rounded-md shadow-2xs"
           activeSelector='[data-active="true"]'
           activeKey={activeCategoryParam || "all"}
@@ -93,7 +93,7 @@ function ComponentsDiscoveryContent() {
             data-hover-item="true"
             data-active={!activeCategoryParam ? "true" : undefined}
             className={cn(
-              "relative z-10 rounded-md px-3 py-1.5 font-mono text-xs transition-colors duration-150 select-none whitespace-nowrap",
+              "relative z-10 shrink-0 rounded-md px-3 py-1.5 font-mono text-xs transition-colors duration-150 select-none whitespace-nowrap",
               !activeCategoryParam
                 ? "text-[var(--text-primary)] font-semibold"
                 : "text-[var(--text-muted)] hover:text-[var(--text-primary)] font-medium"
@@ -111,7 +111,7 @@ function ComponentsDiscoveryContent() {
                 data-hover-item="true"
                 data-active={isSelected ? "true" : undefined}
                 className={cn(
-                  "relative z-10 rounded-md px-3 py-1.5 font-mono text-xs transition-colors duration-150 select-none whitespace-nowrap",
+                  "relative z-10 shrink-0 rounded-md px-3 py-1.5 font-mono text-xs transition-colors duration-150 select-none whitespace-nowrap",
                   isSelected
                     ? "text-[var(--text-primary)] font-semibold"
                     : "text-[var(--text-muted)] hover:text-[var(--text-primary)] font-medium"

@@ -994,11 +994,27 @@ export function FireflyCursor({
       if (!raf && alive && visible && !document.hidden) raf = requestAnimationFrame(frame);
     };
 
-    const onPointerMove = (event: PointerEvent) => {
+    const getLocalPoint = (event: PointerEvent) => {
       const rect = container.getBoundingClientRect();
-      const x = event.clientX - rect.left;
-      const y = event.clientY - rect.top;
-      const inside = x >= 0 && y >= 0 && x <= rect.width && y <= rect.height;
+      const width = Math.max(1, container.clientWidth);
+      const height = Math.max(1, container.clientHeight);
+      const scaleX = width / Math.max(1, rect.width);
+      const scaleY = height / Math.max(1, rect.height);
+      const x = (event.clientX - rect.left) * scaleX;
+      const y = (event.clientY - rect.top) * scaleY;
+      return {
+        x,
+        y,
+        inside:
+          event.clientX >= rect.left &&
+          event.clientX <= rect.right &&
+          event.clientY >= rect.top &&
+          event.clientY <= rect.bottom,
+      };
+    };
+
+    const onPointerMove = (event: PointerEvent) => {
+      const { x, y, inside } = getLocalPoint(event);
       if (!inside) {
         if (state.pointer.inside) {
           state.pointer.inside = false;
@@ -1025,10 +1041,8 @@ export function FireflyCursor({
     const onPointerDown = (event: PointerEvent) => {
       const s = settingsRef.current;
       if (!s.clickBurst || !s.enabled) return;
-      const rect = container.getBoundingClientRect();
-      const x = event.clientX - rect.left;
-      const y = event.clientY - rect.top;
-      if (x < 0 || y < 0 || x > rect.width || y > rect.height) return;
+      const { x, y, inside } = getLocalPoint(event);
+      if (!inside) return;
       state.bursts.push([x, y]);
       wake();
     };
@@ -1059,9 +1073,9 @@ export function FireflyCursor({
     });
     intersection.observe(container);
 
-    window.addEventListener("pointermove", onPointerMove, { passive: true });
-    window.addEventListener("pointerdown", onPointerDown, { passive: true });
-    document.documentElement.addEventListener("pointerleave", onPointerLeave);
+    container.addEventListener("pointermove", onPointerMove, { passive: true, capture: true });
+    container.addEventListener("pointerdown", onPointerDown, { passive: true, capture: true });
+    container.addEventListener("pointerleave", onPointerLeave);
     document.addEventListener("visibilitychange", onVisibility);
 
     resize();
@@ -1072,9 +1086,9 @@ export function FireflyCursor({
       cancelAnimationFrame(raf);
       resizeObserver.disconnect();
       intersection.disconnect();
-      window.removeEventListener("pointermove", onPointerMove);
-      window.removeEventListener("pointerdown", onPointerDown);
-      document.documentElement.removeEventListener("pointerleave", onPointerLeave);
+      container.removeEventListener("pointermove", onPointerMove, true);
+      container.removeEventListener("pointerdown", onPointerDown, true);
+      container.removeEventListener("pointerleave", onPointerLeave);
       document.removeEventListener("visibilitychange", onVisibility);
       release();
       Object.values(passes).forEach((pass: any) => gl.deleteProgram(pass.program));

@@ -120,6 +120,7 @@ html.light[data-accent="cyan"] {
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
@@ -130,6 +131,24 @@ body {
   -moz-osx-font-smoothing: grayscale;
   transition: background-color 250ms var(--ease-spring), color 250ms var(--ease-spring);
   text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+/* Keep interactive previews and dense registry pages usable on narrow screens. */
+@media (max-width: 640px) {
+  html {
+    font-size: 15px;
+  }
+
+  button,
+  a {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  pre {
+    max-width: 100%;
+    overflow-x: auto;
+  }
 }
 
 /* --- GOOGLE SANS CORPORATE TYPOGRAPHY SCHEMA --- */

@@ -107,7 +107,7 @@ export function ScaledThumbnailWrapper({
     <div
       ref={containerRef}
       className={cn(
-        "w-full h-full min-h-full flex items-center justify-center overflow-hidden relative select-none",
+        "w-full h-full min-h-0 flex items-center justify-center overflow-hidden relative select-none",
         className
       )}
     >
@@ -119,7 +119,7 @@ export function ScaledThumbnailWrapper({
           overflow: "hidden",
           flexShrink: 0,
         }}
-        className="pointer-events-auto flex items-center justify-center"
+        className="pointer-events-auto flex items-center justify-center max-w-full max-h-full"
       >
         <div
           style={{

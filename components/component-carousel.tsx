@@ -136,36 +136,36 @@ function getCarouselCardConfig(name: string): {
     name === "directional-marquee"
   ) {
     return {
-      widthClass: "w-[440px] sm:w-[520px]",
-      previewHeightClass: "h-56",
+      widthClass: "w-[min(440px,calc(100vw-2rem))] sm:w-[520px]",
+      previewHeightClass: "h-48 sm:h-56",
       previewMaxWidthClass: "max-w-none w-full",
     };
   }
   if (name === "expanding-card" || name === "kinetic-text") {
     return {
-      widthClass: "w-[330px] sm:w-[370px]",
-      previewHeightClass: "h-56",
+      widthClass: "w-[min(330px,calc(100vw-2rem))] sm:w-[370px]",
+      previewHeightClass: "h-48 sm:h-56",
       previewMaxWidthClass: "max-w-xs sm:max-w-sm",
     };
   }
   if (name === "content-slider") {
     return {
-      widthClass: "w-[290px] sm:w-[310px]",
-      previewHeightClass: "h-48",
+      widthClass: "w-[min(290px,calc(100vw-2rem))] sm:w-[310px]",
+      previewHeightClass: "h-44 sm:h-48",
       previewMaxWidthClass: "max-w-[260px]",
     };
   }
   if (name === "sidebar" || name === "tabs" || name === "card" || name === "stat-card" || name === "accordion" || name === "notched-navbar") {
     return {
-      widthClass: "w-[280px] sm:w-[310px]",
-      previewHeightClass: "h-36",
+      widthClass: "w-[min(280px,calc(100vw-2rem))] sm:w-[310px]",
+      previewHeightClass: "h-40 sm:h-36",
       previewMaxWidthClass: "max-w-[270px]",
     };
   }
   // Compact default (button, input, switch, badge, dialog)
   return {
-    widthClass: "w-[250px] sm:w-[270px]",
-    previewHeightClass: "h-32",
+    widthClass: "w-[min(250px,calc(100vw-2rem))] sm:w-[270px]",
+    previewHeightClass: "h-36 sm:h-32",
     previewMaxWidthClass: "max-w-[220px]",
   };
 }

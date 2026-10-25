@@ -6,7 +6,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import {
   Terminal,
   Copy,
-  Check,
   Sparkles,
   Code,
   FileCode,
@@ -19,7 +18,6 @@ import {
   LayoutGrid,
   Maximize2,
   ChevronDown,
-  X,
 } from "lucide-react";
 import { RegistryItem, REGISTRY_DATA } from "@/registry/registry-data";
 import { VectorComponentIcon } from "@/components/vector-icons";
@@ -85,6 +83,12 @@ export function ComponentDetailClient({ item, initialVariant }: ComponentDetailC
   const [configuredCode, setConfiguredCode] = React.useState("");
 
   const dropdownRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    if (!window.matchMedia("(max-width: 640px)").matches) return;
+    const frame = requestAnimationFrame(() => setViewport("mobile"));
+    return () => cancelAnimationFrame(frame);
+  }, []);
 
   const mainFile = item.files[0];
   const sourceCode = mainFile?.content || "";
@@ -219,11 +223,11 @@ ${(configuredCode || item.usage || "").trim()}
   };
 
   return (
-    <div className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-6 space-y-6 pb-6">
+    <div className="flex-1 w-full max-w-6xl mx-auto px-3 sm:px-6 py-4 sm:py-6 space-y-5 sm:space-y-6 pb-6">
       {/* 1. Header Section */}
       <div className="space-y-4 border-b border-[var(--border)] pb-5">
         {/* Breadcrumbs */}
-        <nav aria-label="Breadcrumb" className="flex items-center gap-2 font-mono text-xs text-[var(--text-muted)]">
+        <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 font-mono text-xs text-[var(--text-muted)]">
           <Link href="/" className="hover:text-[var(--text-primary)] transition-colors flex items-center gap-0.5">
             <span>kilo</span>
             <span className="text-[var(--accent-green)] font-semibold">/</span>
@@ -249,7 +253,7 @@ ${(configuredCode || item.usage || "").trim()}
           <div className="space-y-1">
             <div className="flex items-center gap-2.5">
               <VectorComponentIcon name={item.name} className="h-5 w-5 text-[var(--accent-green)] shrink-0" />
-              <h1 className="font-mono text-2xl sm:text-3xl font-bold tracking-tight text-[var(--text-primary)]">
+              <h1 className="min-w-0 break-words font-mono text-2xl sm:text-3xl font-bold tracking-tight text-[var(--text-primary)]">
                 {item.title}
               </h1>
             </div>
@@ -259,9 +263,9 @@ ${(configuredCode || item.usage || "").trim()}
           </div>
 
           {/* Quick CLI Pill */}
-          <div className="flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] px-3 py-1.5 font-mono text-xs text-[var(--text-secondary)] shadow-xs">
+          <div className="flex min-w-0 max-w-full items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] px-3 py-1.5 font-mono text-xs text-[var(--text-secondary)] shadow-xs">
             <Terminal className="h-3.5 w-3.5 text-[var(--accent-green)] shrink-0" />
-            <span className="select-all">npx kilo-ui add {item.name}</span>
+            <span className="truncate select-all">npx kilo-ui add {item.name}</span>
             <button
               type="button"
               onClick={() => handleCopyAction("cli")}
@@ -285,7 +289,7 @@ ${(configuredCode || item.usage || "").trim()}
           className="space-y-6"
         >
           {/* Toolbar with Slide Switcher */}
-          <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center justify-between gap-2.5">
             {/* Left: View Switcher (Preview / Code) with smooth spring highlight */}
             <SlidingHighlightContainer
               activeSelector='[data-state="active"]'
@@ -326,7 +330,7 @@ ${(configuredCode || item.usage || "").trim()}
             </SlidingHighlightContainer>
 
             {/* Right: Viewport Sizing + Favorites + Share + Copy for AI */}
-            <div className="flex items-center gap-2">
+            <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:justify-end">
               {/* Viewport size buttons (active in preview mode) */}
               {activeTab === "preview" && (
                 <SlidingHighlightContainer
@@ -568,7 +572,7 @@ ${(configuredCode || item.usage || "").trim()}
         </div>
 
           {/* Primary View (Live Preview with Knobs OR TSX Source Code) with Slide Physics */}
-          <div className="relative w-full overflow-x-clip min-h-[460px]">
+          <div className="relative w-full overflow-x-clip min-h-[360px] sm:min-h-[460px]">
             <TabsContent value="preview" className="space-y-12 mt-0">
               <section className="space-y-3">
                 <ComponentPreviewStage

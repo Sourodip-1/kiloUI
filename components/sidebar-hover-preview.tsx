@@ -30,12 +30,18 @@ export function SidebarHoverPreview({
   isCollapsed = false,
 }: SidebarHoverPreviewProps) {
   const [mounted, setMounted] = React.useState(false);
+  const [canHover, setCanHover] = React.useState(false);
   const [current, setCurrent] = React.useState<HoverState | null>(null);
   const [isVisible, setIsVisible] = React.useState(false);
   const cardRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     setMounted(true);
+    const media = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const update = () => setCanHover(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
   }, []);
 
   // Smooth item tracking
@@ -76,7 +82,7 @@ export function SidebarHoverPreview({
     onMouseLeavePreview?.();
   };
 
-  if (!mounted || !current) return null;
+  if (!mounted || !canHover || !current) return null;
 
   // Viewport vertical clamping ensures the card NEVER overflows the screen bottom or top
   const rawTop = current.top - measuredHeight / 2;
@@ -155,7 +161,7 @@ export function SidebarHoverPreview({
           }}
         />
 
-        <div className="w-full h-full flex items-center justify-center pointer-events-none relative z-10 overflow-hidden">
+        <div className="w-full h-full flex items-center justify-center pointer-events-auto relative z-10 overflow-hidden">
           <ComponentPreviewStage
             item={item}
             interactive={false}
