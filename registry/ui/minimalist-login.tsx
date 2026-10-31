@@ -160,24 +160,25 @@ export function MinimalistLogin({
     const render = () => {
       pulseAnimRef.current += 0.04;
 
-      const rect = canvas.getBoundingClientRect();
+      const width = canvas.clientWidth || 320;
+      const height = canvas.clientHeight || 440;
       const dpr = window.devicePixelRatio || 1;
       if (
-        canvas.width !== Math.round(rect.width * dpr) ||
-        canvas.height !== Math.round(rect.height * dpr)
+        canvas.width !== Math.round(width * dpr) ||
+        canvas.height !== Math.round(height * dpr)
       ) {
-        canvas.width = Math.round(rect.width * dpr);
-        canvas.height = Math.round(rect.height * dpr);
+        canvas.width = Math.round(width * dpr);
+        canvas.height = Math.round(height * dpr);
       }
 
       ctx.save();
       ctx.scale(dpr, dpr);
-      ctx.clearRect(0, 0, rect.width, rect.height);
+      ctx.clearRect(0, 0, width, height);
 
-      const baseR = Math.min(rect.width * 0.58, rect.height * 0.46);
-      const sphereRadius = Math.max(160, Math.min(baseR, 215));
-      const cx = rect.width * 0.22;
-      const cy = rect.height * 0.49;
+      const baseR = Math.min(width * 0.58, height * 0.46);
+      const sphereRadius = Math.max(70, Math.min(baseR, 215));
+      const cx = width * 0.24;
+      const cy = height * 0.49;
 
       if (sphereMotion) {
         targetAngleY += 0.0055 * rotationSpeed;
@@ -367,7 +368,15 @@ export function MinimalistLogin({
     const canvas = canvasRef.current;
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
-    mouseRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top, isOver: true };
+    const layoutW = canvas.clientWidth || 1;
+    const layoutH = canvas.clientHeight || 1;
+    const scaleX = layoutW / (rect.width || 1);
+    const scaleY = layoutH / (rect.height || 1);
+    mouseRef.current = {
+      x: (e.clientX - rect.left) * scaleX,
+      y: (e.clientY - rect.top) * scaleY,
+      isOver: true,
+    };
   };
   const handleMouseEnter = () => { mouseRef.current.isOver = true; };
   const handleMouseLeave = () => { mouseRef.current.isOver = false; };

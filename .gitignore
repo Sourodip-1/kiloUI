@@ -39,6 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-.kontext/memory.db-shm
-.gitignore
-.kontext/memory.db-wal
+
+# memory & scratch
+.kontext/
+scratch/

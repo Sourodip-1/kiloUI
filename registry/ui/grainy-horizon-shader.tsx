@@ -101,15 +101,12 @@ export function GrainyHorizonShader({
     if (!ctx) return;
 
     const drawBackground = () => {
-      const rect = container.getBoundingClientRect();
-      const w = Math.max(1, Math.floor(rect.width));
-      const h = Math.max(1, Math.floor(rect.height));
+      const w = Math.max(1, container.clientWidth || 640);
+      const h = Math.max(1, container.clientHeight || 320);
       const dpr = typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1;
 
       canvas.width = Math.round(w * dpr);
       canvas.height = Math.round(h * dpr);
-      canvas.style.width = `${w}px`;
-      canvas.style.height = `${h}px`;
 
       ctx.save();
       ctx.scale(dpr, dpr);

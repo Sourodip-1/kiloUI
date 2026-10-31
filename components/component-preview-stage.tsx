@@ -49,6 +49,11 @@ import { GrainyGridShader } from "@/registry/ui/grainy-grid-shader";
 import { GrainyHorizonShader } from "@/registry/ui/grainy-horizon-shader";
 import { FireflyCursor } from "@/registry/ui/firefly-cursor";
 import { EtherealSmokeShader, ETHEREAL_SMOKE_PRESETS } from "@/registry/ui/ethereal-smoke-shader";
+import { LiquidMetalBackground } from "@/registry/ui/liquid-metal-background";
+import { MorphNodeRing, MorphShapeDesign } from "@/registry/ui/morph-node-ring";
+import { GlassReveal, GlassRevealShape } from "@/registry/ui/glass-reveal";
+import { HorizonLogin } from "@/registry/ui/horizon-login";
+import { BlueprintLogin } from "@/registry/ui/blueprint-login";
 import { RegistryItem } from "@/registry/registry-data";
 import { ScaledThumbnailWrapper } from "@/components/scaled-thumbnail-wrapper";
 import {
@@ -264,6 +269,152 @@ function CustomizeInput({
       placeholder={placeholder}
       className="bg-transparent text-right text-xs text-[var(--text-primary)] font-mono focus:outline-none placeholder:text-[var(--text-muted)] w-28 sm:w-36 px-1 truncate"
     />
+  );
+}
+
+/** Elegant elevated image preset and custom URL selector */
+function CustomizeImageSelect({
+  value,
+  onChange,
+  presets = [
+    { name: "Sunflowers", url: "/images/sunflowers.jpg" },
+    {
+      name: "Portrait",
+      url: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1200&q=80",
+    },
+    {
+      name: "Cyber Neon",
+      url: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1200&q=80",
+    },
+    {
+      name: "Abstract Mist",
+      url: "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=1200&q=80",
+    },
+    {
+      name: "Camera Noir",
+      url: "https://images.unsplash.com/photo-1552168324-d612d77725e3?auto=format&fit=crop&w=1200&q=80",
+    },
+  ],
+}: {
+  value: string;
+  onChange: (val: string) => void;
+  presets?: { name: string; url: string }[];
+}) {
+  const [open, setOpen] = React.useState(false);
+  const containerRef = React.useRef<HTMLDivElement>(null);
+  const currentPreset = presets.find((p) => p.url === value);
+  const label = currentPreset ? currentPreset.name : "Custom URL";
+
+  React.useEffect(() => {
+    if (!open) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open]);
+
+  return (
+    <div ref={containerRef} className={cn("relative inline-block text-left", open && "z-50")}>
+      <button
+        type="button"
+        onClick={() => setOpen((prev) => !prev)}
+        className={cn(
+          "group flex items-center justify-between gap-2 px-2.5 py-1 rounded-md text-xs font-mono transition-all duration-150 cursor-pointer select-none",
+          "bg-[var(--surface-tertiary)]/80 hover:bg-[var(--surface-tertiary)] border border-[var(--border)] hover:border-[var(--border-hover)]",
+          "text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-green)]/40 shadow-xs",
+          open && "border-[var(--accent-green)]/50 ring-1 ring-[var(--accent-green)]/40 bg-[var(--surface-elevated)]"
+        )}
+        aria-haspopup="dialog"
+        aria-expanded={open}
+      >
+        <div className="flex items-center gap-2 truncate max-w-[130px]">
+          <img
+            src={value}
+            alt=""
+            className="h-4 w-4 rounded-sm object-cover border border-white/20 shrink-0"
+            onError={(e) => {
+              (e.target as HTMLElement).style.display = "none";
+            }}
+          />
+          <span className="truncate font-medium text-[var(--text-primary)]">
+            {label}
+          </span>
+        </div>
+        <ChevronDown
+          className={cn(
+            "h-3 w-3 text-[var(--text-muted)] transition-transform duration-200 shrink-0 group-hover:text-[var(--text-primary)]",
+            open && "rotate-180 text-[var(--accent-green)]"
+          )}
+        />
+      </button>
+
+      {open && (
+        <div
+          className={cn(
+            "absolute right-0 mt-1.5 w-64 p-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)]/95 backdrop-blur-xl shadow-2xl z-50",
+            "animate-in fade-in zoom-in-95 duration-100 origin-top-right text-xs"
+          )}
+        >
+          <div className="text-[10px] uppercase font-mono tracking-wider text-[var(--text-muted)] px-1 pb-2">
+            Select Photo Preset
+          </div>
+          <div className="grid grid-cols-1 gap-1 mb-2.5 max-h-52 overflow-y-auto pr-0.5">
+            {presets.map((preset) => {
+              const isSelected = value === preset.url;
+              return (
+                <button
+                  key={preset.name}
+                  type="button"
+                  onClick={() => {
+                    onChange(preset.url);
+                    setOpen(false);
+                  }}
+                  className={cn(
+                    "flex items-center gap-2.5 w-full p-1.5 rounded-lg text-xs font-mono transition-colors text-left cursor-pointer",
+                    isSelected
+                      ? "bg-[var(--surface-secondary)] text-[var(--accent-green)] font-semibold border border-[var(--border)]"
+                      : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)]"
+                  )}
+                >
+                  <img
+                    src={preset.url}
+                    alt={preset.name}
+                    className="h-7 w-7 rounded-md object-cover border border-white/10 shrink-0"
+                  />
+                  <span className="flex-1 truncate font-medium">{preset.name}</span>
+                  {isSelected && (
+                    <Check className="h-3.5 w-3.5 text-[var(--accent-green)] shrink-0 mr-1" />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="border-t border-[var(--border)]/70 pt-2 px-0.5">
+            <div className="text-[10px] uppercase font-mono tracking-wider text-[var(--text-muted)] mb-1">
+              Custom Image URL
+            </div>
+            <input
+              type="text"
+              value={value}
+              onChange={(e) => onChange(e.target.value)}
+              placeholder="https://..."
+              className="w-full px-2.5 py-1.5 rounded-md bg-[var(--surface-secondary)] border border-[var(--border)] text-[var(--text-primary)] font-mono text-[11px] focus:outline-none focus:ring-1 focus:ring-[var(--accent-green)] placeholder:text-[var(--text-muted)]"
+            />
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -858,6 +1009,70 @@ export function ComponentPreviewStage({
     []
   );
 
+  // Liquid Metal Background State
+  const initialMetalTone =
+    activeVariant === "pure-silver" ||
+    activeVariant === "liquid-gold" ||
+    activeVariant === "titanium" ||
+    activeVariant === "cobalt-chrome"
+      ? (activeVariant as "cobalt-chrome" | "pure-silver" | "liquid-gold" | "titanium")
+      : "cobalt-chrome";
+  const [metalTone, setMetalTone] = React.useState<"cobalt-chrome" | "pure-silver" | "liquid-gold" | "titanium">(initialMetalTone);
+  const [metalIntensity, setMetalIntensity] = React.useState<"subtle" | "balanced" | "dramatic">("balanced");
+  const [metalSpeed, setMetalSpeed] = React.useState<number>(1.0);
+  const [metalInteractive, setMetalInteractive] = React.useState<boolean>(true);
+  const [metalTheme, setMetalTheme] = React.useState<"system" | "dark" | "light">("system");
+
+  // 25. Horizon Login State
+  const [horizonLoginSpeed, setHorizonLoginSpeed] = React.useState<number>(1.0);
+  const [horizonLoginGlowIntensity, setHorizonLoginGlowIntensity] = React.useState<number>(1.0);
+  const [horizonLoginGrain, setHorizonLoginGrain] = React.useState<boolean>(true);
+  const [horizonLoginDefaultTab, setHorizonLoginDefaultTab] = React.useState<"login" | "signup">("login");
+
+  // 26. Blueprint Login State
+  const [bpLoginDefaultTab, setBpLoginDefaultTab] = React.useState<"login" | "signup">("login");
+  const [bpExpandRatio, setBpExpandRatio] = React.useState<number>(1.42);
+  const [bpNeighborWave, setBpNeighborWave] = React.useState<boolean>(true);
+  const [bpRotationY, setBpRotationY] = React.useState<number>(-26);
+  const [bpRotationX, setBpRotationX] = React.useState<number>(3);
+
+  // 27. Morph Node Ring State
+  const [ringLoop, setRingLoop] = React.useState<boolean>(true);
+  const [ringSpeed, setRingSpeed] = React.useState<number>(1.0);
+  const [ringNodeCount, setRingNodeCount] = React.useState<number>(8);
+  const [ringMode, setRingMode] = React.useState<"image" | "color">("image");
+  const [ringNodeSize, setRingNodeSize] = React.useState<number>(68);
+  const [ringRadius, setRingRadius] = React.useState<number>(130);
+  const [ringDesign, setRingDesign] = React.useState<MorphShapeDesign>("all");
+  const [ringEnableRotation, setRingEnableRotation] = React.useState<boolean>(true);
+  const [ringRotationSpeed, setRingRotationSpeed] = React.useState<number>(1.0);
+  const [ringKeepUpright, setRingKeepUpright] = React.useState<boolean>(true);
+  const [ringVariant, setRingVariant] = React.useState<string>("morph-sequence");
+
+  // 28. Glass Reveal State (Matching all 19 controls from React Bits Pro specification)
+  const [glassRevealImage, setGlassRevealImage] = React.useState<string>(
+    "/images/sunflowers.jpg"
+  );
+  const [glassRevealShape, setGlassRevealShape] = React.useState<GlassRevealShape>("circle");
+  const [glassRevealSize, setGlassRevealSize] = React.useState<number>(0.70);
+  const [glassRevealSoftness, setGlassRevealSoftness] = React.useState<number>(0.00);
+  const [glassRevealDistortion, setGlassRevealDistortion] = React.useState<number>(0.45);
+  const [glassRevealAberration, setGlassRevealAberration] = React.useState<number>(0.000);
+  const [glassRevealWobble, setGlassRevealWobble] = React.useState<number>(0.00);
+  const [glassRevealWobbleSpeed, setGlassRevealWobbleSpeed] = React.useState<number>(1.5);
+  const [glassRevealWaveFrequency, setGlassRevealWaveFrequency] = React.useState<number>(1);
+  const [glassRevealWaveStrength, setGlassRevealWaveStrength] = React.useState<number>(0.000);
+  const [glassRevealWaveSpeed, setGlassRevealWaveSpeed] = React.useState<number>(0.1);
+  const [glassRevealGrain, setGlassRevealGrain] = React.useState<number>(0.020);
+  const [glassRevealGrainSpeed, setGlassRevealGrainSpeed] = React.useState<number>(22);
+  const [glassRevealGrayscale, setGlassRevealGrayscale] = React.useState<number>(0.85);
+  const [glassRevealDim, setGlassRevealDim] = React.useState<number>(0.00);
+  const [glassRevealFollow, setGlassRevealFollow] = React.useState<number>(0.00);
+  const [glassRevealReturnToCenter, setGlassRevealReturnToCenter] = React.useState<boolean>(false);
+  const [glassRevealFallback, setGlassRevealFallback] = React.useState<string>("#171717");
+  const [glassRevealPaused, setGlassRevealPaused] = React.useState<boolean>(false);
+  const [glassRevealVariant, setGlassRevealVariant] = React.useState<string>("sunflower-circle");
+
   // Available semantic variants for this component
   const variants = React.useMemo(() => {
     if (item.variants && item.variants.length > 0) return item.variants;
@@ -876,6 +1091,31 @@ export function ComponentPreviewStage({
       return ["comet", "firefly", "nebula", "plasma", "aurora"];
     if (item.name === "ethereal-smoke-shader")
       return ["chai-blue", "ethereal-violet", "solar-flare", "emerald-mist", "spectral-white"];
+    if (item.name === "liquid-metal-background")
+      return ["cobalt-chrome", "pure-silver", "liquid-gold", "titanium"];
+    if (item.name === "morph-node-ring")
+      return [
+        "morph-sequence",
+        "static-petal",
+        "static-diamond",
+        "static-semicircle",
+        "static-squircle",
+        "static-blade",
+        "static-star",
+        "static-circle",
+        "color-palette",
+        "orbital-rotation",
+      ];
+    if (item.name === "glass-reveal")
+      return [
+        "sunflower-circle",
+        "liquid-squircle",
+        "spectral-diamond",
+        "star-portal",
+        "wave-ripple",
+        "vintage-grain",
+        "cinematic-follow",
+      ];
     return [];
   }, [item.variants, item.name]);
 
@@ -976,6 +1216,83 @@ export function ComponentPreviewStage({
       else if (item.name === "ethereal-smoke-shader") {
         handleSmokePresetChange(v as any);
       }
+      else if (item.name === "liquid-metal-background") {
+        setMetalTone(v as any);
+      }
+      else if (item.name === "morph-node-ring") {
+        setRingVariant(v);
+        if (v === "morph-sequence" || v === "all") {
+          setRingDesign("all");
+          setRingLoop(true);
+        } else if (v === "color-palette" || v === "color") {
+          setRingMode("color");
+        } else if (v === "orbital-rotation") {
+          setRingEnableRotation(true);
+        } else {
+          // Static shapes: static-petal, static-diamond, static-squircle, etc.
+          const shape = v.replace(/^static-/, "") as MorphShapeDesign;
+          setRingDesign(shape);
+          setRingLoop(false);
+        }
+      }
+      else if (item.name === "glass-reveal") {
+        setGlassRevealVariant(v);
+        if (v === "sunflower-circle") {
+          setGlassRevealImage("/images/sunflowers.jpg");
+          setGlassRevealShape("circle");
+          setGlassRevealSize(0.70);
+          setGlassRevealSoftness(0.00);
+          setGlassRevealDistortion(0.45);
+          setGlassRevealAberration(0.000);
+          setGlassRevealWobble(0.00);
+          setGlassRevealWobbleSpeed(1.5);
+          setGlassRevealWaveFrequency(1);
+          setGlassRevealWaveStrength(0.000);
+          setGlassRevealWaveSpeed(0.1);
+          setGlassRevealGrain(0.020);
+          setGlassRevealGrainSpeed(22);
+          setGlassRevealGrayscale(0.85);
+          setGlassRevealDim(0.00);
+          setGlassRevealFollow(0.00);
+          setGlassRevealReturnToCenter(false);
+          setGlassRevealPaused(false);
+        } else if (v === "liquid-squircle") {
+          setGlassRevealShape("squircle");
+          setGlassRevealSize(0.65);
+          setGlassRevealDistortion(1.80);
+          setGlassRevealAberration(0.015);
+          setGlassRevealWobble(1.20);
+          setGlassRevealWobbleSpeed(3.0);
+          setGlassRevealWaveFrequency(8);
+        } else if (v === "spectral-diamond") {
+          setGlassRevealShape("diamond");
+          setGlassRevealSize(0.58);
+          setGlassRevealDistortion(1.30);
+          setGlassRevealAberration(0.035);
+          setGlassRevealWobble(0.20);
+          setGlassRevealSoftness(0.00);
+        } else if (v === "star-portal") {
+          setGlassRevealShape("star");
+          setGlassRevealSize(0.70);
+          setGlassRevealDistortion(1.40);
+          setGlassRevealAberration(0.020);
+          setGlassRevealWobble(0.60);
+        } else if (v === "wave-ripple") {
+          setGlassRevealShape("circle");
+          setGlassRevealWaveFrequency(14);
+          setGlassRevealWaveStrength(0.035);
+          setGlassRevealWaveSpeed(2.5);
+          setGlassRevealDistortion(0.80);
+        } else if (v === "vintage-grain") {
+          setGlassRevealGrain(0.065);
+          setGlassRevealGrainSpeed(16);
+          setGlassRevealDim(0.25);
+          setGlassRevealGrayscale(1.00);
+        } else if (v === "cinematic-follow") {
+          setGlassRevealFollow(0.95);
+          setGlassRevealReturnToCenter(true);
+        }
+      }
     },
     [
       item.name,
@@ -1029,6 +1346,10 @@ export function ComponentPreviewStage({
       ? (expandingForced ? "expanded" : "default")
       : item.name === "blurred-carousel"
       ? (carouselAutoplay ? "autoplay" : "default")
+      : item.name === "morph-node-ring"
+      ? ringVariant
+      : item.name === "glass-reveal"
+      ? glassRevealVariant
       : activeVariant || variants[0] || "default";
 
   const currentIndex = Math.max(0, variants.indexOf(currentVariant));
@@ -1196,6 +1517,18 @@ export function ComponentPreviewStage({
   variant="${loginVariant}"${loginVariant === "rounded-corners" ? `\n  borderRadius={${loginRadius}}` : ""}${!loginSphereMotion ? `\n  sphereMotion={false}` : ""}${!loginInteractiveDots ? `\n  interactiveDots={false}` : ""}
   onSubmit={(data) => console.log("Login submitted:", data)}
 />`;
+    } else if (item.name === "horizon-login") {
+      code = `<HorizonLogin
+  defaultTab="${horizonLoginDefaultTab}"${horizonLoginSpeed !== 1 ? `\n  horizonSpeed={${horizonLoginSpeed}}` : ""}${horizonLoginGlowIntensity !== 1 ? `\n  glowIntensity={${horizonLoginGlowIntensity}}` : ""}${!horizonLoginGrain ? `\n  grain={false}` : ""}
+  onLogin={(data) => console.log("Login submitted:", data)}
+  onSignUp={(data) => console.log("Sign-up submitted:", data)}
+/>`;
+    } else if (item.name === "blueprint-login") {
+      code = `<BlueprintLogin
+  defaultTab="${bpLoginDefaultTab}"${bpExpandRatio !== 1.42 ? `\n  expandRatio={${bpExpandRatio}}` : ""}${!bpNeighborWave ? `\n  neighborWave={false}` : ""}${bpRotationY !== -26 ? `\n  rotationY={${bpRotationY}}` : ""}${bpRotationX !== 3 ? `\n  rotationX={${bpRotationX}}` : ""}
+  onLogin={(data) => console.log("Login submitted:", data)}
+  onSignUp={(data) => console.log("Sign-up submitted:", data)}
+/>`;
     } else if (item.name === "concave-carousel") {
       code = `<ConcaveCarousel
   preset="${concavePreset}"
@@ -1291,6 +1624,50 @@ export function ComponentPreviewStage({
   grain={${smokeGrain}}
   vignette={${smokeVignette}}
   interactive={${smokeInteractive}}
+/>`;
+    } else if (item.name === "liquid-metal-background") {
+      code = `<LiquidMetalBackground
+  colorTone="${metalTone}"
+  intensity="${metalIntensity}"
+  speed={${metalSpeed}}
+  interactive={${metalInteractive}}
+  theme="${metalTheme}"
+/>`;
+    } else if (item.name === "morph-node-ring") {
+      code = `<MorphNodeRing
+  nodeCount={${ringNodeCount}}
+  mode="${ringMode}"
+  nodeSize={${ringNodeSize}}
+  radius={${ringRadius}}
+  loop={${ringLoop}}
+  speed={${ringSpeed}}
+  design="${ringDesign}"${
+    ringEnableRotation
+      ? `\n  enableRotation={${ringEnableRotation}}\n  rotationSpeed={${ringRotationSpeed}}`
+      : ""
+  }${ringMode === "image" ? `\n  keepImagesUpright={${ringKeepUpright}}` : ""}
+/>`;
+    } else if (item.name === "glass-reveal") {
+      code = `<GlassReveal
+  image="${glassRevealImage}"
+  shape="${glassRevealShape}"
+  size={${glassRevealSize.toFixed(2)}}
+  softness={${glassRevealSoftness.toFixed(2)}}
+  distortion={${glassRevealDistortion.toFixed(2)}}
+  aberration={${glassRevealAberration.toFixed(3)}}
+  wobble={${glassRevealWobble.toFixed(2)}}
+  wobbleSpeed={${glassRevealWobbleSpeed.toFixed(1)}}
+  waveFrequency={${glassRevealWaveFrequency}}
+  waveStrength={${glassRevealWaveStrength.toFixed(3)}}
+  waveSpeed={${glassRevealWaveSpeed.toFixed(1)}}
+  grain={${glassRevealGrain.toFixed(3)}}
+  grainSpeed={${glassRevealGrainSpeed}}
+  grayscale={${glassRevealGrayscale.toFixed(2)}}
+  dim={${glassRevealDim.toFixed(2)}}
+  follow={${glassRevealFollow.toFixed(2)}}
+  returnToCenter={${glassRevealReturnToCenter}}
+  fallback="${glassRevealFallback}"
+  paused={${glassRevealPaused}}
 />`;
     }
     onConfiguredCodeChange(code);
@@ -1461,6 +1838,21 @@ export function ComponentPreviewStage({
     smokeGrain,
     smokeVignette,
     smokeInteractive,
+    metalTone,
+    metalIntensity,
+    metalSpeed,
+    metalInteractive,
+    metalTheme,
+    ringLoop,
+    ringSpeed,
+    ringNodeCount,
+    ringMode,
+    ringNodeSize,
+    ringRadius,
+    ringDesign,
+    ringEnableRotation,
+    ringRotationSpeed,
+    ringKeepUpright,
     onConfiguredCodeChange,
   ]);
 
@@ -1889,16 +2281,16 @@ export function ComponentPreviewStage({
               </div>
             ) : (
               /* SMALL PREVIEW CARD (on /components, carousels, sidebar hover) */
-              <div className="w-full max-w-[340px] flex items-center justify-center p-0.5">
+              <div className="w-full max-w-[420px] flex items-center justify-center p-1">
                 <NotchedNavbar
                   variant="compact"
-                  notchWidth={140}
-                  notchHeight={28}
-                  filletWidth={14}
-                  borderRadius={10}
+                  notchWidth={150}
+                  notchHeight={30}
+                  filletWidth={16}
+                  borderRadius={12}
                   whiteBoxPadding={0}
                   backdropBg="transparent"
-                  minHeight={115}
+                  minHeight={130}
                   links={[
                     { id: "home", label: "Home", icon: <HomeIcon /> },
                     { id: "explore", label: "Explore", icon: <BriefcaseIcon /> },
@@ -1908,12 +2300,12 @@ export function ComponentPreviewStage({
                   onLinkClick={(id) => setNotchedActiveTab(id)}
                   className="shadow-md"
                 >
-                  <div className="flex flex-col items-center justify-center text-center py-2 space-y-1">
-                    <div className="text-xs font-semibold text-white tracking-tight flex items-center gap-1.5">
+                  <div className="flex flex-col items-center justify-center text-center py-2.5 px-4 space-y-1">
+                    <div className="text-xs sm:text-sm font-semibold text-white tracking-tight flex items-center gap-1.5">
                       <span>Infrastructure Telemetry</span>
                       <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-green)] animate-pulse" />
                     </div>
-                    <p className="text-[10px] text-neutral-400 font-mono">
+                    <p className="text-[11px] text-neutral-400 font-mono">
                       Global edge cluster operational
                     </p>
                   </div>
@@ -2106,22 +2498,22 @@ export function ComponentPreviewStage({
                 </Accordion>
               </div>
             ) : (
-              <div className="w-full max-w-[245px]">
-                <Accordion type="single">
+              <div className="w-full max-w-[400px]">
+                <Accordion type="single" defaultValue="item-1">
                   <AccordionItem value="item-1" className="border-[var(--border)]">
-                    <AccordionTrigger className="py-2 text-xs hover:no-underline font-medium">
+                    <AccordionTrigger className="py-2.5 text-xs hover:no-underline font-medium">
                       <span className="truncate pr-2">Distribution & CLI</span>
                     </AccordionTrigger>
-                    <AccordionContent className="pb-2 text-[11px] text-[var(--text-secondary)]">
-                      shadcn-compatible JSON CLI endpoints.
+                    <AccordionContent className="pb-2.5 text-xs text-[var(--text-secondary)] leading-relaxed">
+                      shadcn-compatible JSON endpoints for zero-dependency CLI installations.
                     </AccordionContent>
                   </AccordionItem>
                   <AccordionItem value="item-2" className="border-b-0">
-                    <AccordionTrigger className="py-2 text-xs hover:no-underline font-medium">
+                    <AccordionTrigger className="py-2.5 text-xs hover:no-underline font-medium">
                       <span className="truncate pr-2">App Router & SSR</span>
                     </AccordionTrigger>
-                    <AccordionContent className="pb-2 text-[11px] text-[var(--text-secondary)]">
-                      React Server Components ready.
+                    <AccordionContent className="pb-2.5 text-xs text-[var(--text-secondary)] leading-relaxed">
+                      React Server Components and TurboPack ready.
                     </AccordionContent>
                   </AccordionItem>
                 </Accordion>
@@ -2378,27 +2770,27 @@ export function ComponentPreviewStage({
                 </div>
               </div>
             ) : interactive ? (
-              <div className="w-full max-w-[280px] h-32 rounded-lg border border-[var(--border)] overflow-hidden flex bg-[var(--bg-sidebar)] shadow-md select-none">
-                <div className="w-10 border-r border-[var(--border)] flex flex-col items-center py-2.5 gap-1.5 shrink-0 bg-[var(--bg-main)]">
-                  <VectorKiloLogo className="h-4 w-4" />
-                  <div className="h-px w-5 bg-[var(--border)] my-0.5" />
-                  <div className="w-6 h-5 rounded bg-[var(--surface-secondary)] flex items-center justify-center">
-                    <VectorFolderIcon isActive className="h-3 w-3 text-[var(--accent-green)]" />
+              <div className="w-full max-w-[400px] h-[155px] rounded-lg border border-[var(--border)] overflow-hidden flex bg-[var(--bg-sidebar)] shadow-md select-none">
+                <div className="w-12 border-r border-[var(--border)] flex flex-col items-center py-3 gap-2 shrink-0 bg-[var(--bg-main)]">
+                  <VectorKiloLogo className="h-4.5 w-4.5" />
+                  <div className="h-px w-6 bg-[var(--border)] my-0.5" />
+                  <div className="w-7 h-6 rounded bg-[var(--surface-secondary)] flex items-center justify-center">
+                    <VectorFolderIcon isActive className="h-3.5 w-3.5 text-[var(--accent-green)]" />
                   </div>
-                  <div className="w-6 h-5 rounded flex items-center justify-center">
-                    <VectorLayersIcon className="h-3 w-3 text-[var(--text-secondary)]" />
+                  <div className="w-7 h-6 rounded flex items-center justify-center">
+                    <VectorLayersIcon className="h-3.5 w-3.5 text-[var(--text-secondary)]" />
                   </div>
                 </div>
-                <div className="flex-1 p-3 flex flex-col justify-between bg-[var(--surface-elevated)]/40">
-                  <div className="space-y-2">
+                <div className="flex-1 p-3.5 flex flex-col justify-between bg-[var(--surface-elevated)]/40">
+                  <div className="space-y-2.5">
                     <div className="flex items-center justify-between">
-                      <div className="h-2 w-20 rounded bg-[var(--surface-secondary)]" />
-                      <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent-green)]" />
+                      <div className="h-2.5 w-24 rounded bg-[var(--surface-secondary)]" />
+                      <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent-green)] animate-pulse" />
                     </div>
-                    <div className="h-1.5 w-28 rounded bg-[var(--surface-secondary)]/60" />
-                    <div className="h-1.5 w-16 rounded bg-[var(--surface-secondary)]/40" />
+                    <div className="h-2 w-36 rounded bg-[var(--surface-secondary)]/60" />
+                    <div className="h-2 w-24 rounded bg-[var(--surface-secondary)]/40" />
                   </div>
-                  <div className="flex items-center justify-between pt-1 border-t border-[var(--border)]/50 text-[9px] font-mono text-[var(--text-muted)]">
+                  <div className="flex items-center justify-between pt-2 border-t border-[var(--border)]/60 text-[10px] font-mono text-[var(--text-muted)]">
                     <span>⌘B to toggle</span>
                     <span className="text-[var(--accent-green)]">64px / 256px</span>
                   </div>
@@ -2742,12 +3134,18 @@ export function ComponentPreviewStage({
                 })()}
           </div>
             ) : (
-              <div className="w-full flex items-center justify-center py-6">
-                <SearchBar
-                  placeholder="Search components..."
-                  variant={searchBarVariant as any}
-                  showShortcut={true}
-                />
+              <div className="w-full h-full flex items-center justify-center p-4">
+                <div className="relative w-full max-w-[420px] flex items-center justify-center py-5 px-6 rounded-2xl border border-[var(--border)] bg-gradient-to-b from-[var(--surface-secondary)]/40 via-[var(--surface-elevated)]/30 to-[var(--surface-elevated)]/20 overflow-hidden shadow-xs">
+                  {/* Subtle ambient lighting pool to reveal glass refraction */}
+                  <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-64 h-28 rounded-full pointer-events-none blur-2xl opacity-40 bg-gradient-to-b from-blue-500/30 to-transparent" />
+                  <div className="relative z-10 w-full flex items-center justify-center">
+                    <SearchBar
+                      placeholder="Search components..."
+                      variant={searchBarVariant as any}
+                      showShortcut={true}
+                    />
+                  </div>
+                </div>
               </div>
             )
           )}
@@ -2761,6 +3159,31 @@ export function ComponentPreviewStage({
                 sphereMotion={loginSphereMotion}
                 interactiveDots={loginInteractiveDots}
                 rotationSpeed={loginRotationSpeed}
+              />
+            </div>
+          )}
+
+          {/* Horizon Login Live Preview */}
+          {item.name === "horizon-login" && (
+            <div className="w-full flex items-center justify-center py-4">
+              <HorizonLogin
+                defaultTab={horizonLoginDefaultTab}
+                horizonSpeed={horizonLoginSpeed}
+                glowIntensity={horizonLoginGlowIntensity}
+                grain={horizonLoginGrain}
+              />
+            </div>
+          )}
+
+          {/* Blueprint Login Live Preview */}
+          {item.name === "blueprint-login" && (
+            <div className="w-full flex items-center justify-center py-4">
+              <BlueprintLogin
+                defaultTab={bpLoginDefaultTab}
+                expandRatio={bpExpandRatio}
+                neighborWave={bpNeighborWave}
+                rotationY={bpRotationY}
+                rotationX={bpRotationX}
               />
             </div>
           )}
@@ -2923,6 +3346,81 @@ export function ComponentPreviewStage({
                 vignette={smokeVignette}
                 interactive={smokeInteractive}
                 className="w-full h-full"
+              />
+            </div>
+          )}
+
+          {/* Liquid Metal Background Live Interactive Preview */}
+          {item.name === "liquid-metal-background" && (
+            <div
+              className={showKnobs ? "w-full rounded-2xl overflow-hidden border border-[var(--border)] shadow-2xl relative" : "w-full h-full rounded-2xl overflow-hidden border border-[var(--border)] shadow-2xl relative"}
+              style={{ height: showKnobs ? 440 : "100%" }}
+            >
+              <LiquidMetalBackground
+                colorTone={metalTone}
+                intensity={metalIntensity}
+                speed={metalSpeed}
+                interactive={metalInteractive}
+                theme={metalTheme}
+                className="w-full h-full"
+              >
+                <div className="flex flex-col items-center justify-center h-full gap-3 px-6 text-center select-none">
+                  <span className="font-mono text-[10px] tracking-widest uppercase text-[var(--accent-green)] font-semibold px-2.5 py-0.5 rounded-full bg-[var(--surface-secondary)]/80 border border-[var(--border)] backdrop-blur-xs">
+                    Raymarched Fluid SDFs
+                  </span>
+                  <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--text-primary)]">
+                    Liquid Metal Background
+                  </h2>
+                  <p className="text-xs sm:text-sm text-[var(--text-secondary)] max-w-md font-sans">
+                    Flowing reflective liquid-chrome ribbons with orbiting mercury beads, studio HDRI reflections, and fluid surface tension.
+                  </p>
+                </div>
+              </LiquidMetalBackground>
+            </div>
+          )}
+
+          {/* Morph Node Ring Live Interactive Preview */}
+          {item.name === "morph-node-ring" && (
+            <div className="w-full flex items-center justify-center p-4 sm:p-8 relative select-none">
+              <MorphNodeRing
+                nodeCount={ringNodeCount}
+                mode={ringMode}
+                nodeSize={ringNodeSize}
+                radius={ringRadius}
+                loop={ringLoop}
+                speed={ringSpeed}
+                design={ringDesign}
+                enableRotation={ringEnableRotation}
+                rotationSpeed={ringRotationSpeed}
+                keepImagesUpright={ringKeepUpright}
+              />
+            </div>
+          )}
+
+          {/* Glass Reveal Live Interactive WebGL Shader Preview */}
+          {item.name === "glass-reveal" && (
+            <div className="w-full flex items-center justify-center p-2 sm:p-6 relative select-none">
+              <GlassReveal
+                image={glassRevealImage}
+                shape={glassRevealShape}
+                size={glassRevealSize}
+                softness={glassRevealSoftness}
+                distortion={glassRevealDistortion}
+                aberration={glassRevealAberration}
+                wobble={glassRevealWobble}
+                wobbleSpeed={glassRevealWobbleSpeed}
+                waveFrequency={glassRevealWaveFrequency}
+                waveStrength={glassRevealWaveStrength}
+                waveSpeed={glassRevealWaveSpeed}
+                grain={glassRevealGrain}
+                grainSpeed={glassRevealGrainSpeed}
+                grayscale={glassRevealGrayscale}
+                dim={glassRevealDim}
+                follow={glassRevealFollow}
+                returnToCenter={glassRevealReturnToCenter}
+                fallback={glassRevealFallback}
+                paused={glassRevealPaused}
+                className="w-full max-w-4xl h-[380px] sm:h-[460px] shadow-2xl border border-[var(--border)]"
               />
             </div>
           )}
@@ -3793,6 +4291,117 @@ export function ComponentPreviewStage({
                     onChange={(e) => setLoginRotationSpeed(Number(e.target.value))}
                     className="w-28 sm:w-32 accent-[var(--accent-green)] cursor-pointer"
                     title="Adjust rotation speed"
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Horizon Login Controls */}
+            {item.name === "horizon-login" && (
+              <>
+                <CustomizeTile label="Default Tab">
+                  <CustomizeSelect
+                    value={horizonLoginDefaultTab}
+                    onChange={(val) => setHorizonLoginDefaultTab(val as "login" | "signup")}
+                    options={[
+                      { label: "Login", value: "login" },
+                      { label: "Sign Up", value: "signup" },
+                    ]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label={`Speed: ${horizonLoginSpeed}x`}>
+                  <input
+                    type="range"
+                    min="0.5"
+                    max="2.5"
+                    step="0.1"
+                    value={horizonLoginSpeed}
+                    onChange={(e) => setHorizonLoginSpeed(Number(e.target.value))}
+                    className="w-28 sm:w-32 accent-[var(--accent-green)] cursor-pointer"
+                    title="Adjust horizon motion speed"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label={`Glow Intensity: ${horizonLoginGlowIntensity}x`}>
+                  <input
+                    type="range"
+                    min="0.5"
+                    max="1.8"
+                    step="0.1"
+                    value={horizonLoginGlowIntensity}
+                    onChange={(e) => setHorizonLoginGlowIntensity(Number(e.target.value))}
+                    className="w-28 sm:w-32 accent-[var(--accent-green)] cursor-pointer"
+                    title="Adjust luminous glow intensity"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Film Grain Texture">
+                  <Switch
+                    checked={horizonLoginGrain}
+                    onCheckedChange={setHorizonLoginGrain}
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Blueprint Login Controls */}
+            {item.name === "blueprint-login" && (
+              <>
+                <CustomizeTile label="Default Tab">
+                  <CustomizeSelect
+                    value={bpLoginDefaultTab}
+                    onChange={(val) => setBpLoginDefaultTab(val as "login" | "signup")}
+                    options={[
+                      { label: "Login", value: "login" },
+                      { label: "Sign Up", value: "signup" },
+                    ]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label={`Rotation Y: ${bpRotationY}°`}>
+                  <input
+                    type="range"
+                    min="-180"
+                    max="180"
+                    step="1"
+                    value={bpRotationY}
+                    onChange={(e) => setBpRotationY(Number(e.target.value))}
+                    className="w-28 sm:w-32 accent-[var(--accent-green)] cursor-pointer"
+                    title="Set Y-axis model rotation angle in degrees"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label={`Pitch X: ${bpRotationX}°`}>
+                  <input
+                    type="range"
+                    min="-30"
+                    max="30"
+                    step="1"
+                    value={bpRotationX}
+                    onChange={(e) => setBpRotationX(Number(e.target.value))}
+                    className="w-28 sm:w-32 accent-[var(--accent-green)] cursor-pointer"
+                    title="Set X-axis model pitch in degrees"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label={`Expand Scale: ${bpExpandRatio}x`}>
+                  <input
+                    type="range"
+                    min="1.15"
+                    max="1.75"
+                    step="0.05"
+                    value={bpExpandRatio}
+                    onChange={(e) => setBpExpandRatio(Number(e.target.value))}
+                    className="w-28 sm:w-32 accent-[var(--accent-green)] cursor-pointer"
+                    title="Adjust cylinder hover expansion scale"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Neighbor Wave">
+                  <Switch
+                    checked={bpNeighborWave}
+                    onCheckedChange={setBpNeighborWave}
                   />
                 </CustomizeTile>
               </>
@@ -4849,6 +5458,400 @@ export function ComponentPreviewStage({
                     checked={smokeInteractive}
                     onChange={setSmokeInteractive}
                     label="Mouse Spreading"
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Liquid Metal Background Controls */}
+            {item.name === "liquid-metal-background" && (
+              <>
+                <CustomizeTile label="Metallic Tone">
+                  <CustomizeSelect
+                    value={metalTone}
+                    onChange={(val) => setMetalTone(val as any)}
+                    options={["cobalt-chrome", "pure-silver", "liquid-gold", "titanium"]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Intensity">
+                  <CustomizeSelect
+                    value={metalIntensity}
+                    onChange={(val) => setMetalIntensity(val as any)}
+                    options={["subtle", "balanced", "dramatic"]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Theme Override">
+                  <CustomizeSelect
+                    value={metalTheme}
+                    onChange={(val) => setMetalTheme(val as any)}
+                    options={["system", "dark", "light"]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Animation Speed">
+                  <CustomizeSlider
+                    value={metalSpeed}
+                    onChange={setMetalSpeed}
+                    min={0.2}
+                    max={2.5}
+                    step={0.1}
+                    unit="x"
+                    formatValue={(v) => `${v.toFixed(1)}x`}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Interactive Parallax">
+                  <CustomizeSwitch
+                    checked={metalInteractive}
+                    onChange={setMetalInteractive}
+                    label="Mouse Parallax & Tilt"
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Morph Node Ring Controls */}
+            {item.name === "morph-node-ring" && (
+              <>
+                <CustomizeTile label="Design / Morph">
+                  <CustomizeSelect
+                    value={ringDesign}
+                    onChange={(val) => {
+                      const des = val as MorphShapeDesign;
+                      setRingDesign(des);
+                      const nextVar = des === "all" ? "morph-sequence" : `static-${des}`;
+                      setRingVariant(nextVar);
+                      onVariantChange?.(nextVar);
+                    }}
+                    options={[
+                      { label: "All (Morphing Sequence)", value: "all" },
+                      { label: "Petal / Floral Leaf", value: "petal" },
+                      { label: "Diamond / Square", value: "diamond" },
+                      { label: "Semicircle / Fan", value: "semicircle" },
+                      { label: "Squircle Pillow", value: "squircle" },
+                      { label: "Blade Shutter", value: "blade" },
+                      { label: "Star Points", value: "star" },
+                      { label: "Circle Disc", value: "circle" },
+                    ]}
+                  />
+                </CustomizeTile>
+
+                {/* Morph Speed controls when morphing sequence is active */}
+                {ringDesign === "all" && (
+                  <>
+                    <CustomizeTile label="Loop Animation">
+                      <CustomizeSwitch
+                        checked={ringLoop}
+                        onChange={setRingLoop}
+                        label="Continuous Morphing"
+                      />
+                    </CustomizeTile>
+
+                    <CustomizeTile label="Morph Speed">
+                      <CustomizeSlider
+                        value={ringSpeed}
+                        onChange={setRingSpeed}
+                        min={0.2}
+                        max={3.0}
+                        step={0.1}
+                        unit="x"
+                        formatValue={(v) => `${v.toFixed(1)}x`}
+                      />
+                    </CustomizeTile>
+                  </>
+                )}
+
+                {/* Orbital Rotation Controls: ALWAYS available in both Morphing and Static modes */}
+                <CustomizeTile label="Use Rotation">
+                  <CustomizeSwitch
+                    checked={ringEnableRotation}
+                    onChange={setRingEnableRotation}
+                    label="Orbital Ring Rotation"
+                  />
+                </CustomizeTile>
+
+                {ringEnableRotation && (
+                  <CustomizeTile label="Rotation Speed">
+                    <CustomizeSlider
+                      value={ringRotationSpeed}
+                      onChange={setRingRotationSpeed}
+                      min={-3.0}
+                      max={3.0}
+                      step={0.2}
+                      unit="x"
+                      formatValue={(v) => `${v.toFixed(1)}x`}
+                    />
+                  </CustomizeTile>
+                )}
+
+                <CustomizeTile label="Render Mode">
+                  <CustomizeSelect
+                    value={ringMode}
+                    onChange={(val) => setRingMode(val as "image" | "color")}
+                    options={[
+                      { label: "Use Images (Photos)", value: "image" },
+                      { label: "Use Colors (Palette)", value: "color" },
+                    ]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Nodes Count">
+                  <CustomizeSlider
+                    value={ringNodeCount}
+                    onChange={setRingNodeCount}
+                    min={3}
+                    max={16}
+                    step={1}
+                    unit=""
+                    formatValue={(v) => `${v} nodes`}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Node Size">
+                  <CustomizeSlider
+                    value={ringNodeSize}
+                    onChange={setRingNodeSize}
+                    min={36}
+                    max={110}
+                    step={2}
+                    unit="px"
+                    formatValue={(v) => `${v}px`}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Padding / Radius">
+                  <CustomizeSlider
+                    value={ringRadius}
+                    onChange={setRingRadius}
+                    min={60}
+                    max={220}
+                    step={5}
+                    unit="px"
+                    formatValue={(v) => `${v}px`}
+                  />
+                </CustomizeTile>
+
+                {ringMode === "image" && (
+                  <CustomizeTile label="Keep Faces Upright">
+                    <CustomizeSwitch
+                      checked={ringKeepUpright}
+                      onChange={setRingKeepUpright}
+                      label="Counter-rotate Image"
+                    />
+                  </CustomizeTile>
+                )}
+              </>
+            )}
+
+            {/* Glass Reveal Controls (Matching all 19 Controls from React Bits Pro specification) */}
+            {item.name === "glass-reveal" && (
+              <>
+                <CustomizeTile label="Image URL">
+                  <CustomizeImageSelect
+                    value={glassRevealImage}
+                    onChange={setGlassRevealImage}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Shape">
+                  <CustomizeSelect
+                    value={glassRevealShape}
+                    onChange={(val) => setGlassRevealShape(val as GlassRevealShape)}
+                    options={[
+                      { label: "Circle", value: "circle" },
+                      { label: "Square", value: "square" },
+                      { label: "Squircle", value: "squircle" },
+                      { label: "Diamond", value: "diamond" },
+                      { label: "Star (5-Point)", value: "star" },
+                    ]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Size">
+                  <CustomizeSlider
+                    value={glassRevealSize}
+                    onChange={setGlassRevealSize}
+                    min={0.1}
+                    max={1.5}
+                    step={0.05}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Softness">
+                  <CustomizeSlider
+                    value={glassRevealSoftness}
+                    onChange={setGlassRevealSoftness}
+                    min={0.0}
+                    max={1.0}
+                    step={0.02}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Distortion">
+                  <CustomizeSlider
+                    value={glassRevealDistortion}
+                    onChange={setGlassRevealDistortion}
+                    min={0.0}
+                    max={3.0}
+                    step={0.05}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Aberration">
+                  <CustomizeSlider
+                    value={glassRevealAberration}
+                    onChange={setGlassRevealAberration}
+                    min={0.0}
+                    max={0.05}
+                    step={0.002}
+                    formatValue={(v) => v.toFixed(3)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Wobble">
+                  <CustomizeSlider
+                    value={glassRevealWobble}
+                    onChange={setGlassRevealWobble}
+                    min={0.0}
+                    max={2.0}
+                    step={0.05}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Wobble Speed">
+                  <CustomizeSlider
+                    value={glassRevealWobbleSpeed}
+                    onChange={setGlassRevealWobbleSpeed}
+                    min={0.1}
+                    max={10.0}
+                    step={0.2}
+                    formatValue={(v) => v.toFixed(1)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Wave Frequency">
+                  <CustomizeSlider
+                    value={glassRevealWaveFrequency}
+                    onChange={setGlassRevealWaveFrequency}
+                    min={1}
+                    max={20}
+                    step={1}
+                    formatValue={(v) => `${v}`}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Wave Strength">
+                  <CustomizeSlider
+                    value={glassRevealWaveStrength}
+                    onChange={setGlassRevealWaveStrength}
+                    min={0.0}
+                    max={0.05}
+                    step={0.002}
+                    formatValue={(v) => v.toFixed(3)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Wave Speed">
+                  <CustomizeSlider
+                    value={glassRevealWaveSpeed}
+                    onChange={setGlassRevealWaveSpeed}
+                    min={0.1}
+                    max={5.0}
+                    step={0.2}
+                    formatValue={(v) => v.toFixed(1)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Grain">
+                  <CustomizeSlider
+                    value={glassRevealGrain}
+                    onChange={setGlassRevealGrain}
+                    min={0.0}
+                    max={0.1}
+                    step={0.005}
+                    formatValue={(v) => v.toFixed(3)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Grain Speed">
+                  <CustomizeSlider
+                    value={glassRevealGrainSpeed}
+                    onChange={setGlassRevealGrainSpeed}
+                    min={1}
+                    max={30}
+                    step={1}
+                    formatValue={(v) => `${v}`}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Grayscale">
+                  <CustomizeSlider
+                    value={glassRevealGrayscale}
+                    onChange={setGlassRevealGrayscale}
+                    min={0.0}
+                    max={1.0}
+                    step={0.05}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Dim">
+                  <CustomizeSlider
+                    value={glassRevealDim}
+                    onChange={setGlassRevealDim}
+                    min={0.0}
+                    max={1.0}
+                    step={0.05}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Follow">
+                  <CustomizeSlider
+                    value={glassRevealFollow}
+                    onChange={setGlassRevealFollow}
+                    min={0.0}
+                    max={0.99}
+                    step={0.02}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Return To Center">
+                  <CustomizeSwitch
+                    checked={glassRevealReturnToCenter}
+                    onChange={setGlassRevealReturnToCenter}
+                    label="Center on Mouse Leave"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Fallback Color">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      value={glassRevealFallback}
+                      onChange={(e) => setGlassRevealFallback(e.target.value)}
+                      className="h-8 w-10 cursor-pointer rounded-lg border border-[var(--border)] bg-transparent p-1"
+                    />
+                    <CustomizeInput
+                      value={glassRevealFallback}
+                      onChange={setGlassRevealFallback}
+                      placeholder="#171717"
+                    />
+                  </div>
+                </CustomizeTile>
+
+                <CustomizeTile label="Paused">
+                  <CustomizeSwitch
+                    checked={glassRevealPaused}
+                    onChange={setGlassRevealPaused}
+                    label="Freeze Animation Time"
                   />
                 </CustomizeTile>
               </>

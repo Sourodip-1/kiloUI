@@ -170,11 +170,105 @@ const MASTER_LOADER_CSS = `
     0%, 100% { opacity: 1; }
     50% { opacity: 0.15; }
   }
+
+  /* VECTR Morphing Vector & App Icons (.v-ico) */
+  .v-ico {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    display: block;
+    fill: none;
+    stroke: var(--ldr-pri, #6366f1);
+    stroke-width: var(--ico-sw, 2px);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .v-ico * {
+    transition: transform calc(var(--ico-dur, 0.42s) / var(--ldr-spd, 1)) var(--ico-ease, cubic-bezier(0.34, 1.56, 0.64, 1)),
+                opacity calc(0.28s / var(--ldr-spd, 1)) ease,
+                stroke-dashoffset calc(var(--ico-dur, 0.42s) / var(--ldr-spd, 1)) ease,
+                stroke calc(0.25s / var(--ldr-spd, 1)) ease,
+                fill calc(0.25s / var(--ldr-spd, 1)) ease;
+    transform-box: view-box;
+    transform-origin: 12px 12px;
+  }
+  .v-ico .trk {
+    stroke: var(--ldr-sec, #27272a);
+  }
+  .v-ico .fill-pri {
+    fill: var(--ldr-pri, #6366f1);
+    stroke: none;
+  }
+  .v-ico .origin-self {
+    transform-box: fill-box !important;
+    transform-origin: center !important;
+  }
+  .v-ico .origin-bottom {
+    transform-box: fill-box !important;
+    transform-origin: bottom center !important;
+  }
+  .v-ico .origin-top {
+    transform-box: fill-box !important;
+    transform-origin: top center !important;
+  }
+  .v-ico .origin-left {
+    transform-box: fill-box !important;
+    transform-origin: center left !important;
+  }
+
+  /* Active / Hover State Transformations */
+  .v-ico.is-active .t-y6 { transform: translateY(6px); }
+  .v-ico.is-active .t-ny6 { transform: translateY(-6px); }
+  .v-ico.is-active .t-y4 { transform: translateY(4px); }
+  .v-ico.is-active .t-ny4 { transform: translateY(-4px); }
+  .v-ico.is-active .t-y2 { transform: translateY(2px); }
+  .v-ico.is-active .t-ny2 { transform: translateY(-2px); }
+  .v-ico.is-active .t-ny3 { transform: translateY(-3px); }
+  .v-ico.is-active .t-x3 { transform: translateX(3px); }
+  .v-ico.is-active .t-nx3 { transform: translateX(-3px); }
+  .v-ico.is-active .t-x5 { transform: translateX(5px); }
+  .v-ico.is-active .t-nx5 { transform: translateX(-5px); }
+
+  .v-ico.is-active .r-45 { transform: rotate(45deg); }
+  .v-ico.is-active .r-n45 { transform: rotate(-45deg); }
+  .v-ico.is-active .r-90 { transform: rotate(90deg); }
+  .v-ico.is-active .r-180 { transform: rotate(180deg); }
+  .v-ico.is-active .r-n180 { transform: rotate(-180deg); }
+  .v-ico.is-active .r-135 { transform: rotate(135deg); }
+  .v-ico.is-active .r-45-y6 { transform: translateY(6px) rotate(45deg); }
+  .v-ico.is-active .r-n45-ny6 { transform: translateY(-6px) rotate(-45deg); }
+  .v-ico.is-active .r-45-y4 { transform: translateY(4px) rotate(45deg); }
+  .v-ico.is-active .r-n45-ny4 { transform: translateY(-4px) rotate(-45deg); }
+
+  .v-ico.is-active .s-0 { transform: scale(0); opacity: 0; }
+  .v-ico.is-active .s-x0 { transform: scaleX(0); opacity: 0; }
+  .v-ico.is-active .s-125 { transform: scale(1.22); }
+  .v-ico.is-active .s-115 { transform: scale(1.14); }
+  .v-ico.is-active .s-80 { transform: scale(0.8); }
+  .v-ico.is-active .op-0 { opacity: 0; }
+  .v-ico.is-active .op-100 { opacity: 1 !important; }
+  .v-ico .op-init-0 { opacity: 0; transform: scale(0.5); }
+  .v-ico.is-active .op-init-0 { opacity: 1; transform: scale(1); }
+
+  /* Specialized App & Menu Morph Helpers */
+  .v-ico.is-active .flap-open { transform: rotateX(45deg) translateY(-2.5px); }
+  .v-ico.is-active .lid-lift { transform: translateY(-3px) rotate(-14deg); }
+  .v-ico.is-active .card-pop { transform: translate(2.5px, -3.5px) rotate(-6deg); }
+  .v-ico.is-active .bell-swing { transform: rotate(16deg); }
+  .v-ico.is-active .clapper-shift { transform: translateX(-2.5px); }
+  .v-ico.is-active .shackle-unlock { transform: translateY(-3px) rotate(16deg); }
+  .v-ico.is-active .bar-grow-1 { transform: scaleY(1.45); }
+  .v-ico.is-active .bar-grow-2 { transform: scaleY(0.65); }
+  .v-ico.is-active .bar-grow-3 { transform: scaleY(1.3); }
+  .v-ico.is-active .pie-pop { transform: translate(2.5px, -2.5px); }
+  .v-ico.is-active .dash-draw { stroke-dashoffset: 0 !important; }
+  .v-ico.is-active .rocket-boost { transform: translate(2.5px, -2.5px) scale(1.06); }
+  .v-ico.is-active .arrow-up-Right { transform: translate(2.5px, -2.5px); }
 `;
 
 /**
- * VectrMenuIconCard: Isolated card component for interactive state-morphing menu icons.
- * Crucial: Keeps the SVG permanently in the DOM and toggles `.is-open` via classList mutation,
+ * VectrMenuIconCard: Isolated card component for interactive state-morphing menu & app icons.
+ * Crucial: Keeps the SVG permanently in the DOM and toggles `.is-open` and `.is-active` via classList mutation,
  * allowing CSS cubic-bezier transitions to smoothly animate without DOM destruction/re-render glitch.
  */
 function VectrMenuIconCard({
@@ -201,29 +295,35 @@ function VectrMenuIconCard({
 
   // Memoized SVG string — re-rendered ONLY when color, speed, or size customization changes
   const svgHtml = React.useMemo(() => {
-    let raw = icon.standaloneSvg || icon.htmlSnippet || "";
-    // Strip inline onclick attribute so it won't conflict with our handler
-    raw = raw.replace(/onclick="[^"]*"/g, "");
+    let raw = icon.svgString || icon.standaloneSvg || icon.htmlSnippet || "";
+    // Strip inline event attributes so they won't conflict with our React handlers
+    raw = raw
+      .replace(/onclick="[^"]*"/g, "")
+      .replace(/onmouseenter="[^"]*"/g, "")
+      .replace(/onmouseleave="[^"]*"/g, "");
     if (color) {
       raw = raw.replaceAll("#6366f1", color);
     }
     if (speed !== 1) {
       raw = raw.replaceAll("0.38s", `${(0.38 / speed).toFixed(2)}s`);
+      raw = raw.replaceAll("--ldr-spd:1", `--ldr-spd:${speed}`);
     }
     raw = raw
       .replace(/width="[0-9]+"/, `width="${size}"`)
       .replace(/height="[0-9]+"/, `height="${size}"`);
     return raw;
-  }, [icon.standaloneSvg, icon.htmlSnippet, color, speed, size]);
+  }, [icon.svgString, icon.standaloneSvg, icon.htmlSnippet, color, speed, size]);
 
   // Direct DOM class toggle preserves CSS keyframe & cubic-bezier transitions!
   React.useEffect(() => {
-    const svgEl = containerRef.current?.querySelector(".vm-icon");
+    const svgEl = containerRef.current?.querySelector(".vm-icon, .v-ico");
     if (svgEl) {
       if (effectiveOpen) {
         svgEl.classList.add("is-open");
+        svgEl.classList.add("is-active");
       } else {
         svgEl.classList.remove("is-open");
+        svgEl.classList.remove("is-active");
       }
     }
   }, [effectiveOpen]);
@@ -248,7 +348,7 @@ function VectrMenuIconCard({
 
   const handleCopyClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onCopy(icon.name, icon.standaloneSvg || icon.htmlSnippet);
+    onCopy(icon.name, icon.svgString || icon.standaloneSvg || icon.htmlSnippet);
   };
 
   return (
@@ -328,16 +428,24 @@ export default function IconsPage() {
   /* ─────────────────────────────────────────────────────────────────── */
   /* 2. Motion Icons & Loaders State (Right-side customization)          */
   /* ─────────────────────────────────────────────────────────────────── */
+  const [animatedAppIcons, setAnimatedAppIcons] = React.useState<any[]>([]);
   const [animatedIcons, setAnimatedIcons] = React.useState<any[]>([]);
   const [animatedLoaders, setAnimatedLoaders] = React.useState<any[]>([]);
   const [motionSearchQuery, setMotionSearchQuery] = React.useState("");
-  const [motionTypeFilter, setMotionTypeFilter] = React.useState<"all" | "menu" | "loaders">("all");
+  const [motionTypeFilter, setMotionTypeFilter] = React.useState<"all" | "app" | "menu" | "loaders">("all");
   const [motionTriggerMode, setMotionTriggerMode] = React.useState<"click" | "hover" | "loop">("click");
   const [motionSpeed, setMotionSpeed] = React.useState<number>(1.0);
   const [motionColor, setMotionColor] = React.useState<string>("#6366f1");
   const [motionSize, setMotionSize] = React.useState<number>(44);
   const [autoplayPhase, setAutoplayPhase] = React.useState<boolean>(false);
 
+  const [selectedAppCats, setSelectedAppCats] = React.useState<string[]>([
+    "Home, Overview & Dashboard",
+    "Wallet, Finance & Commerce",
+    "Folders, Files & Cloud",
+    "Users, Security & Settings",
+    "Dev Tools, Media & Actions",
+  ]);
   const [selectedMenuCats, setSelectedMenuCats] = React.useState<string[]>([
     "Hamburger to X",
     "Grid, Bento & Dots",
@@ -351,11 +459,28 @@ export default function IconsPage() {
     "Wipes, Bars & Lines",
     "Minimal Morphs & UI",
   ]);
+  const [isAppCatsOpen, setIsAppCatsOpen] = React.useState(true);
   const [isMenuCatsOpen, setIsMenuCatsOpen] = React.useState(true);
   const [isLoaderCatsOpen, setIsLoaderCatsOpen] = React.useState(true);
 
   // Fetch datasets from public/icons
   React.useEffect(() => {
+    // 1. VECTR App & UI motion icons from bundle 39
+    fetch("/icons/vectr-icons-bundle-39.json")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data?.items) {
+          const appItems = data.items.filter((i: any) => i.suite === "app");
+          setAnimatedAppIcons(appItems);
+          const allCats = Array.from(
+            new Set(appItems.map((i: any) => i.category).filter(Boolean))
+          ) as string[];
+          if (allCats.length > 0) setSelectedAppCats(allCats);
+        }
+      })
+      .catch(() => {});
+
+    // 2. VECTR Menu icons
     fetch("/icons/vectr-menu-icons-26.json")
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
@@ -369,6 +494,7 @@ export default function IconsPage() {
       })
       .catch(() => {});
 
+    // 3. VECTR UI loaders
     fetch("/icons/vectr-ui-loaders-41.json")
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
@@ -401,6 +527,12 @@ export default function IconsPage() {
     );
   };
 
+  const toggleAppCat = (cat: string) => {
+    setSelectedAppCats((prev) =>
+      prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]
+    );
+  };
+
   const toggleMenuCat = (cat: string) => {
     setSelectedMenuCats((prev) =>
       prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]
@@ -424,9 +556,22 @@ export default function IconsPage() {
     });
   }, [searchQuery, selectedCategories]);
 
+  // Filtered animated app icons
+  const filteredAnimatedAppIcons = React.useMemo(() => {
+    if (motionTypeFilter === "menu" || motionTypeFilter === "loaders") return [];
+    return animatedAppIcons.filter((icon) => {
+      const matchesSearch =
+        icon.name.toLowerCase().includes(motionSearchQuery.toLowerCase()) ||
+        icon.slug?.toLowerCase().includes(motionSearchQuery.toLowerCase()) ||
+        (icon.tags && icon.tags.some((t: string) => t.toLowerCase().includes(motionSearchQuery.toLowerCase())));
+      const matchesCat = selectedAppCats.includes(icon.category);
+      return matchesSearch && matchesCat;
+    });
+  }, [animatedAppIcons, motionSearchQuery, motionTypeFilter, selectedAppCats]);
+
   // Filtered animated menu icons
   const filteredAnimatedIcons = React.useMemo(() => {
-    if (motionTypeFilter === "loaders") return [];
+    if (motionTypeFilter === "app" || motionTypeFilter === "loaders") return [];
     return animatedIcons.filter((icon) => {
       const matchesSearch =
         icon.name.toLowerCase().includes(motionSearchQuery.toLowerCase()) ||
@@ -439,7 +584,7 @@ export default function IconsPage() {
 
   // Filtered animated loaders
   const filteredAnimatedLoaders = React.useMemo(() => {
-    if (motionTypeFilter === "menu") return [];
+    if (motionTypeFilter === "app" || motionTypeFilter === "menu") return [];
     return animatedLoaders.filter((ldr) => {
       const matchesSearch =
         ldr.name.toLowerCase().includes(motionSearchQuery.toLowerCase()) ||
@@ -498,6 +643,23 @@ export default function IconsPage() {
     { name: "Media", count: ICONS_LIST.filter((i) => i.category === "Media").length },
     { name: "Status", count: ICONS_LIST.filter((i) => i.category === "Status").length },
   ];
+
+  const appCategoryList = React.useMemo(() => {
+    const defaults = [
+      "Home, Overview & Dashboard",
+      "Wallet, Finance & Commerce",
+      "Folders, Files & Cloud",
+      "Users, Security & Settings",
+      "Dev Tools, Media & Actions",
+    ];
+    const foundCats = animatedAppIcons.length > 0 
+      ? Array.from(new Set(animatedAppIcons.map((i: any) => i.category).filter(Boolean))) as string[]
+      : defaults;
+    return foundCats.map((name) => ({
+      name,
+      count: animatedAppIcons.filter((i: any) => i.category === name).length,
+    }));
+  }, [animatedAppIcons]);
 
   const menuCategoryList = React.useMemo(() => {
     const defaults = ["Hamburger to X", "Grid, Bento & Dots", "Sidebar & Layout", "Filter, Sort & UI"];
@@ -581,14 +743,14 @@ export default function IconsPage() {
                 )}
               >
                 <Sparkles className="h-3.5 w-3.5 text-[var(--accent-green)]" />
-                <span>Motion & Loaders ({animatedIcons.length + animatedLoaders.length || 67})</span>
+                <span>Motion & Loaders ({animatedAppIcons.length + animatedIcons.length + animatedLoaders.length || 104})</span>
               </button>
             </div>
 
             <span className="text-xs font-mono text-[var(--text-muted)] tabular-nums">
               {activeTab === "standard"
                 ? `${filteredIcons.length} icons`
-                : `${filteredAnimatedIcons.length + filteredAnimatedLoaders.length} icons`}
+                : `${filteredAnimatedAppIcons.length + filteredAnimatedIcons.length + filteredAnimatedLoaders.length} icons`}
             </span>
           </div>
         </div>
@@ -801,7 +963,55 @@ export default function IconsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
           {/* LEFT 3 COLS: Motion Icons & Animated Loaders */}
           <div className="lg:col-span-3 space-y-6">
-            {/* 1. Animated Menu Icons Card */}
+            {/* 1. Animated App & UI Icons Card */}
+            {(motionTypeFilter === "all" || motionTypeFilter === "app") && (
+              <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] p-6 sm:p-7 space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[var(--border)] pb-3 gap-2">
+                  <div>
+                    <h3 className="font-mono text-sm font-bold text-[var(--text-primary)] flex items-center gap-2">
+                      <Sparkles className="h-4 w-4 text-[var(--accent-green)]" />
+                      <span>VECTR App & UI Icons ({filteredAnimatedAppIcons.length})</span>
+                    </h3>
+                    <p className="text-xs text-[var(--text-secondary)] mt-0.5">
+                      Reactive motion icons for dashboards, commerce, files, and settings. Mode:{" "}
+                      <span className="font-mono text-[var(--accent-green)] font-semibold uppercase">
+                        {motionTriggerMode === "click"
+                          ? "Click to Toggle"
+                          : motionTriggerMode === "hover"
+                          ? "Hover to Morph"
+                          : "Continuous Loop"}
+                      </span>
+                    </p>
+                  </div>
+                  <span className="text-[11px] font-mono text-[var(--text-muted)] shrink-0">
+                    Click to morph • Copy icon on hover
+                  </span>
+                </div>
+
+                {filteredAnimatedAppIcons.length === 0 ? (
+                  <div className="py-12 text-center font-mono text-xs text-[var(--text-muted)]">
+                    No app icons match your filters
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3.5">
+                    {filteredAnimatedAppIcons.map((icon: any) => (
+                      <VectrMenuIconCard
+                        key={icon.uid || `app-${icon.id}`}
+                        icon={icon}
+                        triggerMode={motionTriggerMode}
+                        speed={motionSpeed}
+                        color={motionColor}
+                        size={motionSize}
+                        autoplayPhase={autoplayPhase}
+                        onCopy={handleCopyMotionItem}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* 2. Animated Menu Icons Card */}
             {(motionTypeFilter === "all" || motionTypeFilter === "menu") && (
               <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] p-6 sm:p-7 space-y-4">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[var(--border)] pb-3 gap-2">
@@ -849,7 +1059,7 @@ export default function IconsPage() {
               </div>
             )}
 
-            {/* 2. Animated UI Loaders Card */}
+            {/* 3. Animated UI Loaders Card */}
             {(motionTypeFilter === "all" || motionTypeFilter === "loaders") && (
               <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] p-6 sm:p-7 space-y-4">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[var(--border)] pb-3 gap-2">
@@ -928,9 +1138,10 @@ export default function IconsPage() {
               <span className="block text-xs font-sans font-medium text-[var(--text-primary)]">
                 Content Type
               </span>
-              <div className="grid grid-cols-3 gap-1 p-1 rounded-lg bg-[var(--surface-secondary)] border border-[var(--border)]">
+              <div className="grid grid-cols-4 gap-1 p-1 rounded-lg bg-[var(--surface-secondary)] border border-[var(--border)]">
                 {[
                   { id: "all", label: "All" },
+                  { id: "app", label: "App UI" },
                   { id: "menu", label: "Menu" },
                   { id: "loaders", label: "Loaders" },
                 ].map((item) => {
@@ -954,14 +1165,14 @@ export default function IconsPage() {
               </div>
             </div>
 
-            {/* 3. Trigger Mode (Menu Icons) */}
+            {/* 3. Trigger Mode (App & Menu Icons) */}
             <div className="space-y-2.5 pt-2 border-t border-[var(--border)]">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-sans font-medium text-[var(--text-primary)]">
                   Trigger Mode
                 </span>
                 <span className="text-[10px] font-mono text-[var(--text-muted)]">
-                  Menu Icons
+                  App & Menu Icons
                 </span>
               </div>
               <div className="space-y-1.5">
@@ -1110,7 +1321,58 @@ export default function IconsPage() {
               </div>
             </div>
 
-            {/* 7. Menu Categories Accordion */}
+            {/* 7. App UI Categories Accordion */}
+            {(motionTypeFilter === "all" || motionTypeFilter === "app") && (
+              <div className="space-y-3 pt-2 border-t border-[var(--border)]">
+                <button
+                  type="button"
+                  onClick={() => setIsAppCatsOpen(!isAppCatsOpen)}
+                  className="flex items-center justify-between w-full text-xs font-sans font-medium text-[var(--text-primary)] cursor-pointer"
+                >
+                  <span>App UI Categories</span>
+                  <ChevronDown
+                    className={cn(
+                      "h-3.5 w-3.5 text-[var(--text-muted)] transition-transform duration-200",
+                      isAppCatsOpen ? "rotate-0" : "-rotate-90"
+                    )}
+                  />
+                </button>
+
+                {isAppCatsOpen && (
+                  <div className="space-y-2 pt-1 pl-0.5">
+                    {appCategoryList.map((cat) => {
+                      const isChecked = selectedAppCats.includes(cat.name);
+                      return (
+                        <label
+                          key={cat.name}
+                          onClick={() => toggleAppCat(cat.name)}
+                          className="flex items-center justify-between text-xs font-sans text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer select-none py-0.5"
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <div
+                              className={cn(
+                                "h-4 w-4 rounded border flex items-center justify-center transition-colors",
+                                isChecked
+                                  ? "bg-[var(--text-primary)] border-[var(--text-primary)] text-[var(--bg-main)]"
+                                  : "border-[var(--border)] bg-transparent"
+                              )}
+                            >
+                              {isChecked && <Check className="h-3 w-3 stroke-[3]" />}
+                            </div>
+                            <span>{cat.name}</span>
+                          </div>
+                          <span className="text-[11px] font-mono text-[var(--text-muted)] tabular-nums">
+                            {cat.count}
+                          </span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* 8. Menu Categories Accordion */}
             {(motionTypeFilter === "all" || motionTypeFilter === "menu") && (
               <div className="space-y-3 pt-2 border-t border-[var(--border)]">
                 <button
@@ -1161,7 +1423,7 @@ export default function IconsPage() {
               </div>
             )}
 
-            {/* 8. Loader Categories Accordion */}
+            {/* 9. Loader Categories Accordion */}
             {(motionTypeFilter === "all" || motionTypeFilter === "loaders") && (
               <div className="space-y-3 pt-2 border-t border-[var(--border)]">
                 <button
@@ -1223,19 +1485,25 @@ export default function IconsPage() {
                   setMotionSpeed(1.0);
                   setMotionColor("#6366f1");
                   setMotionSize(44);
+                  setSelectedAppCats([
+                    "Home, Overview & Dashboard",
+                    "Wallet, Finance & Commerce",
+                    "Folders, Files & Cloud",
+                    "Users, Security & Settings",
+                    "Dev Tools, Media & Actions",
+                  ]);
                   setSelectedMenuCats([
                     "Hamburger to X",
                     "Grid, Bento & Dots",
                     "Sidebar & Layout",
-                    "Media & Controls",
-                    "More & Actions",
+                    "Filter, Sort & UI",
                   ]);
                   setSelectedLoaderCats([
                     "Circles & Rings",
-                    "Bars & Progress",
-                    "Dots & Grids",
-                    "Waves & Ripples",
-                    "Flip & Spin",
+                    "Ball Bounces & Dots",
+                    "Squares & Polygons",
+                    "Wipes, Bars & Lines",
+                    "Minimal Morphs & UI",
                   ]);
                 }}
                 className="flex items-center justify-center gap-1.5 w-full py-1.5 rounded-lg border border-[var(--border)] text-xs font-mono text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] transition-colors cursor-pointer"

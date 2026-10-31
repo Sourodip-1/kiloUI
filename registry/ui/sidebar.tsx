@@ -468,7 +468,7 @@ function SidebarBase({
             >
               <span className="whitespace-nowrap">Kilo/Icons</span>
               <span className="text-[10px] font-sans font-medium tabular-nums text-[var(--text-muted)]">
-                115
+                152
               </span>
             </div>
           </Link>
@@ -720,7 +720,7 @@ function SidebarBase({
       <div className="flex h-14 items-center justify-between px-3 border-b border-[var(--border)] shrink-0 w-64">
         <Link
           href="/"
-          className="flex items-center gap-2.5 group/brand py-1 px-1 rounded transition-colors overflow-hidden"
+          className="flex items-center gap-2.5 group/brand py-1 px-1 rounded transition-colors overflow-visible"
           onClick={(e) => {
             if (isCollapsed) {
               e.preventDefault();
@@ -731,8 +731,8 @@ function SidebarBase({
           }}
           title={isCollapsed ? "Expand sidebar (⌘B)" : "kilo/ui"}
         >
-          <div className="h-6 w-6 shrink-0 flex items-center justify-center">
-            <VectorKiloLogo theme={theme} className="h-6 w-6 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/brand:scale-115 group-hover/brand:rotate-6" />
+          <div className="h-6 w-6 shrink-0 flex items-center justify-center overflow-visible">
+            <VectorKiloLogo theme={theme} className="h-6 w-6" />
           </div>
           <span
             className={cn(
@@ -740,7 +740,7 @@ function SidebarBase({
               isCollapsed && "opacity-0 pointer-events-none"
             )}
           >
-            kilo<span className="text-[var(--accent-green)]">/</span>ui
+            kilo<span className="text-[var(--accent-green)] transition-all duration-300 group-hover/brand:scale-125 group-hover/brand:drop-shadow-[0_0_8px_var(--accent-green)] inline-block origin-center">/</span>ui
           </span>
         </Link>
 

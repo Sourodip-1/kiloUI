@@ -47,11 +47,7 @@ export function ScaledThumbnailWrapper({
     category === "Backgrounds & Shaders" ||
     category === "Cursors" ||
     category === "Media & Layout" ||
-    category === "Navigation" ||
-    name === "notched-navbar" ||
-    name === "sidebar" ||
     name === "table" ||
-    name === "accordion" ||
     name === "card" ||
     name === "dialog" ||
     name === "expanding-card" ||
@@ -63,12 +59,56 @@ export function ScaledThumbnailWrapper({
     name === "kinetic-motion-text" ||
     name === "footer";
 
-  const targetBaseWidth = customBaseWidth ?? (isLarge ? 640 : 320);
-  const targetBaseHeight = customBaseHeight ?? (isLarge ? 320 : 160);
+  let targetBaseWidth = customBaseWidth;
+  let targetBaseHeight = customBaseHeight;
+  let defaultInitialScale = 1.0;
+
+  if (!targetBaseWidth || !targetBaseHeight) {
+    if (name === "minimalist-login" || name === "horizon-login" || name === "blueprint-login") {
+      targetBaseWidth = 780;
+      targetBaseHeight = 460;
+      defaultInitialScale = 0.44;
+    } else if (name === "search-bar" || name === "liquid-glass-search-bar") {
+      targetBaseWidth = 460;
+      targetBaseHeight = 180;
+      defaultInitialScale = 0.82;
+    } else if (name === "tabs") {
+      targetBaseWidth = 440;
+      targetBaseHeight = 165;
+      defaultInitialScale = 1.0;
+    } else if (name === "notched-navbar") {
+      targetBaseWidth = 430;
+      targetBaseHeight = 155;
+      defaultInitialScale = 1.0;
+    } else if (name === "accordion") {
+      targetBaseWidth = 400;
+      targetBaseHeight = 160;
+      defaultInitialScale = 1.0;
+    } else if (name === "sidebar") {
+      targetBaseWidth = 400;
+      targetBaseHeight = 165;
+      defaultInitialScale = 1.0;
+    } else if (name === "morph-node-ring") {
+      targetBaseWidth = 380;
+      targetBaseHeight = 260;
+      defaultInitialScale = 0.68;
+    } else if (name === "glass-reveal") {
+      targetBaseWidth = 480;
+      targetBaseHeight = 270;
+      defaultInitialScale = 0.58;
+    } else if (isLarge) {
+      targetBaseWidth = 640;
+      targetBaseHeight = 320;
+      defaultInitialScale = 0.42;
+    } else {
+      targetBaseWidth = 320;
+      targetBaseHeight = 160;
+      defaultInitialScale = 1.0;
+    }
+  }
 
   // Initialize with sensible scale to avoid initial render flicker
-  const initialScale = isLarge ? 0.42 : 1.0;
-  const [scale, setScale] = React.useState<number>(initialScale);
+  const [scale, setScale] = React.useState<number>(defaultInitialScale);
   const [ready, setReady] = React.useState<boolean>(false);
 
   React.useEffect(() => {

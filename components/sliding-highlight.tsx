@@ -16,16 +16,23 @@ export interface SlidingHighlightContainerProps extends React.HTMLAttributes<HTM
  * Renders a smooth floating highlight backdrop that glides between items
  * with sub-pixel alignment using natural spring physics ease-[cubic-bezier(0.16,1,0.3,1)].
  */
-export function SlidingHighlightContainer({
-  children,
-  className,
-  pillClassName,
-  itemSelector = '[data-hover-item="true"]',
-  activeSelector,
-  activeKey,
-  ...props
-}: SlidingHighlightContainerProps) {
+export const SlidingHighlightContainer = React.forwardRef<
+  HTMLDivElement,
+  SlidingHighlightContainerProps
+>(function SlidingHighlightContainer(
+  {
+    children,
+    className,
+    pillClassName,
+    itemSelector = '[data-hover-item="true"]',
+    activeSelector,
+    activeKey,
+    ...props
+  },
+  forwardedRef
+) {
   const containerRef = React.useRef<HTMLDivElement>(null);
+  React.useImperativeHandle(forwardedRef, () => containerRef.current as HTMLDivElement);
   const activeTargetRef = React.useRef<HTMLElement | null>(null);
   const [hasEntered, setHasEntered] = React.useState(false);
   const [hoverRect, setHoverRect] = React.useState<{
@@ -199,4 +206,6 @@ export function SlidingHighlightContainer({
       {children}
     </div>
   );
-}
+});
+
+SlidingHighlightContainer.displayName = "SlidingHighlightContainer";

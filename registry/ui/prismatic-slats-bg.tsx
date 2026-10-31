@@ -133,11 +133,10 @@ export function PrismaticSlatsBg({
     const dpr = typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1;
 
     const resize = () => {
-      const { width, height } = container.getBoundingClientRect();
+      const width = container.clientWidth || 640;
+      const height = container.clientHeight || 320;
       canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
-      canvas.style.width = `${width}px`;
-      canvas.style.height = `${height}px`;
 
       if (smoothPosRef.current.x === 0 && smoothPosRef.current.y === 0) {
         smoothPosRef.current.x = width * 0.42;
@@ -454,11 +453,16 @@ export function PrismaticSlatsBg({
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    const container = containerRef.current;
+    if (!canvas || !container) return;
     const rect = canvas.getBoundingClientRect();
+    const layoutW = container.clientWidth || 1;
+    const layoutH = container.clientHeight || 1;
+    const scaleX = layoutW / (rect.width || 1);
+    const scaleY = layoutH / (rect.height || 1);
     mouseRef.current = {
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
+      x: (e.clientX - rect.left) * scaleX,
+      y: (e.clientY - rect.top) * scaleY,
       isOver: true,
     };
   };

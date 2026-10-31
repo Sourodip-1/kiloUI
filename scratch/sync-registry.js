@@ -73,6 +73,25 @@ const PROPS_MAP = {
     { name: "onSubmit", type: "(data: { email: string; password: string }) => void", description: "Callback invoked upon login form submission." },
     { name: "onSignUp", type: "(data: { name: string; email: string; password: string }) => void", description: "Callback invoked upon sign-up form submission." }
   ],
+  "horizon-login": [
+    { name: "defaultTab", type: "'login' | 'signup'", defaultValue: "'login'", description: "Active initial tab mode." },
+    { name: "horizonSpeed", type: "number", defaultValue: "1", description: "Animation time speed multiplier for the atmospheric purple horizon." },
+    { name: "glowIntensity", type: "number", defaultValue: "1", description: "Brightness and volumetric intensity scale of the horizon bands." },
+    { name: "grain", type: "boolean", defaultValue: "true", description: "Enables subtle monochromatic film grain overlay to eliminate gradient banding." },
+    { name: "onLogin", type: "(data: { email: string; password: string }) => Promise<void> | void", description: "Callback invoked on login form submission." },
+    { name: "onSignUp", type: "(data: { name: string; email: string; password: string }) => Promise<void> | void", description: "Callback invoked on registration form submission." },
+    { name: "onForgotPassword", type: "(email: string) => Promise<void> | void", description: "Callback invoked on password recovery link submission." }
+  ],
+  "blueprint-login": [
+    { name: "defaultTab", type: "'login' | 'signup'", defaultValue: "'login'", description: "Active initial tab state." },
+    { name: "expandRatio", type: "number", defaultValue: "1.42", description: "Expansion scale multiplier when a cylinder is hovered." },
+    { name: "neighborWave", type: "boolean", defaultValue: "true", description: "Whether adjacent cylinders expand in a gentle mechanical wave." },
+    { name: "rotationY", type: "number", defaultValue: "-26", description: "Y-axis rotation angle of the mechanical model in degrees." },
+    { name: "rotationX", type: "number", defaultValue: "3", description: "X-axis pitch rotation angle of the mechanical model in degrees." },
+    { name: "onLogin", type: "(data: { email: string; password: string }) => Promise<void> | void", description: "Callback invoked upon login form submission." },
+    { name: "onSignUp", type: "(data: { name: string; email: string; password: string }) => Promise<void> | void", description: "Callback invoked upon registration form submission." },
+    { name: "onForgotPassword", type: "(email: string) => Promise<void> | void", description: "Callback invoked upon password reset link submission." }
+  ],
   "prismatic-slats-bg": [
     { name: "preset", type: "'Violet' | 'Cyan' | 'Sunset' | 'Emerald'", defaultValue: "'Violet'", description: "Color and lighting preset treatment." },
     { name: "background", type: "string", defaultValue: "'#050505'", description: "Base dark background CSS color." },
@@ -307,6 +326,14 @@ const PROPS_MAP = {
     { name: "vignette", type: "number", defaultValue: "0.45", description: "Vignette edge darkening falloff intensity." },
     { name: "interactive", type: "boolean", defaultValue: "true", description: "Whether mouse proximity actively spreads the smoke." },
     { name: "children", type: "React.ReactNode", description: "Optional content rendered on top of the smoke canvas." }
+  ],
+  "liquid-metal-background": [
+    { name: "theme", type: "'dark' | 'light' | 'system'", defaultValue: "'system'", description: "Color and reflection treatment: 'dark' (obsidian & cobalt rim), 'light' (silver chrome & dark graphite), or 'system' (inherits active theme with smooth lerping)." },
+    { name: "intensity", type: "'subtle' | 'balanced' | 'dramatic'", defaultValue: "'balanced'", description: "Luminance, specular gleam, and environment reflection intensity." },
+    { name: "speed", type: "number", defaultValue: "1.0", description: "Animation time progression and harmonic swirl velocity multiplier." },
+    { name: "interactive", type: "boolean", defaultValue: "true", description: "Enables spring-damped cursor parallax and highlight displacement." },
+    { name: "colorTone", type: "'cobalt-chrome' | 'pure-silver' | 'liquid-gold' | 'titanium'", defaultValue: "'cobalt-chrome'", description: "Metallic color reflection tone and chromatic accent caustics." },
+    { name: "children", type: "React.ReactNode", description: "Optional foreground UI overlay (hero typography, CTA buttons, badges)." }
   ]
 };
 
@@ -389,6 +416,33 @@ export function MinimalistLoginDemo() {
     <MinimalistLogin
       variant="sharp-edges"
       onSubmit={(data) => console.log("Login submitted:", data)}
+    />
+  );
+}`,
+  "horizon-login": `import { HorizonLogin } from "@/registry/ui/horizon-login";
+
+export function HorizonLoginDemo() {
+  return (
+    <HorizonLogin
+      defaultTab="login"
+      horizonSpeed={1}
+      glowIntensity={1}
+      grain={true}
+      onLogin={(data) => console.log("Login submitted:", data)}
+      onSignUp={(data) => console.log("Sign-up submitted:", data)}
+    />
+  );
+}`,
+  "blueprint-login": `import { BlueprintLogin } from "@/registry/ui/blueprint-login";
+
+export function BlueprintLoginDemo() {
+  return (
+    <BlueprintLogin
+      defaultTab="login"
+      expandRatio={1.42}
+      neighborWave={true}
+      onLogin={(data) => console.log("Login submitted:", data)}
+      onSignUp={(data) => console.log("Sign-up submitted:", data)}
     />
   );
 }`,
@@ -790,6 +844,32 @@ export function EtherealSmokeShaderDemo() {
       />
     </div>
   );
+}`,
+  "liquid-metal-background": `import { LiquidMetalBackground } from "@/registry/ui/liquid-metal-background";
+
+export function LiquidMetalBackgroundDemo() {
+  return (
+    <div style={{ width: "100%", height: 480, borderRadius: 16, overflow: "hidden", position: "relative" }}>
+      <LiquidMetalBackground
+        intensity="balanced"
+        colorTone="cobalt-chrome"
+        speed={1.0}
+        interactive={true}
+      >
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", gap: 14 }}>
+          <span style={{ fontSize: 11, fontFamily: "monospace", letterSpacing: "0.15em", textTransform: "uppercase", opacity: 0.7 }}>
+            Next-Gen Raymarched SDFs
+          </span>
+          <h1 style={{ fontSize: 32, fontWeight: 700, letterSpacing: "-0.03em" }}>
+            Liquid Chrome Sculptures
+          </h1>
+          <p style={{ fontSize: 14, opacity: 0.7, maxWidth: 440, textAlign: "center" }}>
+            Continuously animated fluid metallic ribbons and merging mercury droplets with studio HDRI reflections.
+          </p>
+        </div>
+      </LiquidMetalBackground>
+    </div>
+  );
 }`
 };
 
@@ -838,6 +918,20 @@ const METADATA_MAP = {
     description: "Spatial minimalist login form featuring a high-performance interactive 3D particle wireframe sphere with real-time motion and cursor hover radar reaction, minimal underline inputs, and customizable sharp or rounded corner geometry.",
     variants: ["sharp-edges", "rounded-corners"],
     dependencies: ["clsx", "tailwind-merge", "lucide-react"],
+    registryDependencies: ["utils"]
+  },
+  "horizon-login": {
+    category: "Forms & Inputs",
+    title: "Horizon Login",
+    description: "Production-quality minimal dark authentication card featuring an abstract animated purple horizon with multi-layered light bands, razor luminous filaments, tactile film grain, and accessible login/signup flows.",
+    dependencies: ["clsx", "tailwind-merge", "lucide-react"],
+    registryDependencies: ["utils"]
+  },
+  "blueprint-login": {
+    category: "Forms & Inputs",
+    title: "Blueprint Login",
+    description: "Architectural blueprint authentication card featuring a static isometric mechanical drawing with interactive cylinder expansion and shrinking on cursor hover, technical HUD callouts, and clean editorial typography.",
+    dependencies: ["clsx", "tailwind-merge", "lucide-react", "three", "@types/three"],
     registryDependencies: ["utils"]
   },
   dialog: {
@@ -995,6 +1089,14 @@ const METADATA_MAP = {
     title: "Ethereal Smoke Shader",
     description: "Cinematic volumetric organic smoke shader inspired by Chai AI. Features incandescent source emission, domain-warped fractal curl noise, deep atmospheric scattering, and fluid mouse dispersion.",
     variants: ["chai-blue", "ethereal-violet", "solar-flare", "emerald-mist", "spectral-white"],
+    dependencies: ["clsx", "tailwind-merge"],
+    registryDependencies: ["utils"]
+  },
+  "liquid-metal-background": {
+    category: "Backgrounds & Shaders",
+    title: "Liquid Metal Background",
+    description: "High-end, interactive liquid-chrome hero background featuring raymarched SDF ribbons, orbiting mercury beads with smin fluid surface tension, studio HDRI reflections, cobalt-blue caustics, and dedicated light/dark mode treatments.",
+    variants: ["cobalt-chrome", "pure-silver", "liquid-gold", "titanium"],
     dependencies: ["clsx", "tailwind-merge"],
     registryDependencies: ["utils"]
   }

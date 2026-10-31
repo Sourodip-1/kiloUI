@@ -355,16 +355,20 @@ export function VectorPanelLeftIcon({
 
 /**
  * 5. Vector Animated Kilo Logo
- * Exact official vector geometry of Kilo UI with physical kinetic spring
- * recoil on the green slash '/' element.
+ * Exact official vector geometry of Kilo UI with bespoke kinetic blade mechanics,
+ * specular edge refraction glint, and magnetic counter-recoil on the K glyph.
  */
 export function VectorKiloLogo({
   className = "h-7 w-7",
   theme = "dark",
+  kColor,
 }: {
   className?: string;
   theme?: "dark" | "light" | "system";
+  kColor?: string;
 }) {
+  const logoId = React.useId().replace(/[:]/g, "");
+
   return (
     <svg
       version="1.2"
@@ -372,19 +376,72 @@ export function VectorKiloLogo({
       viewBox="0 0 512 512"
       className={`${className} overflow-visible group/logo select-none`}
     >
-      {/* The K glyph - uses var(--text-primary) for dark/light mode, no hover color change */}
+      <defs>
+        {/* Specular Edge Gradient on the green slash */}
+        <linearGradient
+          id={`kilo-slash-grad-${logoId}`}
+          x1="0%"
+          y1="0%"
+          x2="100%"
+          y2="100%"
+        >
+          <stop offset="0%" stopColor="var(--accent-green)" />
+          <stop offset="35%" stopColor="var(--accent-green)" />
+          <stop offset="50%" stopColor="#ffffff" stopOpacity="0.45" />
+          <stop offset="65%" stopColor="var(--accent-green)" />
+          <stop offset="100%" stopColor="var(--accent-green)" />
+        </linearGradient>
+
+        {/* Luminous Neon Rim Glow */}
+        <filter id={`kilo-glow-${logoId}`} x="-40%" y="-40%" width="180%" height="180%">
+          <feDropShadow dx="0" dy="0" stdDeviation="10" floodColor="var(--accent-green)" floodOpacity="0.65" />
+        </filter>
+      </defs>
+
+      {/* The K glyph - magnetic inertial counter-stabilization */}
       <path
         d="m144.4 264.7l-5.6 12.1v106.2h-79.6v-251.1h79.6v110.6l56.8-110.6h92.9l-72 120.4 72 130.7h-92.9z"
-        fill="var(--text-primary)"
-        className="transition-colors duration-200"
+        fill={kColor || "var(--text-primary)"}
+        className="transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/logo:-translate-x-[1px] group-hover/logo:translate-y-[0.5px] group-hover/logo:scale-[0.985] group-hover/brand:-translate-x-[1px] group-hover/brand:translate-y-[0.5px] group-hover/brand:scale-[0.985] group-hover:-translate-x-[1px] group-hover:translate-y-[0.5px] group-hover:scale-[0.985]"
+        style={{
+          transformOrigin: "180px 258px",
+        }}
       />
 
-      {/* The slash '/' - Always green, animated on hover with kinetic spring recoil, no color change */}
-      <path
-        d="m385.2 127.1h85.2l-73.8 261.1h-79.6z"
-        fill="var(--accent-green)"
-        className="transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover/logo:-translate-y-4 group-hover/logo:translate-x-2 group-hover/brand:-translate-y-4 group-hover/brand:translate-x-2 group-hover:-translate-y-4 group-hover:translate-x-2"
-      />
+      {/* The slash '/' - Precision kinetic blade action with specular sheen & neon glow */}
+      <g
+        className="transition-all duration-300 ease-[cubic-bezier(0.34,1.45,0.64,1)] group-hover/logo:translate-x-[2px] group-hover/logo:-translate-y-[2px] group-hover/logo:scale-[1.035] group-hover/brand:translate-x-[2px] group-hover/brand:-translate-y-[2px] group-hover/brand:scale-[1.035] group-hover:translate-x-[2px] group-hover:-translate-y-[2px] group-hover:scale-[1.035]"
+        style={{
+          transformOrigin: "394px 258px",
+        }}
+      >
+        {/* Glow halo under blade (ignites on hover) */}
+        <path
+          d="m385.2 127.1h85.2l-73.8 261.1h-79.6z"
+          fill="var(--accent-green)"
+          className="opacity-0 group-hover/logo:opacity-100 group-hover/brand:opacity-100 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+          filter={`url(#kilo-glow-${logoId})`}
+        />
+
+        {/* Primary blade body */}
+        <path
+          d="m385.2 127.1h85.2l-73.8 261.1h-79.6z"
+          fill={`url(#kilo-slash-grad-${logoId})`}
+          className="transition-colors duration-200"
+        />
+
+        {/* Crisp interior bevel highlight line along cutting edge */}
+        <line
+          x1="392"
+          y1="135"
+          x2="320"
+          y2="380"
+          stroke="#ffffff"
+          strokeWidth="6"
+          strokeLinecap="round"
+          className="opacity-35 group-hover/logo:opacity-95 group-hover/brand:opacity-95 group-hover:opacity-95 transition-opacity duration-300"
+        />
+      </g>
     </svg>
   );
 }
@@ -1229,6 +1286,46 @@ export function VectorComponentIcon({
         <line x1="13" y1="3" x2="19" y2="21" />
         <line x1="3" y1="10" x2="21" y2="10" strokeOpacity="0.35" strokeWidth="1" />
         <line x1="3" y1="16" x2="21" y2="16" strokeOpacity="0.25" strokeWidth="1" />
+      </svg>
+    );
+  }
+
+  // Liquid Metal Background (flowing liquid chrome ribbon & mercury droplets)
+  if (norm.includes("metal") || norm.includes("liquid-metal")) {
+    return (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={`${className} ${isActive ? "stroke-[#38bdf8]" : ""}`}
+      >
+        <path
+          d="M3 16c4-6 7 2 11-4s4-5 7-1"
+          className={isActive ? "stroke-[#38bdf8]" : "stroke-current"}
+          strokeWidth="2"
+        />
+        <path
+          d="M2 9.5c3.5-3 7.5 1 11-2s5-3 8-1"
+          opacity="0.6"
+          strokeWidth="1.5"
+        />
+        <circle
+          cx="17.5"
+          cy="14"
+          r="1.75"
+          fill="currentColor"
+          className={isActive ? "fill-[#38bdf8]" : ""}
+        />
+        <circle
+          cx="7"
+          cy="11.5"
+          r="1.2"
+          fill="currentColor"
+          opacity="0.75"
+        />
       </svg>
     );
   }

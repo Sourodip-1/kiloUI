@@ -16,6 +16,7 @@ import { REGISTRY_DATA, RegistryItem } from "@/registry/registry-data";
 import { VectorKiloLogo, VectorCategoryIcon } from "@/components/vector-icons";
 import { ComponentCarousel } from "@/components/component-carousel";
 import { useAppShell } from "@/components/app-shell";
+import { LiquidMetalBackground } from "@/components/liquid-metal-background";
 
 export default function OverviewPage() {
   const { showToast, theme } = useAppShell();
@@ -26,6 +27,7 @@ export default function OverviewPage() {
 
   // Latest components for the horizontal carousel
   const latestComponents = [
+    REGISTRY_DATA["liquid-metal-background"],
     REGISTRY_DATA["sidebar"],
     REGISTRY_DATA["stat-card"],
     REGISTRY_DATA["dialog"],
@@ -51,64 +53,102 @@ export default function OverviewPage() {
 
   return (
     <div className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-12">
-      {/* 1. Quiet, Focused Hero Section */}
-      <section className="space-y-4">
-        {/* Clean Logo without background container or decorative frame */}
-        <div className="flex items-center gap-3">
-          <Link
-            href="/"
-            className="group/logo inline-flex items-center gap-3 cursor-pointer"
-            aria-label="kilo/ui Home"
-          >
-            {/* Logo has green slash, adaptive K, animated slash on hover, no size zoom */}
-            <div className="h-10 w-10 flex items-center justify-center">
-              <VectorKiloLogo
-                theme={theme}
-                className="h-10 w-10"
-              />
-            </div>
-            <div>
-              <h1 className="font-mono text-2xl font-bold tracking-tight text-[var(--text-primary)] select-none">
-                kilo<span className="text-[var(--accent-green)]">/</span>ui
-              </h1>
-              <p className="font-mono text-[11px] text-[var(--text-muted)]">
-                v0.1.0 • Component Library & Interactive Playground
-              </p>
-            </div>
-          </Link>
-        </div>
+      {/* 1. Animated Liquid Metal Hero Section */}
+      <section className="relative rounded-2xl border border-[var(--border)] overflow-hidden bg-[var(--surface-primary)] p-6 sm:p-10 shadow-sm transition-colors duration-300">
+        {/* Real-time 3D Raymarched Liquid Chrome Canvas (Background layer) */}
+        <LiquidMetalBackground
+          className="absolute inset-0 z-0 pointer-events-none"
+          intensity="balanced"
+          colorTone="cobalt-chrome"
+          speed={1.0}
+          interactive={true}
+        />
 
-        {/* Concise Description */}
-        <p className="text-sm text-[var(--text-secondary)] max-w-2xl leading-relaxed">
-          A minimal, precision-engineered component library and interactive playground with a dark visual identity, clean navigation, subtle animations, and a complete documentation and editing experience for every component.
-        </p>
+        {/* Full-Area Organic Frosted Glass Overlay — gives crystal-clear text on left while keeping 3D chrome razor-sharp on right */}
+        <div
+          className="pointer-events-none absolute inset-0 z-[1] backdrop-saturate-150"
+          style={{
+            backdropFilter: "blur(16px)",
+            WebkitBackdropFilter: "blur(16px)",
+            maskImage: "linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 35%, rgba(0,0,0,0.3) 68%, rgba(0,0,0,0) 100%)",
+            WebkitMaskImage: "linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 35%, rgba(0,0,0,0.3) 68%, rgba(0,0,0,0) 100%)",
+          }}
+          aria-hidden="true"
+        />
+        {/* Soft atmospheric gradient for crisp typography contrast */}
+        <div
+          className="pointer-events-none absolute inset-0 z-[2] bg-gradient-to-r from-black/90 via-black/60 via-35% to-transparent"
+          aria-hidden="true"
+        />
 
-        {/* Quick Actions & CLI Command */}
-        <div className="flex flex-wrap items-center gap-3 pt-2">
-          <Link
-            href="/components"
-            className="inline-flex items-center gap-2 h-9 px-4 rounded-md bg-[var(--text-primary)] text-[var(--bg-main)] font-mono text-xs font-medium hover:opacity-90 active:scale-98 transition-all cursor-pointer"
-          >
-            <Layers className="h-3.5 w-3.5" />
-            <span>Explore Components</span>
-            <ArrowRight className="h-3.5 w-3.5 ml-1" />
-          </Link>
+        {/* Foreground Content Layer — Clean open layout with crisp white typography on frosted black blur */}
+        <div className="relative z-10 space-y-4 max-w-2xl text-white">
+          {/* Clean Logo without background container or decorative frame */}
+          <div className="flex items-center gap-3">
+            <Link
+              href="/"
+              className="group/logo inline-flex items-center gap-3 cursor-pointer"
+              aria-label="kilo/ui Home"
+            >
+              {/* Logo has green slash, crisp white K on black blur, kinetic blade animation on hover */}
+              <div className="h-10 w-10 flex items-center justify-center">
+                <VectorKiloLogo
+                  kColor="#ffffff"
+                  className="h-10 w-10"
+                />
+              </div>
+              <div>
+                <h1
+                  className="font-mono text-2xl font-bold tracking-tight select-none drop-shadow-md"
+                  style={{ color: "#ffffff" }}
+                >
+                  kilo<span className="text-[var(--accent-green)]">/</span>ui
+                </h1>
+                <p
+                  className="font-mono text-[11px]"
+                  style={{ color: "rgba(255, 255, 255, 0.75)" }}
+                >
+                  v0.1.0 • Component Library &amp; Interactive Playground
+                </p>
+              </div>
+            </Link>
+          </div>
 
-          {/* Quick CLI snippet */}
-          <button
-            type="button"
-            onClick={() => handleCopyCli("npx kilo-ui add button")}
-            className="inline-flex items-center gap-2 h-9 px-3 rounded-md border border-[var(--border)] bg-[var(--surface-secondary)]/50 font-mono text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:border-[var(--border-hover)] transition-all cursor-pointer"
-            title="Click to copy CLI installation command"
+          {/* Concise Description — White with drop shadow for pristine legibility on black blur */}
+          <p
+            className="text-sm leading-relaxed drop-shadow-sm font-sans font-normal"
+            style={{ color: "rgba(255, 255, 255, 0.9)" }}
           >
-            <Terminal className="h-3.5 w-3.5 text-[var(--accent-green)]" />
-            <span>npx kilo-ui add button</span>
-            {copiedCli ? (
-              <Check className="h-3.5 w-3.5 text-[var(--accent-green)] ml-1" />
-            ) : (
-              <Copy className="h-3.5 w-3.5 text-[var(--text-muted)] ml-1" />
-            )}
-          </button>
+            A minimal, precision-engineered component library and interactive playground with a dark visual identity, clean navigation, subtle animations, and a complete documentation and editing experience for every component.
+          </p>
+
+          {/* Quick Actions & CLI Command */}
+          <div className="flex flex-wrap items-center gap-3 pt-2">
+            <Link
+              href="/components"
+              className="inline-flex items-center gap-2 h-9 px-4 rounded-md bg-white text-black font-mono text-xs font-semibold hover:bg-white/90 active:scale-98 transition-all cursor-pointer shadow-md"
+            >
+              <Layers className="h-3.5 w-3.5" />
+              <span>Explore Components</span>
+              <ArrowRight className="h-3.5 w-3.5 ml-1" />
+            </Link>
+
+            {/* Quick CLI snippet with frosted glass button */}
+            <button
+              type="button"
+              onClick={() => handleCopyCli("npx kilo-ui add button")}
+              className="inline-flex items-center gap-2 h-9 px-3.5 rounded-md border border-white/20 bg-black/45 hover:bg-black/60 hover:border-white/40 backdrop-blur-md font-mono text-xs text-white/90 hover:text-white transition-all cursor-pointer shadow-sm"
+              title="Click to copy CLI installation command"
+            >
+              <Terminal className="h-3.5 w-3.5 text-[var(--accent-green)]" />
+              <span>npx kilo-ui add button</span>
+              {copiedCli ? (
+                <Check className="h-3.5 w-3.5 text-[var(--accent-green)] ml-1" />
+              ) : (
+                <Copy className="h-3.5 w-3.5 text-white/60 ml-1" />
+              )}
+            </button>
+          </div>
         </div>
       </section>
 
