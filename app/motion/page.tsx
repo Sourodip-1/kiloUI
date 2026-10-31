@@ -210,14 +210,14 @@ export default function MotionEnginePage() {
           <button
             type="button"
             onClick={() => {
-              navigator.clipboard.writeText("npx kilo-ui add motion-engine");
+              navigator.clipboard.writeText("npx @kilo-ui/cli add motion-engine");
               setCopiedCli(true);
               setTimeout(() => setCopiedCli(false), 2000);
             }}
             className="inline-flex items-center gap-2 h-9 px-3.5 rounded-lg border border-[var(--border)] bg-[var(--surface-secondary)] text-xs font-mono text-[var(--text-primary)] hover:border-[var(--accent-green)] transition-all cursor-pointer shadow-xs active:scale-95 shrink-0"
           >
             <Terminal className="h-3.5 w-3.5 text-[var(--accent-green)]" />
-            <span>npx kilo-ui add motion-engine</span>
+            <span>npx @kilo-ui/cli add motion-engine</span>
             {copiedCli ? <Check className="h-3.5 w-3.5 text-[var(--accent-green)]" /> : <Copy className="h-3 w-3 opacity-60" />}
           </button>
         </div>

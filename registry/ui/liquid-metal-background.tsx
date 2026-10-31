@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { cn } from "@/lib/utils";
-import { useAppShell } from "@/components/app-shell";
 
 export interface LiquidMetalBackgroundProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Theme override: 'dark', 'light', or 'system' (inherits from app shell by default) */
@@ -387,16 +386,7 @@ export function LiquidMetalBackground({
   const containerRef = React.useRef<HTMLDivElement>(null);
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
 
-  // App shell theme integration
-  let appShellTheme: "dark" | "light" | "system" | null = null;
-  try {
-    const shell = useAppShell();
-    appShellTheme = shell.theme;
-  } catch {
-    appShellTheme = null;
-  }
-
-  const effectiveThemeProp = themeProp || appShellTheme || "system";
+  const effectiveThemeProp = themeProp || "system";
 
   // Track active light/dark state
   const [resolvedIsLight, setResolvedIsLight] = React.useState<boolean>(() => {

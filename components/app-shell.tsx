@@ -18,6 +18,7 @@ import {
   Heart,
   Trash2,
   Copy,
+  Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Sidebar } from "@/components/sidebar";
@@ -341,106 +342,105 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         setLikedDrawerOpen,
       }}
     >
-      <div className="h-screen max-h-screen flex bg-[var(--bg-main)] text-[var(--text-primary)] antialiased font-sans overflow-hidden">
-        {/* Reusable Sidebar */}
-        <Sidebar
-          collapsed={sidebarCollapsed}
-          onCollapsedChange={setSidebarCollapsed}
-          mobileOpen={mobileMenuOpen}
-          onMobileOpenChange={setMobileMenuOpen}
-          activeComponent={activeComponent}
-          activeCategory={currentItem?.category}
-          theme={theme}
-        />
+      {pathname === "/" || !["/components", "/overview", "/icons", "/motion", "/liked", "/login"].some(r => pathname === r || pathname?.startsWith(r + "/")) ? (
+        <div className="min-h-screen w-full bg-[#070709] text-white antialiased font-sans">
+          {children}
+        </div>
+      ) : (
+        <div className="h-screen max-h-screen flex bg-[var(--bg-main)] text-[var(--text-primary)] antialiased font-sans overflow-hidden">
+          {/* Reusable Sidebar */}
+          <Sidebar
+            collapsed={sidebarCollapsed}
+            onCollapsedChange={setSidebarCollapsed}
+            mobileOpen={mobileMenuOpen}
+            onMobileOpenChange={setMobileMenuOpen}
+            activeComponent={activeComponent}
+            activeCategory={currentItem?.category}
+            theme={theme}
+          />
 
-        {/* Main Content Area with dedicated vertical scrolling */}
-        <div
-          ref={mainScrollRef}
-          id="main-scroll-container"
-          className="flex flex-1 flex-col h-full overflow-y-auto overflow-x-hidden min-w-0"
-        >
-          {/* Top Sticky Header */}
-          <header className="sticky top-0 z-40 flex min-h-14 items-center justify-between gap-2 border-b border-[var(--border)] bg-[var(--bg-main)]/95 backdrop-blur px-3 sm:px-6 py-2 shrink-0">
-            <div className="flex items-center gap-3">
-              {/* Mobile Menu Trigger */}
-              <button
-                type="button"
-                onClick={() => setMobileMenuOpen(true)}
-                className="p-1.5 text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] rounded lg:hidden cursor-pointer"
-                aria-label="Open navigation menu"
-              >
-                <Menu className="h-5 w-5" />
-              </button>
-
-              {/* Collapsed Sidebar Expand Button */}
-              {sidebarCollapsed && (
+          {/* Main Content Area with dedicated vertical scrolling */}
+          <div
+            ref={mainScrollRef}
+            id="main-scroll-container"
+            className="flex flex-1 flex-col h-full overflow-y-auto overflow-x-hidden min-w-0"
+          >
+            {/* Top Sticky Header */}
+            <header className="sticky top-0 z-40 flex min-h-14 items-center justify-between gap-2 border-b border-[var(--border)] bg-[var(--bg-main)]/95 backdrop-blur px-3 sm:px-6 py-2 shrink-0">
+              <div className="flex items-center gap-3">
+                {/* Mobile Menu Trigger */}
                 <button
                   type="button"
-                  onClick={() => setSidebarCollapsed(false)}
-                  className="hidden lg:flex p-1.5 rounded border border-[var(--border)] bg-[var(--surface-elevated)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] active:scale-95 transition-all animate-in fade-in duration-200 cursor-pointer"
-                  aria-label="Expand sidebar"
-                  title="Expand sidebar (⌘B)"
+                  onClick={() => setMobileMenuOpen(true)}
+                  className="p-1.5 text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] rounded lg:hidden cursor-pointer"
+                  aria-label="Open navigation menu"
                 >
-                  <VectorPanelLeftIcon isCollapsed={true} className="h-3.5 w-3.5" />
+                  <Menu className="h-5 w-5" />
                 </button>
-              )}
 
-              {/* Breadcrumb Navigation */}
-              <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-1.5 font-mono text-xs text-[var(--text-muted)]">
-                <Link
-                  href="/"
-                  className="hover:text-[var(--text-primary)] transition-colors flex items-center gap-0.5 font-bold"
-                >
-                  <span>kilo</span>
-                  <span className="text-[var(--accent-green)] font-bold">/</span>
-                  <span>ui</span>
-                </Link>
-
-                {pathname === "/" && (
-                  <>
-                    <span>/</span>
-                    <span className="text-[var(--text-primary)] font-bold">Overview</span>
-                  </>
+                {/* Collapsed Sidebar Expand Button */}
+                {sidebarCollapsed && (
+                  <button
+                    type="button"
+                    onClick={() => setSidebarCollapsed(false)}
+                    className="hidden lg:flex p-1.5 rounded border border-[var(--border)] bg-[var(--surface-elevated)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] active:scale-95 transition-all animate-in fade-in duration-200 cursor-pointer"
+                    aria-label="Expand sidebar"
+                    title="Expand sidebar (⌘B)"
+                  >
+                    <VectorPanelLeftIcon isCollapsed={true} className="h-3.5 w-3.5" />
+                  </button>
                 )}
 
-                {pathname === "/components" && (
-                  <>
-                    <span>/</span>
-                    <span className="text-[var(--text-primary)] font-bold">All Components</span>
-                  </>
-                )}
+                {/* Breadcrumb Navigation */}
+                <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-1.5 font-mono text-xs text-[var(--text-muted)]">
+                  <Link
+                    href="/"
+                    className="hover:text-[var(--text-primary)] transition-colors flex items-center gap-0.5 font-bold"
+                  >
+                    <span>kilo</span>
+                    <span className="text-[var(--accent-green)] font-bold">/</span>
+                    <span>ui</span>
+                  </Link>
 
-                {pathname?.startsWith("/liked") && (
-                  <>
-                    <span>/</span>
-                    <span className="text-[var(--text-primary)] font-bold">Liked Components</span>
-                  </>
-                )}
+                  {pathname === "/overview" && (
+                    <>
+                      <span>/</span>
+                      <span className="text-[var(--text-primary)] font-bold">Overview</span>
+                    </>
+                  )}
 
-                {pathname?.startsWith("/components/") && currentItem && (
-                  <>
-                    <span>/</span>
-                    <Link
-                      href={`/components?category=${encodeURIComponent(currentItem.category)}`}
-                      className="hover:text-[var(--text-primary)] transition-colors hidden sm:inline font-semibold"
-                    >
-                      {currentItem.category}
-                    </Link>
-                    <span className="hidden sm:inline">/</span>
-                    <span className="max-w-[35vw] truncate text-[var(--text-primary)] font-bold">{currentItem.title}</span>
-                  </>
-                )}
+                  {pathname === "/components" && (
+                    <>
+                      <span>/</span>
+                      <span className="text-[var(--text-primary)] font-bold">All Components</span>
+                    </>
+                  )}
 
-                {pathname?.startsWith("/docs") && (
-                  <>
-                    <span>/</span>
-                    <span className="text-[var(--text-primary)] font-bold">Registry API</span>
-                  </>
-                )}
-              </nav>
-            </div>
+                  {pathname?.startsWith("/liked") && (
+                    <>
+                      <span>/</span>
+                      <span className="text-[var(--text-primary)] font-bold">Liked Components</span>
+                    </>
+                  )}
 
-            <div className="flex items-center gap-1.5 sm:gap-2">
+                  {pathname?.startsWith("/components/") && currentItem && (
+                    <>
+                      <span>/</span>
+                      <Link
+                        href={`/components?category=${encodeURIComponent(currentItem.category)}`}
+                        className="hover:text-[var(--text-primary)] transition-colors hidden sm:inline font-semibold"
+                      >
+                        {currentItem.category}
+                      </Link>
+                      <span className="hidden sm:inline">/</span>
+                      <span className="max-w-[35vw] truncate text-[var(--text-primary)] font-bold">{currentItem.title}</span>
+                    </>
+                  )}
+                </nav>
+              </div>
+
+              <div className="flex items-center gap-1.5 sm:gap-2">
+
               {/* Liked Navigation Button */}
               <Link
                 href="/liked"
@@ -849,14 +849,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                           type="button"
                           onClick={(e) => {
                             e.stopPropagation();
-                            navigator.clipboard.writeText(`npx kilo-ui add ${item.name}`);
-                            showToast(`Copied "npx kilo-ui add ${item.name}"`);
+                            navigator.clipboard.writeText(`npx @kilo-ui/cli add ${item.name}`);
+                            showToast(`Copied "npx @kilo-ui/cli add ${item.name}"`);
                           }}
                           className="inline-flex items-center gap-1 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors font-mono text-[10px] cursor-pointer"
                           title="Copy install command"
                         >
                           <Terminal className="h-3 w-3" />
-                          <span>npx kilo-ui add {item.name}</span>
+                          <span>npx @kilo-ui/cli add {item.name}</span>
                           <Copy className="h-2.5 w-2.5 ml-0.5 opacity-60" />
                         </button>
 
@@ -904,6 +904,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
         )}
       </div>
+      )}
     </AppShellContext.Provider>
   );
 }

@@ -21,8 +21,21 @@ export async function generateMetadata({
   if (!item) return { title: "Component Not Found — kilo/ui" };
 
   return {
-    title: `${item.title} — kilo/ui Component Library`,
+    title: `${item.title} — React & Next.js Primitive`,
     description: item.description,
+    alternates: {
+      canonical: `https://www.kiloui.dev/components/${name}`,
+    },
+    openGraph: {
+      title: `${item.title} — kilo/ui Primitive`,
+      description: item.description,
+      url: `https://www.kiloui.dev/components/${name}`,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${item.title} — kilo/ui Primitive`,
+      description: item.description,
+    },
   };
 }
 

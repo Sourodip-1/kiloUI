@@ -1,13 +1,14 @@
 {
-  "name": "kiloui",
+  "name": "@kilo-ui/cli",
   "version": "0.1.0",
   "description": "Minimal, high-performance copy-paste UI primitives, shaders, and animations for React and Next.js",
   "license": "MIT",
   "author": "Sourodip",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Sourodip-1/kiloUI.git"
+    "url": "git+https://github.com/Sourodip-1/kiloUI.git"
   },
+  "homepage": "https://www.kiloui.dev",
   "keywords": [
     "react",
     "nextjs",
@@ -16,17 +17,21 @@
     "tailwind",
     "webgl",
     "shadcn",
-    "registry"
+    "registry",
+    "motion",
+    "creative-ui"
   ],
   "bin": {
-    "kiloui": "./bin/cli.mjs",
-    "kilo-ui": "./bin/cli.mjs"
+    "kilo-ui": "bin/cli.mjs",
+    "kiloui": "bin/cli.mjs"
   },
   "files": [
     "bin",
-    "registry",
-    "public/images"
+    "registry"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -34,6 +39,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@kilo-ui/cli": "^0.0.0-stage",
     "@types/three": "^0.186.0",
     "clsx": "^2.1.1",
     "lucide-react": "^1.61.0",

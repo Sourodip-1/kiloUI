@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Kilo/Icons — kilo/ui",
-  description: "A crafted collection of clean vector icons, morphing menu actions, and responsive 60fps SVG loaders.",
+  title: "Precision Vector Icons",
+  description: "Curated collection of lightweight, pixel-perfect SVG icons for developer dashboards and modern interfaces.",
+  alternates: {
+    canonical: "https://www.kiloui.dev/icons",
+  },
 };
 
 export default function IconsLayout({

@@ -32,20 +32,10 @@ export function ScaledThumbnailWrapper({
 }: ScaledThumbnailWrapperProps) {
   const containerRef = React.useRef<HTMLDivElement>(null);
 
-  // When disabled (e.g. in full playground mode), render children in a standard flex container
-  if (!enabled) {
-    return (
-      <div className={cn("w-full flex items-center justify-center", className)}>
-        {children}
-      </div>
-    );
-  }
-
   // Widescreen / Complex / Full-bleed components render in a desktop canvas
   // UI control atoms (buttons, badges, switches) render in a compact canvas
   const isLarge =
     category === "Backgrounds & Shaders" ||
-    category === "Cursors" ||
     category === "Media & Layout" ||
     name === "table" ||
     name === "card" ||
@@ -59,11 +49,11 @@ export function ScaledThumbnailWrapper({
     name === "kinetic-motion-text" ||
     name === "footer";
 
-  let targetBaseWidth = customBaseWidth;
-  let targetBaseHeight = customBaseHeight;
+  let targetBaseWidth = customBaseWidth || 320;
+  let targetBaseHeight = customBaseHeight || 160;
   let defaultInitialScale = 1.0;
 
-  if (!targetBaseWidth || !targetBaseHeight) {
+  if (!customBaseWidth || !customBaseHeight) {
     if (name === "minimalist-login" || name === "horizon-login" || name === "blueprint-login") {
       targetBaseWidth = 780;
       targetBaseHeight = 460;
@@ -107,11 +97,13 @@ export function ScaledThumbnailWrapper({
     }
   }
 
-  // Initialize with sensible scale to avoid initial render flicker
+  // Initialize with sensible scale to avoid initial render flicker - ALL HOOKS UNCONDITIONAL
   const [scale, setScale] = React.useState<number>(defaultInitialScale);
   const [ready, setReady] = React.useState<boolean>(false);
 
   React.useEffect(() => {
+    if (!enabled || category === "Cursors") return;
+
     const el = containerRef.current;
     if (!el) return;
 
@@ -138,7 +130,17 @@ export function ScaledThumbnailWrapper({
       ro.observe(el.parentElement);
     }
     return () => ro.disconnect();
-  }, [targetBaseWidth, targetBaseHeight]);
+  }, [enabled, category, targetBaseWidth, targetBaseHeight]);
+
+  // When disabled (e.g. in full playground mode) or for full-bleed interactive cursors,
+  // return AFTER hooks have run so hook call order remains 100% constant across renders
+  if (!enabled || category === "Cursors") {
+    return (
+      <div className={cn("w-full h-full min-h-[280px] flex items-center justify-center relative overflow-hidden", className)}>
+        {children}
+      </div>
+    );
+  }
 
   const sizerWidth = Math.max(1, Math.round(targetBaseWidth * scale));
   const sizerHeight = Math.max(1, Math.round(targetBaseHeight * scale));

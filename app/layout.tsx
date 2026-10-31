@@ -20,8 +20,77 @@ const googleSansCode = Google_Sans_Code({
 });
 
 export const metadata: Metadata = {
-  title: "kilo/ui — Component Library & Interactive Playground",
-  description: "Minimal, premium developer-focused component library, interactive playground, and registry.",
+  metadataBase: new URL("https://www.kiloui.dev"),
+  title: {
+    default: "kilo/ui — Precision UI Primitives & Hardware Shaders",
+    template: "%s | kilo/ui",
+  },
+  description:
+    "Minimal, high-performance copy-paste UI primitives, WebGL shaders, precision motion engines, and interactive animations for React & Next.js. Zero runtime wrappers.",
+  keywords: [
+    "React components",
+    "Next.js 16",
+    "Tailwind CSS v4",
+    "WebGL shaders",
+    "copy paste UI",
+    "UI primitives",
+    "Target Cursor",
+    "Contour Tide",
+    "Option Wheel",
+    "Motion Engine",
+    "Kinetic Text",
+    "shadcn alternative",
+    "creative developer",
+    "creative UI",
+    "TypeScript strict",
+  ],
+  authors: [{ name: "Sourodip", url: "https://sourodip.me" }],
+  creator: "Sourodip",
+  publisher: "kilo/ui",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  alternates: {
+    canonical: "https://www.kiloui.dev",
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://www.kiloui.dev",
+    siteName: "kilo/ui",
+    title: "kilo/ui — Precision UI Primitives & Hardware Shaders",
+    description:
+      "Minimal, high-performance copy-paste UI primitives, WebGL shaders, precision motion engines, and interactive animations for React & Next.js.",
+    images: [
+      {
+        url: "/KiloUi-logo-darkmode.svg",
+        width: 1200,
+        height: 630,
+        alt: "kilo/ui - Precision UI Primitives",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "kilo/ui — Precision UI Primitives & Hardware Shaders",
+    description:
+      "Minimal, high-performance copy-paste UI primitives, WebGL shaders, and precision animations for React & Next.js.",
+    creator: "@sourodip",
+    images: ["/KiloUi-logo-darkmode.svg"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
   icons: {
     icon: [
       {
@@ -45,7 +114,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${googleSans.variable} ${googleSansCode.variable} h-full antialiased`}
+      className={`${googleSans.variable} ${googleSansCode.variable} min-h-full antialiased`}
     >
       <head>
         <script
@@ -74,6 +143,31 @@ export default function RootLayout({
                 } catch (e) {}
               })();
             `,
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebApplication",
+              "name": "kilo/ui",
+              "url": "https://www.kiloui.dev",
+              "description":
+                "Minimal, high-performance copy-paste UI primitives, shaders, and animations for React and Next.js.",
+              "applicationCategory": "DeveloperApplication",
+              "operatingSystem": "All",
+              "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "USD",
+              },
+              "author": {
+                "@type": "Person",
+                "name": "Sourodip",
+                "url": "https://sourodip.me",
+              },
+            }),
           }}
         />
       </head>

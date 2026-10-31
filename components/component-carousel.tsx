@@ -124,11 +124,26 @@ export function ComponentCarousel({
   );
 }
 
-function getCarouselCardConfig(name: string): {
+function getCarouselCardConfig(name: string, category?: string): {
   widthClass: string;
   previewHeightClass: string;
   previewMaxWidthClass: string;
 } {
+  if (
+    category === "Cursors" ||
+    name === "firefly-cursor" ||
+    name === "magnetic-cursor" ||
+    name === "neon-ribbon-cursor" ||
+    name === "quantum-particles-cursor" ||
+    name === "spotlight-cursor" ||
+    name === "elastic-blob-cursor"
+  ) {
+    return {
+      widthClass: "w-[min(440px,calc(100vw-2rem))] sm:w-[500px]",
+      previewHeightClass: "h-60 sm:h-64",
+      previewMaxWidthClass: "max-w-none w-full",
+    };
+  }
   if (
     name === "blurred-carousel" ||
     name === "footer" ||
@@ -171,7 +186,7 @@ function getCarouselCardConfig(name: string): {
 }
 
 function CarouselItem({ item }: { item: RegistryItem }) {
-  const config = getCarouselCardConfig(item.name);
+  const config = getCarouselCardConfig(item.name, item.category);
 
   return (
     <div

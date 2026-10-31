@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { Plus, X, Check, Heart, Sparkles, Image as ImageIcon } from "lucide-react";
-import { cn } from "../lib/utils";
+import { cn } from "@/lib/utils";
 
 export interface BentoClusterItem {
   id: string;

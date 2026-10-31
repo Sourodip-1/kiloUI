@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { TrendingUp, TrendingDown, ArrowUpRight } from "lucide-react";
-import { cn } from "../lib/utils";
+import { cn } from "@/lib/utils";
 
 export interface StatCardProps extends React.HTMLAttributes<HTMLDivElement> {
   title: string;

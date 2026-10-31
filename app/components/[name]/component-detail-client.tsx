@@ -185,8 +185,8 @@ ${(configuredCode || item.usage || "").trim()}
         content = sourceCode;
         label = "Copied TSX component source!";
       } else if (type === "cli") {
-        content = `npx kilo-ui add ${item.name}`;
-        label = `Copied 'npx kilo-ui add ${item.name}'`;
+        content = `npx @kilo-ui/cli add ${item.name}`;
+        label = `Copied 'npx @kilo-ui/cli add ${item.name}'`;
       }
       await navigator.clipboard.writeText(content);
       showToast(label);
@@ -265,7 +265,7 @@ ${(configuredCode || item.usage || "").trim()}
           {/* Quick CLI Pill */}
           <div className="flex min-w-0 max-w-full items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] px-3 py-1.5 font-mono text-xs text-[var(--text-secondary)] shadow-xs">
             <Terminal className="h-3.5 w-3.5 text-[var(--accent-green)] shrink-0" />
-            <span className="truncate select-all">npx kilo-ui add {item.name}</span>
+            <span className="truncate select-all">npx @kilo-ui/cli add {item.name}</span>
             <button
               type="button"
               onClick={() => handleCopyAction("cli")}

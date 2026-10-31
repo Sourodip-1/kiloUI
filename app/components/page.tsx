@@ -206,6 +206,7 @@ function ComponentsDiscoveryContent() {
               {allItems
                 .filter((i) => i.category === activeCategoryParam)
                 .map((item) => {
+                  const isCursor = item.category === "Cursors";
                   const isWide =
                     item.name === "blurred-carousel" ||
                     item.name === "footer" ||
@@ -249,7 +250,9 @@ function ComponentsDiscoveryContent() {
                       <div
                         className={cn(
                           "flex items-center justify-center bg-[var(--bg-main)]/60 relative",
-                          isWide
+                          isCursor
+                            ? "p-0 h-[340px] sm:h-[380px] w-full overflow-hidden"
+                            : isWide
                             ? "p-4 sm:p-6 min-h-[300px]"
                             : isFeatured
                             ? "p-4 sm:p-6 min-h-[290px]"
@@ -264,14 +267,25 @@ function ComponentsDiscoveryContent() {
                         <div
                           className={cn(
                             "w-full flex items-center justify-center",
-                            isWide ? "max-w-4xl" : isFeatured ? "max-w-lg" : isSlider ? "max-w-[260px]" : "max-w-lg"
+                            isCursor
+                              ? "w-full h-full max-w-full"
+                              : isWide
+                              ? "max-w-4xl"
+                              : isFeatured
+                              ? "max-w-lg"
+                              : isSlider
+                              ? "max-w-[260px]"
+                              : "max-w-lg"
                           )}
                         >
                           <ComponentPreviewStage
                             item={item}
                             interactive={true}
                             showKnobs={false}
-                            className="border-none bg-transparent p-0 shadow-none w-full"
+                            className={cn(
+                              "border-none bg-transparent p-0 shadow-none w-full",
+                              isCursor && "h-full min-h-[340px] sm:min-h-[380px]"
+                            )}
                           />
                         </div>
                       </div>

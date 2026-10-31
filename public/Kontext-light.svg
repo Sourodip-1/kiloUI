@@ -1,0 +1,24 @@
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+	<style>
+		.s0 { fill: #000000ff } 
+		.s1 { fill: #ff0000 } 
+		.s2 { fill: #5aff00 } 
+		.s3 { fill: #ff00f0 } 
+		.s4 { fill: #0600ff } 
+	</style>
+	<g id="Folder 4">
+		<path id="Shape 4" fill-rule="evenodd" class="s0" d="m273 134v34h-34v-34z"/>
+		<path id="Shape 4 copy 12" fill-rule="evenodd" class="s1" d="m273 64v34h-34v-34z"/>
+		<path id="Shape 4 copy 8" fill-rule="evenodd" class="s2" d="m393 155v34h-34v-34z"/>
+		<path id="Shape 4 copy" fill-rule="evenodd" class="s0" d="m273 205v34h-34v-34z"/>
+		<path id="Shape 4 copy 4" fill-rule="evenodd" class="s0" d="m213 215v34h-34v-34z"/>
+		<path id="Shape 4 copy 5" fill-rule="evenodd" class="s0" d="m213 265v34h-34v-34z"/>
+		<path id="Shape 4 copy 6" fill-rule="evenodd" class="s0" d="m333 215v34h-34v-34z"/>
+		<path id="Shape 4 copy 7" fill-rule="evenodd" class="s0" d="m333 265v34h-34v-34z"/>
+		<path id="Shape 4 copy 2" fill-rule="evenodd" class="s3" d="m273 275v34h-34v-34z"/>
+		<path id="Shape 4 copy 3" fill-rule="evenodd" class="s0" d="m273 345v34h-34v-34z"/>
+		<path id="Shape 4 copy 9" fill-rule="evenodd" class="s4" d="m393 325v34h-34v-34z"/>
+		<path id="Shape 4 copy 10" fill-rule="evenodd" class="s0" d="m153 155v34h-34v-34z"/>
+		<path id="Shape 4 copy 11" fill-rule="evenodd" class="s0" d="m153 325v34h-34v-34z"/>
+	</g>
+</svg>

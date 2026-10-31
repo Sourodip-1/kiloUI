@@ -48,8 +48,14 @@ import { ConcaveCarousel } from "@/registry/ui/concave-carousel";
 import { GrainyGridShader } from "@/registry/ui/grainy-grid-shader";
 import { GrainyHorizonShader } from "@/registry/ui/grainy-horizon-shader";
 import { FireflyCursor } from "@/registry/ui/firefly-cursor";
+import { TargetCursor, MagneticCursor, TargetCursorVariant } from "@/registry/ui/magnetic-cursor";
+import { NeonRibbonCursor, NeonRibbonVariant } from "@/registry/ui/neon-ribbon-cursor";
+import { QuantumParticlesCursor, QuantumVariant } from "@/registry/ui/quantum-particles-cursor";
+import { SpotlightCursor, SpotlightVariant } from "@/registry/ui/spotlight-cursor";
+import { ElasticBlobCursor, ElasticBlobVariant } from "@/registry/ui/elastic-blob-cursor";
 import { EtherealSmokeShader, ETHEREAL_SMOKE_PRESETS } from "@/registry/ui/ethereal-smoke-shader";
 import { LiquidMetalBackground } from "@/registry/ui/liquid-metal-background";
+import { ContourTide, ContourTidePreset, CONTOUR_TIDE_PRESETS } from "@/registry/ui/contour-tide";
 import { MorphNodeRing, MorphShapeDesign } from "@/registry/ui/morph-node-ring";
 import { GlassReveal, GlassRevealShape } from "@/registry/ui/glass-reveal";
 import { HorizonLogin } from "@/registry/ui/horizon-login";
@@ -1073,6 +1079,94 @@ export function ComponentPreviewStage({
   const [glassRevealPaused, setGlassRevealPaused] = React.useState<boolean>(false);
   const [glassRevealVariant, setGlassRevealVariant] = React.useState<string>("sunflower-circle");
 
+  // 29. Target Cursor / Magnetic Cursor State (React Bits TargetCursor)
+  const [magVariant, setMagVariant] = React.useState<TargetCursorVariant>("brackets-reticle");
+  const [magColor, setMagColor] = React.useState<string>("#ffffff");
+  const [magColorOnTarget, setMagColorOnTarget] = React.useState<string>("");
+  const [magSpinDuration, setMagSpinDuration] = React.useState<number>(2);
+  const [magHoverDuration, setMagHoverDuration] = React.useState<number>(0.2);
+  const [magParallaxOn, setMagParallaxOn] = React.useState<boolean>(true);
+  const [magHideDefaultCursor, setMagHideDefaultCursor] = React.useState<boolean>(true);
+  const [magSize, setMagSize] = React.useState<number>(36);
+  const [magCornerSize, setMagCornerSize] = React.useState<number>(12);
+  const [magThickness, setMagThickness] = React.useState<number>(3);
+  const [magPadding, setMagPadding] = React.useState<number>(6);
+  const [magMatchRadius, setMagMatchRadius] = React.useState<boolean>(true);
+  const [magDotSize, setMagDotSize] = React.useState<number>(4);
+  const [magBlend, setMagBlend] = React.useState<"difference" | "normal" | "screen">("difference");
+  const [magShowLabel, setMagShowLabel] = React.useState<boolean>(true);
+  const [magClickEffect, setMagClickEffect] = React.useState<boolean>(true);
+  const targetCursorStageRef = React.useRef<HTMLDivElement>(null);
+
+  // 30. Neon Ribbon Cursor State
+  const [ribbonVariant, setRibbonVariant] = React.useState<NeonRibbonVariant>("cyber-neon");
+  const [ribbonHeadColor, setRibbonHeadColor] = React.useState<string>("#00f0ff");
+  const [ribbonTailColor, setRibbonTailColor] = React.useState<string>("#ff0077");
+  const [ribbonWidth, setRibbonWidth] = React.useState<number>(18);
+  const [ribbonTrailLength, setRibbonTrailLength] = React.useState<number>(45);
+  const [ribbonTension, setRibbonTension] = React.useState<number>(0.22);
+  const [ribbonGlow, setRibbonGlow] = React.useState<number>(16);
+  const [ribbonWaveSpeed, setRibbonWaveSpeed] = React.useState<number>(2.5);
+  const [ribbonBurst, setRibbonBurst] = React.useState<boolean>(true);
+
+  // 31. Quantum Particles Cursor State
+  const [quantumVariant, setQuantumVariant] = React.useState<QuantumVariant>("cyber-constellation");
+  const [quantumColor, setQuantumColor] = React.useState<string>("#38bdf8");
+  const [quantumSecondary, setQuantumSecondary] = React.useState<string>("#6366f1");
+  const [quantumParticleCount, setQuantumParticleCount] = React.useState<number>(65);
+  const [quantumConnectDist, setQuantumConnectDist] = React.useState<number>(90);
+  const [quantumForce, setQuantumForce] = React.useState<"attract" | "repel" | "orbit">("attract");
+  const [quantumGravity, setQuantumGravity] = React.useState<number>(0.8);
+  const [quantumRadius, setQuantumRadius] = React.useState<number>(130);
+  const [quantumShockwave, setQuantumShockwave] = React.useState<boolean>(true);
+
+  // 32. Spotlight Cursor State
+  const [spotlightVariant, setSpotlightVariant] = React.useState<SpotlightVariant>("studio-spotlight");
+  const [spotlightColor, setSpotlightColor] = React.useState<string>("#ffffff");
+  const [spotlightRadius, setSpotlightRadius] = React.useState<number>(220);
+  const [spotlightFalloff, setSpotlightFalloff] = React.useState<number>(0.75);
+  const [spotlightDarkness, setSpotlightDarkness] = React.useState<number>(0.88);
+  const [spotlightTension, setSpotlightTension] = React.useState<number>(0.2);
+  const [spotlightGrid, setSpotlightGrid] = React.useState<boolean>(true);
+  const [spotlightSpecular, setSpotlightSpecular] = React.useState<number>(0.6);
+  const [spotlightPulse, setSpotlightPulse] = React.useState<boolean>(true);
+
+  // 33. Elastic Blob Cursor State
+  const [blobVariant, setBlobVariant] = React.useState<ElasticBlobVariant>("mercury-silver");
+  const [blobColor, setBlobColor] = React.useState<string>("#e2e8f0");
+  const [blobSecondary, setBlobSecondary] = React.useState<string>("#94a3b8");
+  const [blobSize, setBlobSize] = React.useState<number>(46);
+  const [blobViscosity, setBlobViscosity] = React.useState<number>(0.35);
+  const [blobTension, setBlobTension] = React.useState<number>(0.18);
+  const [blobDroplets, setBlobDroplets] = React.useState<boolean>(true);
+  const [blobGooeyStrength, setBlobGooeyStrength] = React.useState<number>(12);
+  const [blobWobble, setBlobWobble] = React.useState<number>(2.0);
+  const [blobSpecular, setBlobSpecular] = React.useState<boolean>(true);
+
+  // 34. Contour Tide State (React Bits Pro Contour Tide)
+  const [tidePreset, setTidePreset] = React.useState<ContourTidePreset>("silver");
+  const [tideBg, setTideBg] = React.useState<string>("#0a0a0a");
+  const [tideWater, setTideWater] = React.useState<string>("#6E6E80");
+  const [tideCrest, setTideCrest] = React.useState<string>("#FFFFFF");
+  const [tideDensity, setTideDensity] = React.useState<number>(1.00);
+  const [tideParticleSize, setTideParticleSize] = React.useState<number>(1.00);
+  const [tideWaveHeight, setTideWaveHeight] = React.useState<number>(1.00);
+  const [tideChoppiness, setTideChoppiness] = React.useState<number>(0.80);
+  const [tideWavelength, setTideWavelength] = React.useState<number>(1.00);
+  const [tideWindAngle, setTideWindAngle] = React.useState<number>(0);
+  const [tideHorizon, setTideHorizon] = React.useState<number>(0.10);
+  const [tideFog, setTideFog] = React.useState<number>(1.00);
+  const [tideGlow, setTideGlow] = React.useState<number>(0.35);
+  const [tideFoam, setTideFoam] = React.useState<number>(1.00);
+  const [tideSpeed, setTideSpeed] = React.useState<number>(1.00);
+  const [tideParallax, setTideParallax] = React.useState<number>(1.00);
+  const [tideSwell, setTideSwell] = React.useState<number>(1.00);
+  const [tideSwellRadius, setTideSwellRadius] = React.useState<number>(0.90);
+  const [tideSeed, setTideSeed] = React.useState<number>(0);
+  const [tideInteractive, setTideInteractive] = React.useState<boolean>(true);
+  const [tideClickRipples, setTideClickRipples] = React.useState<boolean>(true);
+  const [tidePaused, setTidePaused] = React.useState<boolean>(false);
+
   // Available semantic variants for this component
   const variants = React.useMemo(() => {
     if (item.variants && item.variants.length > 0) return item.variants;
@@ -1089,8 +1183,20 @@ export function ComponentPreviewStage({
       return ["ultraviolet", "aurora-green", "solar-amber", "cyber-cyan", "monochrome"];
     if (item.name === "firefly-cursor")
       return ["comet", "firefly", "nebula", "plasma", "aurora"];
+    if (item.name === "magnetic-cursor")
+      return ["brackets-reticle", "cyber-lock", "matrix-target", "minimal-cross", "amber-tracker"];
+    if (item.name === "neon-ribbon-cursor")
+      return ["cyber-neon", "prismatic-rainbow", "solar-flare", "emerald-matrix", "spectral-silk"];
+    if (item.name === "quantum-particles-cursor")
+      return ["cyber-constellation", "synaptic-neural", "cosmic-supernova", "bioluminescent", "matrix-grid"];
+    if (item.name === "spotlight-cursor")
+      return ["studio-spotlight", "thermal-scanner", "cyber-radar", "ultraviolet-lens", "golden-sunbeam"];
+    if (item.name === "elastic-blob-cursor")
+      return ["mercury-silver", "neon-slime", "liquid-lava", "deep-ink", "aurora-metasphere"];
     if (item.name === "ethereal-smoke-shader")
       return ["chai-blue", "ethereal-violet", "solar-flare", "emerald-mist", "spectral-white"];
+    if (item.name === "contour-tide")
+      return ["silver", "ocean", "gold", "cyberpunk", "emerald"];
     if (item.name === "liquid-metal-background")
       return ["cobalt-chrome", "pure-silver", "liquid-gold", "titanium"];
     if (item.name === "morph-node-ring")
@@ -1216,6 +1322,37 @@ export function ComponentPreviewStage({
       else if (item.name === "ethereal-smoke-shader") {
         handleSmokePresetChange(v as any);
       }
+            else if (item.name === "contour-tide") {
+        const pr = v as ContourTidePreset;
+        setTidePreset(pr);
+        const pal = CONTOUR_TIDE_PRESETS[pr];
+        if (pal) {
+          setTideBg(pal.background);
+          setTideWater(pal.water);
+          setTideCrest(pal.crest);
+        }
+        if (pr === "silver") {
+          setTideWaveHeight(1.0);
+          setTideChoppiness(0.8);
+          setTideGlow(0.35);
+        } else if (pr === "ocean") {
+          setTideWaveHeight(1.2);
+          setTideChoppiness(0.9);
+          setTideGlow(0.5);
+        } else if (pr === "gold") {
+          setTideWaveHeight(0.9);
+          setTideChoppiness(0.7);
+          setTideGlow(0.6);
+        } else if (pr === "cyberpunk") {
+          setTideWaveHeight(1.3);
+          setTideChoppiness(1.1);
+          setTideGlow(0.7);
+        } else if (pr === "emerald") {
+          setTideWaveHeight(1.0);
+          setTideChoppiness(0.85);
+          setTideGlow(0.45);
+        }
+      }
       else if (item.name === "liquid-metal-background") {
         setMetalTone(v as any);
       }
@@ -1293,6 +1430,103 @@ export function ComponentPreviewStage({
           setGlassRevealReturnToCenter(true);
         }
       }
+      else if (item.name === "magnetic-cursor") {
+        setMagVariant(v as TargetCursorVariant);
+        if (v === "cyber-lock") {
+          setMagColor("#00f0ff");
+          setMagColorOnTarget("#5CA904");
+          setMagSpinDuration(1.2);
+          setMagHoverDuration(0.15);
+          setMagThickness(2.5);
+          setMagSize(40);
+          setMagCornerSize(14);
+          setMagBlend("screen");
+          setMagMatchRadius(false);
+          setMagDotSize(4);
+          setMagPadding(6);
+        } else if (v === "matrix-target") {
+          setMagColor("#10b981");
+          setMagColorOnTarget("#86efac");
+          setMagSpinDuration(3.0);
+          setMagHoverDuration(0.2);
+          setMagThickness(2);
+          setMagSize(42);
+          setMagCornerSize(16);
+          setMagDotSize(5);
+          setMagPadding(8);
+          setMagBlend("screen");
+          setMagMatchRadius(true);
+        } else if (v === "minimal-cross") {
+          setMagColor("#ffffff");
+          setMagColorOnTarget("");
+          setMagSpinDuration(0);
+          setMagHoverDuration(0.1);
+          setMagSize(28);
+          setMagCornerSize(8);
+          setMagThickness(2);
+          setMagDotSize(3);
+          setMagPadding(4);
+          setMagBlend("difference");
+          setMagMatchRadius(true);
+        } else if (v === "amber-tracker") {
+          setMagColor("#f59e0b");
+          setMagColorOnTarget("#ef4444");
+          setMagSpinDuration(1.8);
+          setMagHoverDuration(0.2);
+          setMagSize(40);
+          setMagCornerSize(14);
+          setMagThickness(3.5);
+          setMagDotSize(4);
+          setMagPadding(6);
+          setMagBlend("normal");
+          setMagMatchRadius(true);
+        } else {
+          // brackets-reticle default
+          setMagColor("#ffffff");
+          setMagColorOnTarget("");
+          setMagSpinDuration(2);
+          setMagHoverDuration(0.2);
+          setMagSize(36);
+          setMagCornerSize(12);
+          setMagThickness(3);
+          setMagDotSize(4);
+          setMagPadding(6);
+          setMagBlend("difference");
+          setMagMatchRadius(true);
+        }
+      }
+      else if (item.name === "neon-ribbon-cursor") {
+        setRibbonVariant(v as NeonRibbonVariant);
+        if (v === "prismatic-rainbow") { setRibbonHeadColor("#f43f5e"); setRibbonTailColor("#06b6d4"); }
+        else if (v === "solar-flare") { setRibbonHeadColor("#f59e0b"); setRibbonTailColor("#ef4444"); }
+        else if (v === "emerald-matrix") { setRibbonHeadColor("#10b981"); setRibbonTailColor("#059669"); }
+        else if (v === "spectral-silk") { setRibbonHeadColor("#a855f7"); setRibbonTailColor("#3b82f6"); }
+        else { setRibbonHeadColor("#00f0ff"); setRibbonTailColor("#ff0077"); }
+      }
+      else if (item.name === "quantum-particles-cursor") {
+        setQuantumVariant(v as QuantumVariant);
+        if (v === "synaptic-neural") { setQuantumColor("#a855f7"); setQuantumSecondary("#ec4899"); }
+        else if (v === "cosmic-supernova") { setQuantumColor("#f59e0b"); setQuantumSecondary("#ef4444"); }
+        else if (v === "bioluminescent") { setQuantumColor("#10b981"); setQuantumSecondary("#06b6d4"); }
+        else if (v === "matrix-grid") { setQuantumColor("#22c55e"); setQuantumSecondary("#86efac"); }
+        else { setQuantumColor("#38bdf8"); setQuantumSecondary("#6366f1"); }
+      }
+      else if (item.name === "spotlight-cursor") {
+        setSpotlightVariant(v as SpotlightVariant);
+        if (v === "thermal-scanner") { setSpotlightColor("#f97316"); }
+        else if (v === "cyber-radar") { setSpotlightColor("#10b981"); }
+        else if (v === "ultraviolet-lens") { setSpotlightColor("#a855f7"); }
+        else if (v === "golden-sunbeam") { setSpotlightColor("#f59e0b"); }
+        else { setSpotlightColor("#ffffff"); }
+      }
+      else if (item.name === "elastic-blob-cursor") {
+        setBlobVariant(v as ElasticBlobVariant);
+        if (v === "neon-slime") { setBlobColor("#84cc16"); setBlobSecondary("#10b981"); }
+        else if (v === "liquid-lava") { setBlobColor("#f97316"); setBlobSecondary("#ef4444"); }
+        else if (v === "deep-ink") { setBlobColor("#1e1b4b"); setBlobSecondary("#4338ca"); }
+        else if (v === "aurora-metasphere") { setBlobColor("#06b6d4"); setBlobSecondary("#a855f7"); }
+        else { setBlobColor("#e2e8f0"); setBlobSecondary("#94a3b8"); }
+      }
     },
     [
       item.name,
@@ -1350,6 +1584,16 @@ export function ComponentPreviewStage({
       ? ringVariant
       : item.name === "glass-reveal"
       ? glassRevealVariant
+      : item.name === "magnetic-cursor"
+      ? magVariant
+      : item.name === "neon-ribbon-cursor"
+      ? ribbonVariant
+      : item.name === "quantum-particles-cursor"
+      ? quantumVariant
+      : item.name === "spotlight-cursor"
+      ? spotlightVariant
+      : item.name === "elastic-blob-cursor"
+      ? blobVariant
       : activeVariant || variants[0] || "default";
 
   const currentIndex = Math.max(0, variants.indexOf(currentVariant));
@@ -1625,6 +1869,31 @@ export function ComponentPreviewStage({
   vignette={${smokeVignette}}
   interactive={${smokeInteractive}}
 />`;
+        } else if (item.name === "contour-tide") {
+      code = `<ContourTide
+  preset="${tidePreset}"
+  backgroundColor="${tideBg}"
+  waterColor="${tideWater}"
+  crestColor="${tideCrest}"
+  density={${tideDensity.toFixed(2)}}
+  particleSize={${tideParticleSize.toFixed(2)}}
+  waveHeight={${tideWaveHeight.toFixed(2)}}
+  choppiness={${tideChoppiness.toFixed(2)}}
+  wavelength={${tideWavelength.toFixed(2)}}
+  windAngle={${tideWindAngle}}
+  horizon={${tideHorizon.toFixed(2)}}
+  fog={${tideFog.toFixed(2)}}
+  glow={${tideGlow.toFixed(2)}}
+  foam={${tideFoam.toFixed(2)}}
+  speed={${tideSpeed.toFixed(2)}}
+  parallax={${tideParallax.toFixed(2)}}
+  swell={${tideSwell.toFixed(2)}}
+  swellRadius={${tideSwellRadius.toFixed(2)}}
+  seed={${tideSeed}}
+  interactive={${tideInteractive}}
+  clickRipples={${tideClickRipples}}
+  paused={${tidePaused}}
+/>`;
     } else if (item.name === "liquid-metal-background") {
       code = `<LiquidMetalBackground
   colorTone="${metalTone}"
@@ -1669,6 +1938,112 @@ export function ComponentPreviewStage({
   fallback="${glassRevealFallback}"
   paused={${glassRevealPaused}}
 />`;
+    } else if (item.name === "magnetic-cursor") {
+      code = `<TargetCursor
+  spinDuration={${magSpinDuration}}
+  hoverDuration={${magHoverDuration}}
+  cursorColor="${magColor}"${magColorOnTarget ? `\n  cursorColorOnTarget="${magColorOnTarget}"` : ""}
+  size={${magSize}}
+  cornerSize={${magCornerSize}}
+  thickness={${magThickness}}
+  padding={${magPadding}}
+  dotSize={${magDotSize}}
+  blendMode="${magBlend}"
+  matchRadius={${magMatchRadius}}
+  parallaxOn={${magParallaxOn}}
+  clickEffect={${magClickEffect}}
+  showLabel={${magShowLabel}}
+  hideDefaultCursor={${magHideDefaultCursor}}
+/>
+
+{/* Interactive Elements to lock onto */}
+<div className="flex gap-4 items-center justify-center">
+  <button className="cursor-target px-5 py-2.5 rounded-xl bg-white/10 text-white font-medium" data-cursor-label="Open">
+    Click me!
+  </button>
+  <div className="cursor-target px-5 py-2.5 rounded-full bg-lime-500/20 text-lime-400 font-medium" data-cursor-label="Target">
+    Hover target
+  </div>
+</div>`;
+    } else if (item.name === "neon-ribbon-cursor") {
+      code = `<NeonRibbonCursor
+  variant="${ribbonVariant}"
+  primaryColor="${ribbonHeadColor}"
+  secondaryColor="${ribbonTailColor}"
+  ribbonWidth={${ribbonWidth}}
+  trailLength={${ribbonTrailLength}}
+  tension={${ribbonTension}}
+  glow={${ribbonGlow}}
+  waveSpeed={${ribbonWaveSpeed}}
+  clickBurst={${ribbonBurst}}
+  className="w-full h-80 rounded-2xl"
+>
+  <div className="flex flex-col items-center justify-center h-full text-center p-8">
+    <p className="text-xl font-bold tracking-tight text-white">Flowing 3D Neon Ribbon</p>
+    <p className="text-sm text-neutral-400 mt-1">Move your cursor swiftly across the stage</p>
+  </div>
+</NeonRibbonCursor>`;
+    } else if (item.name === "quantum-particles-cursor") {
+      code = `<QuantumParticlesCursor
+  variant="${quantumVariant}"
+  color="${quantumColor}"
+  secondaryColor="${quantumSecondary}"
+  particleCount={${quantumParticleCount}}
+  connectDistance={${quantumConnectDist}}
+  forceMode="${quantumForce}"
+  gravity={${quantumGravity}}
+  cursorRadius={${quantumRadius}}
+  shockwave={${quantumShockwave}}
+  className="w-full h-80 rounded-2xl"
+>
+  <div className="flex flex-col items-center justify-center h-full text-center p-8">
+    <p className="text-xl font-bold tracking-tight text-white">Quantum Filament Matrix</p>
+    <p className="text-sm text-neutral-400 mt-1">Click to trigger energy shockwave ripple</p>
+  </div>
+</QuantumParticlesCursor>`;
+    } else if (item.name === "spotlight-cursor") {
+      code = `<SpotlightCursor
+  variant="${spotlightVariant}"
+  color="${spotlightColor}"
+  radius={${spotlightRadius}}
+  falloff={${spotlightFalloff}}
+  ambientDarkness={${spotlightDarkness}}
+  springTension={${spotlightTension}}
+  revealGrid={${spotlightGrid}}
+  specular={${spotlightSpecular}}
+  pulseOnClick={${spotlightPulse}}
+  className="w-full h-80 rounded-2xl"
+>
+  <div className="grid grid-cols-2 gap-4 p-8 h-full items-center">
+    <div className="p-4 rounded-xl border border-white/10 bg-white/5">
+      <h4 className="text-white font-semibold">Hidden Node Alpha</h4>
+      <p className="text-xs text-neutral-400 mt-1">Revealed by spotlight focus</p>
+    </div>
+    <div className="p-4 rounded-xl border border-white/10 bg-white/5">
+      <h4 className="text-white font-semibold">Coordinate Array</h4>
+      <p className="text-xs text-neutral-400 mt-1">Matrix alignment calibrated</p>
+    </div>
+  </div>
+</SpotlightCursor>`;
+    } else if (item.name === "elastic-blob-cursor") {
+      code = `<ElasticBlobCursor
+  variant="${blobVariant}"
+  color="${blobColor}"
+  secondaryColor="${blobSecondary}"
+  blobSize={${blobSize}}
+  viscosity={${blobViscosity}}
+  springTension={${blobTension}}
+  droplets={${blobDroplets}}
+  gooeyStrength={${blobGooeyStrength}}
+  wobbleSpeed={${blobWobble}}
+  specular={${blobSpecular}}
+  className="w-full h-80 rounded-2xl"
+>
+  <div className="flex flex-col items-center justify-center h-full text-center p-8">
+    <p className="text-xl font-bold tracking-tight text-white">Organic Liquid Metasphere</p>
+    <p className="text-sm text-neutral-400 mt-1">SVG Gooey Filter with Viscous Surface Tension</p>
+  </div>
+</ElasticBlobCursor>`;
     }
     onConfiguredCodeChange(code);
   }, [
@@ -1853,6 +2228,59 @@ export function ComponentPreviewStage({
     ringEnableRotation,
     ringRotationSpeed,
     ringKeepUpright,
+    magVariant,
+    magColor,
+    magColorOnTarget,
+    magSpinDuration,
+    magHoverDuration,
+    magParallaxOn,
+    magHideDefaultCursor,
+    magSize,
+    magCornerSize,
+    magThickness,
+    magPadding,
+    magMatchRadius,
+    magDotSize,
+    magBlend,
+    magShowLabel,
+    magClickEffect,
+    ribbonVariant,
+    ribbonHeadColor,
+    ribbonTailColor,
+    ribbonWidth,
+    ribbonTrailLength,
+    ribbonTension,
+    ribbonGlow,
+    ribbonWaveSpeed,
+    ribbonBurst,
+    quantumVariant,
+    quantumColor,
+    quantumSecondary,
+    quantumParticleCount,
+    quantumConnectDist,
+    quantumForce,
+    quantumGravity,
+    quantumRadius,
+    quantumShockwave,
+    spotlightVariant,
+    spotlightColor,
+    spotlightRadius,
+    spotlightFalloff,
+    spotlightDarkness,
+    spotlightTension,
+    spotlightGrid,
+    spotlightSpecular,
+    spotlightPulse,
+    blobVariant,
+    blobColor,
+    blobSecondary,
+    blobSize,
+    blobViscosity,
+    blobTension,
+    blobDroplets,
+    blobGooeyStrength,
+    blobWobble,
+    blobSpecular,
     onConfiguredCodeChange,
   ]);
 
@@ -3297,8 +3725,8 @@ export function ComponentPreviewStage({
           {/* Firefly Cursor Live Interactive Simulation Preview */}
           {item.name === "firefly-cursor" && (
             <div
-              className={showKnobs ? "w-full rounded-2xl overflow-hidden border border-[var(--border)] shadow-2xl bg-black relative" : "w-full h-full rounded-2xl overflow-hidden border border-[var(--border)] shadow-2xl bg-black relative"}
-              style={{ height: showKnobs ? 440 : "100%" }}
+              className={showKnobs ? "w-full rounded-2xl overflow-hidden border border-[var(--border)] shadow-2xl bg-black relative select-none" : "w-full h-full min-h-[340px] sm:min-h-[380px] bg-black relative select-none"}
+              style={{ height: showKnobs ? 520 : "100%", minHeight: showKnobs ? 520 : 340 }}
             >
               <FireflyCursor
                 preset={cursorPreset}
@@ -3316,6 +3744,19 @@ export function ComponentPreviewStage({
                 enabled={cursorEnabled}
                 className="w-full h-full"
               />
+              <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center select-none pointer-events-none z-10">
+                <span className="font-mono text-[10px] tracking-widest uppercase text-amber-400 font-semibold px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-xs">
+                  Fluid Dynamics Simulation
+                </span>
+                <div className="space-y-1 max-w-md mt-2">
+                  <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
+                    Firefly Cursor
+                  </h3>
+                  <p className="text-xs sm:text-sm text-neutral-400">
+                    Move swiftly across the canvas to generate advection eddies. Click to release cooling ember sparks.
+                  </p>
+                </div>
+              </div>
             </div>
           )}
 
@@ -3347,6 +3788,60 @@ export function ComponentPreviewStage({
                 interactive={smokeInteractive}
                 className="w-full h-full"
               />
+            </div>
+          )}
+
+                    {/* Contour Tide Live Interactive Preview */}
+          {item.name === "contour-tide" && (
+            <div
+              className={showKnobs ? "w-full rounded-2xl overflow-hidden border border-[var(--border)] shadow-2xl relative" : "w-full h-full rounded-2xl overflow-hidden border border-[var(--border)] shadow-2xl relative"}
+              style={{ height: showKnobs ? 480 : "100%" }}
+            >
+              <ContourTide
+                preset={tidePreset}
+                backgroundColor={tideBg}
+                waterColor={tideWater}
+                crestColor={tideCrest}
+                density={tideDensity}
+                particleSize={tideParticleSize}
+                waveHeight={tideWaveHeight}
+                choppiness={tideChoppiness}
+                wavelength={tideWavelength}
+                windAngle={tideWindAngle}
+                horizon={tideHorizon}
+                fog={tideFog}
+                glow={tideGlow}
+                foam={tideFoam}
+                speed={tideSpeed}
+                parallax={tideParallax}
+                swell={tideSwell}
+                swellRadius={tideSwellRadius}
+                seed={tideSeed}
+                interactive={tideInteractive}
+                clickRipples={tideClickRipples}
+                paused={tidePaused}
+                className="w-full h-full"
+              >
+                <div className="flex flex-col items-center justify-center h-full gap-4 px-6 text-center select-none pointer-events-none">
+                  <span className="font-mono text-[10px] tracking-widest uppercase text-white/80 font-semibold px-3 py-1 rounded-full bg-white/10 border border-white/20 backdrop-blur-md">
+                    Ocean of Particles Rolling in Waves
+                  </span>
+                  <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
+                    Contour Tide
+                  </h2>
+                  <p className="text-xs sm:text-sm text-white/70 max-w-md font-sans">
+                    Interactive 3D particle sea undulating with Gerstner wave harmonics, cursor swell displacement, and propagating ripple rings.
+                  </p>
+                  <div className="flex items-center gap-3 mt-2 pointer-events-auto">
+                    <button className="px-5 py-2 rounded-full text-xs font-semibold bg-white text-black hover:bg-white/90 transition-all cursor-pointer shadow-lg">
+                      Explore Particles
+                    </button>
+                    <button className="px-5 py-2 rounded-full text-xs font-semibold border border-white/30 text-white hover:bg-white/10 transition-all cursor-pointer backdrop-blur-md">
+                      Click to Ripple
+                    </button>
+                  </div>
+                </div>
+              </ContourTide>
             </div>
           )}
 
@@ -3422,6 +3917,231 @@ export function ComponentPreviewStage({
                 paused={glassRevealPaused}
                 className="w-full max-w-4xl h-[380px] sm:h-[460px] shadow-2xl border border-[var(--border)]"
               />
+            </div>
+          )}
+
+          {/* Target Cursor / Magnetic Cursor Live Interactive Preview (React Bits) */}
+          {item.name === "magnetic-cursor" && (
+            <div
+              ref={targetCursorStageRef}
+              className={showKnobs ? "w-full rounded-2xl overflow-hidden border border-[var(--border)] shadow-2xl bg-[#090b10] relative select-none" : "w-full h-full min-h-[340px] sm:min-h-[380px] bg-[#090b10] relative select-none"}
+              style={{ height: showKnobs ? 520 : "100%", minHeight: showKnobs ? 520 : 340 }}
+            >
+              <TargetCursor
+                container={targetCursorStageRef}
+                variant={magVariant}
+                cursorColor={magColor}
+                cursorColorOnTarget={magColorOnTarget || undefined}
+                spinDuration={magSpinDuration}
+                hoverDuration={magHoverDuration}
+                parallaxOn={magParallaxOn}
+                hideDefaultCursor={magHideDefaultCursor}
+                size={magSize}
+                cornerSize={magCornerSize}
+                thickness={magThickness}
+                padding={magPadding}
+                matchRadius={magMatchRadius}
+                dotSize={magDotSize}
+                blendMode={magBlend}
+                showLabel={magShowLabel}
+                clickEffect={magClickEffect}
+              />
+              <div className="flex flex-col items-center justify-center h-full gap-5 p-6 text-center select-none pointer-events-auto">
+                <span className="font-mono text-[10px] tracking-widest uppercase text-lime-400 font-semibold px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-xs">
+                  Reticle Brackets &amp; Target Lock
+                </span>
+                <div className="space-y-1 max-w-md">
+                  <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
+                    Target Cursor
+                  </h3>
+                  <p className="text-xs sm:text-sm text-neutral-400">
+                    Spinning reticle brackets that magnetically snap to interactive targets, match corner radiuses, and show floating labels.
+                  </p>
+                </div>
+                <div className="flex flex-wrap items-center justify-center gap-3 mt-1">
+                  <button
+                    type="button"
+                    className="cursor-target px-5 py-2.5 rounded-xl text-xs font-semibold bg-white/10 hover:bg-white/15 border border-white/20 text-white transition-colors cursor-pointer"
+                    data-cursor-label="EXPLORE"
+                  >
+                    Explore Target
+                  </button>
+                  <button
+                    type="button"
+                    className="cursor-target px-5 py-2.5 rounded-full text-xs font-semibold bg-lime-500/20 hover:bg-lime-500/30 border border-lime-500/40 text-lime-300 transition-colors cursor-pointer"
+                    data-cursor-label="LAUNCH"
+                  >
+                    Launch System
+                  </button>
+                  <button
+                    type="button"
+                    className="cursor-target px-5 py-2.5 rounded-md text-xs font-semibold bg-sky-500/20 hover:bg-sky-500/30 border border-sky-500/40 text-sky-300 transition-colors cursor-pointer"
+                    data-cursor-label="PLAY REEL"
+                  >
+                    Play Reel
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Neon Ribbon Cursor Live Interactive Preview */}
+          {item.name === "neon-ribbon-cursor" && (
+            <div
+              className={showKnobs ? "w-full rounded-2xl overflow-hidden border border-[var(--border)] shadow-2xl bg-[#05060a] relative select-none" : "w-full h-full min-h-[340px] sm:min-h-[380px] bg-[#05060a] relative select-none"}
+              style={{ height: showKnobs ? 520 : "100%", minHeight: showKnobs ? 520 : 340 }}
+            >
+              <NeonRibbonCursor
+                variant={ribbonVariant}
+                primaryColor={ribbonHeadColor}
+                secondaryColor={ribbonTailColor}
+                ribbonWidth={ribbonWidth}
+                trailLength={ribbonTrailLength}
+                tension={ribbonTension}
+                glow={ribbonGlow}
+                waveSpeed={ribbonWaveSpeed}
+                clickBurst={ribbonBurst}
+                className="w-full h-full"
+              >
+                <div className="flex flex-col items-center justify-center h-full gap-4 p-6 text-center select-none pointer-events-none">
+                  <span className="font-mono text-[10px] tracking-widest uppercase text-cyan-400 font-semibold px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-xs">
+                    Quad-Strip Ribbon Spline
+                  </span>
+                  <div className="space-y-1 max-w-md">
+                    <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
+                      Neon Ribbon Cursor
+                    </h3>
+                    <p className="text-xs sm:text-sm text-neutral-400">
+                      Move rapidly to create flowing ribbon sweeps. Click anywhere to trigger neon spark bursts.
+                    </p>
+                  </div>
+                  <div className="flex gap-2 text-[11px] font-mono text-neutral-500 mt-2">
+                    <span className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10">3D Spline</span>
+                    <span className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10">Speed Flares</span>
+                    <span className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10">Click Embers</span>
+                  </div>
+                </div>
+              </NeonRibbonCursor>
+            </div>
+          )}
+
+          {/* Quantum Particles Cursor Live Interactive Preview */}
+          {item.name === "quantum-particles-cursor" && (
+            <div
+              className={showKnobs ? "w-full rounded-2xl overflow-hidden border border-[var(--border)] shadow-2xl bg-[#060710] relative select-none" : "w-full h-full min-h-[340px] sm:min-h-[380px] bg-[#060710] relative select-none"}
+              style={{ height: showKnobs ? 520 : "100%", minHeight: showKnobs ? 520 : 340 }}
+            >
+              <QuantumParticlesCursor
+                variant={quantumVariant}
+                color={quantumColor}
+                secondaryColor={quantumSecondary}
+                particleCount={quantumParticleCount}
+                connectDistance={quantumConnectDist}
+                forceMode={quantumForce}
+                gravity={quantumGravity}
+                cursorRadius={quantumRadius}
+                shockwave={quantumShockwave}
+                className="w-full h-full"
+              >
+                <div className="flex flex-col items-center justify-center h-full gap-4 p-6 text-center select-none pointer-events-none">
+                  <span className="font-mono text-[10px] tracking-widest uppercase text-sky-400 font-semibold px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-xs">
+                    Constellation Laser Filaments
+                  </span>
+                  <div className="space-y-1 max-w-md">
+                    <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
+                      Quantum Particles Cursor
+                    </h3>
+                    <p className="text-xs sm:text-sm text-neutral-400">
+                      Particle network with gravitational laser filaments. Click to unleash an expanding quantum shockwave.
+                    </p>
+                  </div>
+                  <div className="flex gap-2 text-[11px] font-mono text-neutral-500 mt-2">
+                    <span className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10">Gravity Well</span>
+                    <span className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10">Synaptic Mesh</span>
+                    <span className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10">Shockwave Pulse</span>
+                  </div>
+                </div>
+              </QuantumParticlesCursor>
+            </div>
+          )}
+
+          {/* Spotlight Cursor Live Interactive Preview */}
+          {item.name === "spotlight-cursor" && (
+            <div
+              className={showKnobs ? "w-full rounded-2xl overflow-hidden border border-[var(--border)] shadow-2xl bg-[#040406] relative select-none" : "w-full h-full min-h-[340px] sm:min-h-[380px] bg-[#040406] relative select-none"}
+              style={{ height: showKnobs ? 520 : "100%", minHeight: showKnobs ? 520 : 340 }}
+            >
+              <SpotlightCursor
+                variant={spotlightVariant}
+                color={spotlightColor}
+                radius={spotlightRadius}
+                falloff={spotlightFalloff}
+                ambientDarkness={spotlightDarkness}
+                springTension={spotlightTension}
+                revealGrid={spotlightGrid}
+                specular={spotlightSpecular}
+                pulseOnClick={spotlightPulse}
+                className="w-full h-full"
+              >
+                <div className="flex flex-col items-center justify-center h-full p-6 text-center select-none pointer-events-none">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg w-full text-left">
+                    <div className="p-4 rounded-xl border border-white/15 bg-white/5 backdrop-blur-xs">
+                      <span className="font-mono text-[9px] uppercase tracking-wider text-neutral-400">Sector 01</span>
+                      <h4 className="text-sm font-semibold text-white mt-1">Optical Focus</h4>
+                      <p className="text-xs text-neutral-400 mt-1">Feathered inverse-square theatrical falloff cone.</p>
+                    </div>
+                    <div className="p-4 rounded-xl border border-white/15 bg-white/5 backdrop-blur-xs">
+                      <span className="font-mono text-[9px] uppercase tracking-wider text-neutral-400">Sector 02</span>
+                      <h4 className="text-sm font-semibold text-white mt-1">Grid Telemetry</h4>
+                      <p className="text-xs text-neutral-400 mt-1">Cybernetic grid revealed under the light beam.</p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-neutral-500 mt-4 font-mono">
+                    Sweep your cursor across the dark stage • Click to flash specular lens
+                  </p>
+                </div>
+              </SpotlightCursor>
+            </div>
+          )}
+
+          {/* Elastic Blob Cursor Live Interactive Preview */}
+          {item.name === "elastic-blob-cursor" && (
+            <div
+              className={showKnobs ? "w-full rounded-2xl overflow-hidden border border-[var(--border)] shadow-2xl bg-[#08090f] relative select-none" : "w-full h-full min-h-[340px] sm:min-h-[380px] bg-[#08090f] relative select-none"}
+              style={{ height: showKnobs ? 520 : "100%", minHeight: showKnobs ? 520 : 340 }}
+            >
+              <ElasticBlobCursor
+                variant={blobVariant}
+                color={blobColor}
+                secondaryColor={blobSecondary}
+                blobSize={blobSize}
+                viscosity={blobViscosity}
+                springTension={blobTension}
+                droplets={blobDroplets}
+                gooeyStrength={blobGooeyStrength}
+                wobbleSpeed={blobWobble}
+                specular={blobSpecular}
+                className="w-full h-full"
+              >
+                <div className="flex flex-col items-center justify-center h-full gap-4 p-6 text-center select-none pointer-events-none">
+                  <span className="font-mono text-[10px] tracking-widest uppercase text-violet-400 font-semibold px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-xs">
+                    SVG Gooey Metasphere
+                  </span>
+                  <div className="space-y-1 max-w-md">
+                    <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
+                      Elastic Blob Cursor
+                    </h3>
+                    <p className="text-xs sm:text-sm text-neutral-400">
+                      Organic liquid metasphere with feColorMatrix filter fusion, jelly wobble, and satellite droplets.
+                    </p>
+                  </div>
+                  <div className="flex gap-2 text-[11px] font-mono text-neutral-500 mt-2">
+                    <span className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10">Liquid Gooey</span>
+                    <span className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10">Satellite Droplets</span>
+                    <span className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10">Specular Glint</span>
+                  </div>
+                </div>
+              </ElasticBlobCursor>
             </div>
           )}
         </ScaledThumbnailWrapper>
@@ -5463,6 +6183,256 @@ export function ComponentPreviewStage({
               </>
             )}
 
+                        {/* Contour Tide Controls (React Bits Pro) */}
+            {item.name === "contour-tide" && (
+              <>
+                <CustomizeTile label="Preset">
+                  <CustomizeSelect
+                    value={tidePreset}
+                    onChange={(val) => applyVariant(val)}
+                    options={["silver", "ocean", "gold", "cyberpunk", "emerald"]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Background">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      value={tideBg}
+                      onChange={(e) => setTideBg(e.target.value)}
+                      className="h-8 w-8 rounded-lg border border-[var(--border)] cursor-pointer bg-transparent p-0 shrink-0"
+                    />
+                    <CustomizeInput
+                      value={tideBg}
+                      onChange={setTideBg}
+                      placeholder="#0a0a0a"
+                    />
+                  </div>
+                </CustomizeTile>
+
+                <CustomizeTile label="Water">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      value={tideWater}
+                      onChange={(e) => setTideWater(e.target.value)}
+                      className="h-8 w-8 rounded-lg border border-[var(--border)] cursor-pointer bg-transparent p-0 shrink-0"
+                    />
+                    <CustomizeInput
+                      value={tideWater}
+                      onChange={setTideWater}
+                      placeholder="#6E6E80"
+                    />
+                  </div>
+                </CustomizeTile>
+
+                <CustomizeTile label="Crest">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      value={tideCrest}
+                      onChange={(e) => setTideCrest(e.target.value)}
+                      className="h-8 w-8 rounded-lg border border-[var(--border)] cursor-pointer bg-transparent p-0 shrink-0"
+                    />
+                    <CustomizeInput
+                      value={tideCrest}
+                      onChange={setTideCrest}
+                      placeholder="#FFFFFF"
+                    />
+                  </div>
+                </CustomizeTile>
+
+                <CustomizeTile label="Density">
+                  <CustomizeSlider
+                    value={tideDensity}
+                    onChange={setTideDensity}
+                    min={0.2}
+                    max={2.0}
+                    step={0.05}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Particle Size">
+                  <CustomizeSlider
+                    value={tideParticleSize}
+                    onChange={setTideParticleSize}
+                    min={0.2}
+                    max={3.0}
+                    step={0.1}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Wave Height">
+                  <CustomizeSlider
+                    value={tideWaveHeight}
+                    onChange={setTideWaveHeight}
+                    min={0.1}
+                    max={3.0}
+                    step={0.05}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Choppiness">
+                  <CustomizeSlider
+                    value={tideChoppiness}
+                    onChange={setTideChoppiness}
+                    min={0.0}
+                    max={2.0}
+                    step={0.05}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Wavelength">
+                  <CustomizeSlider
+                    value={tideWavelength}
+                    onChange={setTideWavelength}
+                    min={0.2}
+                    max={3.0}
+                    step={0.1}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Wind Angle">
+                  <CustomizeSlider
+                    value={tideWindAngle}
+                    onChange={setTideWindAngle}
+                    min={0}
+                    max={360}
+                    step={5}
+                    formatValue={(v) => `${v}°`}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Horizon">
+                  <CustomizeSlider
+                    value={tideHorizon}
+                    onChange={setTideHorizon}
+                    min={0.0}
+                    max={0.5}
+                    step={0.02}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Fog">
+                  <CustomizeSlider
+                    value={tideFog}
+                    onChange={setTideFog}
+                    min={0.0}
+                    max={2.0}
+                    step={0.05}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Glow">
+                  <CustomizeSlider
+                    value={tideGlow}
+                    onChange={setTideGlow}
+                    min={0.0}
+                    max={1.0}
+                    step={0.05}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Foam">
+                  <CustomizeSlider
+                    value={tideFoam}
+                    onChange={setTideFoam}
+                    min={0.0}
+                    max={2.0}
+                    step={0.05}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Speed">
+                  <CustomizeSlider
+                    value={tideSpeed}
+                    onChange={setTideSpeed}
+                    min={0.1}
+                    max={3.0}
+                    step={0.1}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Parallax">
+                  <CustomizeSlider
+                    value={tideParallax}
+                    onChange={setTideParallax}
+                    min={0.0}
+                    max={2.0}
+                    step={0.05}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Swell">
+                  <CustomizeSlider
+                    value={tideSwell}
+                    onChange={setTideSwell}
+                    min={0.0}
+                    max={2.0}
+                    step={0.05}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Swell Radius">
+                  <CustomizeSlider
+                    value={tideSwellRadius}
+                    onChange={setTideSwellRadius}
+                    min={0.1}
+                    max={2.0}
+                    step={0.05}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Seed">
+                  <CustomizeSlider
+                    value={tideSeed}
+                    onChange={setTideSeed}
+                    min={0}
+                    max={100}
+                    step={1}
+                    formatValue={(v) => `${v}`}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Interactive">
+                  <CustomizeSwitch
+                    checked={tideInteractive}
+                    onChange={setTideInteractive}
+                    label="Cursor Swell & Parallax"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Click Ripples">
+                  <CustomizeSwitch
+                    checked={tideClickRipples}
+                    onChange={setTideClickRipples}
+                    label="Spawn Ripple Rings on Click"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Paused">
+                  <CustomizeSwitch
+                    checked={tidePaused}
+                    onChange={setTidePaused}
+                    label="Freeze Wave Simulation"
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
             {/* Liquid Metal Background Controls */}
             {item.name === "liquid-metal-background" && (
               <>
@@ -5852,6 +6822,605 @@ export function ComponentPreviewStage({
                     checked={glassRevealPaused}
                     onChange={setGlassRevealPaused}
                     label="Freeze Animation Time"
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* 29. Target Cursor / Magnetic Cursor Controls (React Bits) */}
+            {item.name === "magnetic-cursor" && (
+              <>
+                <CustomizeTile label="Preset">
+                  <CustomizeSelect
+                    value={magVariant}
+                    onChange={(val) => applyVariant(val)}
+                    options={["brackets-reticle", "cyber-lock", "matrix-target", "minimal-cross", "amber-tracker"]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Cursor Color">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      value={magColor}
+                      onChange={(e) => setMagColor(e.target.value)}
+                      className="h-8 w-8 rounded-lg border border-[var(--border)] cursor-pointer bg-transparent p-0 shrink-0"
+                    />
+                    <CustomizeInput
+                      value={magColor}
+                      onChange={setMagColor}
+                      placeholder="#ffffff"
+                    />
+                  </div>
+                </CustomizeTile>
+
+                <CustomizeTile label="Color on Target">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      value={magColorOnTarget || "#5CA904"}
+                      onChange={(e) => setMagColorOnTarget(e.target.value)}
+                      className="h-8 w-8 rounded-lg border border-[var(--border)] cursor-pointer bg-transparent p-0 shrink-0"
+                    />
+                    <CustomizeInput
+                      value={magColorOnTarget}
+                      onChange={setMagColorOnTarget}
+                      placeholder="Optional, e.g. #5CA904"
+                    />
+                  </div>
+                </CustomizeTile>
+
+                <CustomizeTile label="Spin Duration">
+                  <CustomizeSlider
+                    value={magSpinDuration}
+                    onChange={setMagSpinDuration}
+                    min={0}
+                    max={6}
+                    step={0.2}
+                    formatValue={(v) => v === 0 ? "Off (0s)" : `${v.toFixed(1)}s`}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Hover Duration">
+                  <CustomizeSlider
+                    value={magHoverDuration}
+                    onChange={setMagHoverDuration}
+                    min={0.05}
+                    max={0.6}
+                    step={0.05}
+                    formatValue={(v) => `${v.toFixed(2)}s`}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Reticle Size">
+                  <CustomizeSlider
+                    value={magSize}
+                    onChange={setMagSize}
+                    min={16}
+                    max={80}
+                    step={2}
+                    formatValue={(v) => `${v}px`}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Bracket Corner Arm">
+                  <CustomizeSlider
+                    value={magCornerSize}
+                    onChange={setMagCornerSize}
+                    min={4}
+                    max={24}
+                    step={1}
+                    formatValue={(v) => `${v}px`}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Stroke Thickness">
+                  <CustomizeSlider
+                    value={magThickness}
+                    onChange={setMagThickness}
+                    min={1}
+                    max={6}
+                    step={0.5}
+                    formatValue={(v) => `${v}px`}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Target Lock Padding">
+                  <CustomizeSlider
+                    value={magPadding}
+                    onChange={setMagPadding}
+                    min={0}
+                    max={20}
+                    step={1}
+                    formatValue={(v) => `${v}px`}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Center Dot Size">
+                  <CustomizeSlider
+                    value={magDotSize}
+                    onChange={setMagDotSize}
+                    min={0}
+                    max={12}
+                    step={1}
+                    formatValue={(v) => v === 0 ? "Hidden" : `${v}px`}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Blend Mode">
+                  <CustomizeSelect
+                    value={magBlend}
+                    onChange={(val) => setMagBlend(val as any)}
+                    options={["difference", "normal", "screen"]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Parallax Tilt">
+                  <CustomizeSwitch
+                    checked={magParallaxOn}
+                    onChange={setMagParallaxOn}
+                    label="Lean brackets toward cursor"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Match Corner Radius">
+                  <CustomizeSwitch
+                    checked={magMatchRadius}
+                    onChange={setMagMatchRadius}
+                    label="Round brackets to follow target"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Click Squeeze">
+                  <CustomizeSwitch
+                    checked={magClickEffect}
+                    onChange={setMagClickEffect}
+                    label="Compress brackets & dot on click"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Show Floating Label">
+                  <CustomizeSwitch
+                    checked={magShowLabel}
+                    onChange={setMagShowLabel}
+                    label="Display data-cursor-label badge"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Hide System Cursor">
+                  <CustomizeSwitch
+                    checked={magHideDefaultCursor}
+                    onChange={setMagHideDefaultCursor}
+                    label="Hide native mouse pointer"
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* 30. Neon Ribbon Cursor Controls */}
+            {item.name === "neon-ribbon-cursor" && (
+              <>
+                <CustomizeTile label="Preset">
+                  <CustomizeSelect
+                    value={ribbonVariant}
+                    onChange={(val) => applyVariant(val)}
+                    options={["cyber-neon", "prismatic-rainbow", "solar-flare", "emerald-matrix", "spectral-silk"]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Head Color">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      value={ribbonHeadColor}
+                      onChange={(e) => setRibbonHeadColor(e.target.value)}
+                      className="h-8 w-8 rounded-lg border border-[var(--border)] cursor-pointer bg-transparent p-0 shrink-0"
+                    />
+                    <CustomizeInput
+                      value={ribbonHeadColor}
+                      onChange={setRibbonHeadColor}
+                      placeholder="#00f0ff"
+                    />
+                  </div>
+                </CustomizeTile>
+
+                <CustomizeTile label="Tail Color">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      value={ribbonTailColor}
+                      onChange={(e) => setRibbonTailColor(e.target.value)}
+                      className="h-8 w-8 rounded-lg border border-[var(--border)] cursor-pointer bg-transparent p-0 shrink-0"
+                    />
+                    <CustomizeInput
+                      value={ribbonTailColor}
+                      onChange={setRibbonTailColor}
+                      placeholder="#ff0077"
+                    />
+                  </div>
+                </CustomizeTile>
+
+                <CustomizeTile label="Ribbon Width">
+                  <CustomizeSlider
+                    value={ribbonWidth}
+                    onChange={setRibbonWidth}
+                    min={6}
+                    max={40}
+                    step={2}
+                    formatValue={(v) => `${v}px`}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Trail Length">
+                  <CustomizeSlider
+                    value={ribbonTrailLength}
+                    onChange={setRibbonTrailLength}
+                    min={15}
+                    max={90}
+                    step={5}
+                    formatValue={(v) => `${v} pts`}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Follow Tension">
+                  <CustomizeSlider
+                    value={ribbonTension}
+                    onChange={setRibbonTension}
+                    min={0.05}
+                    max={0.5}
+                    step={0.02}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Glow Radius">
+                  <CustomizeSlider
+                    value={ribbonGlow}
+                    onChange={setRibbonGlow}
+                    min={0}
+                    max={30}
+                    step={1}
+                    formatValue={(v) => `${v}px`}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Wave Speed">
+                  <CustomizeSlider
+                    value={ribbonWaveSpeed}
+                    onChange={setRibbonWaveSpeed}
+                    min={0}
+                    max={10}
+                    step={0.5}
+                    formatValue={(v) => v.toFixed(1)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Click Spark Burst">
+                  <CustomizeSwitch
+                    checked={ribbonBurst}
+                    onChange={setRibbonBurst}
+                    label="Explode Embers on Click"
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* 31. Quantum Particles Cursor Controls */}
+            {item.name === "quantum-particles-cursor" && (
+              <>
+                <CustomizeTile label="Preset">
+                  <CustomizeSelect
+                    value={quantumVariant}
+                    onChange={(val) => applyVariant(val)}
+                    options={["cyber-constellation", "synaptic-neural", "cosmic-supernova", "bioluminescent", "matrix-grid"]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Primary Color">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      value={quantumColor}
+                      onChange={(e) => setQuantumColor(e.target.value)}
+                      className="h-8 w-8 rounded-lg border border-[var(--border)] cursor-pointer bg-transparent p-0 shrink-0"
+                    />
+                    <CustomizeInput
+                      value={quantumColor}
+                      onChange={setQuantumColor}
+                      placeholder="#38bdf8"
+                    />
+                  </div>
+                </CustomizeTile>
+
+                <CustomizeTile label="Secondary Color">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      value={quantumSecondary}
+                      onChange={(e) => setQuantumSecondary(e.target.value)}
+                      className="h-8 w-8 rounded-lg border border-[var(--border)] cursor-pointer bg-transparent p-0 shrink-0"
+                    />
+                    <CustomizeInput
+                      value={quantumSecondary}
+                      onChange={setQuantumSecondary}
+                      placeholder="#6366f1"
+                    />
+                  </div>
+                </CustomizeTile>
+
+                <CustomizeTile label="Force Mode">
+                  <CustomizeSelect
+                    value={quantumForce}
+                    onChange={(val) => setQuantumForce(val as any)}
+                    options={["attract", "repel", "orbit"]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Particle Count">
+                  <CustomizeSlider
+                    value={quantumParticleCount}
+                    onChange={setQuantumParticleCount}
+                    min={20}
+                    max={120}
+                    step={5}
+                    formatValue={(v) => `${v}`}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Connect Distance">
+                  <CustomizeSlider
+                    value={quantumConnectDist}
+                    onChange={setQuantumConnectDist}
+                    min={40}
+                    max={150}
+                    step={5}
+                    formatValue={(v) => `${v}px`}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Gravity Strength">
+                  <CustomizeSlider
+                    value={quantumGravity}
+                    onChange={setQuantumGravity}
+                    min={0.1}
+                    max={2.0}
+                    step={0.1}
+                    formatValue={(v) => v.toFixed(1)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Radius of Influence">
+                  <CustomizeSlider
+                    value={quantumRadius}
+                    onChange={setQuantumRadius}
+                    min={60}
+                    max={240}
+                    step={10}
+                    formatValue={(v) => `${v}px`}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Shockwave Pulse">
+                  <CustomizeSwitch
+                    checked={quantumShockwave}
+                    onChange={setQuantumShockwave}
+                    label="Ripple Shockwave on Click"
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* 32. Spotlight Cursor Controls */}
+            {item.name === "spotlight-cursor" && (
+              <>
+                <CustomizeTile label="Preset">
+                  <CustomizeSelect
+                    value={spotlightVariant}
+                    onChange={(val) => applyVariant(val)}
+                    options={["studio-spotlight", "thermal-scanner", "cyber-radar", "ultraviolet-lens", "golden-sunbeam"]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Light Color">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      value={spotlightColor}
+                      onChange={(e) => setSpotlightColor(e.target.value)}
+                      className="h-8 w-8 rounded-lg border border-[var(--border)] cursor-pointer bg-transparent p-0 shrink-0"
+                    />
+                    <CustomizeInput
+                      value={spotlightColor}
+                      onChange={setSpotlightColor}
+                      placeholder="#ffffff"
+                    />
+                  </div>
+                </CustomizeTile>
+
+                <CustomizeTile label="Beam Radius">
+                  <CustomizeSlider
+                    value={spotlightRadius}
+                    onChange={setSpotlightRadius}
+                    min={80}
+                    max={400}
+                    step={10}
+                    formatValue={(v) => `${v}px`}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Falloff Softness">
+                  <CustomizeSlider
+                    value={spotlightFalloff}
+                    onChange={setSpotlightFalloff}
+                    min={0.1}
+                    max={1.0}
+                    step={0.05}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Ambient Darkness">
+                  <CustomizeSlider
+                    value={spotlightDarkness}
+                    onChange={setSpotlightDarkness}
+                    min={0.2}
+                    max={0.98}
+                    step={0.02}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Follow Tension">
+                  <CustomizeSlider
+                    value={spotlightTension}
+                    onChange={setSpotlightTension}
+                    min={0.05}
+                    max={0.4}
+                    step={0.02}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Specular Glint">
+                  <CustomizeSlider
+                    value={spotlightSpecular}
+                    onChange={setSpotlightSpecular}
+                    min={0.0}
+                    max={1.0}
+                    step={0.05}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Reveal Grid">
+                  <CustomizeSwitch
+                    checked={spotlightGrid}
+                    onChange={setSpotlightGrid}
+                    label="Project Cyber Coordinates Grid"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Pulse on Click">
+                  <CustomizeSwitch
+                    checked={spotlightPulse}
+                    onChange={setSpotlightPulse}
+                    label="Flare Brightness on Down"
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* 33. Elastic Blob Cursor Controls */}
+            {item.name === "elastic-blob-cursor" && (
+              <>
+                <CustomizeTile label="Preset">
+                  <CustomizeSelect
+                    value={blobVariant}
+                    onChange={(val) => applyVariant(val)}
+                    options={["mercury-silver", "neon-slime", "liquid-lava", "deep-ink", "aurora-metasphere"]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Primary Color">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      value={blobColor}
+                      onChange={(e) => setBlobColor(e.target.value)}
+                      className="h-8 w-8 rounded-lg border border-[var(--border)] cursor-pointer bg-transparent p-0 shrink-0"
+                    />
+                    <CustomizeInput
+                      value={blobColor}
+                      onChange={setBlobColor}
+                      placeholder="#e2e8f0"
+                    />
+                  </div>
+                </CustomizeTile>
+
+                <CustomizeTile label="Rim Color">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      value={blobSecondary}
+                      onChange={(e) => setBlobSecondary(e.target.value)}
+                      className="h-8 w-8 rounded-lg border border-[var(--border)] cursor-pointer bg-transparent p-0 shrink-0"
+                    />
+                    <CustomizeInput
+                      value={blobSecondary}
+                      onChange={setBlobSecondary}
+                      placeholder="#94a3b8"
+                    />
+                  </div>
+                </CustomizeTile>
+
+                <CustomizeTile label="Blob Size">
+                  <CustomizeSlider
+                    value={blobSize}
+                    onChange={setBlobSize}
+                    min={24}
+                    max={80}
+                    step={2}
+                    formatValue={(v) => `${v}px`}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Viscosity Stretch">
+                  <CustomizeSlider
+                    value={blobViscosity}
+                    onChange={setBlobViscosity}
+                    min={0.1}
+                    max={0.8}
+                    step={0.05}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Spring Tension">
+                  <CustomizeSlider
+                    value={blobTension}
+                    onChange={setBlobTension}
+                    min={0.05}
+                    max={0.4}
+                    step={0.02}
+                    formatValue={(v) => v.toFixed(2)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Gooey Merge Strength">
+                  <CustomizeSlider
+                    value={blobGooeyStrength}
+                    onChange={setBlobGooeyStrength}
+                    min={4}
+                    max={20}
+                    step={1}
+                    formatValue={(v) => `${v}`}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Jelly Wobble Speed">
+                  <CustomizeSlider
+                    value={blobWobble}
+                    onChange={setBlobWobble}
+                    min={0.5}
+                    max={5.0}
+                    step={0.2}
+                    formatValue={(v) => v.toFixed(1)}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Satellite Droplets">
+                  <CustomizeSwitch
+                    checked={blobDroplets}
+                    onChange={setBlobDroplets}
+                    label="Spawn Detached Droplets"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Specular Highlight">
+                  <CustomizeSwitch
+                    checked={blobSpecular}
+                    onChange={setBlobSpecular}
+                    label="3D Liquid Surface Glint"
                   />
                 </CustomizeTile>
               </>

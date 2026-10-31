@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { cn } from "../lib/utils";
+import { cn } from "@/lib/utils";
 
 export type TabsVariant = "default" | "slide" | "liquid-pill" | "island" | "minimal";
 export type TabsPillStyle = "liquid-glow" | "solid" | "glass" | "accent";

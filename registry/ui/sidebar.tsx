@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { ChevronDown, X, Menu, Terminal, ChevronsUpDown, ChevronsDownUp } from "lucide-react";
+import { ChevronDown, X, Menu, Terminal, ChevronsUpDown, ChevronsDownUp, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   VectorLayersIcon,
@@ -352,10 +352,9 @@ function SidebarBase({
     }, 160);
   };
 
-  const isOverview = pathname === "/";
+  const isOverview = pathname === "/overview";
   const isAllComponents = pathname === "/components";
   const isIcons = pathname === "/icons" || pathname?.startsWith("/icons");
-  const isDocs = pathname === "/docs" || pathname?.startsWith("/docs");
 
   const isScrollableCategories = variant === "scrollable-categories";
 
@@ -368,7 +367,7 @@ function SidebarBase({
         <nav className="space-y-1">
           {/* Overview */}
           <Link
-            href="/"
+            href="/overview"
             data-hover-item="true"
             onClick={() => onMobileOpenChange?.(false)}
             className={cn(
@@ -786,10 +785,12 @@ function SidebarBase({
 
       {/* 4. Minimal Clean Footer */}
       <div className="border-t border-[var(--border)] p-2.5 shrink-0 w-64">
-        <Link
-          href="/docs"
+        <a
+          href="https://github.com/Sourodip-1/kiloUI"
+          target="_blank"
+          rel="noopener noreferrer"
           className="flex items-center justify-between text-xs font-sans font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors px-1"
-          title="Registry Documentation"
+          title="GitHub Repository (Sourodip-1/kiloUI)"
         >
           <span
             className={cn(
@@ -797,17 +798,17 @@ function SidebarBase({
               isCollapsed && "opacity-0 pointer-events-none"
             )}
           >
-            Documentation
+            GitHub
           </span>
           <span
             className={cn(
-              "text-[10px] transition-opacity duration-200",
+              "text-[10px] font-mono transition-opacity duration-200",
               isCollapsed && "opacity-0 pointer-events-none"
             )}
           >
-            /docs
+            v0.1.0
           </span>
-        </Link>
+        </a>
       </div>
     </div>
   );

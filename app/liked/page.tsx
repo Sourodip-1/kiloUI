@@ -15,6 +15,7 @@ import { REGISTRY_DATA, RegistryItem } from "@/registry/registry-data";
 import { VectorComponentIcon } from "@/components/vector-icons";
 import { ComponentPreviewStage } from "@/components/component-preview-stage";
 import { useAppShell } from "@/components/app-shell";
+import { cn } from "@/lib/utils";
 
 export default function LikedComponentsPage() {
   const { favorites, toggleFavorite, clearFavorites, showToast } = useAppShell();
@@ -155,15 +156,28 @@ export default function LikedComponentsPage() {
 
               {/* Preview Stage */}
               <div
-                className="p-6 flex items-center justify-center min-h-[180px] bg-[var(--bg-main)]/60"
+                className={cn(
+                  "flex items-center justify-center bg-[var(--bg-main)]/60 relative overflow-hidden",
+                  item.category === "Cursors"
+                    ? "p-0 h-[320px] w-full"
+                    : "p-6 min-h-[180px]"
+                )}
                 onClick={(e) => e.stopPropagation()}
               >
-                <div className="w-full max-w-sm flex items-center justify-center">
+                <div
+                  className={cn(
+                    "w-full flex items-center justify-center",
+                    item.category === "Cursors" ? "w-full h-full max-w-full" : "max-w-sm"
+                  )}
+                >
                   <ComponentPreviewStage
                     item={item}
                     interactive={true}
                     showKnobs={false}
-                    className="border-none bg-transparent p-0 shadow-none"
+                    className={cn(
+                      "border-none bg-transparent p-0 shadow-none",
+                      item.category === "Cursors" ? "w-full h-full min-h-[320px]" : ""
+                    )}
                   />
                 </div>
               </div>
@@ -173,14 +187,14 @@ export default function LikedComponentsPage() {
                 <button
                   type="button"
                   onClick={() => {
-                    navigator.clipboard.writeText(`npx kilo-ui add ${item.name}`);
-                    showToast(`Copied "npx kilo-ui add ${item.name}"`);
+                    navigator.clipboard.writeText(`npx @kilo-ui/cli add ${item.name}`);
+                    showToast(`Copied "npx @kilo-ui/cli add ${item.name}"`);
                   }}
                   className="inline-flex items-center gap-1.5 font-mono text-[11px] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors cursor-pointer truncate"
                   title="Copy install command"
                 >
                   <Terminal className="h-3.5 w-3.5 shrink-0" />
-                  <span className="truncate">npx kilo-ui add {item.name}</span>
+                  <span className="truncate">npx @kilo-ui/cli add {item.name}</span>
                   <Copy className="h-3 w-3 opacity-60 shrink-0" />
                 </button>
 
