@@ -60,6 +60,13 @@ import { MorphNodeRing, MorphShapeDesign } from "@/registry/ui/morph-node-ring";
 import { GlassReveal, GlassRevealShape } from "@/registry/ui/glass-reveal";
 import { HorizonLogin } from "@/registry/ui/horizon-login";
 import { BlueprintLogin } from "@/registry/ui/blueprint-login";
+import { MagneticButton } from "@/registry/ui/magnetic-button";
+import { BorderBeamButton } from "@/registry/ui/border-beam-button";
+import { CyberGlitchButton } from "@/registry/ui/cyber-glitch-button";
+import { LiquidWaveButton } from "@/registry/ui/liquid-wave-button";
+import { ParticleBurstButton } from "@/registry/ui/particle-burst-button";
+import { ElasticSlotButton } from "@/registry/ui/elastic-slot-button";
+import { GlassPrismButton } from "@/registry/ui/glass-prism-button";
 import { RegistryItem } from "@/registry/registry-data";
 import { ScaledThumbnailWrapper } from "@/components/scaled-thumbnail-wrapper";
 import {
@@ -568,6 +575,86 @@ export function ComponentPreviewStage({
   const [btnLabel, setBtnLabel] = React.useState("Action Button");
   const [btnLoading, setBtnLoading] = React.useState(false);
   const [btnDisabled, setBtnDisabled] = React.useState(false);
+
+  // Magnetic Button state
+  const [magneticVariant, setMagneticVariant] = React.useState<any>(
+    item.name === "magnetic-button" && activeVariant ? activeVariant : "neon-glow"
+  );
+  const [magneticSize, setMagneticSize] = React.useState<any>("default");
+  const [magneticLabel, setMagneticLabel] = React.useState("Explore Grid");
+  const [magneticStrength, setMagneticStrength] = React.useState(0.35);
+  const [magneticSpotlight, setMagneticSpotlight] = React.useState(true);
+  const [magneticLoading, setMagneticLoading] = React.useState(false);
+  const [magneticDisabled, setMagneticDisabled] = React.useState(false);
+
+  // Border Beam Button state
+  const [borderBeamVariant, setBorderBeamVariant] = React.useState<any>(
+    item.name === "border-beam-button" && activeVariant ? activeVariant : "cyan-cyber"
+  );
+  const [borderBeamSize, setBorderBeamSize] = React.useState<any>("default");
+  const [borderBeamLabel, setBorderBeamLabel] = React.useState("Initialize Core");
+  const [borderBeamDuration, setBorderBeamDuration] = React.useState(4);
+  const [borderBeamPulseSize, setBorderBeamPulseSize] = React.useState(28);
+  const [borderBeamSpeedup, setBorderBeamSpeedup] = React.useState(true);
+  const [borderBeamLoading, setBorderBeamLoading] = React.useState(false);
+  const [borderBeamDisabled, setBorderBeamDisabled] = React.useState(false);
+
+  // Cyber Glitch Button state
+  const [cyberGlitchVariant, setCyberGlitchVariant] = React.useState<any>(
+    item.name === "cyber-glitch-button" && activeVariant ? activeVariant : "tokyo-cyan"
+  );
+  const [cyberGlitchSize, setCyberGlitchSize] = React.useState<any>("default");
+  const [cyberGlitchLabel, setCyberGlitchLabel] = React.useState("BREACH PROTOCOL");
+  const [cyberGlitchHud, setCyberGlitchHud] = React.useState("SYS_ID // 0x8F");
+  const [cyberGlitchBrackets, setCyberGlitchBrackets] = React.useState(true);
+  const [cyberGlitchScanlines, setCyberGlitchScanlines] = React.useState(true);
+  const [cyberGlitchLoading, setCyberGlitchLoading] = React.useState(false);
+  const [cyberGlitchDisabled, setCyberGlitchDisabled] = React.useState(false);
+
+  // Liquid Wave Button state
+  const [liquidWaveVariant, setLiquidWaveVariant] = React.useState<any>(
+    item.name === "liquid-wave-button" && activeVariant ? activeVariant : "ocean-deep"
+  );
+  const [liquidWaveSize, setLiquidWaveSize] = React.useState<any>("default");
+  const [liquidWaveLabel, setLiquidWaveLabel] = React.useState("Deep Dive");
+  const [liquidWaveSpeed, setLiquidWaveSpeed] = React.useState(1);
+  const [liquidWaveBubbles, setLiquidWaveBubbles] = React.useState(true);
+  const [liquidWaveLoading, setLiquidWaveLoading] = React.useState(false);
+  const [liquidWaveDisabled, setLiquidWaveDisabled] = React.useState(false);
+
+  // Particle Burst Button state
+  const [particleBurstVariant, setParticleBurstVariant] = React.useState<any>(
+    item.name === "particle-burst-button" && activeVariant ? activeVariant : "supernova-gold"
+  );
+  const [particleBurstSize, setParticleBurstSize] = React.useState<any>("default");
+  const [particleBurstLabel, setParticleBurstLabel] = React.useState("Ignite Sparks");
+  const [particleBurstCount, setParticleBurstCount] = React.useState(32);
+  const [particleBurstAmbient, setParticleBurstAmbient] = React.useState(true);
+  const [particleBurstLoading, setParticleBurstLoading] = React.useState(false);
+  const [particleBurstDisabled, setParticleBurstDisabled] = React.useState(false);
+
+  // Elastic Slot Button state
+  const [elasticSlotVariant, setElasticSlotVariant] = React.useState<any>(
+    item.name === "elastic-slot-button" && activeVariant ? activeVariant : "accent-pill"
+  );
+  const [elasticSlotSize, setElasticSlotSize] = React.useState<any>("default");
+  const [elasticSlotLabel, setElasticSlotLabel] = React.useState("Deploy App");
+  const [elasticSlotHoverLabel, setElasticSlotHoverLabel] = React.useState("Let's Ship ↗");
+  const [elasticSlotDrawer, setElasticSlotDrawer] = React.useState(true);
+  const [elasticSlotLoading, setElasticSlotLoading] = React.useState(false);
+  const [elasticSlotDisabled, setElasticSlotDisabled] = React.useState(false);
+
+  // Glass Prism Button state
+  const [glassPrismVariant, setGlassPrismVariant] = React.useState<any>(
+    item.name === "glass-prism-button" && activeVariant ? activeVariant : "spatial-glass"
+  );
+  const [glassPrismSize, setGlassPrismSize] = React.useState<any>("default");
+  const [glassPrismLabel, setGlassPrismLabel] = React.useState("Spatial Compute");
+  const [glassPrismTilt, setGlassPrismTilt] = React.useState(12);
+  const [glassPrismGlare, setGlassPrismGlare] = React.useState(0.35);
+  const [glassPrismBorder, setGlassPrismBorder] = React.useState(true);
+  const [glassPrismLoading, setGlassPrismLoading] = React.useState(false);
+  const [glassPrismDisabled, setGlassPrismDisabled] = React.useState(false);
 
   // 2. Input state
   const [inputVal, setInputVal] = React.useState("production.env");
@@ -1231,6 +1318,13 @@ export function ComponentPreviewStage({
   const applyVariant = React.useCallback(
     (v: string) => {
       if (item.name === "button") setBtnVariant(v);
+      else if (item.name === "magnetic-button") setMagneticVariant(v);
+      else if (item.name === "border-beam-button") setBorderBeamVariant(v);
+      else if (item.name === "cyber-glitch-button") setCyberGlitchVariant(v);
+      else if (item.name === "liquid-wave-button") setLiquidWaveVariant(v);
+      else if (item.name === "particle-burst-button") setParticleBurstVariant(v);
+      else if (item.name === "elastic-slot-button") setElasticSlotVariant(v);
+      else if (item.name === "glass-prism-button") setGlassPrismVariant(v);
       else if (item.name === "checkbox") {
         setCheckboxVariant(v as any);
         if (v === "lineart") {
@@ -1548,6 +1642,20 @@ export function ComponentPreviewStage({
   const currentVariant =
     item.name === "button"
       ? btnVariant
+      : item.name === "magnetic-button"
+      ? magneticVariant
+      : item.name === "border-beam-button"
+      ? borderBeamVariant
+      : item.name === "cyber-glitch-button"
+      ? cyberGlitchVariant
+      : item.name === "liquid-wave-button"
+      ? liquidWaveVariant
+      : item.name === "particle-burst-button"
+      ? particleBurstVariant
+      : item.name === "elastic-slot-button"
+      ? elasticSlotVariant
+      : item.name === "glass-prism-button"
+      ? glassPrismVariant
       : item.name === "checkbox"
       ? checkboxVariant
       : item.name === "notched-navbar"
@@ -1636,6 +1744,65 @@ export function ComponentPreviewStage({
     setBtnLoading(false);
     setBtnDisabled(false);
 
+    setMagneticVariant("neon-glow");
+    setMagneticSize("default");
+    setMagneticLabel("Explore Grid");
+    setMagneticStrength(0.35);
+    setMagneticSpotlight(true);
+    setMagneticLoading(false);
+    setMagneticDisabled(false);
+
+    setBorderBeamVariant("cyan-cyber");
+    setBorderBeamSize("default");
+    setBorderBeamLabel("Initialize Core");
+    setBorderBeamDuration(4);
+    setBorderBeamPulseSize(28);
+    setBorderBeamSpeedup(true);
+    setBorderBeamLoading(false);
+    setBorderBeamDisabled(false);
+
+    setCyberGlitchVariant("tokyo-cyan");
+    setCyberGlitchSize("default");
+    setCyberGlitchLabel("BREACH PROTOCOL");
+    setCyberGlitchHud("SYS_ID // 0x8F");
+    setCyberGlitchBrackets(true);
+    setCyberGlitchScanlines(true);
+    setCyberGlitchLoading(false);
+    setCyberGlitchDisabled(false);
+
+    setLiquidWaveVariant("ocean-deep");
+    setLiquidWaveSize("default");
+    setLiquidWaveLabel("Deep Dive");
+    setLiquidWaveSpeed(1);
+    setLiquidWaveBubbles(true);
+    setLiquidWaveLoading(false);
+    setLiquidWaveDisabled(false);
+
+    setParticleBurstVariant("supernova-gold");
+    setParticleBurstSize("default");
+    setParticleBurstLabel("Ignite Sparks");
+    setParticleBurstCount(32);
+    setParticleBurstAmbient(true);
+    setParticleBurstLoading(false);
+    setParticleBurstDisabled(false);
+
+    setElasticSlotVariant("accent-pill");
+    setElasticSlotSize("default");
+    setElasticSlotLabel("Deploy App");
+    setElasticSlotHoverLabel("Let's Ship ↗");
+    setElasticSlotDrawer(true);
+    setElasticSlotLoading(false);
+    setElasticSlotDisabled(false);
+
+    setGlassPrismVariant("spatial-glass");
+    setGlassPrismSize("default");
+    setGlassPrismLabel("Spatial Compute");
+    setGlassPrismTilt(12);
+    setGlassPrismGlare(0.35);
+    setGlassPrismBorder(true);
+    setGlassPrismLoading(false);
+    setGlassPrismDisabled(false);
+
     setInputVal("production.env");
     setInputLabel("Target Filename");
     setInputHelper("Relative to workspace root");
@@ -1684,6 +1851,20 @@ export function ComponentPreviewStage({
     let code = item.usage || item.files[0]?.content || "";
     if (item.name === "button") {
       code = `<Button variant="${btnVariant}" size="${btnSize}"${btnLoading ? " isLoading" : ""}${btnDisabled ? " disabled" : ""}>\n  ${btnLabel}\n</Button>`;
+    } else if (item.name === "magnetic-button") {
+      code = `<MagneticButton\n  variant="${magneticVariant}"\n  size="${magneticSize}"\n  strength={${magneticStrength}}${magneticSpotlight ? "\n  showSpotlight" : ""}${magneticLoading ? "\n  isLoading" : ""}${magneticDisabled ? "\n  disabled" : ""}\n>\n  ${magneticLabel}\n</MagneticButton>`;
+    } else if (item.name === "border-beam-button") {
+      code = `<BorderBeamButton\n  variant="${borderBeamVariant}"\n  size="${borderBeamSize}"\n  beamDuration={${borderBeamDuration}}\n  beamSize={${borderBeamPulseSize}}${borderBeamSpeedup ? "\n  hoverSpeedup" : ""}${borderBeamLoading ? "\n  isLoading" : ""}${borderBeamDisabled ? "\n  disabled" : ""}\n>\n  ${borderBeamLabel}\n</BorderBeamButton>`;
+    } else if (item.name === "cyber-glitch-button") {
+      code = `<CyberGlitchButton\n  variant="${cyberGlitchVariant}"\n  size="${cyberGlitchSize}"${cyberGlitchHud ? `\n  hudCode="${cyberGlitchHud}"` : ""}${cyberGlitchBrackets ? "\n  showBrackets" : ""}${cyberGlitchScanlines ? "\n  showScanlines" : ""}${cyberGlitchLoading ? "\n  isLoading" : ""}${cyberGlitchDisabled ? "\n  disabled" : ""}\n>\n  ${cyberGlitchLabel}\n</CyberGlitchButton>`;
+    } else if (item.name === "liquid-wave-button") {
+      code = `<LiquidWaveButton\n  variant="${liquidWaveVariant}"\n  size="${liquidWaveSize}"\n  waveSpeed={${liquidWaveSpeed}}${liquidWaveBubbles ? "\n  showBubbles" : ""}${liquidWaveLoading ? "\n  isLoading" : ""}${liquidWaveDisabled ? "\n  disabled" : ""}\n>\n  ${liquidWaveLabel}\n</LiquidWaveButton>`;
+    } else if (item.name === "particle-burst-button") {
+      code = `<ParticleBurstButton\n  variant="${particleBurstVariant}"\n  size="${particleBurstSize}"\n  particleCount={${particleBurstCount}}${particleBurstAmbient ? "\n  enableAmbient" : ""}${particleBurstLoading ? "\n  isLoading" : ""}${particleBurstDisabled ? "\n  disabled" : ""}\n>\n  ${particleBurstLabel}\n</ParticleBurstButton>`;
+    } else if (item.name === "elastic-slot-button") {
+      code = `<ElasticSlotButton\n  variant="${elasticSlotVariant}"\n  size="${elasticSlotSize}"${elasticSlotHoverLabel ? `\n  hoverLabel="${elasticSlotHoverLabel}"` : ""}${elasticSlotDrawer ? "\n  showDrawer" : ""}${elasticSlotLoading ? "\n  isLoading" : ""}${elasticSlotDisabled ? "\n  disabled" : ""}\n>\n  ${elasticSlotLabel}\n</ElasticSlotButton>`;
+    } else if (item.name === "glass-prism-button") {
+      code = `<GlassPrismButton\n  variant="${glassPrismVariant}"\n  size="${glassPrismSize}"\n  maxTilt={${glassPrismTilt}}\n  glareOpacity={${glassPrismGlare}}${glassPrismBorder ? "\n  showPrismBorder" : ""}${glassPrismLoading ? "\n  isLoading" : ""}${glassPrismDisabled ? "\n  disabled" : ""}\n>\n  ${glassPrismLabel}\n</GlassPrismButton>`;
     } else if (item.name === "input") {
       code = `<Input\n  label="${inputLabel}"\n  value="${inputVal}"\n  placeholder="${inputPlaceholder}"\n  helperText="${inputHelper}"\n  ${inputError ? `error="${inputError}"\n  ` : ""}${inputDisabled ? "disabled\n" : ""}/>`;
     } else if (item.name === "checkbox") {
@@ -2443,6 +2624,121 @@ export function ComponentPreviewStage({
               >
                 {btnLabel}
               </Button>
+            </div>
+          )}
+
+          {/* Magnetic Button */}
+          {item.name === "magnetic-button" && (
+            <div className="flex flex-col items-center justify-center p-6">
+              <MagneticButton
+                variant={magneticVariant}
+                size={magneticSize}
+                strength={magneticStrength}
+                showSpotlight={magneticSpotlight}
+                isLoading={magneticLoading}
+                disabled={magneticDisabled}
+              >
+                {magneticLabel}
+              </MagneticButton>
+            </div>
+          )}
+
+          {/* Border Beam Button */}
+          {item.name === "border-beam-button" && (
+            <div className="flex flex-col items-center justify-center p-6">
+              <BorderBeamButton
+                variant={borderBeamVariant}
+                size={borderBeamSize}
+                beamDuration={borderBeamDuration}
+                beamSize={borderBeamPulseSize}
+                hoverSpeedup={borderBeamSpeedup}
+                isLoading={borderBeamLoading}
+                disabled={borderBeamDisabled}
+              >
+                {borderBeamLabel}
+              </BorderBeamButton>
+            </div>
+          )}
+
+          {/* Cyber Glitch Button */}
+          {item.name === "cyber-glitch-button" && (
+            <div className="flex flex-col items-center justify-center p-6">
+              <CyberGlitchButton
+                variant={cyberGlitchVariant}
+                size={cyberGlitchSize}
+                hudCode={cyberGlitchHud}
+                showBrackets={cyberGlitchBrackets}
+                showScanlines={cyberGlitchScanlines}
+                isLoading={cyberGlitchLoading}
+                disabled={cyberGlitchDisabled}
+              >
+                {cyberGlitchLabel}
+              </CyberGlitchButton>
+            </div>
+          )}
+
+          {/* Liquid Wave Button */}
+          {item.name === "liquid-wave-button" && (
+            <div className="flex flex-col items-center justify-center p-6">
+              <LiquidWaveButton
+                variant={liquidWaveVariant}
+                size={liquidWaveSize}
+                waveSpeed={liquidWaveSpeed}
+                showBubbles={liquidWaveBubbles}
+                isLoading={liquidWaveLoading}
+                disabled={liquidWaveDisabled}
+              >
+                {liquidWaveLabel}
+              </LiquidWaveButton>
+            </div>
+          )}
+
+          {/* Particle Burst Button */}
+          {item.name === "particle-burst-button" && (
+            <div className="flex flex-col items-center justify-center p-6">
+              <ParticleBurstButton
+                variant={particleBurstVariant}
+                size={particleBurstSize}
+                particleCount={particleBurstCount}
+                enableAmbient={particleBurstAmbient}
+                isLoading={particleBurstLoading}
+                disabled={particleBurstDisabled}
+              >
+                {particleBurstLabel}
+              </ParticleBurstButton>
+            </div>
+          )}
+
+          {/* Elastic Slot Button */}
+          {item.name === "elastic-slot-button" && (
+            <div className="flex flex-col items-center justify-center p-6">
+              <ElasticSlotButton
+                variant={elasticSlotVariant}
+                size={elasticSlotSize}
+                hoverLabel={elasticSlotHoverLabel}
+                showDrawer={elasticSlotDrawer}
+                isLoading={elasticSlotLoading}
+                disabled={elasticSlotDisabled}
+              >
+                {elasticSlotLabel}
+              </ElasticSlotButton>
+            </div>
+          )}
+
+          {/* Glass Prism Button */}
+          {item.name === "glass-prism-button" && (
+            <div className="flex flex-col items-center justify-center p-6">
+              <GlassPrismButton
+                variant={glassPrismVariant}
+                size={glassPrismSize}
+                maxTilt={glassPrismTilt}
+                glareOpacity={glassPrismGlare}
+                showPrismBorder={glassPrismBorder}
+                isLoading={glassPrismLoading}
+                disabled={glassPrismDisabled}
+              >
+                {glassPrismLabel}
+              </GlassPrismButton>
             </div>
           )}
 
@@ -4205,6 +4501,492 @@ export function ComponentPreviewStage({
                   <CustomizeSwitch
                     checked={btnDisabled}
                     onChange={setBtnDisabled}
+                    label="Toggle disabled"
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Magnetic Button Controls */}
+            {item.name === "magnetic-button" && (
+              <>
+                <CustomizeTile label="Variant">
+                  <CustomizeSelect
+                    value={magneticVariant}
+                    onChange={(val) => {
+                      setMagneticVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={item.variants || ["neon-glow", "ghost-specular", "accent-lime", "violet-aurora", "minimal-monochrome"]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Size">
+                  <CustomizeSelect
+                    value={magneticSize}
+                    onChange={setMagneticSize}
+                    options={["sm", "default", "lg", "icon"]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Label">
+                  <CustomizeInput
+                    value={magneticLabel}
+                    onChange={setMagneticLabel}
+                    placeholder="Button label"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Pull Strength">
+                  <CustomizeSlider
+                    value={magneticStrength}
+                    onChange={setMagneticStrength}
+                    min={0.1}
+                    max={0.8}
+                    step={0.05}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Spotlight Glare">
+                  <CustomizeSwitch
+                    checked={magneticSpotlight}
+                    onChange={setMagneticSpotlight}
+                    label="Cursor spotlight"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Loading State">
+                  <CustomizeSwitch
+                    checked={magneticLoading}
+                    onChange={setMagneticLoading}
+                    label="Toggle loading"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Disabled">
+                  <CustomizeSwitch
+                    checked={magneticDisabled}
+                    onChange={setMagneticDisabled}
+                    label="Toggle disabled"
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Border Beam Button Controls */}
+            {item.name === "border-beam-button" && (
+              <>
+                <CustomizeTile label="Variant">
+                  <CustomizeSelect
+                    value={borderBeamVariant}
+                    onChange={(val) => {
+                      setBorderBeamVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={item.variants || ["cyan-cyber", "emerald-matrix", "violet-plasma", "amber-solar", "rainbow-spectrum"]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Size">
+                  <CustomizeSelect
+                    value={borderBeamSize}
+                    onChange={setBorderBeamSize}
+                    options={["sm", "default", "lg", "icon"]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Label">
+                  <CustomizeInput
+                    value={borderBeamLabel}
+                    onChange={setBorderBeamLabel}
+                    placeholder="Button label"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Beam Duration (s)">
+                  <CustomizeSlider
+                    value={borderBeamDuration}
+                    onChange={setBorderBeamDuration}
+                    min={1}
+                    max={10}
+                    step={0.5}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Beam Length">
+                  <CustomizeSlider
+                    value={borderBeamPulseSize}
+                    onChange={setBorderBeamPulseSize}
+                    min={15}
+                    max={60}
+                    step={1}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Hover Hyperdrive">
+                  <CustomizeSwitch
+                    checked={borderBeamSpeedup}
+                    onChange={setBorderBeamSpeedup}
+                    label="Accelerate on hover"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Loading State">
+                  <CustomizeSwitch
+                    checked={borderBeamLoading}
+                    onChange={setBorderBeamLoading}
+                    label="Toggle loading"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Disabled">
+                  <CustomizeSwitch
+                    checked={borderBeamDisabled}
+                    onChange={setBorderBeamDisabled}
+                    label="Toggle disabled"
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Cyber Glitch Button Controls */}
+            {item.name === "cyber-glitch-button" && (
+              <>
+                <CustomizeTile label="Variant">
+                  <CustomizeSelect
+                    value={cyberGlitchVariant}
+                    onChange={(val) => {
+                      setCyberGlitchVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={item.variants || ["matrix-neon", "tokyo-cyan", "crimson-danger", "stealth-obsidian", "synth-sunset"]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Size">
+                  <CustomizeSelect
+                    value={cyberGlitchSize}
+                    onChange={setCyberGlitchSize}
+                    options={["sm", "default", "lg", "icon"]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Label">
+                  <CustomizeInput
+                    value={cyberGlitchLabel}
+                    onChange={setCyberGlitchLabel}
+                    placeholder="Button label"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="HUD Tech Code">
+                  <CustomizeInput
+                    value={cyberGlitchHud}
+                    onChange={setCyberGlitchHud}
+                    placeholder="e.g. SYS_ID // 0x8F"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Target Brackets">
+                  <CustomizeSwitch
+                    checked={cyberGlitchBrackets}
+                    onChange={setCyberGlitchBrackets}
+                    label="Show HUD brackets"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="CRT Scanlines">
+                  <CustomizeSwitch
+                    checked={cyberGlitchScanlines}
+                    onChange={setCyberGlitchScanlines}
+                    label="Show scanlines"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Loading State">
+                  <CustomizeSwitch
+                    checked={cyberGlitchLoading}
+                    onChange={setCyberGlitchLoading}
+                    label="Toggle loading"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Disabled">
+                  <CustomizeSwitch
+                    checked={cyberGlitchDisabled}
+                    onChange={setCyberGlitchDisabled}
+                    label="Toggle disabled"
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Liquid Wave Button Controls */}
+            {item.name === "liquid-wave-button" && (
+              <>
+                <CustomizeTile label="Variant">
+                  <CustomizeSelect
+                    value={liquidWaveVariant}
+                    onChange={(val) => {
+                      setLiquidWaveVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={item.variants || ["ocean-deep", "toxic-acid", "magma-flame", "mercury-chrome", "violet-nebula"]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Size">
+                  <CustomizeSelect
+                    value={liquidWaveSize}
+                    onChange={setLiquidWaveSize}
+                    options={["sm", "default", "lg", "icon"]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Label">
+                  <CustomizeInput
+                    value={liquidWaveLabel}
+                    onChange={setLiquidWaveLabel}
+                    placeholder="Button label"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Wave Speed">
+                  <CustomizeSlider
+                    value={liquidWaveSpeed}
+                    onChange={setLiquidWaveSpeed}
+                    min={0.5}
+                    max={2.5}
+                    step={0.1}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Rising Bubbles">
+                  <CustomizeSwitch
+                    checked={liquidWaveBubbles}
+                    onChange={setLiquidWaveBubbles}
+                    label="Floating bubbles"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Loading State">
+                  <CustomizeSwitch
+                    checked={liquidWaveLoading}
+                    onChange={setLiquidWaveLoading}
+                    label="Toggle loading"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Disabled">
+                  <CustomizeSwitch
+                    checked={liquidWaveDisabled}
+                    onChange={setLiquidWaveDisabled}
+                    label="Toggle disabled"
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Particle Burst Button Controls */}
+            {item.name === "particle-burst-button" && (
+              <>
+                <CustomizeTile label="Variant">
+                  <CustomizeSelect
+                    value={particleBurstVariant}
+                    onChange={(val) => {
+                      setParticleBurstVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={item.variants || ["supernova-gold", "cosmic-starfield", "electric-emerald", "fuchsia-confetti", "monochrome-firefly"]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Size">
+                  <CustomizeSelect
+                    value={particleBurstSize}
+                    onChange={setParticleBurstSize}
+                    options={["sm", "default", "lg", "icon"]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Label">
+                  <CustomizeInput
+                    value={particleBurstLabel}
+                    onChange={setParticleBurstLabel}
+                    placeholder="Button label"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Sparks Count">
+                  <CustomizeSlider
+                    value={particleBurstCount}
+                    onChange={setParticleBurstCount}
+                    min={16}
+                    max={64}
+                    step={4}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Ambient Stardust">
+                  <CustomizeSwitch
+                    checked={particleBurstAmbient}
+                    onChange={setParticleBurstAmbient}
+                    label="Idle twinkling motes"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Loading State">
+                  <CustomizeSwitch
+                    checked={particleBurstLoading}
+                    onChange={setParticleBurstLoading}
+                    label="Toggle loading"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Disabled">
+                  <CustomizeSwitch
+                    checked={particleBurstDisabled}
+                    onChange={setParticleBurstDisabled}
+                    label="Toggle disabled"
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Elastic Slot Button Controls */}
+            {item.name === "elastic-slot-button" && (
+              <>
+                <CustomizeTile label="Variant">
+                  <CustomizeSelect
+                    value={elasticSlotVariant}
+                    onChange={(val) => {
+                      setElasticSlotVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={item.variants || ["editorial-mono", "accent-pill", "glass-tactile", "dark-carbon", "destructive-alert"]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Size">
+                  <CustomizeSelect
+                    value={elasticSlotSize}
+                    onChange={setElasticSlotSize}
+                    options={["sm", "default", "lg", "icon"]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Primary Label">
+                  <CustomizeInput
+                    value={elasticSlotLabel}
+                    onChange={setElasticSlotLabel}
+                    placeholder="Resting text"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Hover Roll Label">
+                  <CustomizeInput
+                    value={elasticSlotHoverLabel}
+                    onChange={setElasticSlotHoverLabel}
+                    placeholder="Rolled text on hover"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Sliding Drawer">
+                  <CustomizeSwitch
+                    checked={elasticSlotDrawer}
+                    onChange={setElasticSlotDrawer}
+                    label="Arrow drawer micro-action"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Loading State">
+                  <CustomizeSwitch
+                    checked={elasticSlotLoading}
+                    onChange={setElasticSlotLoading}
+                    label="Toggle loading"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Disabled">
+                  <CustomizeSwitch
+                    checked={elasticSlotDisabled}
+                    onChange={setElasticSlotDisabled}
+                    label="Toggle disabled"
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Glass Prism Button Controls */}
+            {item.name === "glass-prism-button" && (
+              <>
+                <CustomizeTile label="Variant">
+                  <CustomizeSelect
+                    value={glassPrismVariant}
+                    onChange={(val) => {
+                      setGlassPrismVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={item.variants || ["spatial-glass", "obsidian-crystal", "aurora-prism", "champagne-gold", "cyber-frost"]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Size">
+                  <CustomizeSelect
+                    value={glassPrismSize}
+                    onChange={setGlassPrismSize}
+                    options={["sm", "default", "lg", "icon"]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Label">
+                  <CustomizeInput
+                    value={glassPrismLabel}
+                    onChange={setGlassPrismLabel}
+                    placeholder="Button label"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Max Tilt (°)">
+                  <CustomizeSlider
+                    value={glassPrismTilt}
+                    onChange={setGlassPrismTilt}
+                    min={4}
+                    max={24}
+                    step={1}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Glare Intensity">
+                  <CustomizeSlider
+                    value={glassPrismGlare}
+                    onChange={setGlassPrismGlare}
+                    min={0.1}
+                    max={0.8}
+                    step={0.05}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Prism Rainbow Rim">
+                  <CustomizeSwitch
+                    checked={glassPrismBorder}
+                    onChange={setGlassPrismBorder}
+                    label="Refractive bevel rim"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Loading State">
+                  <CustomizeSwitch
+                    checked={glassPrismLoading}
+                    onChange={setGlassPrismLoading}
+                    label="Toggle loading"
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Disabled">
+                  <CustomizeSwitch
+                    checked={glassPrismDisabled}
+                    onChange={setGlassPrismDisabled}
                     label="Toggle disabled"
                   />
                 </CustomizeTile>

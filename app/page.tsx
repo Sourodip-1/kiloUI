@@ -311,8 +311,9 @@ export default function LandingPage() {
               <span className="text-[var(--accent-green)]">/</span>
               <span>ui</span>
             </div>
-            <span className="hidden sm:inline-flex ml-1.5 px-1.5 py-0.5 rounded text-[10px] font-mono font-medium bg-zinc-800 text-zinc-400 border border-zinc-700/60">
-              v1.0
+            <span className="hidden sm:inline-flex items-center gap-1.5 ml-1.5 px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-zinc-800 text-zinc-300 border border-zinc-700/60 shadow-2xs">
+              <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent-green)] animate-pulse" />
+              v1.1
             </span>
           </Link>
 

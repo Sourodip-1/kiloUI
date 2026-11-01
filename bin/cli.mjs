@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const VERSION = "0.1.0";
+const VERSION = "0.2.0";
 const GITHUB_RAW_BASE = "https://raw.githubusercontent.com/Sourodip-1/kiloUI/main";
 const DEFAULT_REGISTRY_URL = process.env.KILO_REGISTRY_URL || "https://www.kiloui.dev/api/registry";
 
@@ -39,6 +39,14 @@ const COMPONENT_ALIASES = {
   "contour-tide": "contour-tide",
   "kinetic-text": "kinetic-text",
   "expanding-card": "expanding-card",
+  "magnetic-btn": "magnetic-button",
+  "border-beam": "border-beam-button",
+  "glitch-button": "cyber-glitch-button",
+  "wave-button": "liquid-wave-button",
+  "particle-button": "particle-burst-button",
+  "slot-button": "elastic-slot-button",
+  "glass-button": "glass-prism-button",
+  "prism-button": "glass-prism-button",
 };
 
 // Associated companion files (e.g. CSS files)
@@ -51,7 +59,7 @@ const COMPANION_FILES = {
 // Peer dependencies by component keywords or names
 const COMPONENT_DEPS = {
   three: ["contour-tide", "liquid-metal-background", "liquid-metal", "ethereal-smoke-shader", "grainy-grid-shader", "grainy-horizon-shader", "morph-node-ring", "glass-reveal", "prismatic-slats-bg"],
-  "lucide-react": ["button", "search-bar", "liquid-glass-search-bar", "footer", "blueprint-login", "horizon-login", "minimalist-login", "dialog", "tabs", "sidebar", "notched-navbar"],
+  "lucide-react": ["button", "search-bar", "liquid-glass-search-bar", "footer", "blueprint-login", "horizon-login", "minimalist-login", "dialog", "tabs", "sidebar", "notched-navbar", "elastic-slot-button"],
 };
 
 function log(msg = "") {

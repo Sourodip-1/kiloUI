@@ -806,7 +806,7 @@ function SidebarBase({
               isCollapsed && "opacity-0 pointer-events-none"
             )}
           >
-            v0.1.0
+            v0.2.0
           </span>
         </a>
       </div>

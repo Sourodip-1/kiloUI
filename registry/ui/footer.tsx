@@ -390,7 +390,7 @@ export const Footer = React.forwardRef<HTMLElement, FooterProps>(
               <span>•</span>
               <span>100% Free Primitives</span>
               <span>•</span>
-              <span>v1.0.4</span>
+              <span>v1.1.0</span>
             </div>
           </div>
         </div>
