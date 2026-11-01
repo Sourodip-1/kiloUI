@@ -5,7 +5,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://www.kiloui.dev";
   const now = new Date();
 
-  // Core static pages
+  // Core high-value pages for search engines & rich sitelinks
   const staticRoutes: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
@@ -17,13 +17,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${baseUrl}/components`,
       lastModified: now,
       changeFrequency: "daily",
-      priority: 0.9,
+      priority: 0.95,
     },
     {
       url: `${baseUrl}/overview`,
       lastModified: now,
       changeFrequency: "weekly",
-      priority: 0.8,
+      priority: 0.9,
     },
     {
       url: `${baseUrl}/motion`,
@@ -35,23 +35,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${baseUrl}/icons`,
       lastModified: now,
       changeFrequency: "weekly",
-      priority: 0.75,
-    },
-    {
-      url: `${baseUrl}/liked`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.5,
+      priority: 0.8,
     },
   ];
 
-  // Dynamic component pages for all primitives in the registry
+  // Dynamic component pages for all active primitives in the registry (39 verified components)
   const componentRoutes: MetadataRoute.Sitemap = Object.keys(REGISTRY_DATA).map((name) => ({
     url: `${baseUrl}/components/${name}`,
     lastModified: now,
     changeFrequency: "weekly",
-    priority: 0.8,
+    priority: 0.7,
   }));
 
   return [...staticRoutes, ...componentRoutes];
 }
+

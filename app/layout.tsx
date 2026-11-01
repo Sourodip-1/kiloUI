@@ -28,6 +28,10 @@ export const metadata: Metadata = {
   description:
     "Minimal, high-performance copy-paste UI primitives, WebGL shaders, precision motion engines, and interactive animations for React & Next.js. Zero runtime wrappers.",
   keywords: [
+    "kilo ui",
+    "kiloui",
+    "kiloui.dev",
+    "kilo-ui",
     "React components",
     "Next.js 16",
     "Tailwind CSS v4",
@@ -36,8 +40,7 @@ export const metadata: Metadata = {
     "UI primitives",
     "Target Cursor",
     "Contour Tide",
-    "Option Wheel",
-    "Motion Engine",
+    "Liquid Metal",
     "Kinetic Text",
     "shadcn alternative",
     "creative developer",
@@ -64,6 +67,12 @@ export const metadata: Metadata = {
     description:
       "Minimal, high-performance copy-paste UI primitives, WebGL shaders, precision motion engines, and interactive animations for React & Next.js.",
     images: [
+      {
+        url: "/android-chrome-512x512.png",
+        width: 512,
+        height: 512,
+        alt: "kilo/ui - Precision UI Primitives",
+      },
       {
         url: "/KiloUi-logo-darkmode.svg",
         width: 1200,
@@ -94,15 +103,50 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
+        url: "/favicon.ico",
+        sizes: "48x48",
+      },
+      {
+        url: "/favicon-32x32.png",
+        sizes: "32x32",
+        type: "image/png",
+      },
+      {
+        url: "/favicon-16x16.png",
+        sizes: "16x16",
+        type: "image/png",
+      },
+      {
+        url: "/android-chrome-192x192.png",
+        sizes: "192x192",
+        type: "image/png",
+      },
+      {
+        url: "/android-chrome-512x512.png",
+        sizes: "512x512",
+        type: "image/png",
+      },
+      {
         url: "/KiloUi-logo-darkmode.svg",
+        type: "image/svg+xml",
         media: "(prefers-color-scheme: dark)",
       },
       {
         url: "/KiloUi-logo-lightmode.svg",
+        type: "image/svg+xml",
         media: "(prefers-color-scheme: light)",
       },
     ],
+    shortcut: ["/favicon.ico"],
+    apple: [
+      {
+        url: "/apple-touch-icon.png",
+        sizes: "180x180",
+        type: "image/png",
+      },
+    ],
   },
+  manifest: "/site.webmanifest",
 };
 
 export default function RootLayout({
@@ -117,6 +161,15 @@ export default function RootLayout({
       className={`${googleSans.variable} ${googleSansCode.variable} min-h-full antialiased`}
     >
       <head>
+        {/* Favicon & Web Manifest explicitly linked for search crawlers & browsers */}
+        <link rel="icon" href="/favicon.ico" sizes="48x48" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+        <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png" />
+        <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <link rel="manifest" href="/site.webmanifest" />
+
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -150,27 +203,85 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
-              "@type": "WebApplication",
-              "name": "kilo/ui",
-              "url": "https://www.kiloui.dev",
-              "description":
-                "Minimal, high-performance copy-paste UI primitives, shaders, and animations for React and Next.js.",
-              "applicationCategory": "DeveloperApplication",
-              "operatingSystem": "All",
-              "offers": {
-                "@type": "Offer",
-                "price": "0",
-                "priceCurrency": "USD",
-              },
-              "author": {
-                "@type": "Person",
-                "name": "Sourodip",
-                "url": "https://sourodip.me",
-              },
+              "@graph": [
+                {
+                  "@type": "WebSite",
+                  "@id": "https://www.kiloui.dev/#website",
+                  "name": "kilo/ui",
+                  "alternateName": ["kilo ui", "kiloui", "kiloui.dev", "kilo-ui"],
+                  "url": "https://www.kiloui.dev",
+                  "description":
+                    "Minimal, high-performance copy-paste UI primitives, WebGL shaders, precision motion engines, and interactive animations for React & Next.js.",
+                  "publisher": {
+                    "@type": "Organization",
+                    "@id": "https://www.kiloui.dev/#organization",
+                    "name": "kilo/ui",
+                    "url": "https://www.kiloui.dev",
+                    "logo": {
+                      "@type": "ImageObject",
+                      "url": "https://www.kiloui.dev/android-chrome-512x512.png",
+                    },
+                  },
+                  "potentialAction": {
+                    "@type": "SearchAction",
+                    "target": {
+                      "@type": "EntryPoint",
+                      "urlTemplate":
+                        "https://www.kiloui.dev/components?q={search_term_string}",
+                    },
+                    "query-input": "required name=search_term_string",
+                  },
+                },
+                {
+                  "@type": "Organization",
+                  "@id": "https://www.kiloui.dev/#organization",
+                  "name": "kilo/ui",
+                  "url": "https://www.kiloui.dev",
+                  "logo": "https://www.kiloui.dev/android-chrome-512x512.png",
+                  "founder": {
+                    "@type": "Person",
+                    "name": "Sourodip",
+                    "url": "https://sourodip.me",
+                  },
+                },
+                {
+                  "@type": "SiteNavigationElement",
+                  "position": 1,
+                  "name": "Components",
+                  "description":
+                    "Browse 39+ interactive React & Next.js UI primitives, WebGL shaders, and tactile cursors.",
+                  "url": "https://www.kiloui.dev/components",
+                },
+                {
+                  "@type": "SiteNavigationElement",
+                  "position": 2,
+                  "name": "Overview",
+                  "description":
+                    "Learn kilo/ui architecture, zero-dependency philosophy, CLI installation, and TypeScript contracts.",
+                  "url": "https://www.kiloui.dev/overview",
+                },
+                {
+                  "@type": "SiteNavigationElement",
+                  "position": 3,
+                  "name": "Motion",
+                  "description":
+                    "Zero-dependency spring physics, spatial continuity, and choreography primitives.",
+                  "url": "https://www.kiloui.dev/motion",
+                },
+                {
+                  "@type": "SiteNavigationElement",
+                  "position": 4,
+                  "name": "Icons",
+                  "description":
+                    "Curated collection of pixel-perfect SVG vector icons for developer dashboards.",
+                  "url": "https://www.kiloui.dev/icons",
+                },
+              ],
             }),
           }}
         />
       </head>
+
       <body className="min-h-full flex flex-col bg-[var(--bg-main)] text-[var(--text-primary)]">
         <AppShell>{children}</AppShell>
       </body>
