@@ -377,7 +377,7 @@ export const Checkbox = React.forwardRef<HTMLButtonElement, CheckboxProps>(
               {isAnimating && isChecked && (
                 <span
                   aria-hidden="true"
-                  className="pointer-events-none absolute -inset-1 rounded-full border border-[var(--accent-green)] animate-ping opacity-60"
+                  className="pointer-events-none absolute -inset-1 rounded-full border border-white/40 animate-ping opacity-40"
                 />
               )}
 

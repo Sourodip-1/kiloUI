@@ -86,6 +86,26 @@ export function ScaledThumbnailWrapper({
       targetBaseWidth = 480;
       targetBaseHeight = 270;
       defaultInitialScale = 0.58;
+    } else if (name === "stack-cards") {
+      targetBaseWidth = 440;
+      targetBaseHeight = 280;
+      defaultInitialScale = 0.65;
+    } else if (name === "command-palette" || name === "spotlight-modal" || name === "drawer-dialog") {
+      targetBaseWidth = 480;
+      targetBaseHeight = 260;
+      defaultInitialScale = 0.65;
+    } else if (name === "dynamic-island-banner" || name === "toast-stack") {
+      targetBaseWidth = 380;
+      targetBaseHeight = 160;
+      defaultInitialScale = 0.85;
+    } else if (name === "announcement-bar" || name === "ticker-notification") {
+      targetBaseWidth = 440;
+      targetBaseHeight = 140;
+      defaultInitialScale = 0.82;
+    } else if (name === "popover-dialog") {
+      targetBaseWidth = 340;
+      targetBaseHeight = 180;
+      defaultInitialScale = 0.9;
     } else if (isLarge) {
       targetBaseWidth = 640;
       targetBaseHeight = 320;
@@ -177,6 +197,9 @@ export function ScaledThumbnailWrapper({
           }}
           className="w-full h-full flex items-center justify-center"
         >
+          {!ready && (
+            <div className="absolute inset-0 pointer-events-none kilo-shimmer opacity-35 z-20 rounded-md" />
+          )}
           {children}
         </div>
       </div>

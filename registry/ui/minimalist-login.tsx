@@ -464,10 +464,6 @@ export function MinimalistLogin({
           "hover:border-[var(--border-hover)]"
         )}
       >
-        {/* Corner reticles */}
-        <span className="absolute top-3.5 left-3.5 font-mono text-[11px] leading-none text-[var(--text-muted)] pointer-events-none" aria-hidden="true">┌</span>
-        <span className="absolute bottom-3.5 left-3.5 font-mono text-[11px] leading-none text-[var(--text-muted)] pointer-events-none" aria-hidden="true">└</span>
-        <span className="absolute bottom-3.5 right-3.5 font-mono text-[11px] leading-none text-[var(--text-muted)] pointer-events-none" aria-hidden="true">┘</span>
 
         {/* Full-bleed 3D Sphere Canvas — cursor-default, no pointer */}
         <canvas

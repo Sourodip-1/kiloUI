@@ -67,6 +67,16 @@ import { LiquidWaveButton } from "@/registry/ui/liquid-wave-button";
 import { ParticleBurstButton } from "@/registry/ui/particle-burst-button";
 import { ElasticSlotButton } from "@/registry/ui/elastic-slot-button";
 import { GlassPrismButton } from "@/registry/ui/glass-prism-button";
+import { Skeleton, SkeletonText, SkeletonAvatar, SkeletonButton, SkeletonBadge, SkeletonCard, SkeletonCanvas } from "@/registry/ui/skeleton";
+import { PopoverDialog } from "@/registry/ui/popover-dialog";
+import { CommandPalette } from "@/registry/ui/command-palette";
+import { DrawerDialog } from "@/registry/ui/drawer-dialog";
+import { SpotlightModal } from "@/registry/ui/spotlight-modal";
+import { AnnouncementBar } from "@/registry/ui/announcement-bar";
+import { ToastStack } from "@/registry/ui/toast-stack";
+import { TickerNotification } from "@/registry/ui/ticker-notification";
+import { DynamicIslandBanner } from "@/registry/ui/dynamic-island-banner";
+import { StackCards } from "@/registry/ui/stack-cards";
 import { RegistryItem } from "@/registry/registry-data";
 import { ScaledThumbnailWrapper } from "@/components/scaled-thumbnail-wrapper";
 import {
@@ -655,6 +665,66 @@ export function ComponentPreviewStage({
   const [glassPrismBorder, setGlassPrismBorder] = React.useState(true);
   const [glassPrismLoading, setGlassPrismLoading] = React.useState(false);
   const [glassPrismDisabled, setGlassPrismDisabled] = React.useState(false);
+
+  // Skeleton state
+  const [skeletonVariant, setSkeletonVariant] = React.useState<any>(
+    item.name === "skeleton" && activeVariant ? activeVariant : "shimmer"
+  );
+  const [skeletonShape, setSkeletonShape] = React.useState<any>("rounded");
+  const [skeletonSpeed, setSkeletonSpeed] = React.useState<any>("normal");
+  const [skeletonGlow, setSkeletonGlow] = React.useState(false);
+  const [skeletonLines, setSkeletonLines] = React.useState(3);
+
+  // 9 New Dialog, Notification, and Card Deck State Hooks
+  const [popoverVariant, setPopoverVariant] = React.useState<any>(
+    item.name === "popover-dialog" && activeVariant ? activeVariant : "contextual-actions"
+  );
+  const [popoverPlacement, setPopoverPlacement] = React.useState<any>("bottom");
+  const [popoverShowArrow, setPopoverShowArrow] = React.useState(true);
+
+  const [commandVariant, setCommandVariant] = React.useState<any>(
+    item.name === "command-palette" && activeVariant ? activeVariant : "spotlight-dark"
+  );
+  const [commandOpen, setCommandOpen] = React.useState(false);
+
+  const [drawerVariant, setDrawerVariant] = React.useState<any>(
+    item.name === "drawer-dialog" && activeVariant ? activeVariant : "bottom-sheet"
+  );
+  const [drawerOpen, setDrawerOpen] = React.useState(false);
+  const [drawerShowHandle, setDrawerShowHandle] = React.useState(true);
+
+  const [spotlightModalVariant, setSpotlightModalVariant] = React.useState<any>(
+    item.name === "spotlight-modal" && activeVariant ? activeVariant : "theatrical-glow"
+  );
+  const [spotlightModalOpen, setSpotlightModalOpen] = React.useState(false);
+  const [spotlightReticle, setSpotlightReticle] = React.useState(true);
+
+  const [announcementVariant, setAnnouncementVariant] = React.useState<any>(
+    item.name === "announcement-bar" && activeVariant ? activeVariant : "cyber-gradient"
+  );
+  const [announcementCountdown, setAnnouncementCountdown] = React.useState(false);
+
+  const [toastStackVariant, setToastStackVariant] = React.useState<any>(
+    item.name === "toast-stack" && activeVariant ? activeVariant : "stacked-bottom-right"
+  );
+  const [toastStackExpand, setToastStackExpand] = React.useState(false);
+  const [toastStackGap, setToastStackGap] = React.useState<"compact" | "normal" | "relaxed">("normal");
+
+  const [tickerVariant, setTickerVariant] = React.useState<any>(
+    item.name === "ticker-notification" && activeVariant ? activeVariant : "cyber-terminal"
+  );
+  const [tickerSpeed, setTickerSpeed] = React.useState<any>("normal");
+  const [tickerPauseOnHover, setTickerPauseOnHover] = React.useState(true);
+
+  const [dynamicIslandVariant, setDynamicIslandVariant] = React.useState<any>(
+    item.name === "dynamic-island-banner" && activeVariant ? activeVariant : "compact-pill"
+  );
+  const [dynamicIslandAccent, setDynamicIslandAccent] = React.useState<any>("green");
+
+  const [stackCardsVariant, setStackCardsVariant] = React.useState<any>(
+    item.name === "stack-cards" && activeVariant ? activeVariant : "perspective-stack"
+  );
+  const [stackCardsAutoPlay, setStackCardsAutoPlay] = React.useState(false);
 
   // 2. Input state
   const [inputVal, setInputVal] = React.useState("production.env");
@@ -1309,6 +1379,34 @@ export function ComponentPreviewStage({
         "vintage-grain",
         "cinematic-follow",
       ];
+    if (item.name === "skeleton")
+      return [
+        "shimmer",
+        "pulse",
+        "wave",
+        "card",
+        "avatar",
+        "text",
+        "canvas",
+      ];
+    if (item.name === "popover-dialog")
+      return ["contextual-actions", "user-card", "confirm-prompt", "color-picker", "media-preview"];
+    if (item.name === "command-palette")
+      return ["spotlight-dark", "cyber-matrix", "minimal-monochrome", "compact-dock"];
+    if (item.name === "drawer-dialog")
+      return ["bottom-sheet", "right-inspector", "left-drawer", "floating-card"];
+    if (item.name === "spotlight-modal")
+      return ["theatrical-glow", "cyber-scan", "golden-hour", "laser-reticle"];
+    if (item.name === "announcement-bar")
+      return ["cyber-gradient", "minimal-monochrome", "pulse-accent", "floating-pill"];
+    if (item.name === "toast-stack")
+      return ["stacked-bottom-right", "stacked-top-center", "cyber-telemetry", "minimal-list"];
+    if (item.name === "ticker-notification")
+      return ["cyber-terminal", "status-beacon", "news-wire", "monochrome-minimal"];
+    if (item.name === "dynamic-island-banner")
+      return ["compact-pill", "expanded-hud", "media-wave", "telemetry-alert"];
+    if (item.name === "stack-cards")
+      return ["perspective-stack", "fan-out", "cyber-deck", "minimal-swipe"];
     return [];
   }, [item.variants, item.name]);
 
@@ -1325,6 +1423,22 @@ export function ComponentPreviewStage({
       else if (item.name === "particle-burst-button") setParticleBurstVariant(v);
       else if (item.name === "elastic-slot-button") setElasticSlotVariant(v);
       else if (item.name === "glass-prism-button") setGlassPrismVariant(v);
+      else if (item.name === "skeleton") {
+        setSkeletonVariant(v);
+        if (v === "card") setSkeletonShape("card");
+        else if (v === "avatar") setSkeletonShape("circular");
+        else if (v === "text") setSkeletonShape("text");
+        else if (v === "canvas") setSkeletonShape("rounded");
+      }
+      else if (item.name === "popover-dialog") setPopoverVariant(v);
+      else if (item.name === "command-palette") setCommandVariant(v);
+      else if (item.name === "drawer-dialog") setDrawerVariant(v);
+      else if (item.name === "spotlight-modal") setSpotlightModalVariant(v);
+      else if (item.name === "announcement-bar") setAnnouncementVariant(v);
+      else if (item.name === "toast-stack") setToastStackVariant(v);
+      else if (item.name === "ticker-notification") setTickerVariant(v);
+      else if (item.name === "dynamic-island-banner") setDynamicIslandVariant(v);
+      else if (item.name === "stack-cards") setStackCardsVariant(v);
       else if (item.name === "checkbox") {
         setCheckboxVariant(v as any);
         if (v === "lineart") {
@@ -1702,6 +1816,26 @@ export function ComponentPreviewStage({
       ? spotlightVariant
       : item.name === "elastic-blob-cursor"
       ? blobVariant
+      : item.name === "skeleton"
+      ? skeletonVariant
+      : item.name === "popover-dialog"
+      ? popoverVariant
+      : item.name === "command-palette"
+      ? commandVariant
+      : item.name === "drawer-dialog"
+      ? drawerVariant
+      : item.name === "spotlight-modal"
+      ? spotlightModalVariant
+      : item.name === "announcement-bar"
+      ? announcementVariant
+      : item.name === "toast-stack"
+      ? toastStackVariant
+      : item.name === "ticker-notification"
+      ? tickerVariant
+      : item.name === "dynamic-island-banner"
+      ? dynamicIslandVariant
+      : item.name === "stack-cards"
+      ? stackCardsVariant
       : activeVariant || variants[0] || "default";
 
   const currentIndex = Math.max(0, variants.indexOf(currentVariant));
@@ -1865,6 +1999,36 @@ export function ComponentPreviewStage({
       code = `<ElasticSlotButton\n  variant="${elasticSlotVariant}"\n  size="${elasticSlotSize}"${elasticSlotHoverLabel ? `\n  hoverLabel="${elasticSlotHoverLabel}"` : ""}${elasticSlotDrawer ? "\n  showDrawer" : ""}${elasticSlotLoading ? "\n  isLoading" : ""}${elasticSlotDisabled ? "\n  disabled" : ""}\n>\n  ${elasticSlotLabel}\n</ElasticSlotButton>`;
     } else if (item.name === "glass-prism-button") {
       code = `<GlassPrismButton\n  variant="${glassPrismVariant}"\n  size="${glassPrismSize}"\n  maxTilt={${glassPrismTilt}}\n  glareOpacity={${glassPrismGlare}}${glassPrismBorder ? "\n  showPrismBorder" : ""}${glassPrismLoading ? "\n  isLoading" : ""}${glassPrismDisabled ? "\n  disabled" : ""}\n>\n  ${glassPrismLabel}\n</GlassPrismButton>`;
+    } else if (item.name === "skeleton") {
+      if (skeletonVariant === "card") {
+        code = `<SkeletonCard\n  variant="${skeletonGlow ? "glow" : "shimmer"}"\n  hasCanvas\n  lines={${skeletonLines}}\n/>`;
+      } else if (skeletonVariant === "avatar") {
+        code = `<div className="flex items-center gap-3">\n  <SkeletonAvatar size="md" shape="${skeletonShape === "rounded" ? "rounded" : "circular"}" variant="${skeletonVariant}" />\n  <div className="space-y-1.5 flex-1">\n    <Skeleton shape="rounded" className="h-4 w-32" />\n    <Skeleton shape="text" className="h-3 w-48" />\n  </div>\n</div>`;
+      } else if (skeletonVariant === "text") {
+        code = `<SkeletonText\n  lines={${skeletonLines}}\n  variant="${skeletonVariant}"\n  widths={["100%", "85%", "65%"]}\n/>`;
+      } else if (skeletonVariant === "canvas") {
+        code = `<SkeletonCanvas\n  label="RENDER_PIPELINE"\n  coordinates="DIM: 1920x1080 // GL_ES_3"\n  variant="${skeletonVariant}"\n  showReticle\n/>`;
+      } else {
+        code = `<Skeleton\n  variant="${skeletonVariant}"\n  shape="${skeletonShape}"\n  speed="${skeletonSpeed}"${skeletonGlow ? "\n  accentGlow" : ""}\n  className="h-10 w-full"\n/>`;
+      }
+    } else if (item.name === "popover-dialog") {
+      code = `<PopoverDialog\n  variant="${popoverVariant}"\n  placement="${popoverPlacement}"${popoverShowArrow ? "\n  showArrow" : ""}\n  title="Node Configuration"\n  description="Adjust routing priorities and edge bandwidth limits."\n/>`;
+    } else if (item.name === "command-palette") {
+      code = `<CommandPalette\n  variant="${commandVariant}"\n  open={${commandOpen}}\n  onOpenChange={setOpen}\n  placeholder="Type a command or search documentation..."\n/>`;
+    } else if (item.name === "drawer-dialog") {
+      code = `<DrawerDialog\n  variant="${drawerVariant}"\n  open={${drawerOpen}}\n  onOpenChange={setOpen}\n  title="System Diagnostics"\n  description="Real-time metrics from the active node cluster"${drawerShowHandle ? "\n  showHandle" : ""}\n/>`;
+    } else if (item.name === "spotlight-modal") {
+      code = `<SpotlightModal\n  variant="${spotlightModalVariant}"\n  open={${spotlightModalOpen}}\n  onOpenChange={setOpen}\n  title="Cluster Node Deployment"\n  subtitle="VERIFIED SECURE RUNTIME"${spotlightReticle ? "\n  showReticle" : ""}\n/>`;
+    } else if (item.name === "announcement-bar") {
+      code = `<AnnouncementBar\n  variant="${announcementVariant}"\n  badge="v0.3.0 Released"\n  message="Explore 10 new overlay primitives, fluid dynamic island, and instant CLI tools."\n  actionLabel="Explore Docs"${announcementCountdown ? "\n  showCountdown" : ""}\n/>`;
+    } else if (item.name === "toast-stack") {
+      code = `<ToastStack\n  variant="${toastStackVariant}"\n  gap="${toastStackGap}"${toastStackExpand ? "\n  isExpanded={true}" : ""}\n  maxVisible={3}\n/>`;
+    } else if (item.name === "ticker-notification") {
+      code = `<TickerNotification\n  variant="${tickerVariant}"\n  speed="${tickerSpeed}"${tickerPauseOnHover ? "\n  pauseOnHover" : ""}\n/>`;
+    } else if (item.name === "dynamic-island-banner") {
+      code = `<DynamicIslandBanner\n  variant="${dynamicIslandVariant}"\n  accentColor="${dynamicIslandAccent}"\n  title="Telemetry Stream Active"\n  subtitle="Edge Node 04 // 24.8ms RTT // 99.98% Health"\n/>`;
+    } else if (item.name === "stack-cards") {
+      code = `<StackCards\n  variant="${stackCardsVariant}"\n  cardWidth={380}\n  cardHeight={240}${stackCardsAutoPlay ? "\n  autoPlay" : ""}\n/>`;
     } else if (item.name === "input") {
       code = `<Input\n  label="${inputLabel}"\n  value="${inputVal}"\n  placeholder="${inputPlaceholder}"\n  helperText="${inputHelper}"\n  ${inputError ? `error="${inputError}"\n  ` : ""}${inputDisabled ? "disabled\n" : ""}/>`;
     } else if (item.name === "checkbox") {
@@ -2525,12 +2689,11 @@ export function ComponentPreviewStage({
               <button
                 type="button"
                 onClick={() => setVariantMenuOpen((prev) => !prev)}
-                className="flex items-center gap-1.5 px-2 py-0.5 rounded-full hover:bg-[var(--surface-secondary)] active:scale-98 transition-all cursor-pointer group"
+                className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full hover:bg-[var(--surface-secondary)] active:scale-98 transition-all cursor-pointer group"
                 title="Select variant"
                 aria-haspopup="listbox"
                 aria-expanded={variantMenuOpen}
               >
-                <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent-green)] shrink-0" />
                 <span className="text-xs font-semibold text-[var(--text-primary)] capitalize tracking-tight">
                   {currentVariant}
                 </span>
@@ -2570,17 +2733,11 @@ export function ComponentPreviewStage({
                         className={cn(
                           "flex items-center justify-between w-full px-2.5 py-1.5 rounded-lg text-xs transition-colors text-left cursor-pointer",
                           isSelected
-                            ? "bg-[var(--surface-secondary)] text-[var(--accent-green)] font-semibold"
+                            ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] font-semibold"
                             : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] font-medium"
                         )}
                       >
                         <div className="flex items-center gap-1.5">
-                          <span
-                            className={cn(
-                              "h-1.5 w-1.5 rounded-full shrink-0",
-                              isSelected ? "bg-[var(--accent-green)]" : "bg-transparent"
-                            )}
-                          />
                           <span className="capitalize">{v}</span>
                         </div>
                         <span className="text-[10px] text-[var(--text-muted)]">
@@ -2974,8 +3131,7 @@ export function ComponentPreviewStage({
                           Edge cluster performance and real-time load
                         </p>
                       </div>
-                      <div className="flex items-center gap-2 text-[11px] font-mono text-emerald-400">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      <div className="flex items-center gap-1.5 text-[11px] font-mono text-zinc-400">
                         <span>All Systems Operational</span>
                       </div>
                     </div>
@@ -3083,6 +3239,145 @@ export function ComponentPreviewStage({
                   Click button to test accessible modal dialog with backdrop & portal
                 </span>
               )}
+            </div>
+          )}
+
+          {/* Popover Dialog */}
+          {item.name === "popover-dialog" && (
+            <div className="flex flex-col items-center justify-center py-20 min-h-[360px]">
+              <PopoverDialog
+                variant={popoverVariant}
+                placement={popoverPlacement}
+                showArrow={popoverShowArrow}
+              />
+            </div>
+          )}
+
+          {/* Command Palette */}
+          {item.name === "command-palette" && (
+            <div className="flex flex-col items-center justify-center gap-4 py-8">
+              <div className="text-center space-y-2">
+                <Button
+                  variant="accent"
+                  onClick={() => setCommandOpen(true)}
+                  className="shadow-xl"
+                >
+                  Open Command Palette (Cmd+K)
+                </Button>
+                <p className="text-xs font-mono text-[var(--text-muted)]">
+                  Press <kbd className="px-1.5 py-0.5 rounded bg-white/10 text-white">Cmd</kbd> + <kbd className="px-1.5 py-0.5 rounded bg-white/10 text-white">K</kbd> to toggle anywhere
+                </p>
+              </div>
+              <CommandPalette
+                open={commandOpen}
+                onOpenChange={setCommandOpen}
+                variant={commandVariant}
+              />
+            </div>
+          )}
+
+          {/* Drawer Dialog */}
+          {item.name === "drawer-dialog" && (
+            <div className="flex flex-col items-center justify-center gap-4 py-8">
+              <Button
+                variant="accent"
+                onClick={() => setDrawerOpen(true)}
+                className="shadow-xl"
+              >
+                Open {drawerVariant.replace("-", " ")} Drawer
+              </Button>
+              <p className="text-xs font-mono text-[var(--text-muted)]">
+                Slide-out inspector sheet with swipe dismiss & backdrop blur
+              </p>
+              <DrawerDialog
+                open={drawerOpen}
+                onOpenChange={setDrawerOpen}
+                variant={drawerVariant}
+                showHandle={drawerShowHandle}
+              />
+            </div>
+          )}
+
+          {/* Spotlight Modal */}
+          {item.name === "spotlight-modal" && (
+            <div className="flex flex-col items-center justify-center gap-4 py-8">
+              <Button
+                variant="accent"
+                onClick={() => setSpotlightModalOpen(true)}
+                className="shadow-xl"
+              >
+                Launch Spotlight Modal
+              </Button>
+              <p className="text-xs font-mono text-[var(--text-muted)]">
+                Interactive modal with mouse-following specular beam and CAD reticles
+              </p>
+              <SpotlightModal
+                open={spotlightModalOpen}
+                onOpenChange={setSpotlightModalOpen}
+                variant={spotlightModalVariant}
+                showReticle={spotlightReticle}
+              />
+            </div>
+          )}
+
+          {/* Announcement Bar */}
+          {item.name === "announcement-bar" && (
+            <div className="w-full max-w-2xl px-4 py-6">
+              <AnnouncementBar
+                variant={announcementVariant}
+                showCountdown={announcementCountdown}
+              />
+            </div>
+          )}
+
+          {/* Toast Stack */}
+          {item.name === "toast-stack" && (
+            <div className={cn(
+              "relative w-full min-h-[380px] p-6 flex flex-col",
+              toastStackVariant === "stacked-bottom-right" && "items-end justify-end",
+              toastStackVariant === "stacked-top-center" && "items-center justify-start",
+              (toastStackVariant === "cyber-telemetry" || toastStackVariant === "minimal-list") && "items-center justify-center"
+            )}>
+              <ToastStack
+                variant={toastStackVariant}
+                gap={toastStackGap}
+                isExpanded={toastStackExpand}
+                onExpandChange={setToastStackExpand}
+              />
+            </div>
+          )}
+
+          {/* Ticker Notification */}
+          {item.name === "ticker-notification" && (
+            <div className="w-full max-w-2xl px-4 py-6">
+              <TickerNotification
+                variant={tickerVariant}
+                speed={tickerSpeed}
+                pauseOnHover={tickerPauseOnHover}
+              />
+            </div>
+          )}
+
+          {/* Dynamic Island Banner */}
+          {item.name === "dynamic-island-banner" && (
+            <div className="w-full max-w-xl px-4 py-6 flex flex-col items-center">
+              <DynamicIslandBanner
+                variant={dynamicIslandVariant}
+                accentColor={dynamicIslandAccent}
+              />
+              <p className="text-[11px] font-mono text-[var(--text-muted)] mt-4">
+                Click the pill above to fluidly expand / collapse the telemetry HUD
+              </p>
+            </div>
+          )}
+
+          {/* Stack Cards */}
+          {item.name === "stack-cards" && (
+            <div className="w-full py-8 flex flex-col items-center">
+              <StackCards
+                variant={stackCardsVariant}
+                autoPlay={stackCardsAutoPlay}
+              />
             </div>
           )}
 
@@ -4440,6 +4735,70 @@ export function ComponentPreviewStage({
               </ElasticBlobCursor>
             </div>
           )}
+
+          {/* Skeleton */}
+          {item.name === "skeleton" && (
+            <div className="flex flex-col items-center justify-center p-4 sm:p-6 w-full max-w-md mx-auto">
+              {skeletonVariant === "card" ? (
+                <SkeletonCard
+                  variant={skeletonGlow ? "glow" : "shimmer"}
+                  hasCanvas
+                  canvasHeight="h-36 sm:h-40"
+                  lines={skeletonLines}
+                  className="w-full shadow-lg"
+                />
+              ) : skeletonVariant === "avatar" ? (
+                <div className="w-full p-5 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] space-y-4">
+                  <div className="flex items-center gap-3.5">
+                    <SkeletonAvatar size="lg" shape={skeletonShape === "rounded" ? "rounded" : "circular"} variant={skeletonVariant} />
+                    <div className="space-y-2 flex-1">
+                      <Skeleton shape="rounded" variant={skeletonVariant} accentGlow={skeletonGlow} className="h-4 w-36" />
+                      <Skeleton shape="text" variant={skeletonVariant} className="h-3 w-48" />
+                    </div>
+                  </div>
+                  <SkeletonText lines={skeletonLines} variant={skeletonVariant} />
+                </div>
+              ) : skeletonVariant === "text" ? (
+                <div className="w-full p-5 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] space-y-3">
+                  <Skeleton shape="rounded" variant={skeletonVariant} accentGlow={skeletonGlow} className="h-5 w-40 mb-2" />
+                  <SkeletonText lines={skeletonLines} variant={skeletonVariant} />
+                  <div className="flex items-center gap-2 pt-2">
+                    <SkeletonButton size="sm" variant={skeletonVariant} />
+                    <SkeletonButton size="sm" variant={skeletonVariant} className="w-16" />
+                  </div>
+                </div>
+              ) : skeletonVariant === "canvas" ? (
+                <div className="w-full h-56 sm:h-64 rounded-xl overflow-hidden shadow-lg border border-[var(--border)]">
+                  <SkeletonCanvas
+                    label="RENDER_PIPELINE"
+                    coordinates="DIM: 1920x1080 // GL_ES_3"
+                    variant={skeletonVariant === "shimmer" ? "shimmer" : "pulse"}
+                    showReticle
+                    className="h-full"
+                  />
+                </div>
+              ) : (
+                /* Shimmer / Pulse / Wave / Glow Showcase */
+                <div className="w-full p-5 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] space-y-4 shadow-md">
+                  <div className="flex items-center justify-between pb-2 border-b border-[var(--border)]/60">
+                    <div className="flex items-center gap-2.5">
+                      <SkeletonAvatar size="sm" variant={skeletonVariant} shape={skeletonShape === "circular" ? "circular" : "rounded"} />
+                      <Skeleton shape="rounded" variant={skeletonVariant} accentGlow={skeletonGlow} className="h-4 w-28" />
+                    </div>
+                    <SkeletonBadge variant={skeletonVariant} />
+                  </div>
+                  <SkeletonText lines={skeletonLines} variant={skeletonVariant} widths={["100%", "88%", "60%"]} />
+                  <div className="flex items-center justify-between pt-2">
+                    <div className="flex gap-2">
+                      <SkeletonButton size="sm" variant={skeletonVariant} accentGlow={skeletonGlow} />
+                      <SkeletonButton size="sm" variant={skeletonVariant} className="w-16" />
+                    </div>
+                    <Skeleton shape="pill" variant={skeletonVariant} className="h-6 w-12" />
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </ScaledThumbnailWrapper>
       </div>
 
@@ -4459,6 +4818,62 @@ export function ComponentPreviewStage({
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+            {/* Skeleton Controls */}
+            {item.name === "skeleton" && (
+              <>
+                <CustomizeTile label="Preset Variant">
+                  <CustomizeSelect
+                    value={skeletonVariant}
+                    onChange={(val) => {
+                      applyVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={["shimmer", "pulse", "wave", "card", "avatar", "text", "canvas"]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Shape">
+                  <CustomizeSelect
+                    value={skeletonShape}
+                    onChange={setSkeletonShape}
+                    options={["rounded", "circular", "pill", "text", "card"]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Speed">
+                  <CustomizeSelect
+                    value={skeletonSpeed}
+                    onChange={setSkeletonSpeed}
+                    options={["normal", "slow", "fast"]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Accent Glow">
+                  <Switch
+                    checked={skeletonGlow}
+                    onCheckedChange={setSkeletonGlow}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Paragraph Lines">
+                  <div className="flex items-center justify-between w-full gap-2">
+                    <input
+                      type="range"
+                      min={1}
+                      max={5}
+                      step={1}
+                      value={skeletonLines}
+                      onChange={(e) => setSkeletonLines(Number(e.target.value))}
+                      className="w-full accent-[var(--accent-green)] cursor-pointer"
+                    />
+                    <span className="font-mono text-xs text-[var(--text-muted)] tabular-nums shrink-0">
+                      {skeletonLines}
+                    </span>
+                  </div>
+                </CustomizeTile>
+              </>
+            )}
+
             {/* Button Controls */}
             {item.name === "button" && (
               <>
@@ -5280,6 +5695,302 @@ export function ComponentPreviewStage({
                     value={dialogDesc}
                     onChange={setDialogDesc}
                     placeholder="Dialog description"
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Popover Dialog Controls */}
+            {item.name === "popover-dialog" && (
+              <>
+                <CustomizeTile label="Preset Variant">
+                  <CustomizeSelect
+                    value={popoverVariant}
+                    onChange={(val) => {
+                      setPopoverVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={[
+                      { label: "Contextual Actions", value: "contextual-actions" },
+                      { label: "User Profile Card", value: "user-card" },
+                      { label: "Confirm Prompt", value: "confirm-prompt" },
+                      { label: "Color Palette", value: "color-picker" },
+                      { label: "Media Preview", value: "media-preview" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Placement">
+                  <CustomizeSelect
+                    value={popoverPlacement}
+                    onChange={setPopoverPlacement}
+                    options={[
+                      { label: "Bottom", value: "bottom" },
+                      { label: "Top", value: "top" },
+                      { label: "Left", value: "left" },
+                      { label: "Right", value: "right" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Show Arrow">
+                  <Switch
+                    checked={popoverShowArrow}
+                    onCheckedChange={setPopoverShowArrow}
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Command Palette Controls */}
+            {item.name === "command-palette" && (
+              <>
+                <CustomizeTile label="Aesthetic Theme">
+                  <CustomizeSelect
+                    value={commandVariant}
+                    onChange={(val) => {
+                      setCommandVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={[
+                      { label: "Spotlight Dark", value: "spotlight-dark" },
+                      { label: "Cyber Matrix", value: "cyber-matrix" },
+                      { label: "Minimal Monochrome", value: "minimal-monochrome" },
+                      { label: "Compact Dock", value: "compact-dock" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Palette Open State">
+                  <Switch
+                    checked={commandOpen}
+                    onCheckedChange={setCommandOpen}
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Drawer Dialog Controls */}
+            {item.name === "drawer-dialog" && (
+              <>
+                <CustomizeTile label="Drawer Mode">
+                  <CustomizeSelect
+                    value={drawerVariant}
+                    onChange={(val) => {
+                      setDrawerVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={[
+                      { label: "Bottom Sheet", value: "bottom-sheet" },
+                      { label: "Right Inspector", value: "right-inspector" },
+                      { label: "Left Drawer", value: "left-drawer" },
+                      { label: "Floating Card", value: "floating-card" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Drawer Open State">
+                  <Switch
+                    checked={drawerOpen}
+                    onCheckedChange={setDrawerOpen}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Show Drag Handle">
+                  <Switch
+                    checked={drawerShowHandle}
+                    onCheckedChange={setDrawerShowHandle}
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Spotlight Modal Controls */}
+            {item.name === "spotlight-modal" && (
+              <>
+                <CustomizeTile label="Spotlight Theme">
+                  <CustomizeSelect
+                    value={spotlightModalVariant}
+                    onChange={(val) => {
+                      setSpotlightModalVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={[
+                      { label: "Theatrical Glow", value: "theatrical-glow" },
+                      { label: "Cyber Scan", value: "cyber-scan" },
+                      { label: "Golden Hour", value: "golden-hour" },
+                      { label: "Laser Reticle", value: "laser-reticle" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Modal Open State">
+                  <Switch
+                    checked={spotlightModalOpen}
+                    onCheckedChange={setSpotlightModalOpen}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Show CAD Reticle">
+                  <Switch
+                    checked={spotlightReticle}
+                    onCheckedChange={setSpotlightReticle}
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Announcement Bar Controls */}
+            {item.name === "announcement-bar" && (
+              <>
+                <CustomizeTile label="Banner Style">
+                  <CustomizeSelect
+                    value={announcementVariant}
+                    onChange={(val) => {
+                      setAnnouncementVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={[
+                      { label: "Cyber Gradient", value: "cyber-gradient" },
+                      { label: "Minimal Monochrome", value: "minimal-monochrome" },
+                      { label: "Pulse Accent", value: "pulse-accent" },
+                      { label: "Floating Pill", value: "floating-pill" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Countdown Timer">
+                  <Switch
+                    checked={announcementCountdown}
+                    onCheckedChange={setAnnouncementCountdown}
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Toast Stack Controls */}
+            {item.name === "toast-stack" && (
+              <>
+                <CustomizeTile label="Stack Presentation">
+                  <CustomizeSelect
+                    value={toastStackVariant}
+                    onChange={(val) => {
+                      setToastStackVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={[
+                      { label: "Stacked Bottom-Right", value: "stacked-bottom-right" },
+                      { label: "Stacked Top-Center", value: "stacked-top-center" },
+                      { label: "Cyber Telemetry", value: "cyber-telemetry" },
+                      { label: "Minimal List", value: "minimal-list" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Card Gap">
+                  <CustomizeSelect
+                    value={toastStackGap}
+                    onChange={(val) => setToastStackGap(val as any)}
+                    options={[
+                      { label: "Compact (10px)", value: "compact" },
+                      { label: "Normal (14px)", value: "normal" },
+                      { label: "Relaxed (20px)", value: "relaxed" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Expand Deck">
+                  <Switch
+                    checked={toastStackExpand}
+                    onCheckedChange={setToastStackExpand}
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Ticker Notification Controls */}
+            {item.name === "ticker-notification" && (
+              <>
+                <CustomizeTile label="Ticker Style">
+                  <CustomizeSelect
+                    value={tickerVariant}
+                    onChange={(val) => {
+                      setTickerVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={[
+                      { label: "Cyber Terminal", value: "cyber-terminal" },
+                      { label: "Status Beacon", value: "status-beacon" },
+                      { label: "News Wire", value: "news-wire" },
+                      { label: "Monochrome Minimal", value: "monochrome-minimal" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Scroll Speed">
+                  <CustomizeSelect
+                    value={tickerSpeed}
+                    onChange={setTickerSpeed}
+                    options={[
+                      { label: "Slow", value: "slow" },
+                      { label: "Normal", value: "normal" },
+                      { label: "Fast", value: "fast" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Pause on Hover">
+                  <Switch
+                    checked={tickerPauseOnHover}
+                    onCheckedChange={setTickerPauseOnHover}
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Dynamic Island Banner Controls */}
+            {item.name === "dynamic-island-banner" && (
+              <>
+                <CustomizeTile label="Island Mode">
+                  <CustomizeSelect
+                    value={dynamicIslandVariant}
+                    onChange={(val) => {
+                      setDynamicIslandVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={[
+                      { label: "Compact Pill", value: "compact-pill" },
+                      { label: "Expanded Telemetry HUD", value: "expanded-hud" },
+                      { label: "Media Waveform", value: "media-wave" },
+                      { label: "Cluster Alert", value: "telemetry-alert" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="LED Accent">
+                  <CustomizeSelect
+                    value={dynamicIslandAccent}
+                    onChange={setDynamicIslandAccent}
+                    options={[
+                      { label: "Neon Green", value: "green" },
+                      { label: "Cyan Plasma", value: "cyan" },
+                      { label: "Amber Warning", value: "amber" },
+                      { label: "Pure White", value: "white" },
+                    ]}
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Stack Cards Controls */}
+            {item.name === "stack-cards" && (
+              <>
+                <CustomizeTile label="Stack Geometry">
+                  <CustomizeSelect
+                    value={stackCardsVariant}
+                    onChange={(val) => {
+                      setStackCardsVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={[
+                      { label: "Perspective Stack", value: "perspective-stack" },
+                      { label: "Radial Fan-Out", value: "fan-out" },
+                      { label: "Cyber CAD Deck", value: "cyber-deck" },
+                      { label: "Minimal Swipe", value: "minimal-swipe" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Auto-Cycle Deck">
+                  <Switch
+                    checked={stackCardsAutoPlay}
+                    onCheckedChange={setStackCardsAutoPlay}
                   />
                 </CustomizeTile>
               </>

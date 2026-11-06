@@ -46,6 +46,10 @@ export const metadata: Metadata = {
     "creative developer",
     "creative UI",
     "TypeScript strict",
+    "Nextjs Components",
+    "kilo",
+    "web ui",
+    "website ui"
   ],
   authors: [{ name: "Sourodip", url: "https://sourodip.me" }],
   creator: "Sourodip",
@@ -103,6 +107,20 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
+        url: "/favicon.svg",
+        type: "image/svg+xml",
+      },
+      {
+        url: "/KiloUi-logo-darkmode.svg",
+        type: "image/svg+xml",
+        media: "(prefers-color-scheme: dark)",
+      },
+      {
+        url: "/KiloUi-logo-lightmode.svg",
+        type: "image/svg+xml",
+        media: "(prefers-color-scheme: light)",
+      },
+      {
         url: "/favicon.ico",
         sizes: "48x48",
       },
@@ -125,16 +143,6 @@ export const metadata: Metadata = {
         url: "/android-chrome-512x512.png",
         sizes: "512x512",
         type: "image/png",
-      },
-      {
-        url: "/KiloUi-logo-darkmode.svg",
-        type: "image/svg+xml",
-        media: "(prefers-color-scheme: dark)",
-      },
-      {
-        url: "/KiloUi-logo-lightmode.svg",
-        type: "image/svg+xml",
-        media: "(prefers-color-scheme: light)",
       },
     ],
     shortcut: ["/favicon.ico"],
@@ -162,6 +170,9 @@ export default function RootLayout({
     >
       <head>
         {/* Favicon & Web Manifest explicitly linked for search crawlers & browsers */}
+        <link rel="icon" id="kilo-favicon-svg" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="icon" href="/KiloUi-logo-darkmode.svg" type="image/svg+xml" media="(prefers-color-scheme: dark)" />
+        <link rel="icon" href="/KiloUi-logo-lightmode.svg" type="image/svg+xml" media="(prefers-color-scheme: light)" />
         <link rel="icon" href="/favicon.ico" sizes="48x48" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
@@ -175,6 +186,20 @@ export default function RootLayout({
             __html: `
               (function() {
                 try {
+                  function syncFavicon() {
+                    try {
+                      var isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                      var fav = document.getElementById('kilo-favicon-svg');
+                      if (fav) {
+                        fav.href = isDark ? '/KiloUi-logo-darkmode.svg' : '/KiloUi-logo-lightmode.svg';
+                      }
+                    } catch(e) {}
+                  }
+                  syncFavicon();
+                  if (window.matchMedia) {
+                    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', syncFavicon);
+                  }
+
                   var saved = localStorage.getItem('kilo-theme');
                   var isLight = false;
                   if (saved === 'light') {

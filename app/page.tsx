@@ -311,9 +311,8 @@ export default function LandingPage() {
               <span className="text-[var(--accent-green)]">/</span>
               <span>ui</span>
             </div>
-            <span className="hidden sm:inline-flex items-center gap-1.5 ml-1.5 px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-zinc-800 text-zinc-300 border border-zinc-700/60 shadow-2xs">
-              <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent-green)] animate-pulse" />
-              v1.1
+            <span className="inline-flex items-center ml-2 px-2 py-0.5 rounded-full text-[10px] font-mono font-medium bg-white/10 text-white/90 border border-white/15 backdrop-blur-md shadow-xs">
+              v0.3.0
             </span>
           </Link>
 
@@ -515,7 +514,23 @@ export default function LandingPage() {
         >
           {/* Hero Foreground Content */}
           <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center space-y-7 pointer-events-none">
-            <div className="space-y-4">
+            <div className="space-y-4 flex flex-col items-center">
+              {/* Version 0.3.0 Release Pill */}
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 backdrop-blur-md shadow-xs pointer-events-auto hover:border-white/20 transition-all">
+                <span className="flex h-1.5 w-1.5 rounded-full bg-[var(--accent-green)] animate-pulse" />
+                <span className="font-mono text-xs text-white/80 font-medium">
+                  v0.3.0 Released
+                </span>
+                <span className="text-white/30">•</span>
+                <Link
+                  href="/components/dynamic-island-banner"
+                  className="font-mono text-xs text-[var(--accent-green)] hover:underline inline-flex items-center gap-1"
+                >
+                  <span>10 New Overlays &amp; Primitives</span>
+                  <ArrowRight className="h-3 w-3" />
+                </Link>
+              </div>
+
               <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-white uppercase font-sans leading-[1.06]">
                 Precision UI Primitives For Modern React
               </h1>

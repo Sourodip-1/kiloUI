@@ -249,7 +249,7 @@ export const DirectionalMarquee = React.forwardRef<HTMLDivElement, DirectionalMa
                 )}
               </span>
               {isScrolling && (
-                <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent-green)] animate-ping ml-1" />
+                <span className="h-1.5 w-1.5 rounded-full bg-white/60 ml-1" />
               )}
             </div>
 

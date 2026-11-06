@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const VERSION = "0.2.0";
+const VERSION = "0.3.0";
 const GITHUB_RAW_BASE = "https://raw.githubusercontent.com/Sourodip-1/kiloUI/main";
 const DEFAULT_REGISTRY_URL = process.env.KILO_REGISTRY_URL || "https://www.kiloui.dev/api/registry";
 
@@ -47,6 +47,28 @@ const COMPONENT_ALIASES = {
   "slot-button": "elastic-slot-button",
   "glass-button": "glass-prism-button",
   "prism-button": "glass-prism-button",
+  "skeleton": "skeleton",
+  "skeleton-loader": "skeleton",
+  "popover": "popover-dialog",
+  "popover-dialog": "popover-dialog",
+  "command": "command-palette",
+  "command-palette": "command-palette",
+  "drawer": "drawer-dialog",
+  "drawer-dialog": "drawer-dialog",
+  "bottom-sheet": "drawer-dialog",
+  "spotlight-modal": "spotlight-modal",
+  "spotlight-dialog": "spotlight-modal",
+  "announcement": "announcement-bar",
+  "announcement-bar": "announcement-bar",
+  "toast": "toast-stack",
+  "toast-stack": "toast-stack",
+  "toasts": "toast-stack",
+  "ticker": "ticker-notification",
+  "ticker-notification": "ticker-notification",
+  "dynamic-island": "dynamic-island-banner",
+  "dynamic-island-banner": "dynamic-island-banner",
+  "stack-cards": "stack-cards",
+  "card-stack": "stack-cards",
 };
 
 // Associated companion files (e.g. CSS files)
@@ -59,7 +81,13 @@ const COMPANION_FILES = {
 // Peer dependencies by component keywords or names
 const COMPONENT_DEPS = {
   three: ["contour-tide", "liquid-metal-background", "liquid-metal", "ethereal-smoke-shader", "grainy-grid-shader", "grainy-horizon-shader", "morph-node-ring", "glass-reveal", "prismatic-slats-bg"],
-  "lucide-react": ["button", "search-bar", "liquid-glass-search-bar", "footer", "blueprint-login", "horizon-login", "minimalist-login", "dialog", "tabs", "sidebar", "notched-navbar", "elastic-slot-button"],
+  "lucide-react": [
+    "button", "search-bar", "liquid-glass-search-bar", "footer", "blueprint-login", 
+    "horizon-login", "minimalist-login", "dialog", "tabs", "sidebar", "notched-navbar", 
+    "elastic-slot-button", "popover-dialog", "command-palette", "drawer-dialog", 
+    "spotlight-modal", "announcement-bar", "toast-stack", "ticker-notification", 
+    "dynamic-island-banner", "stack-cards"
+  ],
 };
 
 function log(msg = "") {

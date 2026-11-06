@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { REGISTRY_DATA } from "@/registry/registry-data";
 import { ComponentDetailClient } from "./component-detail-client";
+import { ComponentDetailSkeleton } from "@/components/skeletons";
 
 export function generateStaticParams() {
   return Object.keys(REGISTRY_DATA).map((name) => ({ name }));
@@ -45,13 +46,7 @@ export default function ComponentPage({
   params: Promise<{ name: string }>;
 }) {
   return (
-    <React.Suspense
-      fallback={
-        <div className="flex-1 max-w-6xl mx-auto px-4 sm:px-6 py-8 text-xs text-[var(--text-muted)] font-mono animate-pulse">
-          Loading component...
-        </div>
-      }
-    >
+    <React.Suspense fallback={<ComponentDetailSkeleton />}>
       <ComponentPageContent params={params} />
     </React.Suspense>
   );

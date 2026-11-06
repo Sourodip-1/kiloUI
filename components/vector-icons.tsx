@@ -821,6 +821,202 @@ export function VectorComponentIcon({
 }) {
   const norm = name.toLowerCase();
 
+  // Skeleton Loader
+  if (norm.includes("skeleton")) {
+    return (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={`${className} ${isActive ? "stroke-[var(--accent-green)]" : ""}`}
+      >
+        <rect x="3" y="4" width="18" height="6" rx="2" strokeDasharray="3 2" />
+        <line x1="3" y1="14" x2="15" y2="14" strokeWidth="2.5" strokeLinecap="round" />
+        <line x1="3" y1="19" x2="11" y2="19" strokeWidth="2.5" strokeLinecap="round" opacity="0.6" />
+        <circle cx="19" cy="16.5" r="2.5" className={isActive ? "fill-[var(--accent-green)]/30 stroke-[var(--accent-green)]" : ""} />
+      </svg>
+    );
+  }
+
+  // Popover Dialog
+  if (norm.includes("popover")) {
+    return (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={`${className} ${isActive ? "stroke-[var(--accent-green)]" : ""}`}
+      >
+        <rect x="3" y="3" width="18" height="14" rx="2.5" />
+        <path d="m9 17 3 4 3-4" />
+        <line x1="7" y1="8" x2="17" y2="8" strokeWidth="1.5" />
+        <line x1="7" y1="12" x2="13" y2="12" strokeWidth="1.5" opacity="0.6" />
+      </svg>
+    );
+  }
+
+  // Command Palette
+  if (norm.includes("command")) {
+    return (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={`${className} ${isActive ? "stroke-[var(--accent-green)]" : ""}`}
+      >
+        <rect x="2" y="4" width="20" height="16" rx="3" />
+        <line x1="2" y1="10" x2="22" y2="10" />
+        <circle cx="6" cy="7" r="1" className={isActive ? "fill-[var(--accent-green)]" : ""} />
+        <path d="m14 14 3 3" />
+        <circle cx="12" cy="15" r="2" />
+      </svg>
+    );
+  }
+
+  // Drawer Dialog
+  if (norm.includes("drawer")) {
+    return (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={`${className} ${isActive ? "stroke-[var(--accent-green)]" : ""}`}
+      >
+        <rect x="3" y="3" width="18" height="18" rx="3" />
+        <line x1="3" y1="12" x2="21" y2="12" />
+        <line x1="10" y1="16" x2="14" y2="16" strokeWidth="2" strokeLinecap="round" className={isActive ? "stroke-[var(--accent-green)]" : ""} />
+      </svg>
+    );
+  }
+
+  // Spotlight Modal
+  if (norm.includes("spotlight-modal")) {
+    return (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={`${className} ${isActive ? "stroke-[var(--accent-green)]" : ""}`}
+      >
+        <rect x="4" y="5" width="16" height="14" rx="2" />
+        <circle cx="12" cy="12" r="3" className={isActive ? "stroke-[var(--accent-green)] fill-[var(--accent-green)]/20" : ""} />
+        <line x1="12" y1="2" x2="12" y2="4" />
+        <line x1="12" y1="20" x2="12" y2="22" />
+      </svg>
+    );
+  }
+
+  // Announcement Bar
+  if (norm.includes("announcement")) {
+    return (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={`${className} ${isActive ? "stroke-[var(--accent-green)]" : ""}`}
+      >
+        <rect x="2" y="7" width="20" height="10" rx="2" />
+        <path d="M18 10h1.5a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H18" />
+        <circle cx="6" cy="12" r="1.5" className={isActive ? "fill-[var(--accent-green)] stroke-[var(--accent-green)]" : ""} />
+        <line x1="10" y1="12" x2="15" y2="12" strokeWidth="1.5" />
+      </svg>
+    );
+  }
+
+  // Toast Stack
+  if (norm.includes("toast")) {
+    return (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={`${className} ${isActive ? "stroke-[var(--accent-green)]" : ""}`}
+      >
+        <rect x="5" y="4" width="14" height="6" rx="1.5" opacity="0.4" />
+        <rect x="4" y="8" width="16" height="6" rx="1.5" opacity="0.7" />
+        <rect x="3" y="12" width="18" height="8" rx="2" className={isActive ? "stroke-[var(--accent-green)]" : ""} />
+        <line x1="6" y1="16" x2="12" y2="16" strokeWidth="1.5" />
+      </svg>
+    );
+  }
+
+  // Ticker Notification
+  if (norm.includes("ticker")) {
+    return (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={`${className} ${isActive ? "stroke-[var(--accent-green)]" : ""}`}
+      >
+        <rect x="2" y="7" width="20" height="10" rx="2" />
+        <polyline points="7 12 10 9 14 15 17 12" className={isActive ? "stroke-[var(--accent-green)]" : ""} />
+      </svg>
+    );
+  }
+
+  // Dynamic Island Banner
+  if (norm.includes("dynamic-island") || norm.includes("island")) {
+    return (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={`${className} ${isActive ? "stroke-[var(--accent-green)]" : ""}`}
+      >
+        <rect x="4" y="9" width="16" height="6" rx="3" className={isActive ? "stroke-[var(--accent-green)]" : ""} />
+        <circle cx="8" cy="12" r="1" className={isActive ? "fill-[var(--accent-green)]" : "fill-current"} />
+        <circle cx="16" cy="12" r="1" fill="currentColor" opacity="0.6" />
+      </svg>
+    );
+  }
+
+  // Stack Cards
+  if (norm.includes("stack-card") || norm.includes("stack")) {
+    return (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={`${className} ${isActive ? "stroke-[var(--accent-green)]" : ""}`}
+      >
+        <rect x="7" y="3" width="14" height="12" rx="2" opacity="0.4" />
+        <rect x="5" y="6" width="14" height="12" rx="2" opacity="0.7" />
+        <rect x="3" y="9" width="14" height="12" rx="2" className={isActive ? "stroke-[var(--accent-green)]" : ""} />
+      </svg>
+    );
+  }
+
   // Firefly Cursor
   if (norm.includes("cursor") || norm.includes("firefly")) {
     return (

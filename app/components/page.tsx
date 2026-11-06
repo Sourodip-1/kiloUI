@@ -20,17 +20,12 @@ import { ComponentCarousel } from "@/components/component-carousel";
 import { VectorCategoryIcon, VectorComponentIcon } from "@/components/vector-icons";
 import { ComponentPreviewStage } from "@/components/component-preview-stage";
 import { SlidingHighlightContainer } from "@/components/sliding-highlight";
+import { ComponentsDiscoverySkeleton } from "@/components/skeletons";
 import { cn } from "@/lib/utils";
 
 export default function AllComponentsPage() {
   return (
-    <React.Suspense
-      fallback={
-        <div className="flex-1 max-w-6xl mx-auto px-4 sm:px-6 py-8 text-xs text-[var(--text-muted)] font-mono">
-          Loading components...
-        </div>
-      }
-    >
+    <React.Suspense fallback={<ComponentsDiscoverySkeleton />}>
       <ComponentsDiscoveryContent />
     </React.Suspense>
   );

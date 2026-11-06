@@ -108,7 +108,7 @@ export default function OverviewPage() {
                   className="font-mono text-[11px]"
                   style={{ color: "rgba(255, 255, 255, 0.75)" }}
                 >
-                  v0.2.0 • Component Library &amp; Interactive Playground
+                  v0.3.0 • Component Library &amp; Interactive Playground
                 </p>
               </div>
             </Link>
