@@ -138,22 +138,46 @@ export function ComponentDetailClient({ item, initialVariant }: ComponentDetailC
     (i) => i.name !== item.name && i.name !== "bento-cluster"
   );
 
-  const promptWriting =
-    item.aiPrompt ||
-    `Create and integrate a production-ready ${item.title} component for kilo/ui in React (TypeScript) and Tailwind CSS.\n\nDescription: ${item.description}\nCategory: ${item.category}`;
+  const depsList = item.dependencies && item.dependencies.length > 0
+    ? item.dependencies.join(", ")
+    : "lucide-react, clsx, tailwind-merge";
 
-  const aiPrompt = `${promptWriting}
+  const usageSnippet = (configuredCode || item.usage || "").trim();
 
-### Component Source Code (${mainFile?.name || `${item.name}.tsx`}):
-\`\`\`tsx
-${sourceCode.trim()}
+  const aiPrompt = `Install and integrate the **${item.title}** component from kilo/ui into this React / Next.js project.
+
+### Component Details:
+- **Component**: ${item.title} (\`${item.name}\`)
+- **Category**: ${item.category}
+- **Description**: ${item.description}
+- **Documentation**: https://www.kiloui.dev/components/${item.name}
+- **Registry API Endpoint**: https://www.kiloui.dev/api/registry/${item.name}
+- **NPM Package**: https://www.npmjs.com/package/@kilo-ui/cli
+
+### Installation:
+Run the official kilo/ui CLI command in your project terminal to add this component directly:
+\`\`\`bash
+npx @kilo-ui/cli add ${item.name}
 \`\`\`
-${(configuredCode || item.usage) ? `
-### Example Usage:
-\`\`\`tsx
-${(configuredCode || item.usage || "").trim()}
+
+*(Alternative: If CLI is unavailable, fetch the raw component definition directly from the registry endpoint: \`https://www.kiloui.dev/api/registry/${item.name}\`)*
+
+### Required Dependencies:
+Ensure the following packages are installed:
+\`\`\`bash
+npm install ${depsList}
 \`\`\`
-` : ""}`.trim();
+
+${usageSnippet ? `### Example Integration:
+\`\`\`tsx
+${usageSnippet}
+\`\`\`
+
+` : ""}### Instructions for AI Agent:
+1. Run \`npx @kilo-ui/cli add ${item.name}\` to add the component to \`components/ui/${item.name}.tsx\`.
+2. Verify that Tailwind CSS and required dependencies are configured.
+3. Import and render the component using the provided usage example above.
+4. Adapt the props, variant, and responsive styling to seamlessly match the current page context.`.trim();
 
   const handleToggleFavorite = () => {
     toggleFavorite(item.name, item.title);
@@ -177,7 +201,7 @@ ${(configuredCode || item.usage || "").trim()}
       let label = "";
       if (type === "prompt") {
         content = aiPrompt;
-        label = "Copied AI prompt with code!";
+        label = "Copied AI integration prompt!";
       } else if (type === "configured") {
         content = configuredCode || item.usage || sourceCode;
         label = "Copied configured code!";
