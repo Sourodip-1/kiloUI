@@ -486,6 +486,7 @@ ${ANSI.bold}COMMANDS${ANSI.reset}
   ${ANSI.cyan}init${ANSI.reset}                    Initialize kilo/ui design tokens and utils
   ${ANSI.cyan}add <component...>${ANSI.reset}     Add one or more components to your project
   ${ANSI.cyan}list${ANSI.reset}                    List all components available in the registry
+  ${ANSI.cyan}mcp${ANSI.reset}                     Start the Model Context Protocol (MCP) stdio server
   ${ANSI.cyan}help${ANSI.reset}                    Display this help message
 
 ${ANSI.bold}OPTIONS${ANSI.reset}
@@ -499,7 +500,95 @@ ${ANSI.bold}EXAMPLES${ANSI.reset}
   $ npx @kilo-ui/cli add option-wheel contour-tide
   $ npx @kilo-ui/cli add button --overwrite
   $ npx @kilo-ui/cli list
+  $ npx @kilo-ui/cli mcp
 `);
+}
+
+async function runMcpBridge() {
+  const readline = await import("node:readline");
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+    terminal: false,
+  });
+
+  const MCP_ENDPOINT = process.env.KILO_MCP_URL || "https://www.kiloui.dev/api/mcp";
+
+  function postJson(endpoint, payload) {
+    return new Promise((resolve, reject) => {
+      const url = new URL(endpoint);
+      const data = JSON.stringify(payload);
+      const req = https.request(
+        url,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Content-Length": Buffer.byteLength(data),
+            "User-Agent": `kilo-ui-cli/${VERSION}`,
+          },
+        },
+        (res) => {
+          let body = "";
+          res.on("data", (chunk) => (body += chunk));
+          res.on("end", () => {
+            try {
+              resolve(JSON.parse(body));
+            } catch (err) {
+              reject(err);
+            }
+          });
+        }
+      );
+      req.on("error", reject);
+      req.write(data);
+      req.end();
+    });
+  }
+
+  rl.on("line", async (line) => {
+    line = line.trim();
+    if (!line) return;
+    try {
+      const msg = JSON.parse(line);
+      if (msg.method === "notifications/initialized") return;
+      if (msg.method === "initialize") {
+        const initResp = {
+          jsonrpc: "2.0",
+          id: msg.id,
+          result: {
+            protocolVersion: "2024-11-05",
+            capabilities: {
+              tools: { listChanged: false },
+              resources: { listChanged: false },
+              prompts: { listChanged: false },
+            },
+            serverInfo: {
+              name: "kilo-ui",
+              version: VERSION,
+            },
+          },
+        };
+        process.stdout.write(JSON.stringify(initResp) + "\n");
+        return;
+      }
+
+      try {
+        const resp = await postJson(MCP_ENDPOINT, msg);
+        process.stdout.write(JSON.stringify(resp) + "\n");
+      } catch (fwdErr) {
+        process.stdout.write(
+          JSON.stringify({
+            jsonrpc: "2.0",
+            id: msg.id,
+            error: { code: -32603, message: `Failed to reach MCP server: ${fwdErr.message}` },
+          }) + "\n"
+        );
+      }
+    } catch {
+      // ignore malformed input
+    }
+  });
 }
 
 async function main() {
@@ -513,6 +602,11 @@ async function main() {
 
   if (command === "--version" || command === "-v" || command === "version") {
     log(`kiloui v${VERSION}`);
+    return;
+  }
+
+  if (command === "mcp") {
+    await runMcpBridge();
     return;
   }
 
