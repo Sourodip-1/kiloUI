@@ -342,7 +342,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         setLikedDrawerOpen,
       }}
     >
-      {pathname === "/" || !["/components", "/overview", "/icons", "/motion", "/liked", "/login"].some(r => pathname === r || pathname?.startsWith(r + "/")) ? (
+      {pathname === "/" || !["/components", "/overview", "/icons", "/motion", "/liked", "/login", "/mobile-primitives", "/mcp"].some(r => pathname === r || pathname?.startsWith(r + "/")) ? (
         <div className="min-h-screen w-full bg-[#070709] text-white antialiased font-sans">
           {children}
         </div>
@@ -420,6 +420,20 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                     <>
                       <span>/</span>
                       <span className="text-[var(--text-primary)] font-bold">Liked Components</span>
+                    </>
+                  )}
+
+                  {pathname?.startsWith("/mobile-primitives") && (
+                    <>
+                      <span>/</span>
+                      <span className="text-[var(--text-primary)] font-bold">Mobile Primitives</span>
+                    </>
+                  )}
+
+                  {pathname?.startsWith("/mcp") && (
+                    <>
+                      <span>/</span>
+                      <span className="text-[var(--text-primary)] font-bold">MCP Connect</span>
                     </>
                   )}
 

@@ -14,6 +14,7 @@ import {
   VectorCategoryIcon,
   VectorComponentIcon,
   VectorCubeIcon,
+  VectorMobileIcon,
 } from "@/components/vector-icons";
 import { REGISTRY_DATA, RegistryItem } from "@/registry/registry-data";
 import { SidebarHoverPreview, HoverState } from "@/components/sidebar-hover-preview";
@@ -355,6 +356,8 @@ function SidebarBase({
   const isOverview = pathname === "/overview";
   const isAllComponents = pathname === "/components";
   const isIcons = pathname === "/icons" || pathname?.startsWith("/icons");
+  const isMobilePrimitives = pathname === "/mobile-primitives" || pathname?.startsWith("/mobile-primitives");
+  const isMcp = pathname === "/mcp" || pathname?.startsWith("/mcp");
 
   const isScrollableCategories = variant === "scrollable-categories";
 
@@ -468,6 +471,79 @@ function SidebarBase({
               <span className="whitespace-nowrap">Kilo/Icons</span>
               <span className="text-[10px] font-sans font-medium tabular-nums text-[var(--text-muted)]">
                 152
+              </span>
+            </div>
+          </Link>
+
+          {/* Mobile Primitives */}
+          <Link
+            href="/mobile-primitives"
+            data-hover-item="true"
+            onClick={() => onMobileOpenChange?.(false)}
+            className={cn(
+              "group relative z-10 flex items-center w-full rounded p-2 text-xs font-semibold tracking-tight transition-colors duration-150 active:scale-[0.98]",
+              isMobilePrimitives
+                ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] border border-[var(--border)]"
+                : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-transparent"
+            )}
+            title={isCollapsed ? "Mobile Primitives" : undefined}
+          >
+            <div className="flex h-5 w-5 shrink-0 items-center justify-center">
+              <VectorMobileIcon
+                isActive={isMobilePrimitives}
+                className={cn(
+                  "h-4 w-4 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-115 group-hover:-translate-y-0.5",
+                  isMobilePrimitives
+                    ? "text-[var(--accent-green)] scale-105"
+                    : "text-[var(--text-primary)] group-hover:text-[var(--accent-green)]"
+                )}
+              />
+            </div>
+            <div
+              className={cn(
+                "flex items-center justify-between flex-1 ml-2.5 overflow-hidden transition-opacity duration-200",
+                isCollapsed && "opacity-0 pointer-events-none"
+              )}
+            >
+              <span className="whitespace-nowrap">Mobile Primitives</span>
+              <span className="text-[10px] font-sans font-medium tabular-nums text-[var(--text-muted)]">
+                5
+              </span>
+            </div>
+          </Link>
+          {/* MCP Connect */}
+          <Link
+            href="/mcp"
+            data-hover-item="true"
+            onClick={() => onMobileOpenChange?.(false)}
+            className={cn(
+              "group relative z-10 flex items-center w-full rounded p-2 text-xs font-semibold tracking-tight transition-colors duration-150 active:scale-[0.98]",
+              isMcp
+                ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] border border-[var(--border)]"
+                : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-transparent"
+            )}
+            title={isCollapsed ? "MCP Connect" : undefined}
+          >
+            <div className="flex h-5 w-5 shrink-0 items-center justify-center">
+              <VectorApiIcon
+                isActive={isMcp}
+                className={cn(
+                  "h-4 w-4 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-115 group-hover:-translate-y-0.5",
+                  isMcp
+                    ? "text-[var(--accent-green)] scale-105"
+                    : "text-[var(--text-primary)] group-hover:text-[var(--accent-green)]"
+                )}
+              />
+            </div>
+            <div
+              className={cn(
+                "flex items-center justify-between flex-1 ml-2.5 overflow-hidden transition-opacity duration-200",
+                isCollapsed && "opacity-0 pointer-events-none"
+              )}
+            >
+              <span className="whitespace-nowrap">MCP Connect</span>
+              <span className="text-[9px] font-mono font-medium px-1.5 py-0.5 rounded border border-[var(--border)] text-[var(--text-muted)] bg-[var(--surface-secondary)]/60">
+                4 tools
               </span>
             </div>
           </Link>
