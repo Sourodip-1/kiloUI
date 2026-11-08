@@ -2,12 +2,13 @@
 
 import * as React from "react";
 import { Check, X } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
 
 export type M3ChipType = "assist" | "filter" | "input" | "suggestion";
 
 export interface M3ChipProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "onAnimationStart" | "onDragStart" | "onDragEnd" | "onDrag"> {
   chipType?: M3ChipType;
   selected?: boolean;
   defaultSelected?: boolean;
@@ -46,25 +47,24 @@ export const M3Chip = React.forwardRef<HTMLButtonElement, M3ChipProps>(
     const handleRemove = onDelete || onRemove;
 
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-      if (chipType === "filter") {
-        const next = !selected;
-        if (controlledSelected === undefined) {
-          setUncontrolledSelected(next);
-        }
-        onSelectedChange?.(next);
+      const next = !selected;
+      if (controlledSelected === undefined) {
+        setUncontrolledSelected(next);
       }
+      onSelectedChange?.(next);
       onClick?.(e);
     };
 
     return (
-      <button
+      <motion.button
         ref={ref}
         type="button"
-        aria-pressed={chipType === "filter" ? selected : undefined}
+        aria-pressed={selected}
         onClick={handleClick}
+        whileTap={{ scale: 0.94 }}
+        transition={{ type: "spring", stiffness: 500, damping: 28 }}
         className={cn(
-          "inline-flex items-center font-sans font-medium select-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-green)]/40 disabled:opacity-40 disabled:pointer-events-none",
-          "transition-all duration-200 active:scale-[0.95] ease-[cubic-bezier(0.2,0,0,1)]",
+          "inline-flex items-center font-sans font-medium select-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-green)]/40 disabled:opacity-40 disabled:pointer-events-none transition-colors",
           isMinimal
             ? cn(
                 "h-7 px-2.5 rounded-lg text-xs gap-1.5 border",
@@ -80,11 +80,23 @@ export const M3Chip = React.forwardRef<HTMLButtonElement, M3ChipProps>(
               ),
           className
         )}
-        {...props}
+        {...(props as any)}
       >
-        {selected && chipType === "filter" ? (
-          <Check className="h-3.5 w-3.5 shrink-0 stroke-[2.5] animate-in zoom-in-50 duration-200 ease-[cubic-bezier(0.34,1.56,0.64,1)] text-[var(--accent-green)]" />
-        ) : avatar ? (
+        <AnimatePresence>
+          {selected && (chipType === "filter" || isMinimal) && (
+            <motion.span
+              initial={{ scale: 0, width: 0, opacity: 0 }}
+              animate={{ scale: 1, width: "auto", opacity: 1 }}
+              exit={{ scale: 0, width: 0, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 500, damping: 25 }}
+              className="shrink-0 flex items-center text-[var(--accent-green)]"
+            >
+              <Check className="h-3.5 w-3.5 stroke-[2.5]" />
+            </motion.span>
+          )}
+        </AnimatePresence>
+
+        {avatar ? (
           <span className="shrink-0 -ml-1 h-5 w-5 rounded-full overflow-hidden flex items-center justify-center">
             {avatar}
           </span>
@@ -102,12 +114,12 @@ export const M3Chip = React.forwardRef<HTMLButtonElement, M3ChipProps>(
               e.stopPropagation();
               handleRemove();
             }}
-            className="p-0.5 -mr-1 rounded-full hover:bg-[var(--surface-tertiary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-transform active:scale-90"
+            className="ml-1 -mr-1 p-0.5 rounded-full hover:bg-[var(--surface-tertiary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
           >
             <X className="h-3 w-3" />
           </span>
         )}
-      </button>
+      </motion.button>
     );
   }
 );

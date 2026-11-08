@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
 
 export interface M3SliderProps {
@@ -100,14 +101,14 @@ export function M3Slider({
         {/* Track Background */}
         <div
           className={cn(
-            "w-full rounded-full transition-colors relative overflow-hidden",
+            "w-full rounded-full relative overflow-hidden",
             isMinimal ? "h-1.5 bg-[var(--surface-secondary)]" : "h-3.5 bg-[var(--surface-secondary)]/80 border border-[var(--border)]/40"
           )}
         >
           {/* Active Filled Track */}
           <div
             className={cn(
-              "h-full transition-all duration-100 ease-[cubic-bezier(0.2,0,0,1)]",
+              "h-full",
               isMinimal ? "bg-[var(--text-primary)]" : "bg-[var(--accent-green)]"
             )}
             style={{ width: `${percentage}%` }}
@@ -131,28 +132,40 @@ export function M3Slider({
 
         {/* Thumb with Elastic Spring Value Pin Balloon */}
         <div
-          className="absolute -translate-x-1/2 flex flex-col items-center pointer-events-none transition-[left] duration-100 ease-[cubic-bezier(0.2,0,0,1)]"
+          className="absolute -translate-x-1/2 flex flex-col items-center pointer-events-none"
           style={{ left: `${percentage}%` }}
         >
           {/* M3 Balloon Pin Bubble with spring pop */}
-          {showValueBubble && isDragging && (
-            <div className="absolute -top-11 flex flex-col items-center animate-in zoom-in-75 fade-in duration-200 ease-[cubic-bezier(0.34,1.56,0.64,1)]">
-              <div className="px-2.5 py-0.5 rounded-full bg-[var(--accent-green)] text-[var(--bg-main)] font-mono text-[11px] font-bold shadow-lg">
-                {value}
-              </div>
-              {/* Pointer triangle */}
-              <div className="w-2 h-1.5 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-[var(--accent-green)]" />
-            </div>
-          )}
+          <AnimatePresence>
+            {showValueBubble && isDragging && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.5, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.6, y: 8 }}
+                transition={{ type: "spring", stiffness: 450, damping: 28 }}
+                className="absolute -top-11 flex flex-col items-center"
+              >
+                <div className="px-2.5 py-0.5 rounded-full bg-[var(--accent-green)] text-[var(--bg-main)] font-mono text-[11px] font-bold shadow-lg">
+                  {value}
+                </div>
+                {/* Pointer triangle */}
+                <div className="w-2 h-1.5 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-[var(--accent-green)]" />
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Thumb circle with Spring Halo Ring */}
-          <div
+          <motion.div
+            animate={{
+              scale: isDragging ? 1.25 : 1,
+            }}
+            transition={{ type: "spring", stiffness: 400, damping: 28 }}
             className={cn(
-              "rounded-full transition-all duration-200 ease-[cubic-bezier(0.34,1.56,0.64,1)]",
+              "rounded-full",
               isMinimal
                 ? "h-4 w-4 bg-[var(--text-primary)] border-2 border-[var(--bg-main)] shadow-sm"
                 : "h-5 w-5 bg-[var(--accent-green)] border-2 border-[var(--bg-main)] shadow-md",
-              isDragging && "scale-125 ring-8 ring-[var(--accent-green)]/25"
+              isDragging && "ring-8 ring-[var(--accent-green)]/25"
             )}
           />
         </div>

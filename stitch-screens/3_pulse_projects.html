@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;background-color:#f8f9fa;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "on-tertiary-container": "#ead1f8", "primary-fixed-dim": "#b2c5ff", "on-primary-fixed-variant": "#0040a1", "inverse-surface": "#2e3132", "inverse-primary": "#b2c5ff", "surface-variant": "#e1e3e4", "on-primary-fixed": "#001847", "secondary": "#00639b", "tertiary-fixed": "#f1daff", "on-tertiary": "#ffffff", "primary-container": "#0b57d0", "on-secondary-fixed-variant": "#004a76", "tertiary": "#524160", "primary": "#0041a2", "surface-container-highest": "#e1e3e4", "tertiary-fixed-dim": "#d5bee4", "surface-bright": "#f8f9fa", "surface-tint": "#0856cf", "outline-variant": "#c3c6d6", "surface-container-high": "#e7e8e9", "surface-container-lowest": "#ffffff", "surface": "#f8f9fa", "secondary-fixed-dim": "#96cbff", "on-error": "#ffffff", "surface-container": "#edeeef", "on-error-container": "#93000a", "on-secondary-container": "#004f7d", "background": "#f8f9fa", "error": "#ba1a1a", "on-surface-variant": "#424654", "on-background": "#191c1d", "on-tertiary-fixed-variant": "#51405f", "surface-container-low": "#f3f4f5", "tertiary-container": "#6b5879", "surface-dim": "#d9dadb", "error-container": "#ffdad6", "on-secondary": "#ffffff", "on-secondary-fixed": "#001d33", "on-primary-container": "#ced9ff", "inverse-on-surface": "#f0f1f2", "outline": "#737785", "primary-fixed": "#dae2ff", "secondary-container": "#7ec1ff", "on-surface": "#191c1d", "on-tertiary-fixed": "#241531", "on-primary": "#ffffff", "secondary-fixed": "#cee5ff" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "space-sm": "0.5rem", "space-lg": "1.5rem", "gutter": "1rem", "gutter-tablet": "1.5rem", "space-xs": "0.25rem", "margin-tablet": "1.5rem", "margin": "1rem", "space-md": "1rem", "margin-desktop": "2rem", "gutter-desktop": "1.5rem", "space-xl": "2rem" }, fontFamily: { "label-sm": ["Roboto Flex"], "label-md": ["Roboto Flex"], "label-lg": ["Roboto Flex"], "body-sm": ["Roboto Flex"], "headline-md": ["Roboto Flex"], "headline-lg": ["Roboto Flex"], "display-lg": ["Roboto Flex"], "display-sm": ["Roboto Flex"], "title-lg": ["Roboto Flex"], "display-lg-mobile": ["Roboto Flex"], "title-sm": ["Roboto Flex"], "title-md": ["Roboto Flex"], "headline-sm": ["Roboto Flex"], "body-md": ["Roboto Flex"], "display-md": ["Roboto Flex"], "display-md-mobile": ["Roboto Flex"], "body-lg": ["Roboto Flex"] }, fontSize: { "label-sm": ["11px", { "lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500" }], "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500" }], "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "500" }], "body-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.4px", "fontWeight": "400" }], "headline-md": ["28px", { "lineHeight": "36px", "letterSpacing": "0px", "fontWeight": "400" }], "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "0px", "fontWeight": "400" }], "display-lg": ["57px", { "lineHeight": "64px", "letterSpacing": "-0.25px", "fontWeight": "400" }], "display-sm": ["36px", { "lineHeight": "44px", "letterSpacing": "0px", "fontWeight": "400" }], "title-lg": ["22px", { "lineHeight": "28px", "letterSpacing": "0px", "fontWeight": "500" }], "display-lg-mobile": ["44px", { "lineHeight": "52px", "letterSpacing": "0px", "fontWeight": "400" }], "title-sm": ["14px", { "lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "500" }], "title-md": ["16px", { "lineHeight": "24px", "letterSpacing": "0.15px", "fontWeight": "500" }], "headline-sm": ["24px", { "lineHeight": "32px", "letterSpacing": "0px", "fontWeight": "400" }], "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.25px", "fontWeight": "400" }], "display-md": ["45px", { "lineHeight": "52px", "letterSpacing": "0px", "fontWeight": "400" }], "display-md-mobile": ["36px", { "lineHeight": "44px", "letterSpacing": "0px", "fontWeight": "400" }], "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0.5px", "fontWeight": "400" }] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-margin flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-xs"><button aria-label="Navigation menu" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined text-[24px]">menu</span></button><div class="flex flex-col ml-1"><span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider font-semibold">Pulse Cloud</span><h1 class="font-title-lg text-title-lg text-on-surface truncate">Projects</h1></div></div><div class="flex items-center gap-1"><button aria-label="Search" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined text-[24px]">search</span></button><button aria-label="Notifications" class="relative w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined text-[24px]">notifications</span><span class="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-error"></span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center ml-1"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full pt-16 pb-24 px-margin bg-surface flex-1"><div class="flex flex-col w-full pb-6 space-y-4">
+<!-- Segmented Control Bar -->
+<section class="w-full">
+<div class="grid grid-cols-3 bg-surface-container-high p-1 rounded-full text-center relative select-none">
+<button class="tab-btn flex items-center justify-center gap-1.5 py-2 px-1 rounded-full bg-surface-container-lowest text-primary shadow-sm transition-all duration-200" id="tab-active" onclick="switchFilter('tab-active')">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">check</span>
+<span class="font-label-md text-label-md truncate">Active (12)</span>
+</button>
+<button class="tab-btn flex items-center justify-center gap-1.5 py-2 px-1 rounded-full text-on-surface-variant hover:text-on-surface transition-all duration-200" id="tab-archived" onclick="switchFilter('tab-archived')">
+<span class="font-label-md text-label-md truncate">Archived (4)</span>
+</button>
+<button class="tab-btn flex items-center justify-center gap-1.5 py-2 px-1 rounded-full text-on-surface-variant hover:text-on-surface transition-all duration-200" id="tab-templates" onclick="switchFilter('tab-templates')">
+<span class="font-label-md text-label-md truncate">Templates (8)</span>
+</button>
+</div>
+</section>
+<!-- M3 Architectural Info Banner -->
+<section class="w-full bg-secondary-fixed/50 rounded-xl p-space-md flex items-start gap-3 shadow-sm">
+<div class="w-9 h-9 rounded-full bg-secondary-fixed-dim/60 flex items-center justify-center flex-shrink-0 text-on-secondary-container mt-0.5">
+<span class="material-symbols-outlined text-[20px]">layers</span>
+</div>
+<div class="flex flex-col flex-1 min-w-0">
+<div class="flex items-center justify-between gap-2">
+<span class="font-label-md text-label-md text-on-secondary-container font-semibold uppercase tracking-wider">Tonal Surface Elevation</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-medium">M3 Spec</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-secondary-container/90 mt-1 leading-relaxed">
+        Elevation is communicated via surface tint luminance shifts rather than heavy drop shadows, preserving clarity across modern adaptive displays.
+      </p>
+<div class="flex items-center gap-3 mt-2">
+<button class="font-label-md text-label-md text-primary font-semibold hover:underline flex items-center gap-1">
+          Learn specs <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Featured Project Card (Elevated dp1/dp2) -->
+<section class="w-full">
+<div class="bg-surface-container-low rounded-xl p-4 shadow-md flex flex-col space-y-3 relative overflow-hidden transition-all duration-300">
+<!-- Image Mockup Banner with Gradient Overlay -->
+<div class="relative w-full h-44 rounded-lg overflow-hidden bg-surface-container-highest">
+<img class="w-full h-full object-cover" data-alt="Modern architectural UI design studio mockup showcasing high-resolution mobile layout wireframes, vibrant indigo and sky-blue design system swatches, ambient studio lighting, soft 3D glassmorphic widgets, and ultra-crisp digital interface geometry on a sleek designer desk." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBz-NQxXg7MtKofCFlk_LHacZ_LHivstzRFJrr3jJnbLGRautgAT5NYA9rOZ5rWN5IY697-clWnJ7OpMxicJ6lDob3pm9nj8MxaLgFPTO95myxozBK8kKIxgc9BnCOnZzy1RcMbAAUDHJmEzeyxJn_qXQXjiNwuAwSmh63VVNwAntekw4o1P9_g3fMMBjRX_5wGHI26_mldID03NS8ue8mg1t0sojVRLHQwlaeKgFk"/>
+<div class="absolute inset-0 bg-gradient-to-t from-inverse-surface/80 via-inverse-surface/20 to-transparent"></div>
+<div class="absolute top-3 left-3 flex items-center gap-1.5">
+<span class="px-2.5 py-1 rounded-full bg-surface-container-lowest/90 backdrop-blur-md text-on-surface font-label-sm text-label-sm font-semibold flex items-center gap-1 shadow-sm">
+<span class="material-symbols-outlined text-[14px] text-primary" style="font-variation-settings: 'FILL' 1;">filter_vintage</span>
+            dp1 Raised
+          </span>
+<span class="px-2.5 py-1 rounded-full bg-secondary-container/90 backdrop-blur-md text-on-secondary-container font-label-sm text-label-sm font-semibold">
+            Sprint 14
+          </span>
+</div>
+<div class="absolute bottom-3 left-3 right-3 flex items-center justify-between text-surface-container-lowest">
+<span class="font-label-sm text-label-sm flex items-center gap-1 drop-shadow">
+<span class="material-symbols-outlined text-[15px]">schedule</span> Updated 12m ago
+          </span>
+<span class="font-label-sm text-label-sm bg-inverse-surface/60 backdrop-blur px-2 py-0.5 rounded-full drop-shadow">
+            Figma Token Sync ON
+          </span>
+</div>
+</div>
+<!-- Card Title & Metadata -->
+<div class="flex flex-col space-y-1">
+<div class="flex items-center justify-between">
+<h2 class="font-title-md text-title-md text-on-surface font-bold tracking-tight truncate">
+            Material Adaptive Spectrum v3.2
+          </h2>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">
+          Cross-platform fluid tokens, dynamic color mappings, and tactile micro-gestures tailored for pulse enterprise cloud workstations.
+        </p>
+</div>
+<!-- Status Chips -->
+<div class="flex flex-wrap items-center gap-2 pt-1">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-container-high text-on-surface font-label-sm text-label-sm font-medium">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span> Active
+        </span>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-primary-fixed text-on-primary-fixed-variant font-label-sm text-label-sm font-medium">
+<span class="material-symbols-outlined text-[14px]">done_all</span> Review Ready
+        </span>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px]">group</span> 6 contributors
+        </span>
+</div>
+<!-- Action Footer -->
+<div class="flex items-center justify-between pt-2">
+<button class="h-10 px-5 rounded-full bg-primary text-on-primary font-label-lg text-label-lg font-medium flex items-center gap-2 shadow-sm active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[18px]">open_in_new</span>
+          Open Board
+        </button>
+<div class="flex items-center gap-1">
+<button aria-label="Share Project" class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-highest transition-colors active:scale-95">
+<span class="material-symbols-outlined text-[20px]">share</span>
+</button>
+<button aria-label="Export Archive" class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-highest transition-colors active:scale-95">
+<span class="material-symbols-outlined text-[20px]">ios_share</span>
+</button>
+<button aria-label="More Options" class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-highest transition-colors active:scale-95">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Two-Column Grid Project Tiles -->
+<section class="w-full">
+<div class="flex items-center justify-between mb-3 px-1">
+<div class="flex items-center gap-2">
+<span class="font-title-sm text-title-sm font-bold text-on-surface">Sub-Surfaces &amp; Assets</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm font-semibold">4</span>
+</div>
+<button class="font-label-sm text-label-sm text-primary font-semibold flex items-center gap-0.5">
+        View matrix <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<!-- Tile 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-3 shadow-sm flex flex-col justify-between space-y-3 relative group">
+<div class="flex items-start justify-between">
+<div class="w-9 h-9 rounded-lg bg-primary-fixed flex items-center justify-center text-primary font-bold">
+<span class="material-symbols-outlined text-[20px]">palette</span>
+</div>
+<!-- SVG Progress Indicator -->
+<div class="relative w-8 h-8 flex items-center justify-center">
+<svg class="w-8 h-8 -rotate-90" viewbox="0 0 36 36">
+<path class="text-surface-container-highest" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3.5"></path>
+<path class="text-primary" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="82, 100" stroke-linecap="round" stroke-width="3.5"></path>
+</svg>
+<span class="absolute font-label-sm text-[10px] font-bold text-on-surface">82%</span>
+</div>
+</div>
+<div>
+<h3 class="font-title-sm text-title-sm text-on-surface font-semibold truncate">Design Tokens</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">Global color &amp; type</p>
+</div>
+<div class="flex items-center justify-between pt-1">
+<!-- Mini Avatar Cluster -->
+<div class="flex -space-x-2 overflow-hidden">
+<div class="w-6 h-6 rounded-full bg-secondary flex items-center justify-center text-on-secondary text-[10px] font-bold shadow-sm">
+              AM
+            </div>
+<div class="w-6 h-6 rounded-full bg-tertiary flex items-center justify-center text-on-tertiary text-[10px] font-bold shadow-sm">
+              CL
+            </div>
+</div>
+<span class="font-label-sm text-[11px] text-on-surface-variant font-medium">14 styles</span>
+</div>
+</div>
+<!-- Tile 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-3 shadow-sm flex flex-col justify-between space-y-3 relative group">
+<div class="flex items-start justify-between">
+<div class="w-9 h-9 rounded-lg bg-secondary-fixed flex items-center justify-center text-secondary font-bold">
+<span class="material-symbols-outlined text-[20px]">touch_app</span>
+</div>
+<!-- SVG Progress Indicator -->
+<div class="relative w-8 h-8 flex items-center justify-center">
+<svg class="w-8 h-8 -rotate-90" viewbox="0 0 36 36">
+<path class="text-surface-container-highest" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3.5"></path>
+<path class="text-secondary" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="45, 100" stroke-linecap="round" stroke-width="3.5"></path>
+</svg>
+<span class="absolute font-label-sm text-[10px] font-bold text-on-surface">45%</span>
+</div>
+</div>
+<div>
+<h3 class="font-title-sm text-title-sm text-on-surface font-semibold truncate">Haptic Engine</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">Gestures &amp; physics</p>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex -space-x-2 overflow-hidden">
+<div class="w-6 h-6 rounded-full bg-primary-container flex items-center justify-center text-on-primary text-[10px] font-bold shadow-sm">
+              JD
+            </div>
+<div class="w-6 h-6 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface text-[10px] font-medium shadow-sm">
+              +3
+            </div>
+</div>
+<span class="font-label-sm text-[11px] text-on-surface-variant font-medium">8 specs</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Interactive M3 Modal Bottom Sheet Specimen Embedded -->
+<section class="w-full pt-2">
+<div class="bg-surface-container-high rounded-3xl p-5 shadow-xl flex flex-col space-y-4 relative">
+<!-- Tactile Drag Handle -->
+<div class="w-full flex justify-center py-0.5">
+<div class="w-10 h-1 bg-outline-variant rounded-full"></div>
+</div>
+<!-- Sheet Title & Status -->
+<div class="flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-secondary font-semibold uppercase tracking-wider">Sheet Specimen</span>
+<h3 class="font-title-md text-title-md text-on-surface font-bold">Quick Share &amp; Permissions</h3>
+</div>
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant cursor-pointer active:scale-95">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</div>
+</div>
+<!-- Quick Action Circular Buttons -->
+<div class="grid grid-cols-4 gap-2 py-1 text-center">
+<div class="flex flex-col items-center gap-1.5 group cursor-pointer" onclick="triggerToast('Link copied to clipboard')">
+<div class="w-13 h-13 p-3.5 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center shadow-sm group-active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[22px]">link</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface font-medium truncate w-full">Copy Link</span>
+</div>
+<div class="flex flex-col items-center gap-1.5 group cursor-pointer" onclick="triggerToast('Generating vector SVG...')">
+<div class="w-13 h-13 p-3.5 rounded-full bg-surface-container-lowest text-on-surface flex items-center justify-center shadow-sm group-active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[22px]">code</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface font-medium truncate w-full">Export SVG</span>
+</div>
+<div class="flex flex-col items-center gap-1.5 group cursor-pointer" onclick="triggerToast('Opening member directory')">
+<div class="w-13 h-13 p-3.5 rounded-full bg-surface-container-lowest text-on-surface flex items-center justify-center shadow-sm group-active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[22px]">person_add</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface font-medium truncate w-full">Add Team</span>
+</div>
+<div class="flex flex-col items-center gap-1.5 group cursor-pointer" onclick="triggerToast('Displaying Quick QR code')">
+<div class="w-13 h-13 p-3.5 rounded-full bg-surface-container-lowest text-on-surface flex items-center justify-center shadow-sm group-active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[22px]">qr_code_2</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface font-medium truncate w-full">QR Code</span>
+</div>
+</div>
+<!-- Toggles & Permission Lists -->
+<div class="bg-surface-container-lowest rounded-xl p-3 space-y-3 shadow-sm">
+<!-- Switch 1 -->
+<div class="flex items-center justify-between gap-3">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-on-surface-variant flex-shrink-0">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-sm text-title-sm text-on-surface font-medium truncate">Public inspect permissions</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Allow anonymous layer inspections</span>
+</div>
+</div>
+<!-- M3 Custom Switch Affordance -->
+<label class="relative inline-flex items-center cursor-pointer flex-shrink-0">
+<input checked="" class="sr-only peer" id="toggle-inspect" onchange="toggleFeedback(this, 'Inspect permissions')" type="checkbox"/>
+<div class="w-[52px] h-[32px] bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:bg-primary transition-colors duration-200"></div>
+<div class="absolute left-1 top-1 w-6 h-6 bg-surface-container-lowest peer-checked:bg-on-primary rounded-full transition-transform duration-200 peer-checked:translate-x-5 flex items-center justify-center text-primary shadow-sm">
+<span class="material-symbols-outlined text-[14px] hidden peer-checked:block">check</span>
+</div>
+</label>
+</div>
+<div class="h-[1px] bg-surface-container-high w-full"></div>
+<!-- Switch 2 -->
+<div class="flex items-center justify-between gap-3">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-on-surface-variant flex-shrink-0">
+<span class="material-symbols-outlined text-[18px]">cloud_sync</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-sm text-title-sm text-on-surface font-medium truncate">Auto-sync design tokens</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Publish changes instantly to GitHub</span>
+</div>
+</div>
+<!-- M3 Custom Switch Affordance -->
+<label class="relative inline-flex items-center cursor-pointer flex-shrink-0">
+<input class="sr-only peer" id="toggle-sync" onchange="toggleFeedback(this, 'Token sync')" type="checkbox"/>
+<div class="w-[52px] h-[32px] bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:bg-primary transition-colors duration-200"></div>
+<div class="absolute left-1 top-1 w-6 h-6 bg-outline peer-checked:bg-on-primary rounded-full transition-transform duration-200 peer-checked:translate-x-5 flex items-center justify-center shadow-sm">
+</div>
+</label>
+</div>
+</div>
+<!-- Action Confirmation Button -->
+<button class="w-full h-11 rounded-full bg-primary text-on-primary font-label-lg text-label-lg font-medium shadow-md active:scale-[0.99] transition-transform flex items-center justify-center gap-2" onclick="triggerToast('Workspace preferences updated')">
+<span class="material-symbols-outlined text-[20px]">save</span>
+        Apply Surface Configuration
+      </button>
+</div>
+</section>
+<!-- Interactive Toast Overlay -->
+<div class="fixed bottom-24 left-1/2 -translate-x-1/2 z-40 bg-inverse-surface text-inverse-on-surface px-4 py-2.5 rounded-full shadow-lg flex items-center gap-2 text-label-md font-label-md opacity-0 pointer-events-none transition-all duration-300 transform translate-y-3" id="toast-pill">
+<span class="material-symbols-outlined text-[18px] text-secondary-fixed">info</span>
+<span id="toast-text">Configuration updated</span>
+</div>
+</div>
+<script>
+  function switchFilter(activeId) {
+    const tabs = ['tab-active', 'tab-archived', 'tab-templates'];
+    tabs.forEach(tabId => {
+      const el = document.getElementById(tabId);
+      if (tabId === activeId) {
+        el.className = "tab-btn flex items-center justify-center gap-1.5 py-2 px-1 rounded-full bg-surface-container-lowest text-primary shadow-sm transition-all duration-200";
+        if (!el.querySelector('.material-symbols-outlined')) {
+          const icon = document.createElement('span');
+          icon.className = "material-symbols-outlined text-[18px]";
+          icon.style = "font-variation-settings: 'FILL' 1;";
+          icon.innerText = "check";
+          el.prepend(icon);
+        }
+      } else {
+        el.className = "tab-btn flex items-center justify-center gap-1.5 py-2 px-1 rounded-full text-on-surface-variant hover:text-on-surface transition-all duration-200";
+        const icon = el.querySelector('.material-symbols-outlined');
+        if (icon) icon.remove();
+      }
+    });
+    triggerToast("Switched surface filter");
+  }
+
+  function triggerToast(message) {
+    const toast = document.getElementById('toast-pill');
+    const toastText = document.getElementById('toast-text');
+    if (!toast || !toastText) return;
+    toastText.innerText = message;
+    toast.classList.remove('opacity-0', 'translate-y-3', 'pointer-events-none');
+    toast.classList.add('opacity-100', 'translate-y-0');
+    
+    clearTimeout(window.__toastTimeout);
+    window.__toastTimeout = setTimeout(() => {
+      toast.classList.remove('opacity-100', 'translate-y-0');
+      toast.classList.add('opacity-0', 'translate-y-3', 'pointer-events-none');
+    }, 2400);
+  }
+
+  function toggleFeedback(checkbox, name) {
+    const state = checkbox.checked ? 'Enabled' : 'Disabled';
+    triggerToast(`${name}: ${state}`);
+  }
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface-container/90 backdrop-blur-xl shadow-[0_-2px_10px_rgba(0,0,0,0.05)]" data-active-classes="[&amp;_.indicator]:bg-secondary-container [&amp;_.indicator]:text-on-secondary-container text-on-surface font-semibold"><div class="flex justify-around items-center h-20 px-space-xs"><a class="flex flex-col items-center justify-center gap-1 min-w-[64px] py-1 text-on-surface-variant transition-colors group" data-path="workspace" href="#"><div class="indicator w-16 h-8 rounded-full flex items-center justify-center transition-all duration-200 group-hover:bg-surface-container-high"><span class="material-symbols-outlined text-[24px]">folder</span></div><span class="font-label-sm text-label-sm text-center">Workspace</span></a><a aria-current="page" class="flex flex-col items-center justify-center gap-1 min-w-[64px] py-1 transition-colors group [&amp;_.indicator]:bg-secondary-container [&amp;_.indicator]:text-on-secondary-container text-on-surface font-semibold" data-path="projects" href="#"><div class="indicator w-16 h-8 rounded-full flex items-center justify-center transition-all duration-200 group-hover:bg-surface-container-high"><span class="material-symbols-outlined text-[24px]">dashboard</span></div><span class="font-label-sm text-label-sm text-center">Projects</span></a><a class="flex flex-col items-center justify-center gap-1 min-w-[64px] py-1 text-on-surface-variant transition-colors group" data-path="security" href="#"><div class="indicator w-16 h-8 rounded-full flex items-center justify-center transition-all duration-200 group-hover:bg-surface-container-high"><span class="material-symbols-outlined text-[24px]">shield</span></div><span class="font-label-sm text-label-sm text-center">Security</span></a><a class="flex flex-col items-center justify-center gap-1 min-w-[64px] py-1 text-on-surface-variant transition-colors group" data-path="sync-&amp;-cloud" href="#"><div class="indicator w-16 h-8 rounded-full flex items-center justify-center transition-all duration-200 group-hover:bg-surface-container-high"><span class="material-symbols-outlined text-[24px]">cloud_sync</span></div><span class="font-label-sm text-label-sm text-center">Sync &amp; Cloud</span></a></div></nav></body></html>

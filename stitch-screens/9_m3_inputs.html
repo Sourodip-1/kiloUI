@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "tertiary-fixed": "#f1daff", "surface-variant": "#e1e3e4", "on-error": "#ffffff", "surface": "#f8f9fa", "secondary-fixed": "#cee5ff", "secondary-container": "#7ec1ff", "on-background": "#191c1d", "primary-fixed-dim": "#b2c5ff", "background": "#f8f9fa", "surface-bright": "#f8f9fa", "surface-container": "#edeeef", "inverse-primary": "#b2c5ff", "outline": "#737785", "tertiary-container": "#6b5879", "on-secondary-container": "#004f7d", "on-tertiary-fixed": "#241531", "on-tertiary": "#ffffff", "secondary": "#00639b", "on-error-container": "#93000a", "on-secondary-fixed-variant": "#004a76", "surface-tint": "#0856cf", "primary": "#0041a2", "inverse-surface": "#2e3132", "primary-fixed": "#dae2ff", "on-primary-fixed": "#001847", "on-primary-container": "#ced9ff", "tertiary": "#524160", "surface-container-lowest": "#ffffff", "surface-container-highest": "#e1e3e4", "surface-dim": "#d9dadb", "on-secondary-fixed": "#001d33", "surface-container-low": "#f3f4f5", "inverse-on-surface": "#f0f1f2", "error": "#ba1a1a", "secondary-fixed-dim": "#96cbff", "tertiary-fixed-dim": "#d5bee4", "on-tertiary-container": "#ead1f8", "on-secondary": "#ffffff", "on-primary": "#ffffff", "on-tertiary-fixed-variant": "#51405f", "on-surface-variant": "#424654", "on-surface": "#191c1d", "primary-container": "#0b57d0", "surface-container-high": "#e7e8e9", "outline-variant": "#c3c6d6", "error-container": "#ffdad6", "on-primary-fixed-variant": "#0040a1" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-xl": "2rem", "space-md": "1rem", "gutter": "1rem", "gutter-desktop": "1.5rem", "margin-desktop": "2rem", "margin-tablet": "1.5rem", "space-xs": "0.25rem", "margin": "1rem", "space-lg": "1.5rem", "space-sm": "0.5rem", "gutter-tablet": "1.5rem" }, "fontFamily": { "label-sm": ["Roboto Flex"], "headline-sm": ["Roboto Flex"], "label-md": ["Roboto Flex"], "display-md": ["Roboto Flex"], "display-lg-mobile": ["Roboto Flex"], "body-md": ["Roboto Flex"], "display-sm": ["Roboto Flex"], "display-lg": ["Roboto Flex"], "body-lg": ["Roboto Flex"], "headline-lg": ["Roboto Flex"], "title-md": ["Roboto Flex"], "display-md-mobile": ["Roboto Flex"], "body-sm": ["Roboto Flex"], "headline-md": ["Roboto Flex"], "title-lg": ["Roboto Flex"], "label-lg": ["Roboto Flex"], "title-sm": ["Roboto Flex"] } } } }</script><style>@layer base{html,body{margin:0;padding:0;min-height:100%;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface text-on-surface antialiased flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl pt-safe shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-space-md flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm min-w-0"><button aria-label="Navigation menu" class="w-12 h-12 rounded-full flex items-center justify-center text-on-surface hover:bg-surface-container transition-colors"><span class="material-symbols-outlined text-[24px]">menu</span></button><div class="flex flex-col min-w-0"><span class="font-label-sm text-label-sm text-on-surface-variant leading-none">Material 3 Gallery</span><h1 class="font-title-lg text-title-lg text-on-surface truncate leading-tight">Inputs &amp; Actions</h1></div></div><div class="flex items-center gap-space-xs shrink-0"><button aria-label="Search" class="w-11 h-11 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors"><span class="material-symbols-outlined text-[24px]">search</span></button><button aria-label="More options" class="w-11 h-11 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors"><span class="material-symbols-outlined text-[24px]">more_vert</span></button><div class="w-11 h-11 flex items-center justify-center ml-space-xs"><img alt="Profile" class="w-8 h-8 rounded-full object-cover ring-2 ring-primary-fixed" src="https://lh3.googleusercontent.com/aida/ALJJyrDFbIWIbSE_fO4S92xXpL74ee-XK112lQlcNRy6jlJ7lsjNxGQtzstYOd2dpuS0CA8GHx-Sih3Uv5-etpqnRZ6Wt1-tqn1fUEron1_TLvnfZUkDYI_954VyhVMv_BYn7HvaMZv-Xnsrbm62DywS9RdAtCUNoiJZWX1TGJZYkeCCz5Oy6tAPIi812kdjLBDcuGjI4l_62fJXQRVu-hZ_3kdJsbzf7Kr7ODpVU6r9r94S"/></div></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 pb-24 bg-surface"><div class="flex flex-col w-full pb-8">
+<!-- Interactive Feedback Pill Notification -->
+<div class="fixed top-20 left-1/2 -translate-x-1/2 z-40 px-space-md py-space-xs rounded-full bg-inverse-surface text-inverse-on-surface shadow-xl flex items-center gap-space-sm opacity-0 pointer-events-none transition-all duration-300 scale-95" id="m3-toast">
+<span class="material-symbols-outlined text-[18px] text-inverse-primary" id="toast-icon">check_circle</span>
+<span class="font-label-sm text-label-sm tracking-wide" id="toast-msg">Action triggered</span>
+</div>
+<!-- Showcase Hero Greeting / Info Banner -->
+<div class="px-space-md pt-space-md pb-space-sm">
+<div class="relative overflow-hidden rounded-xl bg-surface-container-high p-space-md shadow-sm">
+<div class="flex items-start justify-between gap-space-md">
+<div class="flex flex-col gap-1 z-10">
+<div class="inline-flex items-center gap-space-xs px-2.5 py-0.5 rounded-full bg-secondary-container text-on-secondary-container w-fit">
+<span class="material-symbols-outlined text-[14px]">tune</span>
+<span class="font-label-sm text-label-sm">Spec 3.0</span>
+</div>
+<h2 class="font-title-lg text-title-lg text-on-surface">Inputs &amp; Actions</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-xs">
+            Interactive playground illustrating elevation, tonal states, micro-gestures, and adaptive tactile surfaces.
+          </p>
+</div>
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-[28px]">touch_app</span>
+</div>
+</div>
+<!-- Ambient decorative gradient pulse -->
+<div class="absolute -right-6 -bottom-6 w-32 h-32 rounded-full bg-primary-fixed-dim/30 blur-2xl pointer-events-none"></div>
+</div>
+</div>
+<!-- SECTION 1: BUTTONS -->
+<section class="px-space-md mt-space-md flex flex-col gap-space-sm">
+<div class="flex items-baseline justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="w-1.5 h-4 rounded-full bg-primary"></span>
+<h3 class="font-title-md text-title-md text-on-surface">Buttons</h3>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">h: 40px • r: full</span>
+</div>
+<!-- Buttons Collection Card -->
+<div class="rounded-xl bg-surface-container-low p-space-md shadow-sm flex flex-col gap-space-md">
+<!-- Standard Action Types Grid -->
+<div class="flex flex-wrap items-center gap-space-sm">
+<!-- Filled Button -->
+<button class="h-10 px-6 rounded-full bg-primary text-on-primary font-label-lg text-label-lg shadow-sm hover:shadow-md active:scale-98 transition-all flex items-center justify-center gap-2" onclick="triggerToast('Filled button: Order confirmed!', 'shopping_bag')">
+<span class="material-symbols-outlined text-[18px]">shopping_cart_checkout</span>
+<span>Confirm Order</span>
+</button>
+<!-- Tonal Button -->
+<button class="h-10 px-6 rounded-full bg-secondary-container text-on-secondary-container font-label-lg text-label-lg hover:shadow-sm active:scale-98 transition-all flex items-center justify-center gap-2" onclick="triggerToast('Tonal button: Draft saved to cloud', 'cloud_done')">
+<span class="material-symbols-outlined text-[18px]">bookmark_add</span>
+<span>Save Draft</span>
+</button>
+<!-- Elevated Button -->
+<button class="h-10 px-6 rounded-full bg-surface-container-lowest text-primary font-label-lg text-label-lg shadow-md hover:shadow-lg active:scale-98 transition-all flex items-center justify-center gap-2" onclick="triggerToast('Elevated button: Sync initiated', 'sync')">
+<span class="material-symbols-outlined text-[18px]">sync</span>
+<span>Sync Data</span>
+</button>
+<!-- Outlined Button -->
+<button class="h-10 px-6 rounded-full bg-surface-container-high/40 text-on-surface font-label-lg text-label-lg hover:bg-surface-container-highest transition-all flex items-center justify-center gap-2" onclick="triggerToast('Outlined button: Cancelled', 'close')">
+<span class="material-symbols-outlined text-[18px]">close</span>
+<span>Cancel</span>
+</button>
+<!-- Text Button -->
+<button class="h-10 px-4 rounded-full text-primary font-label-lg text-label-lg hover:bg-primary-fixed/40 transition-all flex items-center justify-center gap-1.5" onclick="triggerToast('Text button: Opening docs', 'menu_book')">
+<span>Learn More</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+<!-- Segmented Buttons Row -->
+<div class="flex flex-col gap-1.5 pt-space-xs">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Segmented Button Group</span>
+<div class="grid grid-cols-3 w-full bg-surface-container-highest p-1 rounded-full" id="segmented-group">
+<button class="seg-btn active flex items-center justify-center gap-1.5 py-2 px-3 rounded-full bg-secondary-container text-on-secondary-container shadow-sm transition-all duration-200" onclick="selectSegment(this, 'Daily analytics loaded')">
+<span class="material-symbols-outlined text-[16px] seg-check">check</span>
+<span class="font-label-md text-label-md truncate">Day</span>
+</button>
+<button class="seg-btn flex items-center justify-center gap-1.5 py-2 px-3 rounded-full text-on-surface-variant hover:text-on-surface transition-all duration-200" onclick="selectSegment(this, 'Weekly analytics loaded')">
+<span class="material-symbols-outlined text-[16px] seg-check hidden">check</span>
+<span class="font-label-md text-label-md truncate">Week</span>
+</button>
+<button class="seg-btn flex items-center justify-center gap-1.5 py-2 px-3 rounded-full text-on-surface-variant hover:text-on-surface transition-all duration-200" onclick="selectSegment(this, 'Monthly report generated')">
+<span class="material-symbols-outlined text-[16px] seg-check hidden">check</span>
+<span class="font-label-md text-label-md truncate">Month</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 2: FLOATING ACTION BUTTONS (FABs) -->
+<section class="px-space-md mt-space-md flex flex-col gap-space-sm">
+<div class="flex items-baseline justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="w-1.5 h-4 rounded-full bg-secondary"></span>
+<h3 class="font-title-md text-title-md text-on-surface">Floating Action Buttons</h3>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">40dp • 56dp • 96dp</span>
+</div>
+<div class="rounded-xl bg-surface-container-low p-space-md shadow-sm">
+<div class="flex items-end justify-around gap-space-sm py-2">
+<!-- Small FAB -->
+<div class="flex flex-col items-center gap-2">
+<button aria-label="Small filter action" class="w-10 h-10 rounded-xl bg-surface-container-high text-primary shadow-md hover:shadow-lg active:scale-95 transition-all flex items-center justify-center" onclick="triggerToast('Small FAB clicked: Filter added', 'filter_alt')">
+<span class="material-symbols-outlined text-[20px]">filter_alt</span>
+</button>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Small (40)</span>
+</div>
+<!-- Standard FAB -->
+<div class="flex flex-col items-center gap-2">
+<button aria-label="Edit document" class="w-14 h-14 rounded-2xl bg-surface-container-high text-on-surface shadow-md hover:shadow-lg active:scale-95 transition-all flex items-center justify-center" onclick="triggerToast('Standard FAB: Editing document', 'edit')">
+<span class="material-symbols-outlined text-[24px]">edit</span>
+</button>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Standard (56)</span>
+</div>
+<!-- Extended FAB -->
+<div class="flex flex-col items-center gap-2">
+<button class="h-14 px-5 rounded-2xl bg-primary-container text-on-primary-container shadow-md hover:shadow-lg active:scale-95 transition-all flex items-center gap-2" onclick="triggerToast('Extended FAB: Creating new note', 'add_comment')">
+<span class="material-symbols-outlined text-[24px]">add</span>
+<span class="font-label-lg text-label-lg">New Note</span>
+</button>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Extended</span>
+</div>
+<!-- Large FAB -->
+<div class="flex flex-col items-center gap-2">
+<button aria-label="Voice record" class="w-24 h-24 rounded-3xl bg-secondary-container text-on-secondary-container shadow-lg hover:shadow-xl active:scale-95 transition-all flex items-center justify-center" onclick="triggerToast('Large FAB: Ambient capture active', 'mic')">
+<span class="material-symbols-outlined text-[36px]">mic</span>
+</button>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Large (96)</span>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 3: CHIPS & TAGS -->
+<section class="px-space-md mt-space-md flex flex-col gap-space-sm">
+<div class="flex items-baseline justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="w-1.5 h-4 rounded-full bg-tertiary"></span>
+<h3 class="font-title-md text-title-md text-on-surface">Chips &amp; Tags</h3>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Assist, Filter, Input, Suggestion</span>
+</div>
+<div class="rounded-xl bg-surface-container-low p-space-md shadow-sm flex flex-col gap-space-sm">
+<div class="flex flex-wrap items-center gap-2.5">
+<!-- Assist Chip -->
+<button class="h-8 px-3 rounded-lg bg-surface-container-high text-on-surface hover:bg-surface-container-highest transition-colors flex items-center gap-2" onclick="toggleAssistChip(this)">
+<span class="material-symbols-outlined text-[18px] text-primary" style="font-variation-settings: 'FILL' 1;">bookmark</span>
+<span class="font-label-md text-label-md">Bookmark</span>
+</button>
+<!-- Filter Chip (Active) -->
+<button class="filter-chip active h-8 px-3 rounded-lg bg-secondary-container text-on-secondary-container transition-all flex items-center gap-1.5 shadow-sm" onclick="toggleFilterChip(this)">
+<span class="material-symbols-outlined text-[16px]">check</span>
+<span class="font-label-md text-label-md">Selected Filter</span>
+</button>
+<!-- Input Chip with avatar & trailing dismiss -->
+<div class="h-8 pl-1 pr-2 rounded-lg bg-surface-container-high text-on-surface flex items-center gap-1.5" id="designer-chip">
+<div class="w-6 h-6 rounded-full bg-primary text-on-primary font-label-sm text-label-sm flex items-center justify-center font-bold">
+            UX
+          </div>
+<span class="font-label-md text-label-md">UX Designer</span>
+<button aria-label="Remove UX Designer tag" class="w-5 h-5 rounded-full hover:bg-surface-variant text-on-surface-variant flex items-center justify-center" onclick="dismissChip('designer-chip')">
+<span class="material-symbols-outlined text-[14px]">close</span>
+</button>
+</div>
+<!-- Suggestion Chip -->
+<button class="h-8 px-3 rounded-lg bg-surface-container-high text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest transition-colors flex items-center gap-1.5" onclick="triggerToast('Suggestion applied: Nearby locations', 'explore')">
+<span class="material-symbols-outlined text-[18px] text-secondary">near_me</span>
+<span class="font-label-md text-label-md">Nearby</span>
+</button>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant pt-1">
+        Chips represent compact tags, contextual filters, or discrete user selections with toggle and clear states.
+      </p>
+</div>
+</section>
+<!-- SECTION 4: TEXT FIELDS & SEARCH -->
+<section class="px-space-md mt-space-md flex flex-col gap-space-sm">
+<div class="flex items-baseline justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="w-1.5 h-4 rounded-full bg-primary"></span>
+<h3 class="font-title-md text-title-md text-on-surface">Text Fields</h3>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Filled • Outlined • Search</span>
+</div>
+<div class="rounded-xl bg-surface-container-low p-space-md shadow-sm flex flex-col gap-space-md">
+<!-- Search Bar (M3 Pill Pattern) -->
+<div class="flex flex-col gap-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant">M3 Search Bar</span>
+<div class="h-14 px-4 rounded-full bg-surface-container-high flex items-center gap-3 shadow-sm hover:shadow transition-shadow">
+<span class="material-symbols-outlined text-[24px] text-on-surface-variant">search</span>
+<input class="bg-transparent flex-1 font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant focus:outline-none" placeholder="Search components, tokens, styles..." type="text"/>
+<button aria-label="Voice search" class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-variant transition-colors" onclick="triggerToast('Microphone voice search ready', 'mic')">
+<span class="material-symbols-outlined text-[20px]">mic</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-label-md text-label-md font-bold">
+            M3
+          </div>
+</div>
+</div>
+<!-- M3 Filled Text Field -->
+<div class="flex flex-col gap-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Filled Variant</span>
+<div class="relative bg-surface-container-high rounded-t-lg pt-2 pb-1 px-4 flex flex-col justify-center transition-all duration-200">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px] text-primary">mail</span>
+<div class="flex flex-col flex-1 min-w-0">
+<label class="font-body-sm text-body-sm text-primary font-medium tracking-wide" for="filled-email">Email address</label>
+<input class="bg-transparent font-body-md text-body-md text-on-surface focus:outline-none" id="filled-email" type="email" value="alex.designer@google.com"/>
+</div>
+<button aria-label="Clear email input" class="w-8 h-8 rounded-full hover:bg-surface-variant flex items-center justify-center text-on-surface-variant" onclick="clearField('filled-email')">
+<span class="material-symbols-outlined text-[18px]">cancel</span>
+</button>
+</div>
+<!-- Underline Indicator -->
+<div class="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-b-lg"></div>
+</div>
+<div class="flex items-center justify-between px-4 pt-1">
+<span class="font-body-sm text-body-sm text-on-surface-variant">We never share your email address.</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">25/50</span>
+</div>
+</div>
+<!-- M3 Outlined Text Field -->
+<div class="flex flex-col gap-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Outlined Variant</span>
+<div class="relative rounded-xl bg-surface-container-low p-3 flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant">lock</span>
+<div class="flex flex-col flex-1 min-w-0">
+<label class="font-body-sm text-body-sm text-on-surface-variant" for="outlined-pwd">Password</label>
+<input class="bg-transparent font-body-md text-body-md text-on-surface focus:outline-none" id="outlined-pwd" type="password" value="SuperSecretPassword99"/>
+</div>
+<button aria-label="Toggle password visibility" class="w-8 h-8 rounded-full hover:bg-surface-container-high flex items-center justify-center text-on-surface-variant transition-colors" onclick="togglePasswordVisibility('outlined-pwd', this)">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</button>
+</div>
+<div class="px-4 pt-0.5">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Supports minimum 8 characters with 1 symbol</span>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 5: SELECTION CONTROLS -->
+<section class="px-space-md mt-space-md flex flex-col gap-space-sm">
+<div class="flex items-baseline justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="w-1.5 h-4 rounded-full bg-secondary"></span>
+<h3 class="font-title-md text-title-md text-on-surface">Selection Controls</h3>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Switches • Checkboxes • Radios</span>
+</div>
+<div class="rounded-xl bg-surface-container-low p-space-md shadow-sm flex flex-col gap-space-md">
+<!-- M3 Switches Grid -->
+<div class="flex flex-col gap-space-sm">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Switches with Icon Thumbs</span>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-sm">
+<!-- Switch ON -->
+<div class="flex items-center justify-between p-3 rounded-lg bg-surface-container">
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-on-surface font-medium">Haptic Feedback</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Active state with icon</span>
+</div>
+<button aria-label="Toggle Haptic Feedback" class="m3-switch w-[52px] h-8 rounded-full bg-primary p-1 flex items-center transition-colors relative" data-checked="true" onclick="toggleSwitch(this)">
+<div class="thumb w-6 h-6 rounded-full bg-on-primary translate-x-5 transition-transform flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[14px] text-primary">check</span>
+</div>
+</button>
+</div>
+<!-- Switch OFF -->
+<div class="flex items-center justify-between p-3 rounded-lg bg-surface-container">
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-on-surface font-medium">Auto-Brightness</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Resting inactive state</span>
+</div>
+<button aria-label="Toggle Auto-Brightness" class="m3-switch w-[52px] h-8 rounded-full bg-surface-container-highest p-1 flex items-center transition-colors relative" data-checked="false" onclick="toggleSwitch(this)">
+<div class="thumb w-6 h-6 rounded-full bg-outline translate-x-0 transition-transform flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[14px] text-surface-container-highest">close</span>
+</div>
+</button>
+</div>
+</div>
+</div>
+<!-- Checkboxes & Radios Split Layout -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md pt-space-xs">
+<!-- Checkboxes -->
+<div class="flex flex-col gap-space-xs">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Checkboxes</span>
+<!-- Checked -->
+<label class="flex items-center gap-3 p-2 rounded-lg hover:bg-surface-container cursor-pointer transition-colors">
+<div class="w-10 h-10 flex items-center justify-center -m-2">
+<div class="w-[18px] h-[18px] rounded bg-primary flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-[16px]">check</span>
+</div>
+</div>
+<span class="font-body-md text-body-md text-on-surface">Cloud backup enabled</span>
+</label>
+<!-- Indeterminate -->
+<label class="flex items-center gap-3 p-2 rounded-lg hover:bg-surface-container cursor-pointer transition-colors">
+<div class="w-10 h-10 flex items-center justify-center -m-2">
+<div class="w-[18px] h-[18px] rounded bg-primary flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-[16px]">remove</span>
+</div>
+</div>
+<span class="font-body-md text-body-md text-on-surface">Partial sync (3/7 items)</span>
+</label>
+<!-- Unchecked -->
+<label class="flex items-center gap-3 p-2 rounded-lg hover:bg-surface-container cursor-pointer transition-colors">
+<div class="w-10 h-10 flex items-center justify-center -m-2">
+<div class="w-[18px] h-[18px] rounded bg-surface-container-highest flex items-center justify-center"></div>
+</div>
+<span class="font-body-md text-body-md text-on-surface-variant">Developer diagnostics</span>
+</label>
+</div>
+<!-- Radios -->
+<div class="flex flex-col gap-space-xs" id="radio-group-theme">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Radio Buttons</span>
+<!-- Selected -->
+<label class="radio-option flex items-center gap-3 p-2 rounded-lg hover:bg-surface-container cursor-pointer transition-colors" onclick="selectRadio(this)">
+<div class="w-10 h-10 flex items-center justify-center -m-2">
+<div class="radio-indicator w-5 h-5 rounded-full bg-primary flex items-center justify-center">
+<div class="w-2.5 h-2.5 rounded-full bg-on-primary"></div>
+</div>
+</div>
+<span class="font-body-md text-body-md text-on-surface">Dynamic tonal palette</span>
+</label>
+<!-- Unselected -->
+<label class="radio-option flex items-center gap-3 p-2 rounded-lg hover:bg-surface-container cursor-pointer transition-colors" onclick="selectRadio(this)">
+<div class="w-10 h-10 flex items-center justify-center -m-2">
+<div class="radio-indicator w-5 h-5 rounded-full bg-surface-container-highest flex items-center justify-center">
+<div class="w-2.5 h-2.5 rounded-full bg-transparent"></div>
+</div>
+</div>
+<span class="font-body-md text-body-md text-on-surface-variant">Monochrome high contrast</span>
+</label>
+<!-- Unselected 2 -->
+<label class="radio-option flex items-center gap-3 p-2 rounded-lg hover:bg-surface-container cursor-pointer transition-colors" onclick="selectRadio(this)">
+<div class="w-10 h-10 flex items-center justify-center -m-2">
+<div class="radio-indicator w-5 h-5 rounded-full bg-surface-container-highest flex items-center justify-center">
+<div class="w-2.5 h-2.5 rounded-full bg-transparent"></div>
+</div>
+</div>
+<span class="font-body-md text-body-md text-on-surface-variant">System default ambient</span>
+</label>
+</div>
+</div>
+<!-- Sliders Showcase -->
+<div class="flex flex-col gap-space-md pt-space-xs">
+<!-- Continuous Slider with Pill Badge Indicator -->
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Continuous Slider (Volume)</span>
+<span class="font-label-sm text-label-sm px-2.5 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-semibold" id="slider-val-badge">72%</span>
+</div>
+<div class="relative w-full h-8 flex items-center">
+<!-- Inactive Track -->
+<div class="absolute w-full h-2 rounded-full bg-surface-container-highest"></div>
+<!-- Active Fill -->
+<div class="absolute left-0 h-2 rounded-full bg-primary" id="slider-fill" style="width: 72%;"></div>
+<!-- Interactive Hidden Range -->
+<input class="absolute inset-0 w-full opacity-0 cursor-pointer" id="slider-continuous" max="100" min="0" oninput="updateContinuousSlider(this.value)" type="range" value="72"/>
+<!-- Visual Thumb -->
+<div class="absolute w-5 h-5 rounded-full bg-primary shadow-md -translate-x-1/2 pointer-events-none" id="slider-thumb" style="left: 72%;"></div>
+</div>
+</div>
+<!-- Discrete Slider with Steps & Ticks -->
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Discrete Steps (Grid Snapping)</span>
+<span class="font-label-sm text-label-sm px-2.5 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-semibold" id="discrete-val-badge">Level 3 of 5</span>
+</div>
+<div class="relative w-full h-8 flex items-center">
+<div class="absolute w-full h-2 rounded-full bg-surface-container-highest flex justify-between items-center px-1">
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+</div>
+<div class="absolute left-0 h-2 rounded-full bg-secondary" id="discrete-fill" style="width: 50%;"></div>
+<input class="absolute inset-0 w-full opacity-0 cursor-pointer" id="slider-discrete" max="5" min="1" oninput="updateDiscreteSlider(this.value)" step="1" type="range" value="3"/>
+<div class="absolute w-5 h-5 rounded-full bg-secondary shadow-md -translate-x-1/2 pointer-events-none" id="discrete-thumb" style="left: 50%;"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Interactive Sandbox Utilities Script -->
+<script>
+    function triggerToast(message, iconName) {
+      const toast = document.getElementById('m3-toast');
+      const toastMsg = document.getElementById('toast-msg');
+      const toastIcon = document.getElementById('toast-icon');
+      if (!toast) return;
+
+      toastMsg.textContent = message;
+      toastIcon.textContent = iconName || 'check_circle';
+      toast.classList.remove('opacity-0', 'scale-95');
+      toast.classList.add('opacity-100', 'scale-100');
+
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => {
+        toast.classList.remove('opacity-100', 'scale-100');
+        toast.classList.add('opacity-0', 'scale-95');
+      }, 2200);
+    }
+
+    function selectSegment(btn, toastText) {
+      const parent = document.getElementById('segmented-group');
+      if (!parent) return;
+      const allBtns = parent.querySelectorAll('.seg-btn');
+      allBtns.forEach(b => {
+        b.classList.remove('bg-secondary-container', 'text-on-secondary-container', 'shadow-sm', 'active');
+        b.classList.add('text-on-surface-variant');
+        const check = b.querySelector('.seg-check');
+        if (check) check.classList.add('hidden');
+      });
+
+      btn.classList.add('bg-secondary-container', 'text-on-secondary-container', 'shadow-sm', 'active');
+      btn.classList.remove('text-on-surface-variant');
+      const activeCheck = btn.querySelector('.seg-check');
+      if (activeCheck) activeCheck.classList.remove('hidden');
+
+      triggerToast(toastText, 'view_timeline');
+    }
+
+    function toggleFilterChip(chip) {
+      const isActive = chip.classList.contains('active');
+      if (isActive) {
+        chip.classList.remove('active', 'bg-secondary-container', 'text-on-secondary-container', 'shadow-sm');
+        chip.classList.add('bg-surface-container-high', 'text-on-surface');
+        const icon = chip.querySelector('.material-symbols-outlined');
+        if (icon) icon.classList.add('hidden');
+        triggerToast('Filter deactivated', 'filter_list_off');
+      } else {
+        chip.classList.add('active', 'bg-secondary-container', 'text-on-secondary-container', 'shadow-sm');
+        chip.classList.remove('bg-surface-container-high', 'text-on-surface');
+        const icon = chip.querySelector('.material-symbols-outlined');
+        if (icon) icon.classList.remove('hidden');
+        triggerToast('Filter activated', 'filter_alt');
+      }
+    }
+
+    function toggleAssistChip(chip) {
+      const icon = chip.querySelector('.material-symbols-outlined');
+      if (icon) {
+        const isFilled = icon.style.fontVariationSettings.includes("'FILL' 1");
+        if (isFilled) {
+          icon.style.fontVariationSettings = "'FILL' 0";
+          triggerToast('Bookmark removed', 'bookmark_border');
+        } else {
+          icon.style.fontVariationSettings = "'FILL' 1";
+          triggerToast('Saved to Bookmarks', 'bookmark');
+        }
+      }
+    }
+
+    function dismissChip(id) {
+      const chip = document.getElementById(id);
+      if (chip) {
+        chip.classList.add('scale-75', 'opacity-0');
+        setTimeout(() => chip.remove(), 200);
+        triggerToast('Tag dismissed', 'label_off');
+      }
+    }
+
+    function clearField(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.value = '';
+        el.focus();
+        triggerToast('Email cleared', 'clear');
+      }
+    }
+
+    function togglePasswordVisibility(id, btn) {
+      const el = document.getElementById(id);
+      const icon = btn.querySelector('.material-symbols-outlined');
+      if (!el || !icon) return;
+      if (el.type === 'password') {
+        el.type = 'text';
+        icon.textContent = 'visibility_off';
+      } else {
+        el.type = 'password';
+        icon.textContent = 'visibility';
+      }
+    }
+
+    function toggleSwitch(btn) {
+      const isChecked = btn.getAttribute('data-checked') === 'true';
+      const thumb = btn.querySelector('.thumb');
+      const icon = thumb ? thumb.querySelector('.material-symbols-outlined') : null;
+
+      if (isChecked) {
+        btn.setAttribute('data-checked', 'false');
+        btn.classList.remove('bg-primary');
+        btn.classList.add('bg-surface-container-highest');
+        if (thumb) {
+          thumb.classList.remove('translate-x-5', 'bg-on-primary');
+          thumb.classList.add('translate-x-0', 'bg-outline');
+        }
+        if (icon) {
+          icon.textContent = 'close';
+          icon.classList.remove('text-primary');
+          icon.classList.add('text-surface-container-highest');
+        }
+        triggerToast('Switch turned OFF', 'toggle_off');
+      } else {
+        btn.setAttribute('data-checked', 'true');
+        btn.classList.remove('bg-surface-container-highest');
+        btn.classList.add('bg-primary');
+        if (thumb) {
+          thumb.classList.remove('translate-x-0', 'bg-outline');
+          thumb.classList.add('translate-x-5', 'bg-on-primary');
+        }
+        if (icon) {
+          icon.textContent = 'check';
+          icon.classList.remove('text-surface-container-highest');
+          icon.classList.add('text-primary');
+        }
+        triggerToast('Switch turned ON', 'toggle_on');
+      }
+    }
+
+    function selectRadio(clickedLabel) {
+      const group = document.getElementById('radio-group-theme');
+      if (!group) return;
+      const options = group.querySelectorAll('.radio-option');
+      options.forEach(opt => {
+        const ind = opt.querySelector('.radio-indicator');
+        const text = opt.querySelector('span');
+        if (ind) {
+          ind.classList.remove('bg-primary');
+          ind.classList.add('bg-surface-container-highest');
+          const dot = ind.querySelector('div');
+          if (dot) dot.classList.replace('bg-on-primary', 'bg-transparent');
+        }
+        if (text) {
+          text.classList.remove('text-on-surface');
+          text.classList.add('text-on-surface-variant');
+        }
+      });
+
+      const selectedInd = clickedLabel.querySelector('.radio-indicator');
+      const selectedText = clickedLabel.querySelector('span');
+      if (selectedInd) {
+        selectedInd.classList.remove('bg-surface-container-highest');
+        selectedInd.classList.add('bg-primary');
+        const dot = selectedInd.querySelector('div');
+        if (dot) dot.classList.replace('bg-transparent', 'bg-on-primary');
+      }
+      if (selectedText) {
+        selectedText.classList.remove('text-on-surface-variant');
+        selectedText.classList.add('text-on-surface');
+        triggerToast(selectedText.textContent.trim(), 'radio_button_checked');
+      }
+    }
+
+    function updateContinuousSlider(val) {
+      const fill = document.getElementById('slider-fill');
+      const thumb = document.getElementById('slider-thumb');
+      const badge = document.getElementById('slider-val-badge');
+      if (fill) fill.style.width = val + '%';
+      if (thumb) thumb.style.left = val + '%';
+      if (badge) badge.textContent = val + '%';
+    }
+
+    function updateDiscreteSlider(step) {
+      const stepVal = parseInt(step, 10);
+      const percentage = ((stepVal - 1) / 4) * 100;
+      const fill = document.getElementById('discrete-fill');
+      const thumb = document.getElementById('discrete-thumb');
+      const badge = document.getElementById('discrete-val-badge');
+      if (fill) fill.style.width = percentage + '%';
+      if (thumb) thumb.style.left = percentage + '%';
+      if (badge) badge.textContent = 'Level ' + stepVal + ' of 5';
+    }
+  </script>
+</div></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface-container/95 backdrop-blur-xl shadow-[0_-1px_12px_rgba(0,0,0,0.05)]" data-active-classes="[&amp;&gt;.m3-indicator]:bg-secondary-container [&amp;&gt;.m3-indicator]:text-on-secondary-container [&amp;&gt;.m3-label]:text-on-surface [&amp;&gt;.m3-label]:font-bold"><div class="flex justify-around items-center h-20 px-space-xs max-w-lg mx-auto"><a class="flex flex-col items-center justify-center gap-1 flex-1 py-1 text-on-surface-variant min-h-[48px]" data-path="inputs-and-actions" href="#"><div class="m3-indicator flex items-center justify-center w-16 h-8 rounded-full transition-all duration-200 text-on-surface-variant"><span class="material-symbols-outlined text-[24px]">edit_note</span></div><span class="m3-label font-label-sm text-label-sm text-on-surface-variant transition-colors truncate max-w-[68px] text-center">Inputs</span></a><a class="flex flex-col items-center justify-center gap-1 flex-1 py-1 text-on-surface-variant min-h-[48px]" data-path="cards-and-surfaces" href="#"><div class="m3-indicator flex items-center justify-center w-16 h-8 rounded-full transition-all duration-200 text-on-surface-variant"><span class="material-symbols-outlined text-[24px]">dashboard</span></div><span class="m3-label font-label-sm text-label-sm text-on-surface-variant transition-colors truncate max-w-[68px] text-center">Surfaces</span></a><a class="flex flex-col items-center justify-center gap-1 flex-1 py-1 text-on-surface-variant min-h-[48px]" data-path="navigation-and-sheets" href="#"><div class="m3-indicator flex items-center justify-center w-16 h-8 rounded-full transition-all duration-200 text-on-surface-variant"><span class="material-symbols-outlined text-[24px]">layers</span></div><span class="m3-label font-label-sm text-label-sm text-on-surface-variant transition-colors truncate max-w-[68px] text-center">Sheets</span></a><a class="flex flex-col items-center justify-center gap-1 flex-1 py-1 text-on-surface-variant min-h-[48px]" data-path="auth-and-otp" href="#"><div class="m3-indicator flex items-center justify-center w-16 h-8 rounded-full transition-all duration-200 text-on-surface-variant"><span class="material-symbols-outlined text-[24px]">lock_person</span></div><span class="m3-label font-label-sm text-label-sm text-on-surface-variant transition-colors truncate max-w-[68px] text-center">Auth</span></a><a class="flex flex-col items-center justify-center gap-1 flex-1 py-1 text-on-surface-variant min-h-[48px]" data-path="loaders" href="#"><div class="m3-indicator flex items-center justify-center w-16 h-8 rounded-full transition-all duration-200 text-on-surface-variant"><span class="material-symbols-outlined text-[24px]">progress_activity</span></div><span class="m3-label font-label-sm text-label-sm text-on-surface-variant transition-colors truncate max-w-[68px] text-center">Loaders</span></a></div></nav></body></html>

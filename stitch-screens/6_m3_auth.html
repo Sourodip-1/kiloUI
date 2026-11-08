@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "tertiary-fixed": "#f1daff", "surface-variant": "#e1e3e4", "on-error": "#ffffff", "surface": "#f8f9fa", "secondary-fixed": "#cee5ff", "secondary-container": "#7ec1ff", "on-background": "#191c1d", "primary-fixed-dim": "#b2c5ff", "background": "#f8f9fa", "surface-bright": "#f8f9fa", "surface-container": "#edeeef", "inverse-primary": "#b2c5ff", "outline": "#737785", "tertiary-container": "#6b5879", "on-secondary-container": "#004f7d", "on-tertiary-fixed": "#241531", "on-tertiary": "#ffffff", "secondary": "#00639b", "on-error-container": "#93000a", "on-secondary-fixed-variant": "#004a76", "surface-tint": "#0856cf", "primary": "#0041a2", "inverse-surface": "#2e3132", "primary-fixed": "#dae2ff", "on-primary-fixed": "#001847", "on-primary-container": "#ced9ff", "tertiary": "#524160", "surface-container-lowest": "#ffffff", "surface-container-highest": "#e1e3e4", "surface-dim": "#d9dadb", "on-secondary-fixed": "#001d33", "surface-container-low": "#f3f4f5", "inverse-on-surface": "#f0f1f2", "error": "#ba1a1a", "secondary-fixed-dim": "#96cbff", "tertiary-fixed-dim": "#d5bee4", "on-tertiary-container": "#ead1f8", "on-secondary": "#ffffff", "on-primary": "#ffffff", "on-tertiary-fixed-variant": "#51405f", "on-surface-variant": "#424654", "on-surface": "#191c1d", "primary-container": "#0b57d0", "surface-container-high": "#e7e8e9", "outline-variant": "#c3c6d6", "error-container": "#ffdad6", "on-primary-fixed-variant": "#0040a1" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-xl": "2rem", "space-md": "1rem", "gutter": "1rem", "gutter-desktop": "1.5rem", "margin-desktop": "2rem", "margin-tablet": "1.5rem", "space-xs": "0.25rem", "margin": "1rem", "space-lg": "1.5rem", "space-sm": "0.5rem", "gutter-tablet": "1.5rem" }, "fontFamily": { "label-sm": ["Roboto Flex"], "headline-sm": ["Roboto Flex"], "label-md": ["Roboto Flex"], "display-md": ["Roboto Flex"], "display-lg-mobile": ["Roboto Flex"], "body-md": ["Roboto Flex"], "display-sm": ["Roboto Flex"], "display-lg": ["Roboto Flex"], "body-lg": ["Roboto Flex"], "headline-lg": ["Roboto Flex"], "title-md": ["Roboto Flex"], "display-md-mobile": ["Roboto Flex"], "body-sm": ["Roboto Flex"], "headline-md": ["Roboto Flex"], "title-lg": ["Roboto Flex"], "label-lg": ["Roboto Flex"], "title-sm": ["Roboto Flex"] } } } }</script><style>@layer base{html,body{margin:0;padding:0;min-height:100%;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface text-on-surface antialiased flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl pt-safe shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-space-md flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm min-w-0"><button aria-label="Navigation menu" class="w-12 h-12 rounded-full flex items-center justify-center text-on-surface hover:bg-surface-container transition-colors"><span class="material-symbols-outlined text-[24px]">menu</span></button><div class="flex flex-col min-w-0"><span class="font-label-sm text-label-sm text-on-surface-variant leading-none">Material 3 Gallery</span><h1 class="font-title-lg text-title-lg text-on-surface truncate leading-tight">Auth &amp; Otp</h1></div></div><div class="flex items-center gap-space-xs shrink-0"><button aria-label="Search" class="w-11 h-11 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors"><span class="material-symbols-outlined text-[24px]">search</span></button><button aria-label="More options" class="w-11 h-11 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors"><span class="material-symbols-outlined text-[24px]">more_vert</span></button><div class="w-11 h-11 flex items-center justify-center ml-space-xs"><img alt="Profile" class="w-8 h-8 rounded-full object-cover ring-2 ring-primary-fixed" src="https://lh3.googleusercontent.com/aida/ALJJyrDFbIWIbSE_fO4S92xXpL74ee-XK112lQlcNRy6jlJ7lsjNxGQtzstYOd2dpuS0CA8GHx-Sih3Uv5-etpqnRZ6Wt1-tqn1fUEron1_TLvnfZUkDYI_954VyhVMv_BYn7HvaMZv-Xnsrbm62DywS9RdAtCUNoiJZWX1TGJZYkeCCz5Oy6tAPIi812kdjLBDcuGjI4l_62fJXQRVu-hZ_3kdJsbzf7Kr7ODpVU6r9r94S"/></div></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 pb-24 bg-surface"><div class="flex flex-col w-full px-margin pb-space-xl">
+<!-- Subtle decorative ambient backdrop accent -->
+<div class="relative w-full overflow-hidden flex flex-col pt-space-sm">
+<div class="absolute -top-12 -right-10 w-44 h-44 rounded-full bg-secondary-fixed opacity-40 blur-3xl pointer-events-none"></div>
+<div class="absolute top-28 -left-12 w-48 h-48 rounded-full bg-tertiary-fixed opacity-30 blur-3xl pointer-events-none"></div>
+<!-- Action Bar & Brand Avatar -->
+<div class="flex items-center justify-between mb-space-md relative z-10">
+<button aria-label="Go back" class="w-12 h-12 -ml-2 rounded-full flex items-center justify-center text-on-surface hover:bg-surface-container transition-colors" type="button">
+<span class="material-symbols-outlined text-[24px]">arrow_back</span>
+</button>
+<div class="flex items-center gap-space-xs bg-surface-container-low px-space-sm py-1 rounded-full shadow-sm">
+<img alt="Material 3 Spec Symbol" class="w-6 h-6 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida/ALJJyrDFbIWIbSE_fO4S92xXpL74ee-XK112lQlcNRy6jlJ7lsjNxGQtzstYOd2dpuS0CA8GHx-Sih3Uv5-etpqnRZ6Wt1-tqn1fUEron1_TLvnfZUkDYI_954VyhVMv_BYn7HvaMZv-Xnsrbm62DywS9RdAtCUNoiJZWX1TGJZYkeCCz5Oy6tAPIi812kdjLBDcuGjI4l_62fJXQRVu-hZ_3kdJsbzf7Kr7ODpVU6r9r94S"/>
+<span class="font-label-sm text-label-sm text-primary font-semibold tracking-wide">M3 DESIGN SPEC</span>
+</div>
+<button aria-label="Help &amp; Guidance" class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors" type="button">
+<span class="material-symbols-outlined text-[22px]">help_outline</span>
+</button>
+</div>
+<!-- Screen Title Header -->
+<div class="flex flex-col gap-1 mb-space-lg relative z-10">
+<div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary-fixed w-fit mb-1">
+<span class="material-symbols-outlined text-on-primary-fixed text-[16px]" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+<span class="font-label-sm text-label-sm text-on-primary-fixed font-medium">Secure Identity &amp; MFA</span>
+</div>
+<h1 class="font-display-md-mobile text-display-md-mobile text-on-surface font-semibold tracking-tight">Welcome back</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Sign in to access your Material 3 component workspace &amp; dynamic tokens.</p>
+</div>
+<!-- M3 Segmented Switcher -->
+<div class="w-full bg-surface-container p-1 rounded-full flex items-center mb-space-lg shadow-sm">
+<button class="flex-1 py-2.5 px-space-sm rounded-full bg-secondary-container text-on-secondary-container font-label-lg text-label-lg font-medium flex items-center justify-center gap-2 shadow-sm transition-all duration-200" id="tab-login" onclick="switchAuthTab('login')">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">badge</span>
+<span>Email Sign In</span>
+</button>
+<button class="flex-1 py-2.5 px-space-sm rounded-full text-on-surface-variant font-label-lg text-label-lg font-medium flex items-center justify-center gap-2 transition-all duration-200" id="tab-otp" onclick="switchAuthTab('otp')">
+<span class="material-symbols-outlined text-[18px]">phonelink_lock</span>
+<span>Phone &amp; OTP</span>
+</button>
+</div>
+<!-- SECTION A: M3 Login Form View -->
+<div class="flex flex-col gap-space-md transition-all duration-300" id="section-login">
+<div class="bg-surface-container-low rounded-xl p-space-md shadow-sm flex flex-col gap-space-md">
+<!-- Floating Label Input: Email -->
+<div class="relative w-full">
+<div class="relative flex items-center bg-surface rounded-xl px-space-md pt-5 pb-2 transition-all focus-within:shadow-md">
+<span class="material-symbols-outlined text-primary text-[22px] mr-3">alternate_email</span>
+<div class="flex-1 flex flex-col justify-center min-w-0">
+<label class="font-label-sm text-label-sm text-primary font-medium tracking-wide">Work Email</label>
+<input class="bg-transparent border-0 outline-none font-body-lg text-body-lg text-on-surface p-0 w-full" placeholder="name@company.com" type="email" value="alex.vance@material.design"/>
+</div>
+<span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</div>
+<!-- Floating Label Input: Password -->
+<div class="relative w-full">
+<div class="relative flex items-center bg-surface rounded-xl px-space-md pt-5 pb-2 transition-all focus-within:shadow-md">
+<span class="material-symbols-outlined text-on-surface-variant text-[22px] mr-3">lock</span>
+<div class="flex-1 flex flex-col justify-center min-w-0">
+<label class="font-label-sm text-label-sm text-on-surface-variant font-medium tracking-wide">Password</label>
+<input class="bg-transparent border-0 outline-none font-body-lg text-body-lg text-on-surface p-0 w-full tracking-widest" type="password" value="••••••••••••"/>
+</div>
+<button aria-label="Toggle password visibility" class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container" type="button">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</button>
+</div>
+</div>
+<!-- Selection Controls: Checkbox & Link -->
+<div class="flex items-center justify-between pt-1">
+<label class="flex items-center gap-2 cursor-pointer select-none">
+<div class="w-5 h-5 rounded bg-primary flex items-center justify-center text-on-primary shadow-xs">
+<span class="material-symbols-outlined text-[16px] font-bold">check</span>
+</div>
+<span class="font-body-md text-body-md text-on-surface font-medium">Remember this device</span>
+</label>
+<a class="font-label-lg text-label-lg text-primary hover:underline font-semibold" href="#">Forgot password?</a>
+</div>
+<!-- Primary Action CTA -->
+<button class="w-full h-12 rounded-full bg-primary text-on-primary font-label-lg text-label-lg font-semibold flex items-center justify-center gap-2 shadow-md hover:opacity-95 active:scale-[0.99] transition-all mt-1" type="button">
+<span class="material-symbols-outlined text-[20px]">login</span>
+<span>Sign In to Workspace</span>
+</button>
+</div>
+<!-- Divider Ornament -->
+<div class="flex items-center gap-3 my-1">
+<div class="flex-1 h-[1px] bg-surface-variant"></div>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">or sign in with</span>
+<div class="flex-1 h-[1px] bg-surface-variant"></div>
+</div>
+<!-- Social Auth Pill Buttons -->
+<div class="grid grid-cols-3 gap-space-sm">
+<button class="h-12 rounded-xl bg-surface-container flex items-center justify-center gap-2 text-on-surface hover:bg-surface-container-high transition-colors shadow-xs" type="button">
+<svg class="w-5 h-5" viewbox="0 0 24 24">
+<path d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z" fill="#4285F4"></path>
+<path d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.35 24 12 24z" fill="#34A853"></path>
+<path d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z" fill="#FBBC05"></path>
+<path d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.35 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z" fill="#EA4335"></path>
+</svg>
+<span class="font-label-md text-label-md font-medium">Google</span>
+</button>
+<button class="h-12 rounded-xl bg-surface-container flex items-center justify-center gap-2 text-on-surface hover:bg-surface-container-high transition-colors shadow-xs" type="button">
+<svg class="w-5 h-5 fill-current" viewbox="0 0 24 24">
+<path clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" fill-rule="evenodd"></path>
+</svg>
+<span class="font-label-md text-label-md font-medium">GitHub</span>
+</button>
+<button class="h-12 rounded-xl bg-surface-container flex items-center justify-center gap-2 text-on-surface hover:bg-surface-container-high transition-colors shadow-xs" type="button">
+<svg class="w-5 h-5 fill-current" viewbox="0 0 24 24">
+<path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.61-.75 1.04-1.8 1.01-2.87-.96.04-2.09.65-2.73 1.4-.56.64-.99 1.68-.86 2.7.99.08 2.01-.52 2.58-1.23z"></path>
+</svg>
+<span class="font-label-md text-label-md font-medium">Apple</span>
+</button>
+</div>
+</div>
+<!-- SECTION B: M3 OTP Verification Card (Full Focus) -->
+<div class="flex flex-col gap-space-md" id="section-otp">
+<div class="bg-surface-container-low rounded-xl p-space-md shadow-sm flex flex-col gap-space-md relative overflow-hidden">
+<!-- Floating Status Badge -->
+<div class="flex items-center justify-between">
+<div class="w-12 h-12 rounded-xl bg-secondary-fixed flex items-center justify-center text-on-secondary-fixed shadow-xs">
+<span class="material-symbols-outlined text-[26px]">sms</span>
+</div>
+<span class="px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-semibold tracking-wide">Step 2 of 2</span>
+</div>
+<!-- Verification Headline & Context -->
+<div class="flex flex-col gap-1">
+<h2 class="font-title-lg text-title-lg text-on-surface font-semibold">Verify your phone</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">
+            Enter the 6-digit code sent to <span class="font-medium text-on-surface">+1 (555) •••-8291</span>
+</p>
+</div>
+<!-- 6 M3 OTP Input Containers -->
+<div class="grid grid-cols-6 gap-1.5 sm:gap-2 my-1">
+<!-- Box 1: Filled -->
+<div class="h-14 rounded-lg bg-surface flex flex-col items-center justify-center shadow-xs">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">4</span>
+<span class="w-4 h-0.5 bg-primary/40 rounded-full mt-0.5"></span>
+</div>
+<!-- Box 2: Filled -->
+<div class="h-14 rounded-lg bg-surface flex flex-col items-center justify-center shadow-xs">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">8</span>
+<span class="w-4 h-0.5 bg-primary/40 rounded-full mt-0.5"></span>
+</div>
+<!-- Box 3: Active State with Pulsing Caret -->
+<div class="h-14 rounded-lg bg-primary-fixed flex flex-col items-center justify-center shadow-sm relative">
+<div class="w-0.5 h-6 bg-primary rounded-full animate-pulse"></div>
+<span class="w-4 h-0.5 bg-primary rounded-full mt-0.5"></span>
+</div>
+<!-- Box 4: Pending -->
+<div class="h-14 rounded-lg bg-surface-container flex flex-col items-center justify-center shadow-xs">
+<span class="font-headline-sm text-headline-sm text-outline-variant font-light">•</span>
+<span class="w-4 h-0.5 bg-outline-variant/30 rounded-full mt-0.5"></span>
+</div>
+<!-- Box 5: Pending -->
+<div class="h-14 rounded-lg bg-surface-container flex flex-col items-center justify-center shadow-xs">
+<span class="font-headline-sm text-headline-sm text-outline-variant font-light">•</span>
+<span class="w-4 h-0.5 bg-outline-variant/30 rounded-full mt-0.5"></span>
+</div>
+<!-- Box 6: Pending -->
+<div class="h-14 rounded-lg bg-surface-container flex flex-col items-center justify-center shadow-xs">
+<span class="font-headline-sm text-headline-sm text-outline-variant font-light">•</span>
+<span class="w-4 h-0.5 bg-outline-variant/30 rounded-full mt-0.5"></span>
+</div>
+</div>
+<!-- Timer & Resend Section -->
+<div class="flex items-center justify-between bg-surface px-space-md py-2.5 rounded-full shadow-xs">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-primary animate-spin" style="animation-duration: 3s;">history</span>
+<span class="font-label-md text-label-md text-on-surface-variant">Resend code in <strong class="text-on-surface font-bold">0:42</strong></span>
+</div>
+<button class="font-label-md text-label-md text-primary font-bold hover:underline px-2 py-1 rounded-full hover:bg-primary-fixed/50 transition-colors" type="button">
+            Resend now
+          </button>
+</div>
+<!-- Main Verification Button with Live Spinner Indicator -->
+<button class="w-full h-12 rounded-full bg-primary text-on-primary font-label-lg text-label-lg font-semibold flex items-center justify-center gap-2 shadow-md hover:bg-primary-container active:scale-[0.99] transition-all" id="verify-btn" onclick="triggerVerifyState()" type="button">
+<span class="material-symbols-outlined text-[20px] animate-spin hidden" id="verify-spinner">progress_activity</span>
+<span class="material-symbols-outlined text-[20px]" id="verify-icon">lock_open</span>
+<span id="verify-text">Verify &amp; Proceed</span>
+</button>
+</div>
+<!-- Quick Numeric Keypad Preview -->
+<div class="bg-surface-container rounded-xl p-space-sm shadow-xs flex flex-col gap-1.5">
+<div class="flex items-center justify-between px-3 py-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">TACTILE NUMPAD SIMULATOR</span>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">dialpad</span>
+</div>
+<div class="grid grid-cols-3 gap-1.5">
+<button class="h-11 rounded-lg bg-surface hover:bg-surface-container-high flex flex-col items-center justify-center active:scale-95 transition-all shadow-xs" type="button">
+<span class="font-title-md text-title-md font-semibold text-on-surface leading-tight">1</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant leading-none"></span>
+</button>
+<button class="h-11 rounded-lg bg-surface hover:bg-surface-container-high flex flex-col items-center justify-center active:scale-95 transition-all shadow-xs" type="button">
+<span class="font-title-md text-title-md font-semibold text-on-surface leading-tight">2</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant leading-none tracking-widest">ABC</span>
+</button>
+<button class="h-11 rounded-lg bg-surface hover:bg-surface-container-high flex flex-col items-center justify-center active:scale-95 transition-all shadow-xs" type="button">
+<span class="font-title-md text-title-md font-semibold text-on-surface leading-tight">3</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant leading-none tracking-widest">DEF</span>
+</button>
+<button class="h-11 rounded-lg bg-surface hover:bg-surface-container-high flex flex-col items-center justify-center active:scale-95 transition-all shadow-xs" type="button">
+<span class="font-title-md text-title-md font-semibold text-on-surface leading-tight">4</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant leading-none tracking-widest">GHI</span>
+</button>
+<button class="h-11 rounded-lg bg-surface hover:bg-surface-container-high flex flex-col items-center justify-center active:scale-95 transition-all shadow-xs" type="button">
+<span class="font-title-md text-title-md font-semibold text-on-surface leading-tight">5</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant leading-none tracking-widest">JKL</span>
+</button>
+<button class="h-11 rounded-lg bg-surface hover:bg-surface-container-high flex flex-col items-center justify-center active:scale-95 transition-all shadow-xs" type="button">
+<span class="font-title-md text-title-md font-semibold text-on-surface leading-tight">6</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant leading-none tracking-widest">MNO</span>
+</button>
+<button class="h-11 rounded-lg bg-surface hover:bg-surface-container-high flex flex-col items-center justify-center active:scale-95 transition-all shadow-xs" type="button">
+<span class="font-title-md text-title-md font-semibold text-on-surface leading-tight">7</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant leading-none tracking-widest">PQRS</span>
+</button>
+<button class="h-11 rounded-lg bg-surface hover:bg-surface-container-high flex flex-col items-center justify-center active:scale-95 transition-all shadow-xs" type="button">
+<span class="font-title-md text-title-md font-semibold text-on-surface leading-tight">8</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant leading-none tracking-widest">TUV</span>
+</button>
+<button class="h-11 rounded-lg bg-surface hover:bg-surface-container-high flex flex-col items-center justify-center active:scale-95 transition-all shadow-xs" type="button">
+<span class="font-title-md text-title-md font-semibold text-on-surface leading-tight">9</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant leading-none tracking-widest">WXYZ</span>
+</button>
+<button class="h-11 rounded-lg bg-transparent flex items-center justify-center text-on-surface-variant" type="button">
+<span class="material-symbols-outlined text-[20px]">fingerprint</span>
+</button>
+<button class="h-11 rounded-lg bg-surface hover:bg-surface-container-high flex flex-col items-center justify-center active:scale-95 transition-all shadow-xs" type="button">
+<span class="font-title-md text-title-md font-semibold text-on-surface leading-tight">0</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant leading-none">+</span>
+</button>
+<button class="h-11 rounded-lg bg-transparent hover:bg-surface-container-high flex items-center justify-center text-on-surface-variant active:scale-95 transition-all" type="button">
+<span class="material-symbols-outlined text-[22px]">backspace</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Security & Privacy Footer Pill -->
+<div class="mt-space-lg flex items-center justify-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-secondary">encrypted</span>
+<span class="font-label-sm text-label-sm">Protected by Google Titan &amp; FIDO2 Passkeys</span>
+</div>
+</div>
+</div>
+<script>
+  function switchAuthTab(tab) {
+    const loginSec = document.getElementById('section-login');
+    const otpSec = document.getElementById('section-otp');
+    const tabLoginBtn = document.getElementById('tab-login');
+    const tabOtpBtn = document.getElementById('tab-otp');
+
+    if (tab === 'login') {
+      loginSec.classList.remove('hidden');
+      otpSec.classList.add('hidden');
+
+      tabLoginBtn.classList.add('bg-secondary-container', 'text-on-secondary-container', 'shadow-sm');
+      tabLoginBtn.classList.remove('text-on-surface-variant');
+
+      tabOtpBtn.classList.remove('bg-secondary-container', 'text-on-secondary-container', 'shadow-sm');
+      tabOtpBtn.classList.add('text-on-surface-variant');
+    } else {
+      loginSec.classList.add('hidden');
+      otpSec.classList.remove('hidden');
+
+      tabOtpBtn.classList.add('bg-secondary-container', 'text-on-secondary-container', 'shadow-sm');
+      tabOtpBtn.classList.remove('text-on-surface-variant');
+
+      tabLoginBtn.classList.remove('bg-secondary-container', 'text-on-secondary-container', 'shadow-sm');
+      tabLoginBtn.classList.add('text-on-surface-variant');
+    }
+  }
+
+  function triggerVerifyState() {
+    const btn = document.getElementById('verify-btn');
+    const spinner = document.getElementById('verify-spinner');
+    const icon = document.getElementById('verify-icon');
+    const text = document.getElementById('verify-text');
+
+    spinner.classList.remove('hidden');
+    icon.classList.add('hidden');
+    text.innerText = 'Authenticating...';
+    btn.classList.add('opacity-80', 'pointer-events-none');
+
+    setTimeout(() => {
+      spinner.classList.add('hidden');
+      icon.classList.remove('hidden');
+      icon.innerText = 'check_circle';
+      text.innerText = 'Identity Confirmed!';
+      btn.classList.remove('opacity-80', 'pointer-events-none');
+      btn.classList.remove('bg-primary');
+      btn.classList.add('bg-secondary');
+    }, 1600);
+  }
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface-container/95 backdrop-blur-xl shadow-[0_-1px_12px_rgba(0,0,0,0.05)]" data-active-classes="[&amp;&gt;.m3-indicator]:bg-secondary-container [&amp;&gt;.m3-indicator]:text-on-secondary-container [&amp;&gt;.m3-label]:text-on-surface [&amp;&gt;.m3-label]:font-bold"><div class="flex justify-around items-center h-20 px-space-xs max-w-lg mx-auto"><a class="flex flex-col items-center justify-center gap-1 flex-1 py-1 text-on-surface-variant min-h-[48px]" data-path="inputs-and-actions" href="#"><div class="m3-indicator flex items-center justify-center w-16 h-8 rounded-full transition-all duration-200 text-on-surface-variant"><span class="material-symbols-outlined text-[24px]">edit_note</span></div><span class="m3-label font-label-sm text-label-sm text-on-surface-variant transition-colors truncate max-w-[68px] text-center">Inputs</span></a><a class="flex flex-col items-center justify-center gap-1 flex-1 py-1 text-on-surface-variant min-h-[48px]" data-path="cards-and-surfaces" href="#"><div class="m3-indicator flex items-center justify-center w-16 h-8 rounded-full transition-all duration-200 text-on-surface-variant"><span class="material-symbols-outlined text-[24px]">dashboard</span></div><span class="m3-label font-label-sm text-label-sm text-on-surface-variant transition-colors truncate max-w-[68px] text-center">Surfaces</span></a><a class="flex flex-col items-center justify-center gap-1 flex-1 py-1 text-on-surface-variant min-h-[48px]" data-path="navigation-and-sheets" href="#"><div class="m3-indicator flex items-center justify-center w-16 h-8 rounded-full transition-all duration-200 text-on-surface-variant"><span class="material-symbols-outlined text-[24px]">layers</span></div><span class="m3-label font-label-sm text-label-sm text-on-surface-variant transition-colors truncate max-w-[68px] text-center">Sheets</span></a><a class="flex flex-col items-center justify-center gap-1 flex-1 py-1 text-on-surface-variant min-h-[48px]" data-path="auth-and-otp" href="#"><div class="m3-indicator flex items-center justify-center w-16 h-8 rounded-full transition-all duration-200 text-on-surface-variant"><span class="material-symbols-outlined text-[24px]">lock_person</span></div><span class="m3-label font-label-sm text-label-sm text-on-surface-variant transition-colors truncate max-w-[68px] text-center">Auth</span></a><a class="flex flex-col items-center justify-center gap-1 flex-1 py-1 text-on-surface-variant min-h-[48px]" data-path="loaders" href="#"><div class="m3-indicator flex items-center justify-center w-16 h-8 rounded-full transition-all duration-200 text-on-surface-variant"><span class="material-symbols-outlined text-[24px]">progress_activity</span></div><span class="m3-label font-label-sm text-label-sm text-on-surface-variant transition-colors truncate max-w-[68px] text-center">Loaders</span></a></div></nav></body></html>

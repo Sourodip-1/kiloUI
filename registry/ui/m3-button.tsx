@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 
 export type M3ButtonVariant =
@@ -16,7 +17,7 @@ export type M3ButtonVariant =
 export type M3ButtonDesign = "m3" | "minimal";
 
 export interface M3ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "onAnimationStart" | "onDragStart" | "onDragEnd" | "onDrag"> {
   variant?: M3ButtonVariant;
   design?: M3ButtonDesign;
   size?: "sm" | "default" | "lg" | "icon";
@@ -46,21 +47,21 @@ export const M3Button = React.forwardRef<HTMLButtonElement, M3ButtonProps>(
     // M3 styles with authentic shape & tonal roles
     const m3Styles: Record<string, string> = {
       filled:
-        "bg-[var(--accent-green)] text-[var(--bg-main)] hover:brightness-110 active:scale-[0.96] shadow-xs border border-transparent font-semibold rounded-full",
+        "bg-[var(--accent-green)] text-[var(--bg-main)] hover:brightness-105 shadow-xs border border-transparent font-semibold rounded-full",
       elevated:
-        "bg-[var(--surface-elevated)] text-[var(--accent-green)] hover:bg-[var(--surface-secondary)] active:scale-[0.96] shadow-sm hover:shadow-md border border-[var(--border)] font-semibold rounded-full",
+        "bg-[var(--surface-elevated)] text-[var(--accent-green)] hover:bg-[var(--surface-secondary)] shadow-sm hover:shadow-md border border-[var(--border)] font-semibold rounded-full",
       tonal:
-        "bg-[var(--accent-green-deep)] text-[var(--accent-green)] hover:brightness-110 active:scale-[0.96] border border-[var(--accent-green)]/20 font-semibold rounded-full",
+        "bg-[var(--accent-green-deep)] text-[var(--accent-green)] hover:brightness-110 border border-[var(--accent-green)]/20 font-semibold rounded-full",
       outlined:
-        "bg-transparent text-[var(--accent-green)] hover:bg-[var(--accent-green-subtle)] active:scale-[0.96] border border-[var(--border-hover)] font-semibold rounded-full",
+        "bg-transparent text-[var(--accent-green)] hover:bg-[var(--accent-green-subtle)] border border-[var(--border-hover)] font-semibold rounded-full",
       text:
-        "bg-transparent text-[var(--accent-green)] hover:bg-[var(--accent-green-subtle)] active:scale-[0.96] border border-transparent font-semibold rounded-full",
+        "bg-transparent text-[var(--accent-green)] hover:bg-[var(--accent-green-subtle)] border border-transparent font-semibold rounded-full",
       "minimal-solid":
-        "bg-[var(--text-primary)] text-[var(--bg-main)] hover:opacity-90 active:scale-[0.96] font-semibold rounded-lg border border-transparent shadow-2xs",
+        "bg-[var(--text-primary)] text-[var(--bg-main)] hover:opacity-90 font-semibold rounded-lg border border-transparent shadow-2xs",
       "minimal-outline":
-        "bg-[var(--surface-elevated)] text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] active:scale-[0.96] font-semibold rounded-lg border border-[var(--border)] shadow-2xs",
+        "bg-[var(--surface-elevated)] text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] font-semibold rounded-lg border border-[var(--border)] shadow-2xs",
       "minimal-ghost":
-        "bg-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] active:scale-[0.96] font-semibold rounded-lg border border-transparent",
+        "bg-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] font-semibold rounded-lg border border-transparent",
     };
 
     const sizeStyles: Record<string, string> = {
@@ -71,16 +72,18 @@ export const M3Button = React.forwardRef<HTMLButtonElement, M3ButtonProps>(
     };
 
     return (
-      <button
+      <motion.button
         ref={ref}
         disabled={disabled || isLoading}
+        whileTap={{ scale: disabled || isLoading ? 1 : 0.96 }}
+        transition={{ type: "spring", stiffness: 500, damping: 30 }}
         className={cn(
-          "relative inline-flex items-center justify-center font-sans transition-all duration-200 select-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-green)]/40 focus-visible:ring-offset-1 disabled:pointer-events-none disabled:opacity-40",
+          "relative inline-flex items-center justify-center font-sans transition-colors select-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-green)]/40 focus-visible:ring-offset-1 disabled:pointer-events-none disabled:opacity-40",
           m3Styles[variant] || m3Styles.filled,
           sizeStyles[size] || sizeStyles.default,
           className
         )}
-        {...props}
+        {...(props as any)}
       >
         {isLoading ? (
           <span className="flex items-center gap-2">
@@ -113,9 +116,8 @@ export const M3Button = React.forwardRef<HTMLButtonElement, M3ButtonProps>(
             {rightIcon && <span className="shrink-0">{rightIcon}</span>}
           </>
         )}
-      </button>
+      </motion.button>
     );
   }
 );
 M3Button.displayName = "M3Button";
-

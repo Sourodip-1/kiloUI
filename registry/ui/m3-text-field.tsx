@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { AlertCircle, X } from "lucide-react";
+import { AlertCircle, X, Eye, EyeOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export type M3TextFieldVariant = "filled" | "outlined" | "minimal";
@@ -35,6 +35,7 @@ export const M3TextField = React.forwardRef<HTMLInputElement, M3TextFieldProps>(
       value,
       defaultValue,
       onChange,
+      type = "text",
       disabled = false,
       ...props
     },
@@ -42,6 +43,10 @@ export const M3TextField = React.forwardRef<HTMLInputElement, M3TextFieldProps>(
   ) => {
     const [isFocused, setIsFocused] = React.useState(false);
     const [innerVal, setInnerVal] = React.useState(defaultValue || "");
+    const [showPassword, setShowPassword] = React.useState(false);
+
+    const isPasswordType = type === "password";
+    const inputType = isPasswordType ? (showPassword ? "text" : "password") : type;
 
     const currentVal = value !== undefined ? value : innerVal;
     const hasValue = String(currentVal).length > 0;
@@ -109,12 +114,12 @@ export const M3TextField = React.forwardRef<HTMLInputElement, M3TextFieldProps>(
                 leadingIcon ? (isFloating ? "left-9" : "left-11") : "left-4",
                 isFilled
                   ? isFloating
-                    ? "top-1.5 text-[10px] font-bold text-[var(--accent-green)] tracking-wider uppercase"
+                    ? "top-2 text-[10px] font-bold text-[var(--accent-green)] tracking-wider uppercase"
                     : "top-4 text-sm text-[var(--text-muted)]"
                   : isFloating
                   ? cn(
-                      "-top-2.5 px-1.5 text-[11px] font-bold tracking-tight rounded-xs z-10",
-                      labelBgClassName || "bg-[#0c0d0e] dark:bg-[#0c0d0e]",
+                      "-top-2.5 px-2 text-[11px] font-bold tracking-tight rounded-full z-10 shadow-2xs backdrop-blur-xs",
+                      labelBgClassName || "bg-[var(--surface-elevated)]",
                       error
                         ? "text-[var(--accent-red)]"
                         : isFocused
@@ -130,6 +135,7 @@ export const M3TextField = React.forwardRef<HTMLInputElement, M3TextFieldProps>(
 
           <input
             ref={ref}
+            type={inputType}
             value={currentVal}
             onChange={handleChange}
             onFocus={() => setIsFocused(true)}
@@ -138,10 +144,20 @@ export const M3TextField = React.forwardRef<HTMLInputElement, M3TextFieldProps>(
             placeholder={isMinimal ? label : ""}
             className={cn(
               "w-full bg-transparent text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none font-medium",
-              isFilled && isFloating && "pt-4"
+              isFilled && isFloating && "pt-3.5"
             )}
             {...props}
           />
+
+          {isPasswordType && (
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="p-1 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors cursor-pointer shrink-0 ml-1"
+            >
+              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
+          )}
 
           {clearable && hasValue && (
             <button
@@ -150,24 +166,30 @@ export const M3TextField = React.forwardRef<HTMLInputElement, M3TextFieldProps>(
                 setInnerVal("");
                 onClear?.();
               }}
-              className="p-1 rounded-full text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors cursor-pointer active:scale-90"
+              className="p-1 rounded-full text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-tertiary)] transition-colors cursor-pointer shrink-0 ml-1"
             >
-              <X className="h-4 w-4" />
+              <X className="h-3.5 w-3.5" />
             </button>
           )}
 
-          {error ? (
-            <AlertCircle className="h-4 w-4 text-[var(--accent-red)] shrink-0 ml-2 animate-in zoom-in-75 duration-150" />
-          ) : trailingIcon ? (
-            <span className="shrink-0 ml-2 text-[var(--text-muted)]">{trailingIcon}</span>
-          ) : null}
+          {trailingIcon && !clearable && !isPasswordType && (
+            <span className="shrink-0 ml-2 text-[var(--text-muted)]">
+              {trailingIcon}
+            </span>
+          )}
+
+          {error && (
+            <span className="shrink-0 ml-2 text-[var(--accent-red)]">
+              <AlertCircle className="h-4 w-4" />
+            </span>
+          )}
         </div>
 
-        {/* Supporting / Error Helper Text */}
+        {/* Helper or error message */}
         {(helperText || error) && (
           <p
             className={cn(
-              "text-xs px-1 pt-0.5",
+              "text-[11px] font-sans px-1",
               error ? "text-[var(--accent-red)] font-medium" : "text-[var(--text-muted)]"
             )}
           >

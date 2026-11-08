@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Check, Minus } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
 
 export interface M3CheckboxProps {
@@ -52,14 +53,16 @@ export function M3Checkbox({
       )}
     >
       <div className="relative flex items-center justify-center p-1">
-        <button
+        <motion.button
           type="button"
           role="checkbox"
           aria-checked={isIndeterminate ? "mixed" : isChecked}
           disabled={disabled}
           onClick={toggle}
+          whileTap={{ scale: 0.9 }}
+          transition={{ type: "spring", stiffness: 500, damping: 25 }}
           className={cn(
-            "flex items-center justify-center transition-all duration-150 ease-[cubic-bezier(0.16,1,0.3,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-green)]/40",
+            "flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-green)]/40",
             isMinimal
               ? cn(
                   "h-4 w-4 rounded border",
@@ -75,12 +78,30 @@ export function M3Checkbox({
                 )
           )}
         >
-          {isIndeterminate ? (
-            <Minus className="h-3.5 w-3.5 stroke-[3]" />
-          ) : isChecked ? (
-            <Check className="h-3.5 w-3.5 stroke-[3]" />
-          ) : null}
-        </button>
+          <AnimatePresence>
+            {isIndeterminate ? (
+              <motion.span
+                key="minus"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                exit={{ scale: 0 }}
+                transition={{ type: "spring", stiffness: 500, damping: 25 }}
+              >
+                <Minus className="h-3.5 w-3.5 stroke-[3]" />
+              </motion.span>
+            ) : isChecked ? (
+              <motion.span
+                key="check"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                exit={{ scale: 0 }}
+                transition={{ type: "spring", stiffness: 500, damping: 25 }}
+              >
+                <Check className="h-3.5 w-3.5 stroke-[3]" />
+              </motion.span>
+            ) : null}
+          </AnimatePresence>
+        </motion.button>
       </div>
 
       {(label || description) && (
@@ -91,7 +112,7 @@ export function M3Checkbox({
             </span>
           )}
           {description && (
-            <span className="text-xs text-[var(--text-secondary)] mt-0.5 leading-normal">
+            <span className="text-xs text-[var(--text-secondary)] mt-0.5">
               {description}
             </span>
           )}

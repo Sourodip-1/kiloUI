@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "tertiary-fixed": "#f1daff", "surface-variant": "#e1e3e4", "on-error": "#ffffff", "surface": "#f8f9fa", "secondary-fixed": "#cee5ff", "secondary-container": "#7ec1ff", "on-background": "#191c1d", "primary-fixed-dim": "#b2c5ff", "background": "#f8f9fa", "surface-bright": "#f8f9fa", "surface-container": "#edeeef", "inverse-primary": "#b2c5ff", "outline": "#737785", "tertiary-container": "#6b5879", "on-secondary-container": "#004f7d", "on-tertiary-fixed": "#241531", "on-tertiary": "#ffffff", "secondary": "#00639b", "on-error-container": "#93000a", "on-secondary-fixed-variant": "#004a76", "surface-tint": "#0856cf", "primary": "#0041a2", "inverse-surface": "#2e3132", "primary-fixed": "#dae2ff", "on-primary-fixed": "#001847", "on-primary-container": "#ced9ff", "tertiary": "#524160", "surface-container-lowest": "#ffffff", "surface-container-highest": "#e1e3e4", "surface-dim": "#d9dadb", "on-secondary-fixed": "#001d33", "surface-container-low": "#f3f4f5", "inverse-on-surface": "#f0f1f2", "error": "#ba1a1a", "secondary-fixed-dim": "#96cbff", "tertiary-fixed-dim": "#d5bee4", "on-tertiary-container": "#ead1f8", "on-secondary": "#ffffff", "on-primary": "#ffffff", "on-tertiary-fixed-variant": "#51405f", "on-surface-variant": "#424654", "on-surface": "#191c1d", "primary-container": "#0b57d0", "surface-container-high": "#e7e8e9", "outline-variant": "#c3c6d6", "error-container": "#ffdad6", "on-primary-fixed-variant": "#0040a1" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-xl": "2rem", "space-md": "1rem", "gutter": "1rem", "gutter-desktop": "1.5rem", "margin-desktop": "2rem", "margin-tablet": "1.5rem", "space-xs": "0.25rem", "margin": "1rem", "space-lg": "1.5rem", "space-sm": "0.5rem", "gutter-tablet": "1.5rem" }, "fontFamily": { "label-sm": ["Roboto Flex"], "headline-sm": ["Roboto Flex"], "label-md": ["Roboto Flex"], "display-md": ["Roboto Flex"], "display-lg-mobile": ["Roboto Flex"], "body-md": ["Roboto Flex"], "display-sm": ["Roboto Flex"], "display-lg": ["Roboto Flex"], "body-lg": ["Roboto Flex"], "headline-lg": ["Roboto Flex"], "title-md": ["Roboto Flex"], "display-md-mobile": ["Roboto Flex"], "body-sm": ["Roboto Flex"], "headline-md": ["Roboto Flex"], "title-lg": ["Roboto Flex"], "label-lg": ["Roboto Flex"], "title-sm": ["Roboto Flex"] } } } }</script><style>@layer base{html,body{margin:0;padding:0;min-height:100%;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface text-on-surface antialiased flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl pt-safe shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-space-md flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm min-w-0"><button aria-label="Navigation menu" class="w-12 h-12 rounded-full flex items-center justify-center text-on-surface hover:bg-surface-container transition-colors"><span class="material-symbols-outlined text-[24px]">menu</span></button><div class="flex flex-col min-w-0"><span class="font-label-sm text-label-sm text-on-surface-variant leading-none">Material 3 Gallery</span><h1 class="font-title-lg text-title-lg text-on-surface truncate leading-tight">Loaders</h1></div></div><div class="flex items-center gap-space-xs shrink-0"><button aria-label="Search" class="w-11 h-11 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors"><span class="material-symbols-outlined text-[24px]">search</span></button><button aria-label="More options" class="w-11 h-11 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors"><span class="material-symbols-outlined text-[24px]">more_vert</span></button><div class="w-11 h-11 flex items-center justify-center ml-space-xs"><img alt="Profile" class="w-8 h-8 rounded-full object-cover ring-2 ring-primary-fixed" src="https://lh3.googleusercontent.com/aida/ALJJyrDFbIWIbSE_fO4S92xXpL74ee-XK112lQlcNRy6jlJ7lsjNxGQtzstYOd2dpuS0CA8GHx-Sih3Uv5-etpqnRZ6Wt1-tqn1fUEron1_TLvnfZUkDYI_954VyhVMv_BYn7HvaMZv-Xnsrbm62DywS9RdAtCUNoiJZWX1TGJZYkeCCz5Oy6tAPIi812kdjLBDcuGjI4l_62fJXQRVu-hZ_3kdJsbzf7Kr7ODpVU6r9r94S"/></div></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 pb-24 bg-surface"><div class="flex flex-col w-full pb-8">
+<!-- Interactive Pull-to-Refresh & State Preview Strip -->
+<div class="px-gutter py-space-sm bg-surface-container-low flex flex-col gap-space-sm mb-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">sync</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider">Dynamic Feed Simulator</span>
+</div>
+<button class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm transition-transform active:scale-95 shadow-sm" id="trigger-refresh-btn">
+<span class="material-symbols-outlined text-[16px]">refresh</span>
+<span>Simulate Pull</span>
+</button>
+</div>
+<!-- PTR Dynamic Pill Bar -->
+<div class="relative overflow-hidden w-full h-11 bg-surface-container rounded-full flex items-center justify-center px-4 transition-all duration-300" id="ptr-indicator">
+<!-- State A: Idle / Pulled -->
+<div class="flex items-center gap-2 text-on-surface-variant" id="ptr-state-idle">
+<span class="material-symbols-outlined text-[20px] text-primary transition-transform duration-200">arrow_downward</span>
+<span class="font-label-md text-label-md">Pull down to synchronize buffer</span>
+</div>
+<!-- State B: Active Spinner -->
+<div class="hidden items-center gap-2.5 text-primary" id="ptr-state-loading">
+<svg class="w-5 h-5 animate-spin" fill="none" viewbox="0 0 24 24">
+<circle class="opacity-80" cx="12" cy="12" r="9" stroke="currentColor" stroke-dasharray="32" stroke-linecap="round" stroke-width="2.5"></circle>
+</svg>
+<span class="font-label-md text-label-md text-on-surface">Fetching telemetry payload...</span>
+</div>
+<!-- State C: Morph Success -->
+<div class="hidden items-center gap-2 text-on-secondary-fixed-variant" id="ptr-state-success">
+<span class="material-symbols-outlined text-[20px] text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-label-md text-label-md font-bold">Synchronized (24ms)</span>
+</div>
+</div>
+</div>
+<!-- SECTION 1: Standard M3 Progress Indicators -->
+<div class="px-gutter flex flex-col gap-space-md mb-space-lg">
+<div class="flex items-center justify-between">
+<div>
+<span class="font-label-sm text-label-sm text-primary uppercase font-bold tracking-wider">Spec Baseline</span>
+<h2 class="font-title-lg text-title-lg text-on-surface">Standard M3 Indicators</h2>
+</div>
+<span class="px-2.5 py-1 rounded-full bg-surface-container-high font-label-sm text-label-sm text-on-surface-variant">MD3 Compliant</span>
+</div>
+<!-- Circular Variants Grid -->
+<div class="grid grid-cols-2 gap-space-md">
+<!-- Circular Indeterminate -->
+<div class="bg-surface-container-low rounded-xl p-space-md flex flex-col items-center justify-between gap-space-md text-center shadow-sm">
+<div class="w-full flex justify-between items-center text-left">
+<span class="font-label-sm text-label-sm font-bold text-on-surface">Circular</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Indeterminate</span>
+</div>
+<!-- Arc Animation Container -->
+<div class="relative w-16 h-16 flex items-center justify-center my-1">
+<svg class="w-12 h-12 animate-spin" style="animation-duration: 1.4s; animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);" viewbox="0 0 48 48">
+<circle class="text-primary" cx="24" cy="24" fill="none" r="18" stroke="currentColor" stroke-dasharray="78 35" stroke-linecap="round" stroke-width="4"></circle>
+</svg>
+</div>
+<div class="w-full bg-surface-container-high rounded-lg p-2 text-left">
+<p class="font-label-sm text-label-sm text-on-surface-variant">4dp track • Round caps</p>
+<p class="font-label-sm text-label-sm text-primary font-mono truncate">md.sys.color.primary</p>
+</div>
+</div>
+<!-- Circular Determinate (68%) -->
+<div class="bg-surface-container-low rounded-xl p-space-md flex flex-col items-center justify-between gap-space-md text-center shadow-sm">
+<div class="w-full flex justify-between items-center text-left">
+<span class="font-label-sm text-label-sm font-bold text-on-surface">Circular</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Determinate</span>
+</div>
+<!-- 68% SVG Ring -->
+<div class="relative w-16 h-16 flex items-center justify-center my-1">
+<svg class="w-14 h-14 -rotate-90" viewbox="0 0 56 56">
+<!-- Track -->
+<circle class="text-secondary-fixed" cx="28" cy="28" fill="none" r="22" stroke="currentColor" stroke-width="4"></circle>
+<!-- Active Fill: Circumference = 2 * PI * 22 ~= 138.2. 68% = 94.0 -->
+<circle class="text-primary transition-all duration-700" cx="28" cy="28" fill="none" r="22" stroke="currentColor" stroke-dasharray="138.2" stroke-dashoffset="44.2" stroke-linecap="round" stroke-width="4"></circle>
+</svg>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="font-title-sm text-title-sm font-bold text-on-surface">68%</span>
+</div>
+</div>
+<div class="w-full bg-surface-container-high rounded-lg p-2 text-left">
+<p class="font-label-sm text-label-sm text-on-surface-variant">Offset 44.2 • 68% fill</p>
+<p class="font-label-sm text-label-sm text-primary font-mono truncate">secondary-fixed track</p>
+</div>
+</div>
+</div>
+<!-- Linear Indicators Card -->
+<div class="bg-surface-container-low rounded-xl p-space-md flex flex-col gap-space-md shadow-sm">
+<!-- Linear Indeterminate with Buffer Dots -->
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-center">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Linear Indeterminate with Buffer</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Loop active</span>
+</div>
+<!-- M3 Track -->
+<div class="relative w-full h-1 bg-surface-container-highest rounded-full overflow-hidden">
+<!-- Background pulsing dots track -->
+<div class="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary via-transparent to-transparent bg-[length:12px_4px]"></div>
+<!-- Bar 1 -->
+<div class="absolute top-0 bottom-0 bg-primary rounded-full" style="animation: m3linear1 2.1s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite; width: 50%;"></div>
+<!-- Bar 2 -->
+<div class="absolute top-0 bottom-0 bg-primary rounded-full" style="animation: m3linear2 2.1s cubic-bezier(0.165, 0.84, 0.44, 1) infinite; animation-delay: 1.15s; width: 35%;"></div>
+</div>
+<div class="flex justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span>Continuous dual-phase arc</span>
+<span class="font-mono text-primary">Token: primary-container</span>
+</div>
+</div>
+<!-- Linear Determinate (74%) -->
+<div class="flex flex-col gap-2 pt-2">
+<div class="flex justify-between items-center">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Linear Determinate</span>
+<span class="font-title-sm text-title-sm font-bold text-primary">74%</span>
+</div>
+<div class="relative w-full h-2 bg-surface-container-highest rounded-full overflow-hidden p-0.5">
+<div class="h-full bg-primary rounded-full transition-all duration-500" style="width: 74%;"></div>
+</div>
+<div class="flex justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span>74% complete (3.7s elapsed)</span>
+<span class="font-mono text-primary">Track: 4dp capsule</span>
+</div>
+</div>
+</div>
+</div>
+<!-- SECTION 2: Unique & Creative M3 Loaders -->
+<div class="px-gutter flex flex-col gap-space-md mb-space-lg">
+<div class="flex items-center justify-between">
+<div>
+<span class="font-label-sm text-label-sm text-secondary uppercase font-bold tracking-wider">Experimental &amp; Expressive</span>
+<h2 class="font-title-lg text-title-lg text-on-surface">Creative M3 Micro-Loaders</h2>
+</div>
+<span class="px-2.5 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm font-medium">Bespoke</span>
+</div>
+<!-- 1. Material Morphing Quad -->
+<div class="bg-surface-container-low rounded-xl p-space-md flex flex-col gap-space-sm shadow-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
+<span class="font-title-sm text-title-sm text-on-surface">Material Morphing Quad</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono">Shape Harmonic</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Rhythmic scale and geometry transition across 4 tonal surfaces with phase-shifted bezier curves.</p>
+<!-- Quad Stage -->
+<div class="py-6 flex items-center justify-center gap-4 bg-surface-container rounded-lg my-1">
+<!-- Circle -->
+<div class="w-7 h-7 rounded-full bg-primary shadow-sm" style="animation: bounceWave 1.4s ease-in-out infinite 0s;"></div>
+<!-- Rounded Square -->
+<div class="w-7 h-7 rounded-lg bg-secondary-container" style="animation: bounceWave 1.4s ease-in-out infinite 0.2s;"></div>
+<!-- Pill / Capsule -->
+<div class="w-5 h-8 rounded-full bg-primary-fixed-dim" style="animation: bounceWave 1.4s ease-in-out infinite 0.4s;"></div>
+<!-- Petal / Teardrop -->
+<div class="w-7 h-7 rounded-t-full rounded-bl-full bg-tertiary-fixed-dim" style="animation: bounceWave 1.4s ease-in-out infinite 0.6s;"></div>
+</div>
+<div class="flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm pt-1">
+<span>Spec: 4 distinct M3 surface radii</span>
+<span class="font-mono text-secondary">Token: tertiary-fixed-dim</span>
+</div>
+</div>
+<!-- 2. Stepped Progress Pill Tracker -->
+<div class="bg-surface-container-low rounded-xl p-space-md flex flex-col gap-space-sm shadow-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
+<span class="font-title-sm text-title-sm text-on-surface">Stepped Multi-Phase Pill</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-semibold">Stage 3 of 4</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">State-aware segmented pipeline with active micro-spinner at the current working segment.</p>
+<!-- Stepper Strip -->
+<div class="grid grid-cols-4 gap-1.5 py-3">
+<!-- Step 1: Done -->
+<div class="flex flex-col gap-1 items-center">
+<div class="w-full h-9 rounded-full bg-primary flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-[18px]">check</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface truncate">1. Setup</span>
+</div>
+<!-- Step 2: Done -->
+<div class="flex flex-col gap-1 items-center">
+<div class="w-full h-9 rounded-full bg-primary flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-[18px]">check</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface truncate">2. Design</span>
+</div>
+<!-- Step 3: Active Spinner -->
+<div class="flex flex-col gap-1 items-center">
+<div class="w-full h-9 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container shadow-inner">
+<svg class="w-4 h-4 animate-spin" fill="none" viewbox="0 0 24 24">
+<circle cx="12" cy="12" r="9" stroke="currentColor" stroke-dasharray="28" stroke-linecap="round" stroke-width="3"></circle>
+</svg>
+</div>
+<span class="font-label-sm text-label-sm font-bold text-primary truncate">3. Export</span>
+</div>
+<!-- Step 4: Pending -->
+<div class="flex flex-col gap-1 items-center opacity-40">
+<div class="w-full h-9 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant truncate">4. Publish</span>
+</div>
+</div>
+<div class="flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span>Active pill elevation Level 1</span>
+<span class="font-mono text-primary">Token: secondary-container</span>
+</div>
+</div>
+<!-- 3. Orbiting Dots Loader & Pulse Halo Button Grid -->
+<div class="grid grid-cols-1 gap-space-md">
+<!-- Orbiting Dots Loader -->
+<div class="bg-surface-container-low rounded-xl p-space-md flex items-center justify-between gap-space-md shadow-sm">
+<div class="flex flex-col gap-1 max-w-[200px]">
+<span class="font-title-sm text-title-sm text-on-surface">Orbiting Node Halo</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">3 satellite nodes revolving smoothly around a fixed M3 core.</p>
+<span class="font-label-sm text-label-sm text-primary font-mono mt-1">orbit-transform-gpu</span>
+</div>
+<div class="w-20 h-20 bg-surface-container rounded-xl flex items-center justify-center relative overflow-hidden">
+<!-- Center Core -->
+<div class="w-4 h-4 rounded-full bg-primary shadow-sm z-10"></div>
+<!-- Orbit Ring System -->
+<div class="absolute w-12 h-12 rounded-full border-none flex items-center justify-center animate-spin" style="animation-duration: 2.2s; animation-timing-function: linear;">
+<div class="absolute top-0 w-2.5 h-2.5 rounded-full bg-secondary-container"></div>
+<div class="absolute bottom-0 left-0 w-2 h-2 rounded-full bg-primary-fixed-dim"></div>
+<div class="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-tertiary-fixed"></div>
+</div>
+</div>
+</div>
+<!-- Pulse Halo Button State -->
+<div class="bg-surface-container-low rounded-xl p-space-md flex flex-col gap-space-sm shadow-sm">
+<div class="flex justify-between items-center">
+<span class="font-title-sm text-title-sm text-on-surface">Pulse Halo Action Button</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">In-flight Feedback</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Embedded micro-indicator within standard pill action preventing layout reflow during write operations.</p>
+<div class="flex flex-wrap gap-space-sm pt-1">
+<!-- Active Loading Button -->
+<button class="relative overflow-hidden flex items-center justify-center gap-2.5 px-6 h-10 rounded-full bg-primary text-on-primary font-label-lg text-label-lg shadow-sm">
+<svg class="w-4 h-4 animate-spin text-on-primary" fill="none" viewbox="0 0 24 24">
+<circle cx="12" cy="12" r="9" stroke="currentColor" stroke-dasharray="26" stroke-linecap="round" stroke-width="3"></circle>
+</svg>
+<span>Synchronizing...</span>
+<span class="absolute inset-0 bg-white/10 animate-pulse pointer-events-none"></span>
+</button>
+<!-- Tonal Pending Variant -->
+<button class="flex items-center justify-center gap-2 px-4 h-10 rounded-full bg-surface-container-high text-on-surface font-label-lg text-label-lg">
+<span class="w-2 h-2 rounded-full bg-secondary animate-ping"></span>
+<span>Queued</span>
+</button>
+</div>
+</div>
+</div>
+<!-- 4. High-Fidelity Shimmer Skeleton Card -->
+<div class="bg-surface-container-low rounded-xl p-space-md flex flex-col gap-space-sm shadow-sm">
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-primary">auto_awesome_motion</span>
+<span class="font-title-sm text-title-sm text-on-surface">Dynamic Shimmer Skeleton</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono">Shader Emulation</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Content placeholder preview with zero cumulative layout shift (CLS).</p>
+<!-- Skeleton UI Surface -->
+<div class="p-space-md bg-surface-container rounded-lg flex flex-col gap-3 relative overflow-hidden">
+<!-- Shimmer Ribbon Overlay -->
+<div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent -translate-x-full animate-[shimmer_1.8s_infinite] pointer-events-none"></div>
+<!-- Header row -->
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest shrink-0"></div>
+<div class="flex flex-col gap-1.5 flex-1 min-w-0">
+<div class="w-3/5 h-3.5 bg-surface-container-highest rounded-full"></div>
+<div class="w-2/5 h-2.5 bg-surface-container-highest rounded-full"></div>
+</div>
+<div class="w-7 h-7 rounded-full bg-surface-container-highest"></div>
+</div>
+<!-- Body block -->
+<div class="flex flex-col gap-2 pt-1">
+<div class="w-full h-3 bg-surface-container-highest rounded-full"></div>
+<div class="w-11/12 h-3 bg-surface-container-highest rounded-full"></div>
+<div class="w-4/6 h-3 bg-surface-container-highest rounded-full"></div>
+</div>
+<!-- Footer chips skeleton -->
+<div class="flex gap-2 pt-2">
+<div class="w-16 h-6 rounded-full bg-surface-container-highest"></div>
+<div class="w-20 h-6 rounded-full bg-surface-container-highest"></div>
+<div class="w-12 h-6 rounded-full bg-surface-container-highest"></div>
+</div>
+</div>
+<div class="flex justify-between items-center text-on-surface-variant font-label-sm text-label-sm pt-1">
+<span>Surface elevation: Surface Container</span>
+<span class="font-mono text-primary">Gradient: via-surface-bright</span>
+</div>
+</div>
+</div>
+<!-- SECTION 3: State Machine & Interactive Feedback -->
+<div class="px-gutter flex flex-col gap-space-md">
+<div>
+<span class="font-label-sm text-label-sm text-tertiary uppercase font-bold tracking-wider">State Machine</span>
+<h2 class="font-title-lg text-title-lg text-on-surface">Error &amp; Success Morph States</h2>
+</div>
+<!-- Morph Demonstration Tiles -->
+<div class="grid grid-cols-1 gap-space-sm">
+<!-- Morph Success State -->
+<div class="bg-surface-container-low rounded-xl p-space-md flex items-center justify-between gap-space-md shadow-sm">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-full bg-secondary-fixed flex items-center justify-center text-secondary shrink-0 transition-transform hover:scale-105">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">task_alt</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-sm text-title-sm text-on-surface">Completed Morph</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Arc collapses seamlessly into checkmark</span>
+</div>
+</div>
+<span class="px-3 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm font-bold">200 OK</span>
+</div>
+<!-- Morph Error & Retry State -->
+<div class="bg-surface-container-low rounded-xl p-space-md flex flex-col gap-3 shadow-sm">
+<div class="flex items-start justify-between gap-2">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-full bg-error-container flex items-center justify-center text-error shrink-0">
+<span class="material-symbols-outlined text-[24px]">cloud_off</span>
+</div>
+<div class="flex flex-col">
+<span class="font-title-sm text-title-sm text-on-surface">Connection Interrupted</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Stream packet timeout at node 7</span>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-bold">Failed</span>
+</div>
+<div class="flex items-center justify-between pt-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono">retryAttempts = 3/5</span>
+<button class="flex items-center gap-1.5 px-4 h-9 rounded-full bg-error text-on-error font-label-sm text-label-sm transition-transform active:scale-95 shadow-sm">
+<span class="material-symbols-outlined text-[16px]">refresh</span>
+<span>Retry Operation</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+  // Dynamic Pull-to-Refresh Simulator Micro-interaction
+  (function initLoaderSim() {
+    const btn = document.getElementById('trigger-refresh-btn');
+    const idleState = document.getElementById('ptr-state-idle');
+    const loadingState = document.getElementById('ptr-state-loading');
+    const successState = document.getElementById('ptr-state-success');
+    const ptrBox = document.getElementById('ptr-indicator');
+
+    if (!btn || !idleState || !loadingState || !successState) return;
+
+    let isRunning = false;
+
+    btn.addEventListener('click', () => {
+      if (isRunning) return;
+      isRunning = true;
+
+      // Stage 1: Transition to Loading
+      idleState.classList.add('hidden');
+      successState.classList.add('hidden');
+      loadingState.classList.remove('hidden');
+      loadingState.classList.add('flex');
+      ptrBox.classList.add('bg-secondary-fixed');
+
+      // Stage 2: Transition to Success
+      setTimeout(() => {
+        loadingState.classList.add('hidden');
+        loadingState.classList.remove('flex');
+        successState.classList.remove('hidden');
+        successState.classList.add('flex');
+        ptrBox.classList.remove('bg-secondary-fixed');
+        ptrBox.classList.add('bg-surface-container-high');
+
+        // Stage 3: Return to Idle
+        setTimeout(() => {
+          successState.classList.add('hidden');
+          successState.classList.remove('flex');
+          idleState.classList.remove('hidden');
+          idleState.classList.add('flex');
+          ptrBox.classList.remove('bg-surface-container-high');
+          isRunning = false;
+        }, 1500);
+      }, 1800);
+    });
+  })();
+</script>
+<style>
+  @keyframes m3linear1 {
+    0% { left: -35%; right: 100%; }
+    60% { left: 100%; right: -90%; }
+    100% { left: 100%; right: -90%; }
+  }
+  @keyframes m3linear2 {
+    0% { left: -200%; right: 100%; }
+    60% { left: 107%; right: -8%; }
+    100% { left: 107%; right: -8%; }
+  }
+  @keyframes bounceWave {
+    0%, 100% { transform: translateY(0px) scale(0.92); opacity: 0.7; }
+    50% { transform: translateY(-8px) scale(1.12); opacity: 1; }
+  }
+  @keyframes shimmer {
+    100% { transform: translateX(100%); }
+  }
+</style></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface-container/95 backdrop-blur-xl shadow-[0_-1px_12px_rgba(0,0,0,0.05)]" data-active-classes="[&amp;&gt;.m3-indicator]:bg-secondary-container [&amp;&gt;.m3-indicator]:text-on-secondary-container [&amp;&gt;.m3-label]:text-on-surface [&amp;&gt;.m3-label]:font-bold"><div class="flex justify-around items-center h-20 px-space-xs max-w-lg mx-auto"><a class="flex flex-col items-center justify-center gap-1 flex-1 py-1 text-on-surface-variant min-h-[48px]" data-path="inputs-and-actions" href="#"><div class="m3-indicator flex items-center justify-center w-16 h-8 rounded-full transition-all duration-200 text-on-surface-variant"><span class="material-symbols-outlined text-[24px]">edit_note</span></div><span class="m3-label font-label-sm text-label-sm text-on-surface-variant transition-colors truncate max-w-[68px] text-center">Inputs</span></a><a class="flex flex-col items-center justify-center gap-1 flex-1 py-1 text-on-surface-variant min-h-[48px]" data-path="cards-and-surfaces" href="#"><div class="m3-indicator flex items-center justify-center w-16 h-8 rounded-full transition-all duration-200 text-on-surface-variant"><span class="material-symbols-outlined text-[24px]">dashboard</span></div><span class="m3-label font-label-sm text-label-sm text-on-surface-variant transition-colors truncate max-w-[68px] text-center">Surfaces</span></a><a class="flex flex-col items-center justify-center gap-1 flex-1 py-1 text-on-surface-variant min-h-[48px]" data-path="navigation-and-sheets" href="#"><div class="m3-indicator flex items-center justify-center w-16 h-8 rounded-full transition-all duration-200 text-on-surface-variant"><span class="material-symbols-outlined text-[24px]">layers</span></div><span class="m3-label font-label-sm text-label-sm text-on-surface-variant transition-colors truncate max-w-[68px] text-center">Sheets</span></a><a class="flex flex-col items-center justify-center gap-1 flex-1 py-1 text-on-surface-variant min-h-[48px]" data-path="auth-and-otp" href="#"><div class="m3-indicator flex items-center justify-center w-16 h-8 rounded-full transition-all duration-200 text-on-surface-variant"><span class="material-symbols-outlined text-[24px]">lock_person</span></div><span class="m3-label font-label-sm text-label-sm text-on-surface-variant transition-colors truncate max-w-[68px] text-center">Auth</span></a><a aria-current="page" class="flex flex-col items-center justify-center gap-1 flex-1 py-1 text-on-surface-variant min-h-[48px] [&amp;&gt;.m3-indicator]:bg-secondary-container [&amp;&gt;.m3-indicator]:text-on-secondary-container [&amp;&gt;.m3-label]:text-on-surface [&amp;&gt;.m3-label]:font-bold" data-path="loaders" href="#"><div class="m3-indicator flex items-center justify-center w-16 h-8 rounded-full transition-all duration-200 text-on-surface-variant"><span class="material-symbols-outlined text-[24px]">progress_activity</span></div><span class="m3-label font-label-sm text-label-sm text-on-surface-variant transition-colors truncate max-w-[68px] text-center">Loaders</span></a></div></nav></body></html>

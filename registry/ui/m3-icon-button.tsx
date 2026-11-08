@@ -1,13 +1,14 @@
 "use client";
 
 import * as React from "react";
+import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 
 export type M3IconButtonVariant = "standard" | "filled" | "tonal" | "outlined" | "minimal";
 export type M3IconButtonSize = "sm" | "default" | "lg";
 
 export interface M3IconButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "onAnimationStart" | "onDragStart" | "onDragEnd" | "onDrag"> {
   variant?: M3IconButtonVariant;
   size?: M3IconButtonSize;
   selected?: boolean;
@@ -74,24 +75,25 @@ export const M3IconButton = React.forwardRef<HTMLButtonElement, M3IconButtonProp
     const currentIcon = selected && selectedIcon ? selectedIcon : icon || children;
 
     return (
-      <button
+      <motion.button
         ref={ref}
         type="button"
         aria-pressed={selected}
         onClick={handleClick}
+        whileTap={{ scale: 0.88 }}
+        transition={{ type: "spring", stiffness: 500, damping: 25 }}
         className={cn(
-          "inline-flex items-center justify-center cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-green)]/40 disabled:opacity-40 disabled:pointer-events-none",
-          "transition-all duration-200 active:scale-[0.85] ease-[cubic-bezier(0.34,1.56,0.64,1)]",
+          "inline-flex items-center justify-center cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-green)]/40 disabled:opacity-40 disabled:pointer-events-none transition-colors",
           variantStyles[variant],
           sizeStyles,
           className
         )}
-        {...props}
+        {...(props as any)}
       >
         <span className="shrink-0 transition-transform duration-200">
           {currentIcon}
         </span>
-      </button>
+      </motion.button>
     );
   }
 );

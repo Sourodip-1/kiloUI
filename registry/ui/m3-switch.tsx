@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Check, X } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
 
 export interface M3SwitchProps {
@@ -65,7 +66,7 @@ export function M3Switch({
         </div>
       )}
 
-      {/* Switch Track with Elastic Spring Physics */}
+      {/* Switch Track with Spring Physics */}
       <button
         type="button"
         role="switch"
@@ -73,7 +74,7 @@ export function M3Switch({
         disabled={disabled}
         onClick={toggle}
         className={cn(
-          "relative inline-flex shrink-0 transition-colors duration-250 ease-[cubic-bezier(0.2,0,0,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-green)]/40 active:scale-[0.96]",
+          "relative inline-flex shrink-0 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-green)]/40",
           isMinimal
             ? cn(
                 "h-6 w-11 rounded-full p-0.5 border",
@@ -90,29 +91,47 @@ export function M3Switch({
         )}
       >
         {/* Switch Thumb with Spring Stretch */}
-        <span
+        <motion.span
+          animate={{
+            x: isChecked ? (isMinimal ? 20 : 20) : 0,
+          }}
+          whileTap={{ scaleX: 1.25 }}
+          transition={{ type: "spring", stiffness: 300, damping: 25 }}
           className={cn(
-            "pointer-events-none flex items-center justify-center rounded-full transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-active:scale-x-125",
+            "pointer-events-none flex items-center justify-center rounded-full shadow-sm",
             isMinimal
-              ? cn(
-                  "h-5 w-5 bg-[var(--bg-main)] shadow-xs",
-                  isChecked ? "translate-x-5" : "translate-x-0"
-                )
-              : cn(
-                  isChecked
-                    ? "h-6 w-6 translate-x-5 bg-[var(--bg-main)] text-[var(--accent-green)] shadow-md"
-                    : "h-6 w-6 translate-x-0 bg-[var(--text-muted)] text-[var(--bg-main)]"
-                )
+              ? "h-5 w-5 bg-[var(--bg-main)]"
+              : isChecked
+              ? "h-6 w-6 bg-[var(--bg-main)] text-[var(--accent-green)]"
+              : "h-6 w-6 bg-[var(--text-muted)] text-[var(--bg-main)]"
           )}
         >
           {showIcon && !isMinimal && (
-            isChecked ? (
-              <Check className="h-3.5 w-3.5 stroke-[3] animate-in zoom-in-50 duration-150" />
-            ) : (
-              <X className="h-3 w-3 stroke-[2.5]" />
-            )
+            <AnimatePresence mode="wait">
+              {isChecked ? (
+                <motion.span
+                  key="check"
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0, opacity: 0 }}
+                  transition={{ type: "spring", stiffness: 500, damping: 25 }}
+                >
+                  <Check className="h-3.5 w-3.5 stroke-[3]" />
+                </motion.span>
+              ) : (
+                <motion.span
+                  key="x"
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0, opacity: 0 }}
+                  transition={{ type: "spring", stiffness: 500, damping: 25 }}
+                >
+                  <X className="h-3 w-3 stroke-[2.5]" />
+                </motion.span>
+              )}
+            </AnimatePresence>
           )}
-        </span>
+        </motion.span>
       </button>
     </label>
   );

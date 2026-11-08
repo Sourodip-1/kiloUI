@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { ChevronRight } from "lucide-react";
+import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 
 export type M3ListLineCount = "1" | "2" | "3" | 1 | 2 | 3;
@@ -54,13 +55,15 @@ export function M3ListItem({
       : "2";
 
   return (
-    <div
+    <motion.div
       onClick={onClick}
       role={isClickable ? "button" : undefined}
       tabIndex={isClickable ? 0 : undefined}
+      whileTap={isClickable ? { scale: 0.985 } : undefined}
+      transition={{ type: "spring", stiffness: 500, damping: 35 }}
       className={cn(
-        "flex w-full font-sans transition-all duration-150 select-none",
-        isClickable && "cursor-pointer active:bg-[var(--surface-tertiary)] active:scale-[0.99]",
+        "flex w-full font-sans transition-colors select-none",
+        isClickable && "cursor-pointer active:bg-[var(--surface-tertiary)]",
         isMinimal
           ? "px-3 py-2.5 min-h-[44px] items-center rounded-lg hover:bg-[var(--surface-secondary)]/50"
           : activeLines === "1"
@@ -127,7 +130,7 @@ export function M3ListItem({
           <ChevronRight className="h-4 w-4 text-[var(--text-muted)]" />
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -152,16 +155,21 @@ export function M3List({
     <div
       role="list"
       className={cn(
-        "w-full flex flex-col overflow-hidden font-sans",
+        "w-full flex flex-col font-sans",
         isMinimal
-          ? "rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] p-1 space-y-0.5 shadow-2xs"
-          : "rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-xs divide-y divide-[var(--border)]/40",
+          ? "p-1.5 space-y-1 rounded-xl bg-[var(--surface-primary)] border border-[var(--border)]"
+          : "rounded-2xl bg-[var(--surface-primary)] border border-[var(--border)] overflow-hidden",
         className
       )}
     >
       {header && (
-        <div className="px-4 pt-3 pb-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)] border-b border-[var(--border)]/40">
-          {header}
+        <div className="px-4 py-2 border-b border-[var(--border)]/60 bg-[var(--surface-secondary)]/40 flex items-center justify-between">
+          <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[var(--text-secondary)]">
+            {header}
+          </span>
+          <span className="text-[10px] font-mono text-[var(--text-muted)]">
+            M3 SPEC
+          </span>
         </div>
       )}
       {children}

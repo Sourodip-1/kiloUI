@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Check } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
 
 export interface M3SegmentOption {
@@ -35,6 +36,7 @@ export function M3SegmentedButton({
 }: M3SegmentedButtonProps) {
   const isMinimal = design === "minimal" || variant === "minimal";
   const isMulti = multiSelect || variant === "multi-select";
+  const uniqueId = React.useId();
 
   const isSelected = (id: string) => {
     if (isMulti) {
@@ -70,10 +72,10 @@ export function M3SegmentedButton({
     <div
       role="group"
       className={cn(
-        "w-full flex items-center overflow-hidden border border-[var(--border)] select-none",
+        "w-full flex items-center select-none border border-[var(--border)] overflow-hidden",
         isMinimal
-          ? "rounded-xl p-0.5 bg-[var(--surface-primary)] gap-1 shadow-2xs"
-          : "rounded-full bg-[var(--surface-primary)] p-0.5 divide-x divide-[var(--border)]",
+          ? "rounded-xl p-1 bg-[var(--surface-primary)] gap-1 shadow-2xs"
+          : "rounded-full bg-[var(--surface-primary)] p-1 gap-1",
         className
       )}
     >
@@ -83,34 +85,46 @@ export function M3SegmentedButton({
         const isLast = i === options.length - 1;
 
         return (
-          <button
+          <motion.button
             key={opt.id}
             type="button"
             disabled={opt.disabled}
             aria-pressed={active}
             onClick={() => handleSelect(opt.id, opt.disabled)}
+            whileTap={{ scale: opt.disabled ? 1 : 0.96 }}
+            transition={{ type: "spring", stiffness: 500, damping: 30 }}
             className={cn(
-              "relative flex-1 min-w-0 flex items-center justify-center font-sans font-medium transition-all duration-200 cursor-pointer disabled:opacity-40 disabled:pointer-events-none active:scale-[0.97] ease-[cubic-bezier(0.2,0,0,1)]",
+              "relative flex-1 min-w-0 flex items-center justify-center font-sans font-medium select-none cursor-pointer disabled:opacity-40 disabled:pointer-events-none focus-visible:outline-none",
               size === "sm" ? "h-8 px-2 text-xs gap-1" : "h-10 px-2.5 text-xs sm:text-sm gap-1.5",
               isMinimal
                 ? cn(
                     "rounded-lg",
                     active
-                      ? "bg-[var(--surface-elevated)] text-[var(--text-primary)] shadow-xs border border-[var(--border)] font-bold"
-                      : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)]/60"
+                      ? "text-[var(--text-primary)] font-bold shadow-xs border border-[var(--border)] bg-[var(--surface-elevated)]"
+                      : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)]/50"
                   )
                 : cn(
-                    isFirst && "rounded-l-full",
-                    isLast && "rounded-r-full",
+                    "rounded-full transition-colors",
                     active
-                      ? "bg-[var(--accent-green-deep)] text-[var(--accent-green)] font-bold shadow-2xs"
-                      : "bg-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)]/50"
+                      ? "text-[var(--accent-green)] font-bold bg-[var(--accent-green-deep)]"
+                      : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)]/50"
                   )
             )}
           >
-            {active && !isMinimal && (
-              <Check className="h-3.5 w-3.5 shrink-0 stroke-[2.5] animate-in zoom-in-50 duration-200 ease-[cubic-bezier(0.34,1.56,0.64,1)] text-[var(--accent-green)]" />
-            )}
+            <AnimatePresence>
+              {active && !isMinimal && (
+                <motion.span
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0, opacity: 0 }}
+                  transition={{ type: "spring", stiffness: 500, damping: 25 }}
+                  className="shrink-0 text-[var(--accent-green)]"
+                >
+                  <Check className="h-3.5 w-3.5 stroke-[2.5]" />
+                </motion.span>
+              )}
+            </AnimatePresence>
+
             {opt.icon && <span className="shrink-0">{opt.icon}</span>}
             <span className="truncate">{opt.label}</span>
             {opt.badge !== undefined && (
@@ -118,7 +132,7 @@ export function M3SegmentedButton({
                 {opt.badge}
               </span>
             )}
-          </button>
+          </motion.button>
         );
       })}
     </div>

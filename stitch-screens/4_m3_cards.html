@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "tertiary-fixed": "#f1daff", "surface-variant": "#e1e3e4", "on-error": "#ffffff", "surface": "#f8f9fa", "secondary-fixed": "#cee5ff", "secondary-container": "#7ec1ff", "on-background": "#191c1d", "primary-fixed-dim": "#b2c5ff", "background": "#f8f9fa", "surface-bright": "#f8f9fa", "surface-container": "#edeeef", "inverse-primary": "#b2c5ff", "outline": "#737785", "tertiary-container": "#6b5879", "on-secondary-container": "#004f7d", "on-tertiary-fixed": "#241531", "on-tertiary": "#ffffff", "secondary": "#00639b", "on-error-container": "#93000a", "on-secondary-fixed-variant": "#004a76", "surface-tint": "#0856cf", "primary": "#0041a2", "inverse-surface": "#2e3132", "primary-fixed": "#dae2ff", "on-primary-fixed": "#001847", "on-primary-container": "#ced9ff", "tertiary": "#524160", "surface-container-lowest": "#ffffff", "surface-container-highest": "#e1e3e4", "surface-dim": "#d9dadb", "on-secondary-fixed": "#001d33", "surface-container-low": "#f3f4f5", "inverse-on-surface": "#f0f1f2", "error": "#ba1a1a", "secondary-fixed-dim": "#96cbff", "tertiary-fixed-dim": "#d5bee4", "on-tertiary-container": "#ead1f8", "on-secondary": "#ffffff", "on-primary": "#ffffff", "on-tertiary-fixed-variant": "#51405f", "on-surface-variant": "#424654", "on-surface": "#191c1d", "primary-container": "#0b57d0", "surface-container-high": "#e7e8e9", "outline-variant": "#c3c6d6", "error-container": "#ffdad6", "on-primary-fixed-variant": "#0040a1" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-xl": "2rem", "space-md": "1rem", "gutter": "1rem", "gutter-desktop": "1.5rem", "margin-desktop": "2rem", "margin-tablet": "1.5rem", "space-xs": "0.25rem", "margin": "1rem", "space-lg": "1.5rem", "space-sm": "0.5rem", "gutter-tablet": "1.5rem" }, "fontFamily": { "label-sm": ["Roboto Flex"], "headline-sm": ["Roboto Flex"], "label-md": ["Roboto Flex"], "display-md": ["Roboto Flex"], "display-lg-mobile": ["Roboto Flex"], "body-md": ["Roboto Flex"], "display-sm": ["Roboto Flex"], "display-lg": ["Roboto Flex"], "body-lg": ["Roboto Flex"], "headline-lg": ["Roboto Flex"], "title-md": ["Roboto Flex"], "display-md-mobile": ["Roboto Flex"], "body-sm": ["Roboto Flex"], "headline-md": ["Roboto Flex"], "title-lg": ["Roboto Flex"], "label-lg": ["Roboto Flex"], "title-sm": ["Roboto Flex"] } } } }</script><style>@layer base{html,body{margin:0;padding:0;min-height:100%;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface text-on-surface antialiased flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl pt-safe shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-space-md flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm min-w-0"><button aria-label="Navigation menu" class="w-12 h-12 rounded-full flex items-center justify-center text-on-surface hover:bg-surface-container transition-colors"><span class="material-symbols-outlined text-[24px]">menu</span></button><div class="flex flex-col min-w-0"><span class="font-label-sm text-label-sm text-on-surface-variant leading-none">Material 3 Gallery</span><h1 class="font-title-lg text-title-lg text-on-surface truncate leading-tight">Cards &amp; Surfaces</h1></div></div><div class="flex items-center gap-space-xs shrink-0"><button aria-label="Search" class="w-11 h-11 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors"><span class="material-symbols-outlined text-[24px]">search</span></button><button aria-label="More options" class="w-11 h-11 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors"><span class="material-symbols-outlined text-[24px]">more_vert</span></button><div class="w-11 h-11 flex items-center justify-center ml-space-xs"><img alt="Profile" class="w-8 h-8 rounded-full object-cover ring-2 ring-primary-fixed" src="https://lh3.googleusercontent.com/aida/ALJJyrDFbIWIbSE_fO4S92xXpL74ee-XK112lQlcNRy6jlJ7lsjNxGQtzstYOd2dpuS0CA8GHx-Sih3Uv5-etpqnRZ6Wt1-tqn1fUEron1_TLvnfZUkDYI_954VyhVMv_BYn7HvaMZv-Xnsrbm62DywS9RdAtCUNoiJZWX1TGJZYkeCCz5Oy6tAPIi812kdjLBDcuGjI4l_62fJXQRVu-hZ_3kdJsbzf7Kr7ODpVU6r9r94S"/></div></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 pb-24 bg-surface"><div class="flex flex-col w-full pb-10">
+<!-- Sub-header context & delightful intro -->
+<div class="px-space-md pt-space-md pb-space-sm flex flex-col gap-1">
+<div class="flex items-center gap-space-xs text-primary">
+<span class="material-symbols-outlined text-[18px]">view_quilt</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider">Surface Architecture</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">
+      M3 crafts depth using tonal color mapping across 5 surface steps rather than stark black shadows.
+    </p>
+</div>
+<!-- SECTION 1: M3 Card Archetypes -->
+<section class="flex flex-col gap-space-md px-space-md mt-space-sm">
+<div class="flex items-center justify-between">
+<h2 class="font-title-md text-title-md text-on-surface">Card Archetypes</h2>
+<span class="font-label-sm text-label-sm text-on-surface-variant">3 Core Variants</span>
+</div>
+<!-- Variant A: Elevated Card -->
+<div class="w-full bg-surface-container-low rounded-xl overflow-hidden shadow-sm flex flex-col transition-transform active:scale-[0.99] duration-150">
+<div class="relative w-full h-44 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Minimalist architectural composition with soft cast shadows, curved concrete surfaces, clean geometric lines, and gentle ambient skylight with deep blues and neutral tones matching Material 3 aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDImrkctnM1xC2JPQY-HxRp5zWw6UOalJBGD1DZJI-zhn4Y3Q3Szsn-aEQ8EzV6-Ifk1x0jbtMB5eQ-II0hrzKXLj6PvhzYn-E4cLn5O_w-NJr7TTkv6IskjhsUTcDKW1trEZeT5lBu9rjN2ehAjabVbYU2-GgwNNOc8C8Z8_Xz9yQ1kXXCwJPw_eST1cyf7omjtdcUAwSN9-R2bhkytJAdGusd-rRwitAdaTNXbus"/>
+<div class="absolute top-3 right-3 bg-surface-container-lowest/80 backdrop-blur-md px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">dp1 Raised</span>
+</div>
+</div>
+<div class="p-space-md flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<h3 class="font-title-lg text-title-lg text-on-surface">Elevated Card</h3>
+<span class="font-label-sm text-label-sm text-primary font-medium">Container Low</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">
+          Elevation via tonal tint paired with a subtle ambient shadow. Calibrated for hierarchy and visual priority.
+        </p>
+<div class="flex items-center justify-end gap-space-sm pt-space-xs">
+<button class="h-10 px-4 rounded-full font-label-lg text-label-lg text-primary hover:bg-surface-container-high transition-colors flex items-center justify-center">
+            Learn More
+          </button>
+<button class="h-10 px-6 rounded-full font-label-lg text-label-lg bg-secondary-container text-on-secondary-container hover:shadow-sm transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">explore</span>
+            Explore
+          </button>
+</div>
+</div>
+</div>
+<!-- Variant B: Filled Card (Tonal) -->
+<div class="w-full bg-surface-container-highest rounded-xl p-space-md flex flex-col gap-space-sm">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Flat Foundation</span>
+<h3 class="font-title-lg text-title-lg text-on-surface">Filled Card (Tonal)</h3>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[24px]">palette</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">
+        No drop shadow. Visual distinction relies completely on high surface container contrast, creating tactile groundedness.
+      </p>
+<!-- Assist Chips Cluster -->
+<div class="flex flex-wrap gap-space-xs py-1">
+<span class="h-8 px-3 rounded-lg bg-surface-container flex items-center gap-1.5 font-label-md text-label-md text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-primary">touch_app</span>
+          Tap target
+        </span>
+<span class="h-8 px-3 rounded-lg bg-surface-container flex items-center gap-1.5 font-label-md text-label-md text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-secondary">contrast</span>
+          Container Highest
+        </span>
+<span class="h-8 px-3 rounded-lg bg-surface-container flex items-center gap-1.5 font-label-md text-label-md text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-tertiary">check</span>
+          0dp Elevation
+        </span>
+</div>
+<div class="flex items-center justify-between pt-space-xs">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Updated 2m ago</span>
+<div class="flex items-center gap-space-xs">
+<button class="h-9 px-3 rounded-full font-label-lg text-label-lg text-primary hover:bg-surface-container flex items-center justify-center">
+            Dismiss
+          </button>
+<button class="h-9 px-4 rounded-full font-label-lg text-label-lg bg-primary text-on-primary hover:opacity-95 transition-opacity flex items-center gap-1">
+<span>Configure</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Variant C: Outlined Card -->
+<div class="w-full bg-surface rounded-xl p-space-md flex flex-col gap-space-xs shadow-none transition-colors" style="box-shadow: inset 0 0 0 1px #c3c6d6;">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed">
+<span class="material-symbols-outlined text-[18px]">crop_square</span>
+</span>
+<h3 class="font-title-lg text-title-lg text-on-surface">Outlined Card</h3>
+</div>
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors" id="bookmark-btn" onclick="this.classList.toggle('text-primary');">
+<span class="material-symbols-outlined text-[22px]">bookmark</span>
+</button>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">
+        Matches base surface luminance with a crisp boundary frame. Best for dense, repetitive grids where uniform boundary containment is critical.
+      </p>
+<div class="flex items-center justify-between pt-2">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Border: Outline Variant (1dp)</span>
+<span class="font-label-sm text-label-sm text-primary font-medium">Level 0 Clean</span>
+</div>
+</div>
+</section>
+<!-- SECTION 2: M3 Surface Elevation Hierarchy (Swatch Stack) -->
+<section class="flex flex-col gap-space-sm px-space-md mt-space-xl">
+<div class="flex flex-col gap-0.5">
+<div class="flex items-center gap-1 text-primary">
+<span class="material-symbols-outlined text-[18px]">layers</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider">Tonal Palette</span>
+</div>
+<h2 class="font-title-md text-title-md text-on-surface">Surface Container Hierarchy</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Five distinct luminescence gradations defining depth without cast shadows.</p>
+</div>
+<!-- Stepped Swatch Visual Cascade -->
+<div class="flex flex-col w-full gap-2 mt-2">
+<!-- 1. Lowest -->
+<div class="flex items-center justify-between p-3.5 bg-surface-container-lowest rounded-xl shadow-sm">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-surface-container-lowest shadow-sm flex items-center justify-center text-on-surface font-title-sm text-title-sm font-bold">
+            01
+          </div>
+<div class="flex flex-col">
+<span class="font-title-sm text-title-sm text-on-surface font-semibold">Surface Container Lowest</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Pure background cards, deep recesses</span>
+</div>
+</div>
+<div class="px-2.5 py-1 rounded-full bg-surface-container font-label-sm text-label-sm font-mono text-on-surface">
+          #FFFFFF
+        </div>
+</div>
+<!-- 2. Low -->
+<div class="flex items-center justify-between p-3.5 bg-surface-container-low rounded-xl">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-surface-container-low shadow-sm flex items-center justify-center text-on-surface font-title-sm text-title-sm font-bold">
+            02
+          </div>
+<div class="flex flex-col">
+<span class="font-title-sm text-title-sm text-on-surface font-semibold">Surface Container Low</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Subtle cards, baseline container</span>
+</div>
+</div>
+<div class="px-2.5 py-1 rounded-full bg-surface-container-high font-label-sm text-label-sm font-mono text-on-surface">
+          #F3F4F5
+        </div>
+</div>
+<!-- 3. Standard Container -->
+<div class="flex items-center justify-between p-3.5 bg-surface-container rounded-xl">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-surface-container shadow-sm flex items-center justify-center text-on-surface font-title-sm text-title-sm font-bold">
+            03
+          </div>
+<div class="flex flex-col">
+<span class="font-title-sm text-title-sm text-on-surface font-semibold">Surface Container</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Default surface for panels &amp; bars</span>
+</div>
+</div>
+<div class="px-2.5 py-1 rounded-full bg-surface-container-highest font-label-sm text-label-sm font-mono text-on-surface">
+          #EDEEEF
+        </div>
+</div>
+<!-- 4. High -->
+<div class="flex items-center justify-between p-3.5 bg-surface-container-high rounded-xl">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-surface-container-high shadow-sm flex items-center justify-center text-on-surface font-title-sm text-title-sm font-bold">
+            04
+          </div>
+<div class="flex flex-col">
+<span class="font-title-sm text-title-sm text-on-surface font-semibold">Surface Container High</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Elevated pickers, active states</span>
+</div>
+</div>
+<div class="px-2.5 py-1 rounded-full bg-surface-container-lowest font-label-sm text-label-sm font-mono text-on-surface">
+          #E7E8E9
+        </div>
+</div>
+<!-- 5. Highest -->
+<div class="flex items-center justify-between p-3.5 bg-surface-container-highest rounded-xl">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-surface-container-highest shadow-sm flex items-center justify-center text-on-surface font-title-sm text-title-sm font-bold">
+            05
+          </div>
+<div class="flex flex-col">
+<span class="font-title-sm text-title-sm text-on-surface font-semibold">Surface Container Highest</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Text fields, modals, dialog sheets</span>
+</div>
+</div>
+<div class="px-2.5 py-1 rounded-full bg-surface-container-lowest font-label-sm text-label-sm font-mono text-on-surface">
+          #E1E3E4
+        </div>
+</div>
+</div>
+</section>
+<!-- SECTION 3: Rich Media & Interactive Cards -->
+<section class="flex flex-col gap-space-md px-space-md mt-space-xl">
+<div class="flex items-center justify-between">
+<h2 class="font-title-md text-title-md text-on-surface">Interactive &amp; Media Cards</h2>
+<span class="font-label-sm text-label-sm text-secondary font-medium">Responsive</span>
+</div>
+<!-- Horizontal Media Card -->
+<div class="w-full bg-surface-container-low rounded-xl p-3 flex gap-space-md items-center shadow-sm">
+<div class="w-24 h-24 rounded-xl overflow-hidden shrink-0 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Close up of modern digital UI design system components, typography scales, vibrant blue tokens, and soft layered cards on screen" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDH9ObudF3PJXDFBEgV3iuCeToWA-Usa51TXXj8StJEBUFLrHSOa8vHhZ-3UwWGDDvFmoAImm49AGd4x1HuIEX2gmQ7K5H62OVssMicEltU0bOnkilK54lRFUMYx2-oIO__2Zo5L6FPCBvVpDIbefQpXksA5_GEZrITA6gIijoFmZm_g1xlIBw__-Ui5zUTzGbjUuHwaiBNcEL0uy-HhxcivmAtkfdW2sqijVWdm6Y"/>
+</div>
+<div class="flex flex-col justify-between flex-1 min-w-0">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-primary uppercase font-bold tracking-wide">Design Spec</span>
+<h3 class="font-title-md text-title-md text-on-surface truncate">Material Design 3</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1">Updated tokens &amp; motion spec</p>
+</div>
+<div class="flex items-center gap-2 pt-2">
+<button class="h-8 px-3 rounded-full font-label-sm text-label-sm bg-primary text-on-primary hover:opacity-90 transition-opacity">
+            Read Spec
+          </button>
+<button class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors" title="Copy Token Link">
+<span class="material-symbols-outlined text-[18px]">share</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Interactive List Item Cards -->
+<div class="flex flex-col gap-2">
+<!-- Item 1 -->
+<div class="w-full p-space-md bg-surface-container-low rounded-xl flex items-center justify-between hover:bg-surface-container transition-colors active:scale-[0.99]" role="button" tabindex="0">
+<div class="flex items-center gap-space-md min-w-0">
+<div class="w-11 h-11 rounded-full bg-secondary-fixed flex items-center justify-center text-on-secondary-fixed shrink-0">
+<span class="material-symbols-outlined text-[22px]">motion_photos_on</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-sm text-title-sm text-on-surface truncate">Predictive Back Gesture</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Spatial surface animations</span>
+</div>
+</div>
+<div class="flex items-center gap-1 shrink-0 ml-2">
+<span class="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-medium">v1.4</span>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">chevron_right</span>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="w-full p-space-md bg-surface-container-low rounded-xl flex items-center justify-between hover:bg-surface-container transition-colors active:scale-[0.99]" role="button" tabindex="0">
+<div class="flex items-center gap-space-md min-w-0">
+<div class="w-11 h-11 rounded-full bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed shrink-0">
+<span class="material-symbols-outlined text-[22px]">dynamic_form</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-sm text-title-sm text-on-surface truncate">Dynamic Color Extraction</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Wallpaper algorithm tuning</span>
+</div>
+</div>
+<div class="flex items-center gap-1 shrink-0 ml-2">
+<span class="px-2 py-0.5 rounded-full bg-tertiary-container text-on-tertiary-container font-label-sm text-label-sm font-medium">Auto</span>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">chevron_right</span>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 4: Banners & Callout Cards -->
+<section class="flex flex-col gap-space-md px-space-md mt-space-xl">
+<div class="flex items-center justify-between">
+<h2 class="font-title-md text-title-md text-on-surface">Banners &amp; Callouts</h2>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Status &amp; Context</span>
+</div>
+<!-- Info Banner Card -->
+<div class="w-full bg-primary-fixed rounded-xl p-space-md flex gap-space-md items-start text-on-primary-fixed shadow-sm transition-opacity duration-200" id="info-banner">
+<div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-on-primary shrink-0">
+<span class="material-symbols-outlined text-[20px]">info</span>
+</div>
+<div class="flex flex-col flex-1 min-w-0">
+<h4 class="font-title-sm text-title-sm text-on-primary-fixed font-bold">Dynamic Surface Adaptation</h4>
+<p class="font-body-sm text-body-sm text-on-primary-fixed-variant mt-0.5">
+          Surfaces automatically shift tone when scrolled under toolbars or app bars to indicate layering.
+        </p>
+<div class="flex items-center gap-space-sm mt-3">
+<button class="h-8 px-3 rounded-full bg-primary text-on-primary font-label-sm text-label-sm hover:opacity-90">
+            Got it
+          </button>
+<button class="font-label-sm text-label-sm text-on-primary-fixed-variant hover:text-on-primary-fixed px-2 py-1" onclick="document.getElementById('info-banner').classList.add('hidden')">
+            Dismiss
+          </button>
+</div>
+</div>
+</div>
+<!-- Warning / Tertiary Alert Card -->
+<div class="w-full bg-tertiary-fixed rounded-xl p-space-md flex items-center justify-between">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-10 h-10 rounded-full bg-tertiary-container text-on-tertiary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]">warning_amber</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-sm text-title-sm text-on-tertiary-fixed font-semibold">Contrast Requirement</span>
+<span class="font-body-sm text-body-sm text-on-tertiary-fixed-variant truncate">Ensure 4.5:1 text-to-surface ratio</span>
+</div>
+</div>
+<button class="h-8 px-3 rounded-full bg-tertiary text-on-tertiary font-label-sm text-label-sm shrink-0 ml-2">
+        Verify
+      </button>
+</div>
+</section>
+</div>
+<script>
+  // Micro-interaction for playful tactile feel
+  document.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('touchstart', function() {
+      this.style.transform = 'scale(0.97)';
+    }, {passive: true});
+    btn.addEventListener('touchend', function() {
+      this.style.transform = '';
+    }, {passive: true});
+  });
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface-container/95 backdrop-blur-xl shadow-[0_-1px_12px_rgba(0,0,0,0.05)]" data-active-classes="[&amp;&gt;.m3-indicator]:bg-secondary-container [&amp;&gt;.m3-indicator]:text-on-secondary-container [&amp;&gt;.m3-label]:text-on-surface [&amp;&gt;.m3-label]:font-bold"><div class="flex justify-around items-center h-20 px-space-xs max-w-lg mx-auto"><a class="flex flex-col items-center justify-center gap-1 flex-1 py-1 text-on-surface-variant min-h-[48px]" data-path="inputs-and-actions" href="#"><div class="m3-indicator flex items-center justify-center w-16 h-8 rounded-full transition-all duration-200 text-on-surface-variant"><span class="material-symbols-outlined text-[24px]">edit_note</span></div><span class="m3-label font-label-sm text-label-sm text-on-surface-variant transition-colors truncate max-w-[68px] text-center">Inputs</span></a><a class="flex flex-col items-center justify-center gap-1 flex-1 py-1 text-on-surface-variant min-h-[48px]" data-path="cards-and-surfaces" href="#"><div class="m3-indicator flex items-center justify-center w-16 h-8 rounded-full transition-all duration-200 text-on-surface-variant"><span class="material-symbols-outlined text-[24px]">dashboard</span></div><span class="m3-label font-label-sm text-label-sm text-on-surface-variant transition-colors truncate max-w-[68px] text-center">Surfaces</span></a><a class="flex flex-col items-center justify-center gap-1 flex-1 py-1 text-on-surface-variant min-h-[48px]" data-path="navigation-and-sheets" href="#"><div class="m3-indicator flex items-center justify-center w-16 h-8 rounded-full transition-all duration-200 text-on-surface-variant"><span class="material-symbols-outlined text-[24px]">layers</span></div><span class="m3-label font-label-sm text-label-sm text-on-surface-variant transition-colors truncate max-w-[68px] text-center">Sheets</span></a><a class="flex flex-col items-center justify-center gap-1 flex-1 py-1 text-on-surface-variant min-h-[48px]" data-path="auth-and-otp" href="#"><div class="m3-indicator flex items-center justify-center w-16 h-8 rounded-full transition-all duration-200 text-on-surface-variant"><span class="material-symbols-outlined text-[24px]">lock_person</span></div><span class="m3-label font-label-sm text-label-sm text-on-surface-variant transition-colors truncate max-w-[68px] text-center">Auth</span></a><a class="flex flex-col items-center justify-center gap-1 flex-1 py-1 text-on-surface-variant min-h-[48px]" data-path="loaders" href="#"><div class="m3-indicator flex items-center justify-center w-16 h-8 rounded-full transition-all duration-200 text-on-surface-variant"><span class="material-symbols-outlined text-[24px]">progress_activity</span></div><span class="m3-label font-label-sm text-label-sm text-on-surface-variant transition-colors truncate max-w-[68px] text-center">Loaders</span></a></div></nav></body></html>

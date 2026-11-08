@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;background-color:#f8f9fa;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "on-tertiary-container": "#ead1f8", "primary-fixed-dim": "#b2c5ff", "on-primary-fixed-variant": "#0040a1", "inverse-surface": "#2e3132", "inverse-primary": "#b2c5ff", "surface-variant": "#e1e3e4", "on-primary-fixed": "#001847", "secondary": "#00639b", "tertiary-fixed": "#f1daff", "on-tertiary": "#ffffff", "primary-container": "#0b57d0", "on-secondary-fixed-variant": "#004a76", "tertiary": "#524160", "primary": "#0041a2", "surface-container-highest": "#e1e3e4", "tertiary-fixed-dim": "#d5bee4", "surface-bright": "#f8f9fa", "surface-tint": "#0856cf", "outline-variant": "#c3c6d6", "surface-container-high": "#e7e8e9", "surface-container-lowest": "#ffffff", "surface": "#f8f9fa", "secondary-fixed-dim": "#96cbff", "on-error": "#ffffff", "surface-container": "#edeeef", "on-error-container": "#93000a", "on-secondary-container": "#004f7d", "background": "#f8f9fa", "error": "#ba1a1a", "on-surface-variant": "#424654", "on-background": "#191c1d", "on-tertiary-fixed-variant": "#51405f", "surface-container-low": "#f3f4f5", "tertiary-container": "#6b5879", "surface-dim": "#d9dadb", "error-container": "#ffdad6", "on-secondary": "#ffffff", "on-secondary-fixed": "#001d33", "on-primary-container": "#ced9ff", "inverse-on-surface": "#f0f1f2", "outline": "#737785", "primary-fixed": "#dae2ff", "secondary-container": "#7ec1ff", "on-surface": "#191c1d", "on-tertiary-fixed": "#241531", "on-primary": "#ffffff", "secondary-fixed": "#cee5ff" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "space-sm": "0.5rem", "space-lg": "1.5rem", "gutter": "1rem", "gutter-tablet": "1.5rem", "space-xs": "0.25rem", "margin-tablet": "1.5rem", "margin": "1rem", "space-md": "1rem", "margin-desktop": "2rem", "gutter-desktop": "1.5rem", "space-xl": "2rem" }, fontFamily: { "label-sm": ["Roboto Flex"], "label-md": ["Roboto Flex"], "label-lg": ["Roboto Flex"], "body-sm": ["Roboto Flex"], "headline-md": ["Roboto Flex"], "headline-lg": ["Roboto Flex"], "display-lg": ["Roboto Flex"], "display-sm": ["Roboto Flex"], "title-lg": ["Roboto Flex"], "display-lg-mobile": ["Roboto Flex"], "title-sm": ["Roboto Flex"], "title-md": ["Roboto Flex"], "headline-sm": ["Roboto Flex"], "body-md": ["Roboto Flex"], "display-md": ["Roboto Flex"], "display-md-mobile": ["Roboto Flex"], "body-lg": ["Roboto Flex"] }, fontSize: { "label-sm": ["11px", { "lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500" }], "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500" }], "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "500" }], "body-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.4px", "fontWeight": "400" }], "headline-md": ["28px", { "lineHeight": "36px", "letterSpacing": "0px", "fontWeight": "400" }], "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "0px", "fontWeight": "400" }], "display-lg": ["57px", { "lineHeight": "64px", "letterSpacing": "-0.25px", "fontWeight": "400" }], "display-sm": ["36px", { "lineHeight": "44px", "letterSpacing": "0px", "fontWeight": "400" }], "title-lg": ["22px", { "lineHeight": "28px", "letterSpacing": "0px", "fontWeight": "500" }], "display-lg-mobile": ["44px", { "lineHeight": "52px", "letterSpacing": "0px", "fontWeight": "400" }], "title-sm": ["14px", { "lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "500" }], "title-md": ["16px", { "lineHeight": "24px", "letterSpacing": "0.15px", "fontWeight": "500" }], "headline-sm": ["24px", { "lineHeight": "32px", "letterSpacing": "0px", "fontWeight": "400" }], "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.25px", "fontWeight": "400" }], "display-md": ["45px", { "lineHeight": "52px", "letterSpacing": "0px", "fontWeight": "400" }], "display-md-mobile": ["36px", { "lineHeight": "44px", "letterSpacing": "0px", "fontWeight": "400" }], "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0.5px", "fontWeight": "400" }] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-margin flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-xs"><button aria-label="Navigation menu" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined text-[24px]">menu</span></button><div class="flex flex-col ml-1"><span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider font-semibold">Pulse Cloud</span><h1 class="font-title-lg text-title-lg text-on-surface truncate">Workspace</h1></div></div><div class="flex items-center gap-1"><button aria-label="Search" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined text-[24px]">search</span></button><button aria-label="Notifications" class="relative w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined text-[24px]">notifications</span><span class="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-error"></span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center ml-1"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full pt-16 pb-24 px-margin bg-surface flex-1"><div class="flex flex-col w-full pb-16">
+<!-- Top Search & Discovery -->
+<section class="flex flex-col gap-space-sm pt-space-xs mb-space-md">
+<!-- M3 Search Bar Pill -->
+<div class="w-full h-14 bg-surface-container-high rounded-full px-4 flex items-center gap-space-sm shadow-sm transition-all focus-within:bg-surface-container-highest focus-within:shadow-md">
+<span class="material-symbols-outlined text-on-surface-variant text-[24px]">search</span>
+<input class="bg-transparent border-none outline-none flex-1 font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant min-w-0" placeholder="Search projects, tasks, or tokens..." type="text"/>
+<div class="flex items-center gap-1">
+<button aria-label="Voice search" class="w-9 h-9 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-[20px]">mic</span>
+</button>
+<button aria-label="Token filters" class="w-9 h-9 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-[20px]">tune</span>
+</button>
+</div>
+</div>
+<!-- M3 Filter Chips Row -->
+<div class="flex items-center gap-2 overflow-x-auto py-1 -mx-margin px-margin scrollbar-none" id="chip-filter-row">
+<!-- Active Chip -->
+<button class="filter-chip h-8 px-3 rounded-lg bg-secondary-container text-on-secondary-container font-label-md text-label-md flex items-center gap-1.5 shrink-0 transition-transform active:scale-95">
+<span class="material-symbols-outlined text-[18px]">check</span>
+<span>All Tasks</span>
+<span class="ml-0.5 px-1.5 py-0.2 rounded-full bg-surface-container-lowest text-on-secondary-container font-label-sm text-label-sm font-semibold">14</span>
+</button>
+<!-- Inactive Chip 1 -->
+<button class="filter-chip h-8 px-3 rounded-lg bg-surface-container-low text-on-surface-variant font-label-md text-label-md flex items-center gap-1.5 shrink-0 transition-transform active:scale-95 hover:bg-surface-container">
+<span class="material-symbols-outlined text-[18px] hidden">check</span>
+<span>High Priority</span>
+<span class="ml-0.5 px-1.5 py-0.2 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-semibold">3</span>
+</button>
+<!-- Inactive Chip 2 -->
+<button class="filter-chip h-8 px-3 rounded-lg bg-surface-container-low text-on-surface-variant font-label-md text-label-md flex items-center gap-1.5 shrink-0 transition-transform active:scale-95 hover:bg-surface-container">
+<span class="material-symbols-outlined text-[18px] hidden">check</span>
+<span>Design System</span>
+<span class="ml-0.5 px-1.5 py-0.2 rounded-full bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm">8</span>
+</button>
+<!-- Inactive Chip 3 -->
+<button class="filter-chip h-8 px-3 rounded-lg bg-surface-container-low text-on-surface-variant font-label-md text-label-md flex items-center gap-1.5 shrink-0 transition-transform active:scale-95 hover:bg-surface-container">
+<span class="material-symbols-outlined text-[18px] hidden">check</span>
+<span>Cloud Sync</span>
+<span class="ml-0.5 px-1.5 py-0.2 rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm font-semibold">2</span>
+</button>
+</div>
+</section>
+<!-- Active In-flight Status & Multi-Phase Sync Section -->
+<section class="flex flex-col gap-space-sm mb-space-lg">
+<div class="bg-surface-container-low rounded-2xl p-4 shadow-sm flex flex-col gap-space-sm relative overflow-hidden">
+<!-- Ambient light effect -->
+<div class="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-primary/10 blur-2xl pointer-events-none"></div>
+<!-- Header row of the sync banner -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-secondary-fixed flex items-center justify-center text-on-secondary-fixed animate-pulse">
+<span class="material-symbols-outlined text-[18px]">sync</span>
+</div>
+<div class="flex flex-col">
+<span class="font-title-sm text-title-sm text-on-surface font-semibold">Pulse Cloud Engine</span>
+<span class="font-label-sm text-label-sm text-secondary font-medium">Stage 3 of 4: Optimizing Assets</span>
+</div>
+</div>
+<span class="font-label-lg text-label-lg text-primary font-bold">78%</span>
+</div>
+<!-- M3 Multi-Phase Stepped Indicator -->
+<div class="grid grid-cols-4 gap-1.5 py-1">
+<div class="h-1.5 rounded-full bg-primary"></div>
+<div class="h-1.5 rounded-full bg-primary"></div>
+<div class="h-1.5 rounded-full bg-primary relative overflow-hidden">
+<div class="absolute inset-0 bg-primary-fixed-dim animate-pulse"></div>
+</div>
+<div class="h-1.5 rounded-full bg-surface-container-highest"></div>
+</div>
+<!-- Linear Determinate Progress Bar (Buffer) -->
+<div class="w-full bg-surface-container-highest h-2 rounded-full overflow-hidden p-0.5 relative">
+<div class="h-full bg-primary rounded-full transition-all duration-500 ease-out" style="width: 78%;"></div>
+</div>
+<!-- Quick Action Buttons -->
+<div class="flex items-center gap-2 pt-2">
+<!-- Filled Button -->
+<button class="h-10 px-5 rounded-full bg-primary text-on-primary font-label-lg text-label-lg flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition-all">
+<span class="material-symbols-outlined text-[18px]">bolt</span>
+<span>Execute</span>
+</button>
+<!-- Tonal Button -->
+<button class="h-10 px-4 rounded-full bg-secondary-container text-on-secondary-container font-label-lg text-label-lg flex items-center justify-center gap-1 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-[18px]">pause</span>
+<span>Pause</span>
+</button>
+<!-- Text Button -->
+<button class="h-10 px-3 rounded-full text-primary font-label-lg text-label-lg flex items-center justify-center hover:bg-primary/5 active:scale-95 transition-all ml-auto">
+<span class="material-symbols-outlined text-[18px] mr-1">terminal</span>
+<span>Logs</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Task & Component Cards Section -->
+<section class="flex flex-col gap-space-md">
+<div class="flex items-center justify-between px-1">
+<h2 class="font-title-md text-title-md text-on-surface font-semibold">Active Workstreams</h2>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">3 Items</span>
+</div>
+<!-- 1. M3 Elevated Card (Container Low with subtle shadow) -->
+<div class="bg-surface-container-low rounded-xl p-4 shadow-md flex flex-col gap-space-sm relative">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container-high shrink-0 shadow-sm flex items-center justify-center">
+<img class="w-full h-full object-cover" data-alt="Close-up portrait of a thoughtful creative designer with warm ambient workspace lighting, high-detail professional photography" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAsw4nMrOAuWoMPYU6Qe6WLeA_f2IQqCQvHLas-FN8lSm6fnmJ60VSEtP81sVPNLSdx2sVvGniRrcRd4UPx_aCouJDzhqUD7VsG-UpQ0LE6TDPDXE44Iwl2F90bX_nsR82O1zrAUBYRkyAOQFFiIB3mtEAfe87B9JzIh2M3QwgCfJVQq9JDUCquX3XcQ770H43a-YCMlSAh3vwgNExWgXu7ocRmFCvUoIanP3pntis"/>
+</div>
+<div class="flex flex-col min-w-0">
+<h3 class="font-title-sm text-title-sm text-on-surface font-semibold truncate">Design System Token Sync</h3>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Updated by Maya L. • 12m ago</span>
+</div>
+</div>
+<!-- In-progress badge -->
+<span class="h-6 px-2.5 rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm font-semibold flex items-center gap-1 shrink-0">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+          In Progress
+        </span>
+</div>
+<!-- Card Metrics & SVG Ring -->
+<div class="bg-surface-container rounded-lg p-3 flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Schema Compliance</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold">68<span class="text-secondary font-normal">%</span></span>
+<span class="font-body-sm text-body-sm text-secondary">240 of 350 tokens linked</span>
+</div>
+<!-- SVG Progress Ring -->
+<div class="relative w-14 h-14 flex items-center justify-center">
+<svg class="w-14 h-14 -rotate-90" viewbox="0 0 36 36">
+<path class="text-surface-container-highest" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3.5"></path>
+<path class="text-primary transition-all duration-500 ease-out" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="68, 100" stroke-linecap="round" stroke-width="3.5"></path>
+</svg>
+<span class="material-symbols-outlined text-[20px] text-primary absolute">token</span>
+</div>
+</div>
+<!-- Action row -->
+<div class="flex items-center justify-end pt-1">
+<button class="h-9 px-4 rounded-full bg-primary-fixed text-on-primary-fixed-variant font-label-md text-label-md flex items-center gap-1.5 hover:bg-primary-fixed-dim transition-colors">
+<span>Inspect Spec</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- 2. M3 Filled Tonal Card (Container Highest, no shadow) -->
+<div class="bg-surface-container-highest rounded-xl p-4 flex flex-col gap-space-sm">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-9 h-9 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">layers</span>
+</div>
+<div class="flex flex-col">
+<h3 class="font-title-sm text-title-sm text-on-surface font-semibold">M3 Component Audit</h3>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Material You Adaptive Guidelines</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-medium">v3.2</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">
+        Audit 42 dynamic tonal surface elevations and verify proper accessible contrast ratios for light mode palettes.
+      </p>
+<!-- Switch control element -->
+<div class="bg-surface-container rounded-lg p-3 flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-title-sm text-title-sm text-on-surface">Haptic Feedback</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Vibrate upon state elevation</span>
+</div>
+<!-- M3 Switch Component -->
+<button aria-checked="true" class="w-[52px] h-[32px] rounded-full bg-primary flex items-center p-1 transition-colors cursor-pointer" id="haptic-toggle" role="switch">
+<div class="w-6 h-6 rounded-full bg-on-primary ml-auto shadow-sm transition-all flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px] text-primary">check</span>
+</div>
+</button>
+</div>
+</div>
+<!-- 3. M3 Outlined Card (Surface, 1dp subtle outline-variant border) -->
+<div class="bg-surface rounded-xl p-4 shadow-sm flex flex-col gap-space-sm bg-gradient-to-b from-surface to-surface-container-low">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-9 h-9 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed">
+<span class="material-symbols-outlined text-[20px]">sensors</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<h3 class="font-title-sm text-title-sm text-on-surface font-semibold">API Endpoint Telemetry</h3>
+<span class="px-1.5 py-0.2 rounded bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm font-mono">/v2/pulse</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">14,209 ops/sec • P99: 42ms</span>
+</div>
+</div>
+<button aria-label="Expand telemetry" class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[20px]">unfold_more</span>
+</button>
+</div>
+<!-- Inline Telemetry Visual Sparkline -->
+<div class="h-12 w-full flex items-end gap-1 px-1 py-1 bg-surface-container-lowest rounded-lg">
+<div class="h-[40%] flex-1 bg-secondary-fixed rounded-t"></div>
+<div class="h-[55%] flex-1 bg-secondary-fixed rounded-t"></div>
+<div class="h-[35%] flex-1 bg-secondary-fixed rounded-t"></div>
+<div class="h-[70%] flex-1 bg-secondary-fixed rounded-t"></div>
+<div class="h-[60%] flex-1 bg-secondary-fixed rounded-t"></div>
+<div class="h-[85%] flex-1 bg-primary rounded-t"></div>
+<div class="h-[95%] flex-1 bg-primary rounded-t"></div>
+<div class="h-[65%] flex-1 bg-secondary-fixed rounded-t"></div>
+<div class="h-[75%] flex-1 bg-secondary-fixed rounded-t"></div>
+<div class="h-[50%] flex-1 bg-secondary-fixed rounded-t"></div>
+</div>
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-sm text-label-sm">Region: US-East (Primary)</span>
+<span class="font-label-sm text-label-sm text-secondary font-medium flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-secondary"></span> Live Stream
+        </span>
+</div>
+</div>
+</section>
+<!-- M3 Extended Floating Action Button (FAB) -->
+<div class="fixed right-4 bottom-24 z-40">
+<button aria-label="Create New Task" class="h-14 px-5 rounded-2xl bg-primary-fixed text-on-primary-fixed-variant shadow-lg flex items-center gap-3 transition-transform active:scale-90 hover:shadow-xl" id="new-task-fab">
+<span class="material-symbols-outlined text-[24px]">add</span>
+<span class="font-label-lg text-label-lg font-semibold tracking-wide">New Task</span>
+</button>
+</div>
+</div>
+<script>
+  // Filter chips interaction toggle
+  const chips = document.querySelectorAll('.filter-chip');
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      chips.forEach(c => {
+        c.classList.remove('bg-secondary-container', 'text-on-secondary-container');
+        c.classList.add('bg-surface-container-low', 'text-on-surface-variant');
+        const icon = c.querySelector('.material-symbols-outlined');
+        if (icon) icon.classList.add('hidden');
+      });
+      chip.classList.remove('bg-surface-container-low', 'text-on-surface-variant');
+      chip.classList.add('bg-secondary-container', 'text-on-secondary-container');
+      const activeIcon = chip.querySelector('.material-symbols-outlined');
+      if (activeIcon) activeIcon.classList.remove('hidden');
+    });
+  });
+
+  // Haptic Switch toggle interaction
+  const toggle = document.getElementById('haptic-toggle');
+  if (toggle) {
+    let isActive = true;
+    toggle.addEventListener('click', () => {
+      isActive = !isActive;
+      toggle.setAttribute('aria-checked', isActive.toString());
+      const knob = toggle.querySelector('div');
+      const icon = toggle.querySelector('span');
+      
+      if (isActive) {
+        toggle.classList.remove('bg-surface-container-highest');
+        toggle.classList.add('bg-primary');
+        knob.classList.remove('ml-0');
+        knob.classList.add('ml-auto');
+        icon.textContent = 'check';
+        icon.classList.remove('text-on-surface-variant');
+        icon.classList.add('text-primary');
+      } else {
+        toggle.classList.remove('bg-primary');
+        toggle.classList.add('bg-surface-container-highest');
+        knob.classList.remove('ml-auto');
+        knob.classList.add('ml-0');
+        icon.textContent = 'close';
+        icon.classList.remove('text-primary');
+        icon.classList.add('text-on-surface-variant');
+      }
+    });
+  }
+
+  // FAB micro-interaction
+  const fab = document.getElementById('new-task-fab');
+  if (fab) {
+    fab.addEventListener('click', () => {
+      fab.classList.add('scale-105');
+      setTimeout(() => fab.classList.remove('scale-105'), 180);
+    });
+  }
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface-container/90 backdrop-blur-xl shadow-[0_-2px_10px_rgba(0,0,0,0.05)]" data-active-classes="[&amp;_.indicator]:bg-secondary-container [&amp;_.indicator]:text-on-secondary-container text-on-surface font-semibold"><div class="flex justify-around items-center h-20 px-space-xs"><a aria-current="page" class="flex flex-col items-center justify-center gap-1 min-w-[64px] py-1 transition-colors group [&amp;_.indicator]:bg-secondary-container [&amp;_.indicator]:text-on-secondary-container text-on-surface font-semibold" data-path="workspace" href="#"><div class="indicator w-16 h-8 rounded-full flex items-center justify-center transition-all duration-200 group-hover:bg-surface-container-high"><span class="material-symbols-outlined text-[24px]">folder</span></div><span class="font-label-sm text-label-sm text-center">Workspace</span></a><a class="flex flex-col items-center justify-center gap-1 min-w-[64px] py-1 text-on-surface-variant transition-colors group" data-path="projects" href="#"><div class="indicator w-16 h-8 rounded-full flex items-center justify-center transition-all duration-200 group-hover:bg-surface-container-high"><span class="material-symbols-outlined text-[24px]">dashboard</span></div><span class="font-label-sm text-label-sm text-center">Projects</span></a><a class="flex flex-col items-center justify-center gap-1 min-w-[64px] py-1 text-on-surface-variant transition-colors group" data-path="security" href="#"><div class="indicator w-16 h-8 rounded-full flex items-center justify-center transition-all duration-200 group-hover:bg-surface-container-high"><span class="material-symbols-outlined text-[24px]">shield</span></div><span class="font-label-sm text-label-sm text-center">Security</span></a><a class="flex flex-col items-center justify-center gap-1 min-w-[64px] py-1 text-on-surface-variant transition-colors group" data-path="sync-&amp;-cloud" href="#"><div class="indicator w-16 h-8 rounded-full flex items-center justify-center transition-all duration-200 group-hover:bg-surface-container-high"><span class="material-symbols-outlined text-[24px]">cloud_sync</span></div><span class="font-label-sm text-label-sm text-center">Sync &amp; Cloud</span></a></div></nav></body></html>

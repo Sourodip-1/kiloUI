@@ -1,11 +1,13 @@
 "use client";
 
 import * as React from "react";
+import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 
 export type M3CardVariant = "elevated" | "filled" | "outlined" | "minimal";
 
-export interface M3CardProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface M3CardProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, "onAnimationStart" | "onDragStart" | "onDragEnd" | "onDrag"> {
   variant?: M3CardVariant;
   media?: React.ReactNode;
   headline?: string;
@@ -23,9 +25,11 @@ export function M3Card({
   actions,
   children,
   className,
+  onClick,
   ...props
 }: M3CardProps) {
   const isMinimal = variant === "minimal";
+  const isInteractive = Boolean(onClick);
 
   const variantStyles: Record<M3CardVariant, string> = {
     elevated:
@@ -39,13 +43,17 @@ export function M3Card({
   };
 
   return (
-    <div
+    <motion.div
+      onClick={onClick}
+      whileTap={isInteractive ? { scale: 0.985 } : undefined}
+      transition={{ type: "spring", stiffness: 450, damping: 30 }}
       className={cn(
-        "overflow-hidden transition-all duration-200 select-none flex flex-col font-sans",
+        "overflow-hidden select-none flex flex-col font-sans transition-colors",
+        isInteractive && "cursor-pointer",
         variantStyles[variant],
         className
       )}
-      {...props}
+      {...(props as any)}
     >
       {/* Optional Media Hero */}
       {media && <div className="w-full overflow-hidden shrink-0">{media}</div>}
@@ -84,7 +92,6 @@ export function M3Card({
           </div>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }
-
