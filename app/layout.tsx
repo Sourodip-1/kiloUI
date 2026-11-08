@@ -288,14 +288,6 @@ export default function RootLayout({
                 {
                   "@type": "SiteNavigationElement",
                   "position": 3,
-                  "name": "Motion",
-                  "description":
-                    "Zero-dependency spring physics, spatial continuity, and choreography primitives.",
-                  "url": "https://www.kiloui.dev/motion",
-                },
-                {
-                  "@type": "SiteNavigationElement",
-                  "position": 4,
                   "name": "Icons",
                   "description":
                     "Curated collection of pixel-perfect SVG vector icons for developer dashboards.",

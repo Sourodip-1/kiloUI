@@ -342,7 +342,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         setLikedDrawerOpen,
       }}
     >
-      {pathname === "/" || !["/components", "/overview", "/icons", "/motion", "/liked", "/login", "/mobile-primitives", "/mcp"].some(r => pathname === r || pathname?.startsWith(r + "/")) ? (
+      {pathname === "/" || !["/components", "/overview", "/icons", "/liked", "/login", "/mobile-primitives", "/mcp"].some(r => pathname === r || pathname?.startsWith(r + "/")) ? (
         <div className="min-h-screen w-full bg-[#070709] text-white antialiased font-sans">
           {children}
         </div>
