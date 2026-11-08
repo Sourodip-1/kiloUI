@@ -5,7 +5,7 @@ import { Copy, Check, Terminal, Cpu, Zap, Database, Globe, ChevronDown, ChevronR
 import { cn } from "@/lib/utils";
 
 // ─── Client Definition Types ──────────────────────────────────────────────────
-type ClientId = "cursor" | "claude" | "vscode" | "windsurf" | "antigravity";
+type ClientId = "cursor" | "claude" | "vscode" | "devin" | "antigravity";
 type ConnectionMode = "cloud" | "npx" | "python";
 
 interface ClientConfig {
@@ -26,7 +26,7 @@ interface ClientConfig {
   };
 }
 
-// ─── Client Brand Vector Icons ────────────────────────────────────────────────
+// ─── Official Brand Vector Icons ──────────────────────────────────────────────
 function KiloLogoIcon({ className = "w-6 h-6" }: { className?: string }) {
   return (
     <svg viewBox="0 0 512 512" className={className}>
@@ -39,53 +39,51 @@ function KiloLogoIcon({ className = "w-6 h-6" }: { className?: string }) {
   );
 }
 
+// Official Cursor Icon
 function CursorLogoIcon({ className = "w-6 h-6" }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" className={className} fill="currentColor">
-      <path d="M12 2.5l7.5 4.33v8.67L12 20.17l-7.5-4.67V6.83L12 2.5zm0 2.31L6.5 7.98v6.71L12 17.86l5.5-3.17V7.98L12 4.81z" />
-      <path d="M12 5.5l5 2.89v5.78L12 17.06l-5-2.89V8.39L12 5.5z" opacity="0.85" />
+      <path d="M11.503.131 1.891 5.678a.84.84 0 0 0-.42.726v11.188c0 .3.162.575.42.724l9.609 5.55a1 1 0 0 0 .998 0l9.61-5.55a.84.84 0 0 0 .42-.724V6.404a.84.84 0 0 0-.42-.726L12.497.131a1.01 1.01 0 0 0-.996 0M2.657 6.338h18.55c.263 0 .43.287.297.515L12.23 22.918c-.062.107-.229.064-.229-.06V12.335a.59.59 0 0 0-.295-.51l-9.11-5.257c-.109-.063-.064-.23.061-.23" />
     </svg>
   );
 }
 
+// Official Claude Icon (SimpleIcons)
 function ClaudeLogoIcon({ className = "w-6 h-6" }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" className={className} fill="currentColor">
-      <path d="M12 2a1.25 1.25 0 0 1 1.25 1.25v3.42l2.42-2.42a1.25 1.25 0 1 1 1.77 1.77l-2.42 2.42h3.42a1.25 1.25 0 1 1 0 2.5h-3.42l2.42 2.42a1.25 1.25 0 1 1-1.77 1.77l-2.42-2.42v3.42a1.25 1.25 0 1 1-2.5 0v-3.42l-2.42 2.42a1.25 1.25 0 1 1-1.77-1.77l2.42-2.42H4.81a1.25 1.25 0 0 1 0-2.5h3.42l-2.42-2.42a1.25 1.25 0 0 1 1.77-1.77l2.42 2.42V3.25A1.25 1.25 0 0 1 12 2z" />
+      <path d="m4.7144 15.9555 4.7174-2.6471.079-.2307-.079-.1275h-.2307l-.7893-.0486-2.6956-.0729-2.3375-.0971-2.2646-.1214-.5707-.1215-.5343-.7042.0546-.3522.4797-.3218.686.0608 1.5179.1032 2.2767.1578 1.6514.0972 2.4468.255h.3886l.0546-.1579-.1336-.0971-.1032-.0972L6.973 9.8356l-2.55-1.6879-1.3356-.9714-.7225-.4918-.3643-.4614-.1578-1.0078.6557-.7225.8803.0607.2246.0607.8925.686 1.9064 1.4754 2.4893 1.8336.3643.3035.1457-.1032.0182-.0728-.164-.2733-1.3539-2.4467-1.445-2.4893-.6435-1.032-.17-.6194c-.0607-.255-.1032-.4674-.1032-.7285L6.287.1335 6.6997 0l.9957.1336.419.3642.6192 1.4147 1.0018 2.2282 1.5543 3.0296.4553.8985.2429.8318.091.255h.1579v-.1457l.1275-1.706.2368-2.0947.2307-2.6957.0789-.7589.3764-.9107.7468-.4918.5828.2793.4797.686-.0668.4433-.2853 1.8517-.5586 2.9021-.3643 1.9429h.2125l.2429-.2429.9835-1.3053 1.6514-2.0643.7286-.8196.85-.9046.5464-.4311h1.0321l.759 1.1293-.34 1.1657-1.0625 1.3478-.8804 1.1414-1.2628 1.7-.7893 1.36.0729.1093.1882-.0183 2.8535-.607 1.5421-.2794 1.8396-.3157.8318.3886.091.3946-.3278.8075-1.967.4857-2.3072.4614-3.4364.8136-.0425.0304.0486.0607 1.5482.1457.6618.0364h1.621l3.0175.2247.7892.522.4736.6376-.079.4857-1.2142.6193-1.6393-.3886-3.825-.9107-1.3113-.3279h-.1822v.1093l1.0929 1.0686 2.0035 1.8092 2.5075 2.3314.1275.5768-.3218.4554-.34-.0486-2.2039-1.6575-.85-.7468-1.9246-1.621h-.1275v.17l.4432.6496 2.3436 3.5214.1214 1.0807-.17.3521-.6071.2125-.6679-.1214-1.3721-1.9246L14.38 17.959l-1.1414-1.9428-.1397.079-.674 7.2552-.3156.3703-.7286.2793-.6071-.4614-.3218-.7468.3218-1.4753.3886-1.9246.3157-1.53.2853-1.9004.17-.6314-.0121-.0425-.1397.0182-1.4328 1.9672-2.1796 2.9446-1.7243 1.8456-.4128.164-.7164-.3704.0667-.6618.4008-.5889 2.386-3.0357 1.4389-1.882.929-1.0868-.0062-.1579h-.0546l-6.3385 4.1164-1.1293.1457-.4857-.4554.0608-.7467.2307-.2429 1.9064-1.3114Z" />
     </svg>
   );
 }
 
+// Official VS Code Ribbon Icon
 function VSCodeLogoIcon({ className = "w-6 h-6" }: { className?: string }) {
   return (
-    <svg viewBox="0 0 24 24" className={className} fill="currentColor">
-      <path d="M17.58 2.05l-7.22 6.67L5.5 5.08 2 6.77v10.46l3.5 1.69 4.86-3.64 7.22 6.67L22 20.36V3.64L17.58 2.05zM17.5 16.92l-4.73-3.6 4.73-3.6v7.2zM5.5 14.52V9.48l3.35 2.52-3.35 2.52z" />
+    <svg viewBox="0 0 100 100" className={className} fill="currentColor">
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M70.9119 99.3171C72.4869 99.9307 74.2828 99.8914 75.8725 99.1264L96.4608 89.2197C98.6242 88.1787 100 85.9892 100 83.5872V16.4133C100 14.0113 98.6243 11.8218 96.4609 10.7808L75.8725 0.873756C73.7862 -0.130129 71.3446 0.11576 69.5135 1.44695C69.252 1.63711 69.0028 1.84943 68.769 2.08341L29.3551 38.0415L12.1872 25.0096C10.589 23.7965 8.35363 23.8959 6.86933 25.2461L1.36303 30.2549C-0.452552 31.9064 -0.454633 34.7627 1.35853 36.417L16.2471 50.0001L1.35853 63.5832C-0.454633 65.2374 -0.452552 68.0938 1.36303 69.7453L6.86933 74.7541C8.35363 76.1043 10.589 76.2037 12.1872 74.9905L29.3551 61.9587L68.769 97.9167C69.3925 98.5406 70.1246 99.0104 70.9119 99.3171ZM75.0152 27.2989L45.1091 50.0001L75.0152 72.7012V27.2989Z"
+      />
     </svg>
   );
 }
 
-function WindsurfLogoIcon({ className = "w-6 h-6" }: { className?: string }) {
+// Official Devin Icon (devin.ai)
+function DevinLogoIcon({ className = "w-6 h-6" }: { className?: string }) {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      className={className}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M4 15c2.5-4 5.5-6 8-6 4 0 6 3 8 3" />
-      <path d="M4 9c2-2 4.5-3 7-3 4.5 0 6.5 4 9 4" />
-      <path d="M4 20c2-1 4.5-1.5 7-1.5 3.5 0 6 1.5 9 1.5" />
+    <svg viewBox="0 0 425 425" className={className} fill="currentColor">
+      <path d="M70 159.333V91.3471C70 88.3592 71.594 85.5983 74.1816 84.1044L133.043 50.1205C135.631 48.6265 138.819 48.6265 141.407 50.1205L200.269 84.1044C202.856 85.5983 204.45 88.3592 204.45 91.3471V126.068C204.708 137.606 210.806 148.734 221.531 154.926C232.256 161.117 244.942 160.834 255.063 155.289L285.132 137.929C287.719 136.435 290.907 136.435 293.495 137.929L352.357 171.913C354.944 173.406 356.538 176.167 356.538 179.155V247.123C356.538 250.111 354.944 252.872 352.357 254.366L293.495 288.35C290.907 289.844 287.719 289.844 285.132 288.35L255.306 271.13C245.146 265.456 232.344 265.117 221.534 271.358C210.809 277.55 204.711 288.678 204.453 300.215V334.926C204.453 337.914 202.859 340.675 200.271 342.169L141.41 376.153C138.822 377.647 135.634 377.647 133.046 376.153L74.1845 342.169C71.5969 340.675 70.0028 337.914 70.0028 334.926V266.959C70.0029 263.971 71.5969 261.21 74.1845 259.716L133.046 225.732C135.634 224.238 138.822 224.238 141.41 225.732L171.547 243.132C181.656 248.638 194.306 248.906 205.005 242.729C215.815 236.488 221.922 225.231 222.088 213.595C221.83 202.057 215.732 189.737 205.008 183.545C194.283 177.353 181.597 177.636 171.476 183.181L141.269 200.72C138.67 202.229 135.461 202.228 132.864 200.716L74.1576 166.562C71.5835 165.065 70 162.311 70 159.333Z" />
     </svg>
   );
 }
 
+// Official Google Antigravity Icon (antigravity.google/press)
 function AntigravityLogoIcon({ className = "w-6 h-6" }: { className?: string }) {
   return (
-    <svg viewBox="0 0 24 24" className={className} fill="currentColor">
-      <path d="M12 2c.5 4.5 3.5 7.5 8 8-4.5.5-7.5 3.5-8 8-.5-4.5-3.5-7.5-8-8 4.5-.5 7.5-3.5 8-8z" />
+    <svg viewBox="0 0 180 180" className={className} fill="currentColor">
+      <path d="M144.248 149.062C151.748 154.688 162.998 150.938 152.685 140.625C121.748 110.625 128.31 28.125 89.8727 28.125C51.4352 28.125 57.9977 110.625 27.0602 140.625C15.8102 151.875 27.9977 154.688 35.4977 149.062C64.5602 129.375 62.6852 94.6875 89.8727 94.6875C117.06 94.6875 115.185 129.375 144.248 149.062Z" />
     </svg>
   );
 }
@@ -149,7 +147,7 @@ const CLIENTS: ClientConfig[] = [
     id: "claude",
     label: "Claude",
     configPath: "~/.config/Claude/claude_desktop_config.json",
-    themeColor: "#d97757",
+    themeColor: "#D97757",
     badgeBg: "bg-[#c25737]",
     badgeBorder: "border-[#ea8868]/40",
     badgeIconColor: "text-white",
@@ -251,17 +249,17 @@ const CLIENTS: ClientConfig[] = [
     },
   },
   {
-    id: "windsurf",
-    label: "Windsurf",
-    configPath: "~/.codeium/windsurf/mcp_config.json",
-    themeColor: "#09b6a2",
-    badgeBg: "bg-[#094843]",
-    badgeBorder: "border-[#2dd4bf]/40",
-    badgeIconColor: "text-[#2dd4bf]",
+    id: "devin",
+    label: "Devin",
+    configPath: "devin.json / MCP Settings",
+    themeColor: "#10b981",
+    badgeBg: "bg-[#062419]",
+    badgeBorder: "border-[#10b981]/35",
+    badgeIconColor: "text-[#34d399]",
     cloudJson: `{
   "mcpServers": {
     "kilo-ui": {
-      "serverUrl": "https://www.kiloui.dev/api/mcp"
+      "url": "https://www.kiloui.dev/api/mcp"
     }
   }
 }`,
@@ -287,17 +285,17 @@ const CLIENTS: ClientConfig[] = [
 }`,
     steps: {
       cloud: [
-        "Open ~/.codeium/windsurf/mcp_config.json (or .windsurf/mcp_config.json)",
-        "Paste the remote serverUrl configuration",
-        "Reload window (Ctrl+Shift+P → Developer: Reload Window) — Cascade AI connects immediately",
+        "Open Devin Settings → Integrations → MCP Servers",
+        "Add a new server with endpoint: https://www.kiloui.dev/api/mcp",
+        "Devin automatically discovers and imports Kilo UI primitives for your codebases",
       ],
       npx: [
-        "Paste the npx command into ~/.codeium/windsurf/mcp_config.json",
-        "Reload window to activate",
+        "Configure Devin's machine environment to run npx -y @kilo-ui/cli mcp",
+        "Verify connectivity in the session environment tools list",
       ],
       python: [
-        "Install python packages and configure local path",
-        "Reload window",
+        "Clone the repo in your Devin workspace and start server/mcp_server.py",
+        "Devin interacts via local stdio",
       ],
     },
   },
@@ -305,10 +303,10 @@ const CLIENTS: ClientConfig[] = [
     id: "antigravity",
     label: "Antigravity",
     configPath: "~/.gemini/config/mcp_config.json",
-    themeColor: "#a78bfa",
-    badgeBg: "bg-[#251b47]",
-    badgeBorder: "border-[#a78bfa]/40",
-    badgeIconColor: "text-[#c4b5fd]",
+    themeColor: "#3186FF",
+    badgeBg: "bg-[#141b36]",
+    badgeBorder: "border-[#3186FF]/40",
+    badgeIconColor: "text-[#82b1ff]",
     cloudJson: `{
   "mcpServers": {
     "kilo-ui": {
@@ -457,8 +455,8 @@ export default function MCPPage() {
         return <ClaudeLogoIcon className={className} />;
       case "vscode":
         return <VSCodeLogoIcon className={className} />;
-      case "windsurf":
-        return <WindsurfLogoIcon className={className} />;
+      case "devin":
+        return <DevinLogoIcon className={className} />;
       case "antigravity":
         return <AntigravityLogoIcon className={className} />;
     }
