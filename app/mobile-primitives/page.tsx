@@ -28,11 +28,28 @@ import { ThumbSegmentController } from "@/components/ui/thumb-segment-controller
 import { PullToRefresh } from "@/components/ui/pull-to-refresh";
 import { FloatingActionDock } from "@/components/ui/floating-action-dock";
 import { SlidingHighlightContainer } from "@/components/sliding-highlight";
+import { useAppShell } from "@/components/app-shell";
 
 type PresetMode = "store" | "feed" | "wallet";
 type CategoryFilter = "all" | "sheets" | "gestures" | "thumb" | "floating";
 
 export default function MobilePrimitivesPage() {
+  const { theme } = useAppShell();
+  const [isLightMode, setIsLightMode] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkLight = () => {
+      return document.documentElement.classList.contains("light");
+    };
+    setIsLightMode(checkLight());
+
+    const observer = new MutationObserver(() => {
+      setIsLightMode(checkLight());
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    return () => observer.disconnect();
+  }, [theme]);
+
   const [activeCategory, setActiveCategory] = React.useState<CategoryFilter>("all");
   const [presetMode, setPresetMode] = React.useState<PresetMode>("store");
   const [isPhoneVisible, setIsPhoneVisible] = React.useState(true);
@@ -425,13 +442,21 @@ export default function MobilePrimitivesPage() {
                 <ChevronRight className="h-4.5 w-4.5 transition-transform duration-200 group-hover:translate-x-0.5" />
               </button>
 
-              {/* Sleek Minimalist Mobile Device Chassis Frame */}
-              <div className="w-[360px] sm:w-[380px] h-[700px] rounded-[44px] bg-[#0c0d0e] border-[6px] border-[#1e2022] shadow-[0_20px_50px_-15px_rgba(0,0,0,0.85)] flex flex-col overflow-hidden relative select-none">
+              {/* Sleek Minimalist Mobile Device Chassis Frame - Rims always black */}
+              <div className="w-[360px] sm:w-[380px] h-[700px] rounded-[44px] bg-[#0c0d0e] border-[7px] border-[#18191b] shadow-[0_20px_50px_-15px_rgba(0,0,0,0.85)] ring-1 ring-black/80 flex flex-col overflow-hidden relative select-none">
               
               {/* Top Status Bar & Dynamic Island */}
-              <div className="pt-3 pb-1 px-6 flex items-center justify-between shrink-0 z-40 bg-[#0c0d0e] text-neutral-400 text-[11px] font-mono">
-                <span className="font-semibold text-white">9:41</span>
+              <div
+                className={cn(
+                  "pt-3 pb-1 px-6 flex items-center justify-between shrink-0 z-40 text-[11px] font-mono transition-colors",
+                  isLightMode ? "bg-[#f8f9fa] text-neutral-600" : "bg-[#0c0d0e] text-neutral-400"
+                )}
+              >
+                <span className={cn("font-semibold", isLightMode ? "text-neutral-900" : "text-white")}>
+                  9:41
+                </span>
                 
+                {/* Dynamic Island - hardware is black in both modes */}
                 <div className="w-24 h-5 rounded-full bg-black border border-neutral-800 flex items-center justify-center gap-1.5 px-2">
                   <div className="w-2 h-2 rounded-full bg-neutral-900 border border-neutral-800 flex items-center justify-center">
                     <div className="w-1 h-1 rounded-full bg-neutral-700" />
@@ -441,21 +466,32 @@ export default function MobilePrimitivesPage() {
                 <div className="flex items-center gap-1.5 text-[10px]">
                   <span>5G</span>
                   <div className="w-4 h-2 rounded-[2px] border border-neutral-400 p-[1px] flex items-center">
-                    <div className="h-full w-2.5 bg-neutral-200" />
+                    <div className={cn("h-full w-2.5", isLightMode ? "bg-neutral-900" : "bg-neutral-200")} />
                   </div>
                 </div>
               </div>
 
               {/* ── Preset 1: Store View (Essential Archive) ── */}
               {presetMode === "store" && (
-                <div className="flex-1 flex flex-col overflow-y-auto px-4 pt-3 pb-20 space-y-4 text-white">
+                <div
+                  className={cn(
+                    "flex-1 flex flex-col overflow-y-auto px-4 pt-3 pb-20 space-y-4 transition-colors",
+                    isLightMode ? "bg-[#f8f9fa] text-neutral-900" : "bg-[#0c0d0e] text-white"
+                  )}
+                >
                   {/* Store Header */}
                   <div className="flex items-center justify-between">
                     <div>
-                      <span className="text-[9px] font-mono tracking-widest text-neutral-500 uppercase">
+                      <span className={cn(
+                        "text-[9px] font-mono tracking-widest uppercase",
+                        isLightMode ? "text-neutral-500" : "text-neutral-500"
+                      )}>
                         KILO STUDIO
                       </span>
-                      <h2 className="text-xl font-bold tracking-tight text-white font-sans">
+                      <h2 className={cn(
+                        "text-xl font-bold tracking-tight font-sans",
+                        isLightMode ? "text-neutral-900" : "text-white"
+                      )}>
                         Essential Archive
                       </h2>
                     </div>
@@ -463,12 +499,20 @@ export default function MobilePrimitivesPage() {
                       <button
                         type="button"
                         onClick={() => setIsSheetOpen(true)}
-                        className="h-8 w-8 rounded-full border border-neutral-800 bg-neutral-900 flex items-center justify-center text-neutral-300 hover:text-white cursor-pointer active:scale-95"
+                        className={cn(
+                          "h-8 w-8 rounded-full border flex items-center justify-center cursor-pointer active:scale-95 transition-colors",
+                          isLightMode
+                            ? "border-neutral-200 bg-white text-neutral-700 hover:text-black shadow-2xs"
+                            : "border-neutral-800 bg-neutral-900 text-neutral-300 hover:text-white"
+                        )}
                       >
                         <ShoppingBag className="h-4 w-4" />
                       </button>
                       {cartCount > 0 && (
-                        <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-white text-black font-mono font-bold text-[9px] flex items-center justify-center">
+                        <span className={cn(
+                          "absolute -top-1 -right-1 h-4 w-4 rounded-full font-mono font-bold text-[9px] flex items-center justify-center",
+                          isLightMode ? "bg-black text-white" : "bg-white text-black"
+                        )}>
                           {cartCount}
                         </span>
                       )}
@@ -477,11 +521,19 @@ export default function MobilePrimitivesPage() {
 
                   {/* Clean Search Input */}
                   <div className="relative">
-                    <Search className="h-3.5 w-3.5 text-neutral-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <Search className={cn(
+                      "h-3.5 w-3.5 absolute left-3 top-1/2 -translate-y-1/2",
+                      isLightMode ? "text-neutral-400" : "text-neutral-500"
+                    )} />
                     <input
                       type="text"
                       placeholder="Search apparel..."
-                      className="w-full h-9 pl-9 pr-3 rounded-xl bg-neutral-900/80 border border-neutral-800/80 text-xs text-white placeholder:text-neutral-500 font-sans focus:outline-none"
+                      className={cn(
+                        "w-full h-9 pl-9 pr-3 rounded-xl border text-xs font-sans focus:outline-none transition-colors",
+                        isLightMode
+                          ? "bg-white border-neutral-200 text-neutral-900 placeholder:text-neutral-400 shadow-2xs"
+                          : "bg-neutral-900/80 border-neutral-800/80 text-white placeholder:text-neutral-500"
+                      )}
                       readOnly
                     />
                   </div>
@@ -492,33 +544,54 @@ export default function MobilePrimitivesPage() {
                       { id: "all", label: "All (24)" },
                       { id: "outerwear", label: "Outerwear" },
                       { id: "footwear", label: "Footwear" },
-                    ].map((cat) => (
-                      <button
-                        key={cat.id}
-                        type="button"
-                        onClick={() => setStoreCategory(cat.id)}
-                        className={cn(
-                          "px-3 py-1 rounded-full border transition-all cursor-pointer whitespace-nowrap active:scale-95",
-                          storeCategory === cat.id
-                            ? "bg-white text-black border-white font-semibold"
-                            : "bg-neutral-900 border-neutral-800 text-neutral-400"
-                        )}
-                      >
-                        {cat.label}
-                      </button>
-                    ))}
+                    ].map((cat) => {
+                      const isSelected = storeCategory === cat.id;
+                      return (
+                        <button
+                          key={cat.id}
+                          type="button"
+                          onClick={() => setStoreCategory(cat.id)}
+                          className={cn(
+                            "px-3 py-1 rounded-full border transition-all cursor-pointer whitespace-nowrap active:scale-95",
+                            isSelected
+                              ? isLightMode
+                                ? "bg-black text-white border-black font-semibold shadow-2xs"
+                                : "bg-white text-black border-white font-semibold"
+                              : isLightMode
+                              ? "bg-white border-neutral-200 text-neutral-600 hover:text-neutral-900 hover:border-neutral-300"
+                              : "bg-neutral-900 border-neutral-800 text-neutral-400"
+                          )}
+                        >
+                          {cat.label}
+                        </button>
+                      );
+                    })}
                   </div>
 
                   {/* Hero Product Card */}
-                  <div className="p-4 rounded-2xl border border-neutral-800/80 bg-neutral-900/50 space-y-3">
+                  <div
+                    className={cn(
+                      "p-4 rounded-2xl border space-y-3 transition-colors",
+                      isLightMode
+                        ? "border-neutral-200 bg-white shadow-2xs"
+                        : "border-neutral-800/80 bg-neutral-900/50"
+                    )}
+                  >
                     <div className="flex items-center justify-between">
-                      <span className="font-mono text-[9px] uppercase px-2 py-0.5 rounded border border-neutral-800 bg-neutral-950 text-neutral-400 font-semibold">
+                      <span
+                        className={cn(
+                          "font-mono text-[9px] uppercase px-2 py-0.5 rounded border font-semibold",
+                          isLightMode
+                            ? "border-neutral-200 bg-neutral-100 text-neutral-600"
+                            : "border-neutral-800 bg-neutral-950 text-neutral-400"
+                        )}
+                      >
                         DROP 01
                       </span>
                       <button
                         type="button"
                         onClick={() => toggleLike("parka-1")}
-                        className="text-neutral-500 hover:text-rose-400 transition-colors cursor-pointer"
+                        className="text-neutral-400 hover:text-rose-500 transition-colors cursor-pointer"
                       >
                         <Heart
                           className={cn(
@@ -529,19 +602,33 @@ export default function MobilePrimitivesPage() {
                       </button>
                     </div>
 
-                    <div className="py-5 flex flex-col items-center justify-center text-center space-y-1 border-y border-neutral-800/40 my-1">
-                      <span className="font-mono text-sm tracking-wider text-neutral-200 font-semibold">
+                    <div
+                      className={cn(
+                        "py-5 flex flex-col items-center justify-center text-center space-y-1 border-y my-1 transition-colors",
+                        isLightMode ? "border-neutral-100" : "border-neutral-800/40"
+                      )}
+                    >
+                      <span
+                        className={cn(
+                          "font-mono text-sm tracking-wider font-semibold",
+                          isLightMode ? "text-neutral-900" : "text-neutral-200"
+                        )}
+                      >
                         [ MODULAR PARKA ]
                       </span>
-                      <span className="text-[10px] font-mono text-neutral-500">
+                      <span className={cn("text-[10px] font-mono", isLightMode ? "text-neutral-400" : "text-neutral-500")}>
                         Interactive 3D model
                       </span>
                     </div>
 
                     <div className="flex items-center justify-between pt-1">
                       <div>
-                        <div className="text-xs font-bold text-white">Technical Shell 3L</div>
-                        <div className="text-[10px] font-mono text-neutral-400">$245.00</div>
+                        <div className={cn("text-xs font-bold", isLightMode ? "text-neutral-900" : "text-white")}>
+                          Technical Shell 3L
+                        </div>
+                        <div className={cn("text-[10px] font-mono", isLightMode ? "text-neutral-500" : "text-neutral-400")}>
+                          $245.00
+                        </div>
                       </div>
                       <button
                         type="button"
@@ -549,7 +636,12 @@ export default function MobilePrimitivesPage() {
                           setCartCount((c) => c + 1);
                           setIsSheetOpen(true);
                         }}
-                        className="px-3 py-1.5 rounded-lg bg-white text-black font-mono font-bold text-xs hover:bg-neutral-200 active:scale-95 transition-all cursor-pointer"
+                        className={cn(
+                          "px-3 py-1.5 rounded-lg font-mono font-bold text-xs active:scale-95 transition-all cursor-pointer",
+                          isLightMode
+                            ? "bg-black text-white hover:bg-neutral-800 shadow-2xs"
+                            : "bg-white text-black hover:bg-neutral-200"
+                        )}
                       >
                         Quick Buy
                       </button>
@@ -558,9 +650,16 @@ export default function MobilePrimitivesPage() {
 
                   {/* Saved Items */}
                   <div className="space-y-2">
-                    <div className="flex items-center justify-between text-[11px] font-mono text-neutral-400">
+                    <div
+                      className={cn(
+                        "flex items-center justify-between text-[11px] font-mono",
+                        isLightMode ? "text-neutral-600" : "text-neutral-400"
+                      )}
+                    >
                       <span>Saved</span>
-                      <span className="text-[10px] text-neutral-500">Swipe ⇄</span>
+                      <span className={cn("text-[10px]", isLightMode ? "text-neutral-400" : "text-neutral-500")}>
+                        Swipe ⇄
+                      </span>
                     </div>
 
                     <SwipeActionCard
@@ -577,10 +676,16 @@ export default function MobilePrimitivesPage() {
                     >
                       <div className="flex items-center justify-between">
                         <div>
-                          <div className="text-xs font-bold text-white">Oversized Heavy Tee</div>
-                          <div className="text-[10px] text-neutral-400 font-mono">Raw Black • L</div>
+                          <div className={cn("text-xs font-bold", isLightMode ? "text-neutral-900" : "text-white")}>
+                            Oversized Heavy Tee
+                          </div>
+                          <div className={cn("text-[10px] font-mono", isLightMode ? "text-neutral-500" : "text-neutral-400")}>
+                            Raw Black • L
+                          </div>
                         </div>
-                        <span className="font-mono text-xs font-bold text-white">$65</span>
+                        <span className={cn("font-mono text-xs font-bold", isLightMode ? "text-neutral-900" : "text-white")}>
+                          $65
+                        </span>
                       </div>
                     </SwipeActionCard>
                   </div>
@@ -589,15 +694,32 @@ export default function MobilePrimitivesPage() {
 
               {/* ── Preset 2: Feed View ── */}
               {presetMode === "feed" && (
-                <div className="flex-1 flex flex-col overflow-hidden">
-                  <div className="px-4 py-2 border-b border-neutral-800/80 bg-neutral-900/40 flex items-center justify-between">
-                    <span className="text-xs font-mono font-bold uppercase text-white">
+                <div
+                  className={cn(
+                    "flex-1 flex flex-col overflow-hidden transition-colors",
+                    isLightMode ? "bg-[#f8f9fa] text-neutral-900" : "bg-[#0c0d0e] text-white"
+                  )}
+                >
+                  <div
+                    className={cn(
+                      "px-4 py-2 border-b flex items-center justify-between transition-colors",
+                      isLightMode
+                        ? "border-neutral-200 bg-white text-neutral-900"
+                        : "border-neutral-800/80 bg-neutral-900/40 text-white"
+                    )}
+                  >
+                    <span className="text-xs font-mono font-bold uppercase">
                       Feed
                     </span>
                     <button
                       type="button"
                       onClick={() => setIsSheetOpen(true)}
-                      className="text-[10px] font-mono px-2 py-0.5 rounded border border-neutral-800 bg-neutral-950 text-neutral-300 hover:text-white"
+                      className={cn(
+                        "text-[10px] font-mono px-2 py-0.5 rounded border transition-colors cursor-pointer",
+                        isLightMode
+                          ? "border-neutral-200 bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
+                          : "border-neutral-800 bg-neutral-950 text-neutral-300 hover:text-white"
+                      )}
                     >
                       Inspect
                     </button>
@@ -619,10 +741,16 @@ export default function MobilePrimitivesPage() {
                         ]}
                       >
                         <div className="flex items-center justify-between mb-1">
-                          <span className="font-mono text-[10px] font-bold text-white">{item.sender}</span>
-                          <span className="font-mono text-[9px] text-neutral-500">{item.time}</span>
+                          <span className={cn("font-mono text-[10px] font-bold", isLightMode ? "text-neutral-900" : "text-white")}>
+                            {item.sender}
+                          </span>
+                          <span className={cn("font-mono text-[9px]", isLightMode ? "text-neutral-500" : "text-neutral-500")}>
+                            {item.time}
+                          </span>
                         </div>
-                        <div className="text-xs text-neutral-300 line-clamp-1">{item.subject}</div>
+                        <div className={cn("text-xs line-clamp-1", isLightMode ? "text-neutral-700" : "text-neutral-300")}>
+                          {item.subject}
+                        </div>
                       </SwipeActionCard>
                     ))}
                   </PullToRefresh>
@@ -631,24 +759,51 @@ export default function MobilePrimitivesPage() {
 
               {/* ── Preset 3: Wallet View ── */}
               {presetMode === "wallet" && (
-                <div className="flex-1 flex flex-col overflow-y-auto px-4 pt-3 pb-20 space-y-4 text-white">
+                <div
+                  className={cn(
+                    "flex-1 flex flex-col overflow-y-auto px-4 pt-3 pb-20 space-y-4 transition-colors",
+                    isLightMode ? "bg-[#f8f9fa] text-neutral-900" : "bg-[#0c0d0e] text-white"
+                  )}
+                >
                   <div>
-                    <span className="text-[9px] font-mono tracking-widest text-neutral-500 uppercase">
+                    <span className={cn(
+                      "text-[9px] font-mono tracking-widest uppercase",
+                      isLightMode ? "text-neutral-500" : "text-neutral-500"
+                    )}>
                       ASSETS
                     </span>
-                    <h2 className="text-xl font-bold tracking-tight text-white font-sans">
+                    <h2 className={cn(
+                      "text-xl font-bold tracking-tight font-sans",
+                      isLightMode ? "text-neutral-900" : "text-white"
+                    )}>
                       Balance
                     </h2>
                   </div>
 
-                  <div className="p-4 rounded-2xl border border-neutral-800 bg-neutral-900/60 space-y-3">
-                    <div className="text-[10px] font-mono text-neutral-400">Total Net Value</div>
-                    <div className="text-2xl font-bold font-mono text-white">$24,850.40</div>
+                  <div
+                    className={cn(
+                      "p-4 rounded-2xl border space-y-3 transition-colors",
+                      isLightMode
+                        ? "border-neutral-200 bg-white shadow-2xs"
+                        : "border-neutral-800 bg-neutral-900/60"
+                    )}
+                  >
+                    <div className={cn("text-[10px] font-mono", isLightMode ? "text-neutral-500" : "text-neutral-400")}>
+                      Total Net Value
+                    </div>
+                    <div className={cn("text-2xl font-bold font-mono", isLightMode ? "text-neutral-900" : "text-white")}>
+                      $24,850.40
+                    </div>
                     <div className="grid grid-cols-2 gap-2 pt-2">
                       <button
                         type="button"
                         onClick={() => setIsSheetOpen(true)}
-                        className="flex items-center justify-center gap-1.5 py-2 rounded-lg bg-white text-black font-mono font-bold text-xs hover:bg-neutral-200 active:scale-95 transition-all cursor-pointer"
+                        className={cn(
+                          "flex items-center justify-center gap-1.5 py-2 rounded-lg font-mono font-bold text-xs active:scale-95 transition-all cursor-pointer",
+                          isLightMode
+                            ? "bg-black text-white hover:bg-neutral-800 shadow-2xs"
+                            : "bg-white text-black hover:bg-neutral-200"
+                        )}
                       >
                         <Send className="h-3 w-3" />
                         <span>Send</span>
@@ -656,7 +811,12 @@ export default function MobilePrimitivesPage() {
                       <button
                         type="button"
                         onClick={() => setIsSheetOpen(true)}
-                        className="flex items-center justify-center gap-1.5 py-2 rounded-lg border border-neutral-800 bg-neutral-950 text-white font-mono text-xs hover:bg-neutral-900 active:scale-95 transition-all cursor-pointer"
+                        className={cn(
+                          "flex items-center justify-center gap-1.5 py-2 rounded-lg border font-mono text-xs active:scale-95 transition-all cursor-pointer",
+                          isLightMode
+                            ? "border-neutral-200 bg-neutral-100 text-neutral-800 hover:bg-neutral-200"
+                            : "border-neutral-800 bg-neutral-950 text-white hover:bg-neutral-900"
+                        )}
                       >
                         <ArrowDownLeft className="h-3 w-3" />
                         <span>Deposit</span>
@@ -665,20 +825,38 @@ export default function MobilePrimitivesPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <div className="text-[11px] font-mono text-neutral-400">Recent</div>
+                    <div className={cn("text-[11px] font-mono", isLightMode ? "text-neutral-600" : "text-neutral-400")}>
+                      Recent
+                    </div>
                     {[
                       { title: "Kilo Studio", amount: "-$145.00", time: "10:24 AM" },
                       { title: "Direct Wire", amount: "+$2,400.00", time: "Yesterday" },
                     ].map((tx) => (
                       <div
                         key={tx.title}
-                        className="p-3 rounded-xl border border-neutral-800/60 bg-neutral-950/40 flex items-center justify-between"
+                        className={cn(
+                          "p-3 rounded-xl border flex items-center justify-between transition-colors",
+                          isLightMode
+                            ? "border-neutral-200 bg-white shadow-2xs"
+                            : "border-neutral-800/60 bg-neutral-950/40"
+                        )}
                       >
                         <div>
-                          <div className="text-xs font-bold text-white">{tx.title}</div>
-                          <div className="text-[10px] text-neutral-500 font-mono">{tx.time}</div>
+                          <div className={cn("text-xs font-bold", isLightMode ? "text-neutral-900" : "text-white")}>
+                            {tx.title}
+                          </div>
+                          <div className={cn("text-[10px] font-mono", isLightMode ? "text-neutral-500" : "text-neutral-500")}>
+                            {tx.time}
+                          </div>
                         </div>
-                        <span className={cn("font-mono text-xs font-bold", tx.amount.startsWith("+") ? "text-emerald-400" : "text-white")}>
+                        <span className={cn(
+                          "font-mono text-xs font-bold",
+                          tx.amount.startsWith("+")
+                            ? "text-emerald-500"
+                            : isLightMode
+                            ? "text-neutral-900"
+                            : "text-white"
+                        )}>
                           {tx.amount}
                         </span>
                       </div>
@@ -723,8 +901,18 @@ export default function MobilePrimitivesPage() {
               />
 
               {/* Bottom Bezel Line */}
-              <div className="h-3 w-full flex items-center justify-center shrink-0 z-40 bg-[#0c0d0e]">
-                <div className="w-28 h-1 rounded-full bg-neutral-600/50" />
+              <div
+                className={cn(
+                  "h-3 w-full flex items-center justify-center shrink-0 z-40 transition-colors",
+                  isLightMode ? "bg-[#f8f9fa]" : "bg-[#0c0d0e]"
+                )}
+              >
+                <div
+                  className={cn(
+                    "w-28 h-1 rounded-full",
+                    isLightMode ? "bg-neutral-300" : "bg-neutral-600/50"
+                  )}
+                />
               </div>
 
               {/* In-Chassis Bottom Sheet */}
@@ -739,24 +927,36 @@ export default function MobilePrimitivesPage() {
                   <button
                     type="button"
                     onClick={() => setIsSheetOpen(false)}
-                    className="w-full py-2.5 rounded-xl bg-white text-black text-xs font-bold font-mono hover:bg-neutral-200 transition-colors cursor-pointer active:scale-95"
+                    className={cn(
+                      "w-full py-2.5 rounded-xl text-xs font-bold font-mono transition-colors cursor-pointer active:scale-95",
+                      isLightMode
+                        ? "bg-black text-white hover:bg-neutral-800 shadow-2xs"
+                        : "bg-white text-black hover:bg-neutral-200"
+                    )}
                   >
                     Confirm &amp; Pay $245.00
                   </button>
                 }
               >
-                <div className="space-y-3 text-xs text-neutral-300">
-                  <div className="p-3 rounded-xl border border-neutral-800 bg-neutral-900/60 space-y-1.5 font-mono text-[11px]">
+                <div className={cn("space-y-3 text-xs", isLightMode ? "text-neutral-700" : "text-neutral-300")}>
+                  <div
+                    className={cn(
+                      "p-3 rounded-xl border space-y-1.5 font-mono text-[11px]",
+                      isLightMode
+                        ? "border-neutral-200 bg-neutral-100/70"
+                        : "border-neutral-800 bg-neutral-900/60"
+                    )}
+                  >
                     <div className="flex items-center justify-between">
-                      <span className="text-neutral-400">Items:</span>
-                      <span className="text-white font-bold">{cartCount} items</span>
+                      <span className={isLightMode ? "text-neutral-500" : "text-neutral-400"}>Items:</span>
+                      <span className={cn("font-bold", isLightMode ? "text-neutral-900" : "text-white")}>{cartCount} items</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-neutral-400">Delivery:</span>
-                      <span className="text-emerald-400 font-bold">Free Express</span>
+                      <span className={isLightMode ? "text-neutral-500" : "text-neutral-400"}>Delivery:</span>
+                      <span className="text-emerald-500 font-bold">Free Express</span>
                     </div>
                   </div>
-                  <p className="text-[11px] text-neutral-400 leading-relaxed font-sans">
+                  <p className={cn("text-[11px] leading-relaxed font-sans", isLightMode ? "text-neutral-500" : "text-neutral-400")}>
                     Swipe downward or drag the handle to dismiss.
                   </p>
                 </div>
