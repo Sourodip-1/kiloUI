@@ -1,8 +1,13 @@
 "use client";
 
 import * as React from "react";
-import { RotateCcw, Check, Copy, ChevronDown, ChevronLeft, ChevronRight, Sparkles, Mic, SlidersHorizontal, Search } from "lucide-react";
+import { RotateCcw, Check, Copy, ChevronDown, ChevronLeft, ChevronRight, Sparkles, Mic, SlidersHorizontal, Search, Pin, Trash2, Home, Compass, Bell, Plus, ShoppingBag, Heart, Smartphone, RefreshCw, Layers, ArrowUpDown, Archive, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { MobileBottomSheet } from "@/registry/ui/mobile-bottom-sheet";
+import { SwipeActionCard } from "@/registry/ui/swipe-action-card";
+import { ThumbSegmentController } from "@/registry/ui/thumb-segment-controller";
+import { PullToRefresh } from "@/registry/ui/pull-to-refresh";
+import { FloatingActionDock } from "@/registry/ui/floating-action-dock";
 import { Button } from "@/registry/ui/button";
 import { Input } from "@/registry/ui/input";
 import { Switch } from "@/registry/ui/switch";
@@ -99,6 +104,108 @@ export interface ComponentPreviewStageProps {
   onConfiguredCodeChange?: (code: string) => void;
   activeVariant?: string;
   onVariantChange?: (variant: string) => void;
+}
+
+/** Dedicated Mobile Preview Simulator with hardware black rims and adaptive light/dark screen */
+function MobilePreviewChassis({
+  children,
+  isLightMode,
+  title,
+  subtitle,
+  actions,
+  className,
+}: {
+  children: React.ReactNode;
+  isLightMode: boolean;
+  title?: string;
+  subtitle?: string;
+  actions?: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "relative mx-auto w-full max-w-[340px] h-[580px] rounded-[44px] p-2.5 shadow-2xl transition-all duration-300 border-[7px] border-[#18191b] bg-[#0c0d0e] ring-1 ring-black/80 flex flex-col justify-between overflow-hidden select-none",
+        className
+      )}
+    >
+      {/* Top Status Bar & Dynamic Island */}
+      <div
+        className={cn(
+          "pt-2 pb-1 px-5 flex items-center justify-between shrink-0 z-30 text-[11px] font-mono transition-colors rounded-t-[34px]",
+          isLightMode ? "bg-[#f8f9fa] text-neutral-600" : "bg-[#0c0d0e] text-neutral-400"
+        )}
+      >
+        <span className={cn("font-semibold text-xs", isLightMode ? "text-neutral-900" : "text-white")}>
+          9:41
+        </span>
+
+        {/* Dynamic Island - hardware is black in both modes */}
+        <div className="w-22 h-4.5 rounded-full bg-black border border-neutral-800 flex items-center justify-center gap-1.5 px-2">
+          <div className="w-1.5 h-1.5 rounded-full bg-[#1c1d22] border border-neutral-700/60" />
+          <div className="w-1 h-1 rounded-full bg-[#0a1829]" />
+        </div>
+
+        <div className="flex items-center gap-1.5 text-[10px]">
+          <span>5G</span>
+          <div className="w-4 h-2 rounded-[2px] border border-neutral-400 p-[1px] flex items-center">
+            <div className={cn("h-full w-2.5", isLightMode ? "bg-neutral-900" : "bg-neutral-200")} />
+          </div>
+        </div>
+      </div>
+
+      {/* Screen Header Bar (optional) */}
+      {(title || subtitle || actions) && (
+        <div
+          className={cn(
+            "px-4 py-2 border-b flex items-center justify-between shrink-0 z-20 transition-colors",
+            isLightMode
+              ? "bg-[#f8f9fa] border-neutral-200 text-neutral-900"
+              : "bg-[#0c0d0e] border-neutral-800/80 text-white"
+          )}
+        >
+          <div>
+            {subtitle && (
+              <span className="text-[9px] font-mono tracking-widest uppercase text-neutral-500 block">
+                {subtitle}
+              </span>
+            )}
+            {title && (
+              <h4 className="text-sm font-bold tracking-tight font-sans">
+                {title}
+              </h4>
+            )}
+          </div>
+          {actions && <div>{actions}</div>}
+        </div>
+      )}
+
+      {/* Screen Interior Content */}
+      <div
+        className={cn(
+          "relative flex-1 flex flex-col overflow-hidden transition-colors",
+          isLightMode ? "bg-[#f8f9fa] text-neutral-900" : "bg-[#0c0d0e] text-white"
+        )}
+      >
+        {children}
+      </div>
+
+      {/* Bottom Home Indicator Bar */}
+      <div
+        className={cn(
+          "h-4 w-full flex items-center justify-center shrink-0 z-30 transition-colors rounded-b-[34px]",
+          isLightMode ? "bg-[#f8f9fa]" : "bg-[#0c0d0e]"
+        )}
+      >
+        <div
+          className={cn(
+            "w-28 h-1 rounded-full",
+            isLightMode ? "bg-neutral-300" : "bg-neutral-600/60"
+          )}
+        />
+      </div>
+    </div>
+  );
 }
 
 /** Tile container for individual controls matching photo 2 */
@@ -577,6 +684,61 @@ export function ComponentPreviewStage({
   activeVariant,
   onVariantChange,
 }: ComponentPreviewStageProps) {
+  // Adaptive light/dark theme tracking for chassis interior
+  const [isLightMode, setIsLightMode] = React.useState(false);
+  React.useEffect(() => {
+    const checkLight = () => document.documentElement.classList.contains("light");
+    setIsLightMode(checkLight());
+    const observer = new MutationObserver(() => setIsLightMode(checkLight()));
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    return () => observer.disconnect();
+  }, []);
+
+  // 1. Mobile Bottom Sheet state
+  const [mobileBottomSheetVariant, setMobileBottomSheetVariant] = React.useState<string>(
+    item.name === "mobile-bottom-sheet" && activeVariant ? activeVariant : "default"
+  );
+  const [mobileBottomSheetOpen, setMobileBottomSheetOpen] = React.useState<boolean>(true);
+  const [mobileBottomSheetTitle, setMobileBottomSheetTitle] = React.useState<string>("Order Summary");
+  const [mobileBottomSheetHandle, setMobileBottomSheetHandle] = React.useState<boolean>(true);
+  const [mobileBottomSheetBlur, setMobileBottomSheetBlur] = React.useState<boolean>(true);
+
+  // 2. Swipe Action Card state
+  const [swipeActionCardVariant, setSwipeActionCardVariant] = React.useState<string>(
+    item.name === "swipe-action-card" && activeVariant ? activeVariant : "default"
+  );
+  const [swipeActionThreshold, setSwipeActionThreshold] = React.useState<number>(72);
+  const [swipeActionDisabled, setSwipeActionDisabled] = React.useState<boolean>(false);
+  const [swipeActionCount, setSwipeActionCount] = React.useState<number>(0);
+  const [swipeLastAction, setSwipeLastAction] = React.useState<string>("");
+
+  // 3. Thumb Segment Controller state
+  const [thumbSegmentVariant, setThumbSegmentVariant] = React.useState<string>(
+    item.name === "thumb-segment-controller" && activeVariant ? activeVariant : "default"
+  );
+  const [thumbSegmentValue, setThumbSegmentValue] = React.useState<string>("week");
+  const [thumbSegmentFullWidth, setThumbSegmentFullWidth] = React.useState<boolean>(true);
+
+  // 4. Pull To Refresh state
+  const [pullToRefreshVariant, setPullToRefreshVariant] = React.useState<string>(
+    item.name === "pull-to-refresh" && activeVariant ? activeVariant : "default"
+  );
+  const [pullToRefreshThreshold, setPullToRefreshThreshold] = React.useState<number>(72);
+  const [pullToRefreshDisabled, setPullToRefreshDisabled] = React.useState<boolean>(false);
+  const [pullRefreshCount, setPullRefreshCount] = React.useState<number>(1);
+  const [pullItems, setPullItems] = React.useState<Array<{ id: string; title: string; desc: string; time: string }>>([
+    { id: "1", title: "Sync Dispatch", desc: "Real-time buffer refreshed", time: "Just now" },
+    { id: "2", title: "Telemetry Core", desc: "Sub-millisecond frame dispatch rate confirmed", time: "34m ago" },
+    { id: "3", title: "AST Validator", desc: "All 5 mobile primitives schema compliance check", time: "1h ago" },
+  ]);
+
+  // 5. Floating Action Dock state
+  const [floatingActionDockVariant, setFloatingActionDockVariant] = React.useState<string>(
+    item.name === "floating-action-dock" && activeVariant ? activeVariant : "default"
+  );
+  const [floatingDockActive, setFloatingDockActive] = React.useState<string>("home");
+  const [floatingDockShowPrimary, setFloatingDockShowPrimary] = React.useState<boolean>(true);
+  const [floatingDockBadge, setFloatingDockBadge] = React.useState<number>(3);
   // 1. Button state
   const [btnVariant, setBtnVariant] = React.useState<any>(
     item.name === "button" && activeVariant ? activeVariant : "default"
@@ -1415,7 +1577,23 @@ export function ComponentPreviewStage({
   // Unified variant setter supporting all interactive components
   const applyVariant = React.useCallback(
     (v: string) => {
-      if (item.name === "button") setBtnVariant(v);
+      if (item.name === "mobile-bottom-sheet") {
+        setMobileBottomSheetVariant(v);
+        setMobileBottomSheetOpen(true);
+      }
+      else if (item.name === "swipe-action-card") {
+        setSwipeActionCardVariant(v);
+      }
+      else if (item.name === "thumb-segment-controller") {
+        setThumbSegmentVariant(v);
+      }
+      else if (item.name === "pull-to-refresh") {
+        setPullToRefreshVariant(v);
+      }
+      else if (item.name === "floating-action-dock") {
+        setFloatingActionDockVariant(v);
+      }
+      else if (item.name === "button") setBtnVariant(v);
       else if (item.name === "magnetic-button") setMagneticVariant(v);
       else if (item.name === "border-beam-button") setBorderBeamVariant(v);
       else if (item.name === "cyber-glitch-button") setCyberGlitchVariant(v);
@@ -1836,6 +2014,16 @@ export function ComponentPreviewStage({
       ? dynamicIslandVariant
       : item.name === "stack-cards"
       ? stackCardsVariant
+      : item.name === "mobile-bottom-sheet"
+      ? mobileBottomSheetVariant
+      : item.name === "swipe-action-card"
+      ? swipeActionCardVariant
+      : item.name === "thumb-segment-controller"
+      ? thumbSegmentVariant
+      : item.name === "pull-to-refresh"
+      ? pullToRefreshVariant
+      : item.name === "floating-action-dock"
+      ? floatingActionDockVariant
       : activeVariant || variants[0] || "default";
 
   const currentIndex = Math.max(0, variants.indexOf(currentVariant));
@@ -1872,6 +2060,29 @@ export function ComponentPreviewStage({
   }, [variantMenuOpen]);
 
   const handleResetAll = () => {
+    setMobileBottomSheetVariant("default");
+    setMobileBottomSheetOpen(true);
+    setMobileBottomSheetTitle("Order Summary");
+    setMobileBottomSheetHandle(true);
+    setMobileBottomSheetBlur(true);
+
+    setSwipeActionCardVariant("default");
+    setSwipeActionThreshold(72);
+    setSwipeActionDisabled(false);
+    setSwipeLastAction("");
+
+    setThumbSegmentVariant("default");
+    setThumbSegmentValue("week");
+    setThumbSegmentFullWidth(true);
+
+    setPullToRefreshVariant("default");
+    setPullToRefreshThreshold(72);
+    setPullToRefreshDisabled(false);
+
+    setFloatingActionDockVariant("default");
+    setFloatingDockActive("home");
+    setFloatingDockShowPrimary(true);
+
     setBtnVariant("default");
     setBtnSize("default");
     setBtnLabel("Action Button");
@@ -2011,6 +2222,17 @@ export function ComponentPreviewStage({
       } else {
         code = `<Skeleton\n  variant="${skeletonVariant}"\n  shape="${skeletonShape}"\n  speed="${skeletonSpeed}"${skeletonGlow ? "\n  accentGlow" : ""}\n  className="h-10 w-full"\n/>`;
       }
+    } else if (item.name === "mobile-bottom-sheet") {
+      const snapArr = mobileBottomSheetVariant === "compact" ? "[0.26, 0.5]" : mobileBottomSheetVariant === "full-expand" ? "[0.92]" : "[0.38, 0.86]";
+      code = `<MobileBottomSheet\n  open={${mobileBottomSheetOpen}}\n  onOpenChange={setOpen}\n  snapPoints={${snapArr}}\n  title="${mobileBottomSheetTitle}"\n  description="Tactile gesture drag with velocity fling physics"\n  showHandle={${mobileBottomSheetHandle}}\n  backdropBlur={${mobileBottomSheetBlur}}\n  footer={\n    <Button className="w-full" onClick={() => setOpen(false)}>\n      Confirm & Pay $49.00\n    </Button>\n  }\n>\n  <div className="space-y-3 py-2">\n    <p className="text-sm">Item order details & telemetry</p>\n  </div>\n</MobileBottomSheet>`;
+    } else if (item.name === "swipe-action-card") {
+      code = `<SwipeActionCard\n  threshold={${swipeActionThreshold}}\n  disabled={${swipeActionDisabled}}\n  leftActions={[\n    { id: "pin", label: "Pin", icon: <Pin className="h-4 w-4" /> },\n    { id: "archive", label: "Archive", icon: <Archive className="h-4 w-4" /> }\n  ]}\n  rightActions={[\n    { id: "delete", label: "Delete", icon: <Trash2 className="h-4 w-4" />, variant: "destructive" }\n  ]}\n  onActionTrigger={(id) => console.log("Triggered:", id)}\n>\n  <div className="p-4 bg-[var(--surface-elevated)] border border-[var(--border)] rounded-xl">\n    <h4 className="font-semibold text-[var(--text-primary)]">Sync Dispatch Order</h4>\n    <p className="text-xs text-[var(--text-muted)] mt-1">Swipe left for delete, right to pin</p>\n  </div>\n</SwipeActionCard>`;
+    } else if (item.name === "thumb-segment-controller") {
+      code = `<ThumbSegmentController\n  size="${thumbSegmentVariant as any}"\n  value="${thumbSegmentValue}"\n  onChange={setSelected}\n  fullWidth={${thumbSegmentFullWidth}}\n  items={[\n    { id: "day", label: "Day" },\n    { id: "week", label: "Week", badge: 3 },\n    { id: "month", label: "Month" },\n    { id: "year", label: "Year" }\n  ]}\n/>`;
+    } else if (item.name === "pull-to-refresh") {
+      code = `<PullToRefresh\n  onRefresh={handleRefresh}\n  pullThreshold={${pullToRefreshThreshold}}\n  disabled={${pullToRefreshDisabled}}\n>\n  <div className="space-y-3 p-4">\n    <p className="text-sm font-semibold">Feed Updated Real-Time</p>\n  </div>\n</PullToRefresh>`;
+    } else if (item.name === "floating-action-dock") {
+      code = `<FloatingActionDock\n  position="${floatingActionDockVariant as any}"${floatingDockShowPrimary ? `\n  primaryAction={{\n    label: "Add",\n    icon: <Plus className="h-4 w-4" />,\n    onClick: () => console.log("Add clicked"),\n  }}` : ""}\n  items={[\n    { id: "home", label: "Home", icon: <Home className="h-4 w-4" />, active: active === "home", onClick: () => setActive("home") },\n    { id: "explore", label: "Explore", icon: <Compass className="h-4 w-4" />, active: active === "explore", onClick: () => setActive("explore") },\n    { id: "alerts", label: "Alerts", icon: <Bell className="h-4 w-4" />, badge: ${floatingDockBadge}, active: active === "alerts", onClick: () => setActive("alerts") }\n  ]}\n/>`;
     } else if (item.name === "popover-dialog") {
       code = `<PopoverDialog\n  variant="${popoverVariant}"\n  placement="${popoverPlacement}"${popoverShowArrow ? "\n  showArrow" : ""}\n  title="Node Configuration"\n  description="Adjust routing priorities and edge bandwidth limits."\n/>`;
     } else if (item.name === "command-palette") {
@@ -4799,6 +5021,642 @@ export function ComponentPreviewStage({
               )}
             </div>
           )}
+
+          {/* Mobile Bottom Sheet */}
+          {item.name === "mobile-bottom-sheet" && (
+            <div className="w-full flex justify-center py-2">
+              <MobilePreviewChassis
+                isLightMode={isLightMode}
+                title="Store Checkout"
+                subtitle="KILO ARCHIVE"
+                actions={
+                  <button
+                    type="button"
+                    onClick={() => setMobileBottomSheetOpen(true)}
+                    className={cn(
+                      "px-2.5 py-1 rounded-md text-[10px] font-mono font-semibold transition-colors cursor-pointer",
+                      isLightMode
+                        ? "bg-black text-white hover:bg-neutral-800"
+                        : "bg-white text-black hover:bg-neutral-200"
+                    )}
+                  >
+                    Open Sheet
+                  </button>
+                }
+              >
+                {/* Screen Content Under Sheet */}
+                <div className="flex-1 flex flex-col p-4 space-y-4 overflow-y-auto">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-[9px] font-mono text-neutral-500 uppercase tracking-wider">ORDER #RFC-902</span>
+                      <h3 className="text-base font-bold">Technical Shell 3L</h3>
+                    </div>
+                    <span className="font-mono text-sm font-bold">$245.00</span>
+                  </div>
+
+                  <div
+                    className={cn(
+                      "p-3 rounded-2xl border flex items-center justify-center h-40 transition-colors",
+                      isLightMode ? "border-neutral-200 bg-neutral-100" : "border-neutral-800 bg-neutral-900/60"
+                    )}
+                  >
+                    <div className="text-center space-y-1">
+                      <ShoppingBag className="h-8 w-8 mx-auto text-neutral-400" />
+                      <p className="text-xs font-mono text-neutral-500">[ MODULAR APPAREL 01 ]</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-neutral-500">Colorway</span>
+                      <span className="font-medium">Raw Black // Triple Dye</span>
+                    </div>
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-neutral-500">Fit</span>
+                      <span className="font-medium">Oversized Relaxed</span>
+                    </div>
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-neutral-500">Delivery</span>
+                      <span className="text-emerald-500 font-semibold">Free Express</span>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setMobileBottomSheetOpen(true)}
+                    className={cn(
+                      "w-full py-2.5 rounded-xl text-xs font-bold font-mono transition-colors cursor-pointer mt-auto",
+                      isLightMode
+                        ? "bg-black text-white hover:bg-neutral-800"
+                        : "bg-white text-black hover:bg-neutral-200"
+                    )}
+                  >
+                    View Order Details
+                  </button>
+                </div>
+
+                {/* In-Chassis Bottom Sheet */}
+                <MobileBottomSheet
+                  open={mobileBottomSheetOpen}
+                  onOpenChange={setMobileBottomSheetOpen}
+                  inline={true}
+                  snapPoints={
+                    mobileBottomSheetVariant === "compact"
+                      ? [0.32, 0.55]
+                      : mobileBottomSheetVariant === "full-expand"
+                      ? [0.94]
+                      : [0.42, 0.88]
+                  }
+                  title={mobileBottomSheetTitle}
+                  description={
+                    mobileBottomSheetVariant === "compact"
+                      ? "Quick express swipe sheet"
+                      : mobileBottomSheetVariant === "full-expand"
+                      ? "Full-height expanded modal drawer"
+                      : "M3 multi-snap physics with velocity fling"
+                  }
+                  showHandle={mobileBottomSheetHandle}
+                  backdropBlur={mobileBottomSheetBlur}
+                  footer={
+                    <button
+                      type="button"
+                      onClick={() => setMobileBottomSheetOpen(false)}
+                      className={cn(
+                        "w-full py-2.5 rounded-xl text-xs font-bold font-mono transition-colors cursor-pointer active:scale-95",
+                        isLightMode
+                          ? "bg-black text-white hover:bg-neutral-800 shadow-2xs"
+                          : "bg-white text-black hover:bg-neutral-200"
+                      )}
+                    >
+                      Confirm & Pay $245.00
+                    </button>
+                  }
+                >
+                  <div className={cn("space-y-3 text-xs", isLightMode ? "text-neutral-700" : "text-neutral-300")}>
+                    <div
+                      className={cn(
+                        "p-3 rounded-xl border space-y-1.5 font-mono text-[11px]",
+                        isLightMode
+                          ? "border-neutral-200 bg-neutral-100/70"
+                          : "border-neutral-800 bg-neutral-900/60"
+                      )}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className={isLightMode ? "text-neutral-500" : "text-neutral-400"}>Item:</span>
+                        <span className={cn("font-bold", isLightMode ? "text-neutral-900" : "text-white")}>Technical Shell 3L</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className={isLightMode ? "text-neutral-500" : "text-neutral-400"}>Dispatch:</span>
+                        <span className="text-emerald-500 font-bold">Standard 2-Day Air</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className={isLightMode ? "text-neutral-500" : "text-neutral-400"}>Subtotal:</span>
+                        <span className={cn("font-bold", isLightMode ? "text-neutral-900" : "text-white")}>$245.00</span>
+                      </div>
+                    </div>
+                    <p className={cn("text-[11px] leading-relaxed font-sans", isLightMode ? "text-neutral-500" : "text-neutral-400")}>
+                      Swipe downward or drag the tactile monochrome handle to dismiss.
+                    </p>
+                  </div>
+                </MobileBottomSheet>
+              </MobilePreviewChassis>
+            </div>
+          )}
+
+          {/* Swipe Action Card */}
+          {item.name === "swipe-action-card" && (
+            <div className="w-full flex justify-center py-2">
+              <MobilePreviewChassis
+                isLightMode={isLightMode}
+                title="Activity Feed"
+                subtitle="GESTURE SWIPES"
+                actions={
+                  <span className="text-[10px] font-mono text-neutral-400">
+                    {swipeActionCount > 0 ? `${swipeActionCount} triggers` : "Swipe cards"}
+                  </span>
+                }
+              >
+                <div className="flex-1 flex flex-col p-4 space-y-3 overflow-y-auto">
+                  <div className="flex items-center justify-between pb-1">
+                    <span className="text-[10px] font-mono text-neutral-500 uppercase tracking-wider">
+                      Interactive Damped Drawers
+                    </span>
+                    <span className="text-[10px] font-mono text-emerald-500">
+                      {swipeLastAction || "Ready"}
+                    </span>
+                  </div>
+
+                  {/* Card 1 */}
+                  <SwipeActionCard
+                    threshold={swipeActionThreshold}
+                    disabled={swipeActionDisabled}
+                    leftActions={
+                      swipeActionCardVariant === "destructive-right"
+                        ? []
+                        : [
+                            {
+                              id: "pin",
+                              label: "Pin",
+                              icon: <Pin className="h-4 w-4" />,
+                              onClick: () => {
+                                setSwipeActionCount((c) => c + 1);
+                                setSwipeLastAction("Pinned #01");
+                              },
+                            },
+                            ...(swipeActionCardVariant === "dual-drawer"
+                              ? [
+                                  {
+                                    id: "archive",
+                                    label: "Archive",
+                                    icon: <Archive className="h-4 w-4" />,
+                                    onClick: () => {
+                                      setSwipeActionCount((c) => c + 1);
+                                      setSwipeLastAction("Archived #01");
+                                    },
+                                  },
+                                ]
+                              : []),
+                          ]
+                    }
+                    rightActions={[
+                      {
+                        id: "delete",
+                        label: "Delete",
+                        icon: <Trash2 className="h-4 w-4" />,
+                        variant: "destructive",
+                        onClick: () => {
+                          setSwipeActionCount((c) => c + 1);
+                          setSwipeLastAction("Deleted #01");
+                        },
+                      },
+                    ]}
+                    onActionTrigger={(actionId) => {
+                      setSwipeActionCount((c) => c + 1);
+                      setSwipeLastAction(`Action: ${actionId}`);
+                    }}
+                  >
+                    <div
+                      className={cn(
+                        "p-3.5 rounded-xl border flex items-center justify-between transition-colors",
+                        isLightMode
+                          ? "border-neutral-200 bg-white shadow-2xs"
+                          : "border-neutral-800/80 bg-neutral-900/90"
+                      )}
+                    >
+                      <div className="space-y-0.5">
+                        <div className="flex items-center gap-1.5">
+                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                          <h4 className="text-xs font-bold">Sync Dispatch #RFC-902</h4>
+                        </div>
+                        <p className="text-[11px] text-neutral-500">Order verification completed</p>
+                      </div>
+                      <span className="text-[10px] font-mono text-neutral-400">Just now</span>
+                    </div>
+                  </SwipeActionCard>
+
+                  {/* Card 2 */}
+                  <SwipeActionCard
+                    threshold={swipeActionThreshold}
+                    disabled={swipeActionDisabled}
+                    leftActions={
+                      swipeActionCardVariant === "destructive-right"
+                        ? []
+                        : [
+                            {
+                              id: "favorite",
+                              label: "Star",
+                              icon: <Heart className="h-4 w-4" />,
+                              onClick: () => {
+                                setSwipeActionCount((c) => c + 1);
+                                setSwipeLastAction("Starred #02");
+                              },
+                            },
+                          ]
+                    }
+                    rightActions={[
+                      {
+                        id: "remove",
+                        label: "Trash",
+                        icon: <Trash2 className="h-4 w-4" />,
+                        variant: "destructive",
+                        onClick: () => {
+                          setSwipeActionCount((c) => c + 1);
+                          setSwipeLastAction("Trashed #02");
+                        },
+                      },
+                    ]}
+                    onActionTrigger={(actionId) => {
+                      setSwipeActionCount((c) => c + 1);
+                      setSwipeLastAction(`Action: ${actionId}`);
+                    }}
+                  >
+                    <div
+                      className={cn(
+                        "p-3.5 rounded-xl border flex items-center justify-between transition-colors",
+                        isLightMode
+                          ? "border-neutral-200 bg-white shadow-2xs"
+                          : "border-neutral-800/80 bg-neutral-900/90"
+                      )}
+                    >
+                      <div className="space-y-0.5">
+                        <div className="flex items-center gap-1.5">
+                          <span className="h-1.5 w-1.5 rounded-full bg-cyan-500" />
+                          <h4 className="text-xs font-bold">Telemetry Node 04</h4>
+                        </div>
+                        <p className="text-[11px] text-neutral-500">Sub-millisecond frame dispatch</p>
+                      </div>
+                      <span className="text-[10px] font-mono text-neutral-400">12m ago</span>
+                    </div>
+                  </SwipeActionCard>
+
+                  {/* Card 3 */}
+                  <SwipeActionCard
+                    threshold={swipeActionThreshold}
+                    disabled={swipeActionDisabled}
+                    leftActions={
+                      swipeActionCardVariant === "destructive-right"
+                        ? []
+                        : [
+                            {
+                              id: "pin",
+                              label: "Pin",
+                              icon: <Pin className="h-4 w-4" />,
+                              onClick: () => {
+                                setSwipeActionCount((c) => c + 1);
+                                setSwipeLastAction("Pinned #03");
+                              },
+                            },
+                          ]
+                    }
+                    rightActions={[
+                      {
+                        id: "dismiss",
+                        label: "Dismiss",
+                        icon: <Trash2 className="h-4 w-4" />,
+                        variant: "destructive",
+                        onClick: () => {
+                          setSwipeActionCount((c) => c + 1);
+                          setSwipeLastAction("Dismissed #03");
+                        },
+                      },
+                    ]}
+                  >
+                    <div
+                      className={cn(
+                        "p-3.5 rounded-xl border flex items-center justify-between transition-colors",
+                        isLightMode
+                          ? "border-neutral-200 bg-white shadow-2xs"
+                          : "border-neutral-800/80 bg-neutral-900/90"
+                      )}
+                    >
+                      <div className="space-y-0.5">
+                        <div className="flex items-center gap-1.5">
+                          <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+                          <h4 className="text-xs font-bold">AST Schema Guard</h4>
+                        </div>
+                        <p className="text-[11px] text-neutral-500">All 5 mobile primitives validated</p>
+                      </div>
+                      <span className="text-[10px] font-mono text-neutral-400">1h ago</span>
+                    </div>
+                  </SwipeActionCard>
+
+                  <p className="text-[11px] text-center text-neutral-500 pt-3">
+                    Drag horizontally to engage spring resistance & action drawers
+                  </p>
+                </div>
+              </MobilePreviewChassis>
+            </div>
+          )}
+
+          {/* Thumb Segment Controller */}
+          {item.name === "thumb-segment-controller" && (
+            <div className="w-full flex justify-center py-2">
+              <MobilePreviewChassis
+                isLightMode={isLightMode}
+                title="Analytics"
+                subtitle="THUMB ZONE"
+              >
+                <div className="flex-1 flex flex-col p-4 space-y-4 overflow-y-auto">
+                  {/* Thumb Segment Controller */}
+                  <div className="space-y-1.5">
+                    <span className="text-[10px] font-mono text-neutral-500 uppercase tracking-wider block">
+                      Ergonomic Segment Control
+                    </span>
+                    <ThumbSegmentController
+                      size={thumbSegmentVariant as any}
+                      value={thumbSegmentValue}
+                      onChange={setThumbSegmentValue}
+                      fullWidth={thumbSegmentFullWidth}
+                      items={[
+                        { id: "day", label: "Day" },
+                        { id: "week", label: "Week", badge: 3 },
+                        { id: "month", label: "Month" },
+                        { id: "year", label: "Year" },
+                      ]}
+                    />
+                  </div>
+
+                  {/* Dynamic Metrics Card reacting to selected segment */}
+                  <div
+                    className={cn(
+                      "p-4 rounded-2xl border space-y-3 transition-colors",
+                      isLightMode
+                        ? "border-neutral-200 bg-white shadow-2xs"
+                        : "border-neutral-800/80 bg-neutral-900/60"
+                    )}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-mono text-neutral-500 uppercase">
+                        Active Period: {thumbSegmentValue.toUpperCase()}
+                      </span>
+                      <span className="text-xs font-mono font-bold text-emerald-500">+18.4%</span>
+                    </div>
+                    <div className="space-y-0.5">
+                      <div className="text-2xl font-bold font-mono tracking-tight">
+                        {thumbSegmentValue === "day"
+                          ? "$1,240.00"
+                          : thumbSegmentValue === "week"
+                          ? "$8,940.50"
+                          : thumbSegmentValue === "month"
+                          ? "$34,200.00"
+                          : "$412,000.00"}
+                      </div>
+                      <p className="text-xs text-neutral-500">
+                        {thumbSegmentValue === "day"
+                          ? "24-hour telemetry revenue"
+                          : thumbSegmentValue === "week"
+                          ? "7-day rolling transaction volume"
+                          : thumbSegmentValue === "month"
+                          ? "30-day active gross metrics"
+                          : "Annual trailing operational run-rate"}
+                      </p>
+                    </div>
+
+                    <div className="h-16 flex items-end gap-1.5 pt-2">
+                      {[40, 65, 45, 80, 55, 90, 75].map((h, i) => (
+                        <div
+                          key={i}
+                          className="flex-1 rounded-sm bg-neutral-800/40 hover:bg-neutral-800 transition-colors relative overflow-hidden"
+                          style={{ height: "100%" }}
+                        >
+                          <div
+                            className={cn(
+                              "w-full rounded-sm absolute bottom-0 transition-all duration-300",
+                              i === 5
+                                ? "bg-[var(--accent-green)]"
+                                : isLightMode
+                                ? "bg-neutral-900"
+                                : "bg-neutral-600"
+                            )}
+                            style={{ height: `${h}%` }}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Secondary Thumb Controller demo */}
+                  <div className="space-y-1.5 pt-1">
+                    <span className="text-[10px] font-mono text-neutral-500 uppercase tracking-wider block">
+                      Filter Mode
+                    </span>
+                    <ThumbSegmentController
+                      size="sm"
+                      value={thumbSegmentValue === "day" ? "all" : thumbSegmentValue === "week" ? "audio" : "gear"}
+                      onChange={(val) => {
+                        if (val === "all") setThumbSegmentValue("day");
+                        else if (val === "audio") setThumbSegmentValue("week");
+                        else setThumbSegmentValue("month");
+                      }}
+                      items={[
+                        { id: "all", label: "All Items" },
+                        { id: "audio", label: "Audio Gear" },
+                        { id: "gear", label: "Accessories" },
+                      ]}
+                    />
+                  </div>
+                </div>
+              </MobilePreviewChassis>
+            </div>
+          )}
+
+          {/* Pull To Refresh */}
+          {item.name === "pull-to-refresh" && (
+            <div className="w-full flex justify-center py-2">
+              <MobilePreviewChassis
+                isLightMode={isLightMode}
+                title="Protocol Stream"
+                subtitle="FEED GESTURES"
+                actions={
+                  <span className="text-[10px] font-mono text-emerald-500">
+                    Live Sync
+                  </span>
+                }
+              >
+                <div className="relative flex-1 h-full overflow-hidden">
+                  <PullToRefresh
+                    pullThreshold={
+                      pullToRefreshVariant === "smooth-dampened" ? 88 : pullToRefreshThreshold
+                    }
+                    maxPull={pullToRefreshVariant === "smooth-dampened" ? 140 : 120}
+                    disabled={pullToRefreshDisabled}
+                    onRefresh={async () => {
+                      await new Promise((resolve) => setTimeout(resolve, 1100));
+                      setPullRefreshCount((c) => c + 1);
+                      const now = new Date();
+                      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                      setPullItems((prev) => [
+                        {
+                          id: String(Date.now()),
+                          title: `Buffer Sync #${prev.length + 1}`,
+                          desc: "Telemetry packet refreshed with zero dropped frames",
+                          time: timeStr,
+                        },
+                        ...prev.slice(0, 4),
+                      ]);
+                    }}
+                  >
+                    <div className="p-4 space-y-3">
+                      <div className="flex items-center justify-between text-[10px] font-mono text-neutral-500 pb-1">
+                        <span>PULL DOWN TO REFRESH</span>
+                        <span>{pullItems.length} items</span>
+                      </div>
+
+                      {pullItems.map((pi, idx) => (
+                        <div
+                          key={pi.id}
+                          className={cn(
+                            "p-3.5 rounded-xl border space-y-1 transition-all duration-300",
+                            idx === 0 && pullRefreshCount > 1 && "ring-1 ring-[var(--accent-green)]/40",
+                            isLightMode
+                              ? "border-neutral-200 bg-white shadow-2xs"
+                              : "border-neutral-800/80 bg-neutral-900/80"
+                          )}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-bold">{pi.title}</span>
+                            <span className="text-[10px] font-mono text-neutral-400">{pi.time}</span>
+                          </div>
+                          <p className="text-[11px] text-neutral-500">{pi.desc}</p>
+                        </div>
+                      ))}
+
+                      <div className="text-center pt-3 pb-6">
+                        <p className="text-[10px] font-mono text-neutral-500">
+                          {pullToRefreshVariant === "smooth-dampened"
+                            ? "Dampened log tension physics active"
+                            : "M3 tactile gesture threshold active"}
+                        </p>
+                      </div>
+                    </div>
+                  </PullToRefresh>
+                </div>
+              </MobilePreviewChassis>
+            </div>
+          )}
+
+          {/* Floating Action Dock */}
+          {item.name === "floating-action-dock" && (
+            <div className="w-full flex justify-center py-2">
+              <MobilePreviewChassis
+                isLightMode={isLightMode}
+                title="Workspace"
+                subtitle="DOCK NAVIGATION"
+                actions={
+                  <span className="text-[10px] font-mono text-neutral-400">
+                    Pos: {floatingActionDockVariant}
+                  </span>
+                }
+              >
+                <div className="relative flex-1 flex flex-col h-full overflow-hidden">
+                  {/* Scrollable interior body */}
+                  <div className="flex-1 overflow-y-auto p-4 pb-24 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-base font-bold capitalize">
+                        {floatingDockActive === "home"
+                          ? "Home Dashboard"
+                          : floatingDockActive === "explore"
+                          ? "Explore Primitives"
+                          : "Notifications"}
+                      </h3>
+                      <span className="text-[10px] font-mono text-neutral-500">Active Tab</span>
+                    </div>
+
+                    {[
+                      { title: "Modular Architecture", desc: "Design system token pipeline configured", time: "10m" },
+                      { title: "Mobile Gestures", desc: "Touch fling physics calibrated for 60fps", time: "42m" },
+                      { title: "Dynamic Safe Areas", desc: "iOS bottom bar inset padding active", time: "2h" },
+                    ].map((card, i) => (
+                      <div
+                        key={i}
+                        className={cn(
+                          "p-3.5 rounded-xl border space-y-1 transition-colors",
+                          isLightMode
+                            ? "border-neutral-200 bg-white shadow-2xs"
+                            : "border-neutral-800/80 bg-neutral-900/60"
+                        )}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold">{card.title}</span>
+                          <span className="text-[10px] font-mono text-neutral-400">{card.time}</span>
+                        </div>
+                        <p className="text-[11px] text-neutral-500">{card.desc}</p>
+                      </div>
+                    ))}
+
+                    <p className="text-[11px] text-center text-neutral-500 pt-4">
+                      Tap floating action dock items below to toggle active route
+                    </p>
+                  </div>
+
+                  {/* The Floating Action Dock anchored to phone simulator bottom */}
+                  <FloatingActionDock
+                    className="absolute"
+                    position={
+                      floatingActionDockVariant === "right"
+                        ? "right"
+                        : "center"
+                    }
+                    primaryAction={
+                      floatingDockShowPrimary
+                        ? {
+                            label: "Add",
+                            icon: <Plus className="h-4 w-4" />,
+                            onClick: () => {
+                              setFloatingDockBadge((b) => b + 1);
+                            },
+                          }
+                        : undefined
+                    }
+                    items={[
+                      {
+                        id: "home",
+                        label: "Home",
+                        icon: <Home className="h-4 w-4" />,
+                        active: floatingDockActive === "home",
+                        onClick: () => setFloatingDockActive("home"),
+                      },
+                      {
+                        id: "explore",
+                        label: "Explore",
+                        icon: <Compass className="h-4 w-4" />,
+                        active: floatingDockActive === "explore",
+                        onClick: () => setFloatingDockActive("explore"),
+                      },
+                      {
+                        id: "alerts",
+                        label: "Alerts",
+                        icon: <Bell className="h-4 w-4" />,
+                        badge: floatingDockBadge,
+                        active: floatingDockActive === "alerts",
+                        onClick: () => setFloatingDockActive("alerts"),
+                      },
+                    ]}
+                  />
+                </div>
+              </MobilePreviewChassis>
+            </div>
+          )}
         </ScaledThumbnailWrapper>
       </div>
 
@@ -5991,6 +6849,257 @@ export function ComponentPreviewStage({
                   <Switch
                     checked={stackCardsAutoPlay}
                     onCheckedChange={setStackCardsAutoPlay}
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Mobile Bottom Sheet Controls */}
+            {item.name === "mobile-bottom-sheet" && (
+              <>
+                <CustomizeTile label="Variant">
+                  <CustomizeSelect
+                    value={mobileBottomSheetVariant}
+                    onChange={(val) => {
+                      setMobileBottomSheetVariant(val);
+                      onVariantChange?.(val);
+                      setMobileBottomSheetOpen(true);
+                    }}
+                    options={[
+                      { label: "Default (Dual Snap)", value: "default" },
+                      { label: "Compact (Quick Peek)", value: "compact" },
+                      { label: "Full Expand (Modal)", value: "full-expand" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Open State">
+                  <CustomizeSwitch
+                    checked={mobileBottomSheetOpen}
+                    onChange={setMobileBottomSheetOpen}
+                    label="Toggle Sheet Open"
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Sheet Title">
+                  <CustomizeInput
+                    value={mobileBottomSheetTitle}
+                    onChange={setMobileBottomSheetTitle}
+                    placeholder="Sheet title"
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Monochrome Handle">
+                  <CustomizeSwitch
+                    checked={mobileBottomSheetHandle}
+                    onChange={setMobileBottomSheetHandle}
+                    label="Show tactile drag handle"
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Backdrop Blur">
+                  <CustomizeSwitch
+                    checked={mobileBottomSheetBlur}
+                    onChange={setMobileBottomSheetBlur}
+                    label="Subtle backdrop blur overlay"
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Swipe Action Card Controls */}
+            {item.name === "swipe-action-card" && (
+              <>
+                <CustomizeTile label="Variant">
+                  <CustomizeSelect
+                    value={swipeActionCardVariant}
+                    onChange={(val) => {
+                      setSwipeActionCardVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={[
+                      { label: "Default (Pin & Delete)", value: "default" },
+                      { label: "Destructive Right", value: "destructive-right" },
+                      { label: "Dual Drawer (Multi-Action)", value: "dual-drawer" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Swipe Snap Threshold">
+                  <CustomizeSlider
+                    value={swipeActionThreshold}
+                    onChange={setSwipeActionThreshold}
+                    min={48}
+                    max={120}
+                    step={4}
+                    formatValue={(v) => `${v}px`}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Disabled State">
+                  <CustomizeSwitch
+                    checked={swipeActionDisabled}
+                    onChange={setSwipeActionDisabled}
+                    label="Disable gesture swipe"
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Last Action">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-mono text-[var(--accent-green)] font-semibold">
+                      {swipeLastAction || "None"}
+                    </span>
+                    {swipeActionCount > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSwipeActionCount(0);
+                          setSwipeLastAction("");
+                        }}
+                        className="p-1 rounded text-[10px] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-tertiary)] cursor-pointer"
+                        title="Reset trigger count"
+                      >
+                        Reset ({swipeActionCount})
+                      </button>
+                    )}
+                  </div>
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Thumb Segment Controller Controls */}
+            {item.name === "thumb-segment-controller" && (
+              <>
+                <CustomizeTile label="Size Variant">
+                  <CustomizeSelect
+                    value={thumbSegmentVariant}
+                    onChange={(val) => {
+                      setThumbSegmentVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={[
+                      { label: "Default (46px thumb reach)", value: "default" },
+                      { label: "Compact SM (36px)", value: "sm" },
+                      { label: "Expansive LG (52px)", value: "lg" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Active Segment">
+                  <CustomizeSelect
+                    value={thumbSegmentValue}
+                    onChange={setThumbSegmentValue}
+                    options={[
+                      { label: "Day", value: "day" },
+                      { label: "Week", value: "week" },
+                      { label: "Month", value: "month" },
+                      { label: "Year", value: "year" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Full Width">
+                  <CustomizeSwitch
+                    checked={thumbSegmentFullWidth}
+                    onChange={setThumbSegmentFullWidth}
+                    label="Expand across container"
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Pull To Refresh Controls */}
+            {item.name === "pull-to-refresh" && (
+              <>
+                <CustomizeTile label="Variant">
+                  <CustomizeSelect
+                    value={pullToRefreshVariant}
+                    onChange={(val) => {
+                      setPullToRefreshVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={[
+                      { label: "Default (M3 72px)", value: "default" },
+                      { label: "Smooth Dampened (88px)", value: "smooth-dampened" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Pull Trigger Threshold">
+                  <CustomizeSlider
+                    value={pullToRefreshThreshold}
+                    onChange={setPullToRefreshThreshold}
+                    min={48}
+                    max={110}
+                    step={4}
+                    formatValue={(v) => `${v}px`}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Disabled State">
+                  <CustomizeSwitch
+                    checked={pullToRefreshDisabled}
+                    onChange={setPullToRefreshDisabled}
+                    label="Disable pull gesture"
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Buffer Refresh">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const now = new Date();
+                      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                      setPullRefreshCount((c) => c + 1);
+                      setPullItems((prev) => [
+                        {
+                          id: String(Date.now()),
+                          title: `Manual Sync #${prev.length + 1}`,
+                          desc: "Telemetry packet refreshed from developer controls",
+                          time: timeStr,
+                        },
+                        ...prev.slice(0, 4),
+                      ]);
+                    }}
+                    className="px-2.5 py-1 rounded text-xs font-mono font-semibold bg-[var(--surface-tertiary)] hover:bg-[var(--surface-tertiary)]/80 text-[var(--text-primary)] cursor-pointer"
+                  >
+                    Simulate Pull
+                  </button>
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Floating Action Dock Controls */}
+            {item.name === "floating-action-dock" && (
+              <>
+                <CustomizeTile label="Alignment Position">
+                  <CustomizeSelect
+                    value={floatingActionDockVariant}
+                    onChange={(val) => {
+                      setFloatingActionDockVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={[
+                      { label: "Default Center", value: "default" },
+                      { label: "Center Aligned", value: "center" },
+                      { label: "Right Aligned", value: "right" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Active Tab">
+                  <CustomizeSelect
+                    value={floatingDockActive}
+                    onChange={setFloatingDockActive}
+                    options={[
+                      { label: "Home", value: "home" },
+                      { label: "Explore", value: "explore" },
+                      { label: "Alerts", value: "alerts" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Primary Monochrome FAB">
+                  <CustomizeSwitch
+                    checked={floatingDockShowPrimary}
+                    onChange={setFloatingDockShowPrimary}
+                    label="Show inverted Add (+) action"
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Alerts Badge Count">
+                  <CustomizeSlider
+                    value={floatingDockBadge}
+                    onChange={setFloatingDockBadge}
+                    min={0}
+                    max={9}
+                    step={1}
+                    formatValue={(v) => `${v}`}
                   />
                 </CustomizeTile>
               </>

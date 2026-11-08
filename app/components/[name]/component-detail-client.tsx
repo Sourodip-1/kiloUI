@@ -75,8 +75,9 @@ export function ComponentDetailClient({ item, initialVariant }: ComponentDetailC
 
   const { showToast, isFavorited: checkFavorited, toggleFavorite } = useAppShell();
   const isFavorited = checkFavorited(item.name);
+  const isMobileApp = item.category === "Mobile App";
   const [activeTab, setActiveTab] = React.useState<"preview" | "code">("preview");
-  const [viewport, setViewport] = React.useState<"desktop" | "tablet" | "mobile">("desktop");
+  const [viewport, setViewport] = React.useState<"desktop" | "tablet" | "mobile">(isMobileApp ? "mobile" : "desktop");
   const [showGrid, setShowGrid] = React.useState(false);
   const [isFullscreen, setIsFullscreen] = React.useState(false);
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
@@ -85,10 +86,14 @@ export function ComponentDetailClient({ item, initialVariant }: ComponentDetailC
   const dropdownRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
+    if (isMobileApp) {
+      setViewport("mobile");
+      return;
+    }
     if (!window.matchMedia("(max-width: 640px)").matches) return;
     const frame = requestAnimationFrame(() => setViewport("mobile"));
     return () => cancelAnimationFrame(frame);
-  }, []);
+  }, [isMobileApp]);
 
   const mainFile = item.files[0];
   const sourceCode = mainFile?.content || "";
@@ -134,9 +139,17 @@ export function ComponentDetailClient({ item, initialVariant }: ComponentDetailC
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [dropdownOpen, isFullscreen]);
 
-  const relatedItems = Object.values(REGISTRY_DATA).filter(
-    (i) => i.name !== item.name && i.name !== "bento-cluster"
+  const mobileItems = Object.values(REGISTRY_DATA).filter(
+    (i) => i.category === "Mobile App" && i.name !== item.name
   );
+  const otherItems = Object.values(REGISTRY_DATA).filter(
+    (i) => i.name !== item.name && i.name !== "bento-cluster" && i.category !== "Mobile App"
+  );
+  const relatedItems = isMobileApp
+    ? [...mobileItems, ...otherItems]
+    : Object.values(REGISTRY_DATA).filter(
+        (i) => i.name !== item.name && i.name !== "bento-cluster"
+      );
 
   const depsList = item.dependencies && item.dependencies.length > 0
     ? item.dependencies.join(", ")
@@ -263,10 +276,10 @@ ${usageSnippet}
           </Link>
           <span>/</span>
           <Link
-            href={`/components?category=${encodeURIComponent(item.category)}`}
+            href={isMobileApp ? "/mobile-primitives" : `/components?category=${encodeURIComponent(item.category)}`}
             className="hover:text-[var(--text-primary)] transition-colors"
           >
-            {item.category}
+            {isMobileApp ? "Mobile Primitives" : item.category}
           </Link>
           <span>/</span>
           <span className="text-[var(--text-primary)] font-medium">{item.title}</span>
@@ -357,102 +370,109 @@ ${usageSnippet}
             <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:justify-end">
               {/* Viewport size buttons (active in preview mode) */}
               {activeTab === "preview" && (
-                <SlidingHighlightContainer
-                  activeSelector='[data-state="active"]'
-                  activeKey={`${viewport}-${isFullscreen}-${showGrid}`}
-                  className="flex items-center rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] p-1 shadow-xs select-none"
-                  pillClassName="bg-[var(--surface-secondary)] border border-[var(--border)]/70 rounded-md shadow-2xs"
-                >
-                  <button
-                    type="button"
-                    data-hover-item="true"
-                    data-state={viewport === "desktop" && !isFullscreen ? "active" : "inactive"}
-                    onClick={() => {
-                      setViewport("desktop");
-                      setIsFullscreen(false);
-                    }}
-                    className={cn(
-                      "group relative z-10 p-1.5 rounded-md transition-colors cursor-pointer",
-                      viewport === "desktop" && !isFullscreen
-                        ? "text-[var(--text-primary)]"
-                        : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
-                    )}
-                    title="Desktop viewport (100%)"
-                    aria-label="Desktop viewport"
+                isMobileApp ? (
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] text-xs font-mono font-medium text-[var(--accent-green)] select-none shadow-xs">
+                    <Smartphone className="h-3.5 w-3.5" />
+                    <span>Mobile (375px)</span>
+                  </div>
+                ) : (
+                  <SlidingHighlightContainer
+                    activeSelector='[data-state="active"]'
+                    activeKey={`${viewport}-${isFullscreen}-${showGrid}`}
+                    className="flex items-center rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] p-1 shadow-xs select-none"
+                    pillClassName="bg-[var(--surface-secondary)] border border-[var(--border)]/70 rounded-md shadow-2xs"
                   >
-                    <Square className="h-4 w-4" />
-                  </button>
-                  <button
-                    type="button"
-                    data-hover-item="true"
-                    data-state={viewport === "tablet" && !isFullscreen ? "active" : "inactive"}
-                    onClick={() => {
-                      setViewport("tablet");
-                      setIsFullscreen(false);
-                    }}
-                    className={cn(
-                      "group relative z-10 p-1.5 rounded-md transition-colors cursor-pointer",
-                      viewport === "tablet" && !isFullscreen
-                        ? "text-[var(--text-primary)]"
-                        : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
-                    )}
-                    title="Tablet viewport (768px)"
-                    aria-label="Tablet viewport"
-                  >
-                    <Laptop className="h-4 w-4" />
-                  </button>
-                  <button
-                    type="button"
-                    data-hover-item="true"
-                    data-state={viewport === "mobile" && !isFullscreen ? "active" : "inactive"}
-                    onClick={() => {
-                      setViewport("mobile");
-                      setIsFullscreen(false);
-                    }}
-                    className={cn(
-                      "group relative z-10 p-1.5 rounded-md transition-colors cursor-pointer",
-                      viewport === "mobile" && !isFullscreen
-                        ? "text-[var(--text-primary)]"
-                        : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
-                    )}
-                    title="Mobile viewport (375px)"
-                    aria-label="Mobile viewport"
-                  >
-                    <Smartphone className="h-4 w-4" />
-                  </button>
-                  <button
-                    type="button"
-                    data-hover-item="true"
-                    data-state={showGrid ? "active" : "inactive"}
-                    onClick={() => setShowGrid(!showGrid)}
-                    className={cn(
-                      "group relative z-10 p-1.5 rounded-md transition-colors cursor-pointer",
-                      showGrid
-                        ? "text-[var(--accent-green)]"
-                        : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
-                    )}
-                    title="Toggle canvas grid"
-                    aria-label="Toggle canvas grid"
-                  >
-                    <LayoutGrid className="h-4 w-4" />
-                  </button>
-                  <button
-                    type="button"
-                    data-hover-item="true"
-                    data-state={isFullscreen ? "active" : "inactive"}
-                    onClick={() => setIsFullscreen(!isFullscreen)}
-                    className={cn(
-                      "group relative z-10 p-1.5 rounded-md transition-colors cursor-pointer",
-                      isFullscreen
-                        ? "text-[var(--accent-green)]"
-                        : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
-                    )}
-                    title="Toggle fullscreen preview"
-                    aria-label="Toggle fullscreen preview"
-                  >
-                    <Maximize2 className="h-4 w-4" />
-                  </button>
-                </SlidingHighlightContainer>
+                    <button
+                      type="button"
+                      data-hover-item="true"
+                      data-state={viewport === "desktop" && !isFullscreen ? "active" : "inactive"}
+                      onClick={() => {
+                        setViewport("desktop");
+                        setIsFullscreen(false);
+                      }}
+                      className={cn(
+                        "group relative z-10 p-1.5 rounded-md transition-colors cursor-pointer",
+                        viewport === "desktop" && !isFullscreen
+                          ? "text-[var(--text-primary)]"
+                          : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                      )}
+                      title="Desktop viewport (100%)"
+                      aria-label="Desktop viewport"
+                    >
+                      <Square className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      data-hover-item="true"
+                      data-state={viewport === "tablet" && !isFullscreen ? "active" : "inactive"}
+                      onClick={() => {
+                        setViewport("tablet");
+                        setIsFullscreen(false);
+                      }}
+                      className={cn(
+                        "group relative z-10 p-1.5 rounded-md transition-colors cursor-pointer",
+                        viewport === "tablet" && !isFullscreen
+                          ? "text-[var(--text-primary)]"
+                          : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                      )}
+                      title="Tablet viewport (768px)"
+                      aria-label="Tablet viewport"
+                    >
+                      <Laptop className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      data-hover-item="true"
+                      data-state={viewport === "mobile" && !isFullscreen ? "active" : "inactive"}
+                      onClick={() => {
+                        setViewport("mobile");
+                        setIsFullscreen(false);
+                      }}
+                      className={cn(
+                        "group relative z-10 p-1.5 rounded-md transition-colors cursor-pointer",
+                        viewport === "mobile" && !isFullscreen
+                          ? "text-[var(--text-primary)]"
+                          : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                      )}
+                      title="Mobile viewport (375px)"
+                      aria-label="Mobile viewport"
+                    >
+                      <Smartphone className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      data-hover-item="true"
+                      data-state={showGrid ? "active" : "inactive"}
+                      onClick={() => setShowGrid(!showGrid)}
+                      className={cn(
+                        "group relative z-10 p-1.5 rounded-md transition-colors cursor-pointer",
+                        showGrid
+                          ? "text-[var(--accent-green)]"
+                          : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                      )}
+                      title="Toggle canvas grid"
+                      aria-label="Toggle canvas grid"
+                    >
+                      <LayoutGrid className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      data-hover-item="true"
+                      data-state={isFullscreen ? "active" : "inactive"}
+                      onClick={() => setIsFullscreen(!isFullscreen)}
+                      className={cn(
+                        "group relative z-10 p-1.5 rounded-md transition-colors cursor-pointer",
+                        isFullscreen
+                          ? "text-[var(--accent-green)]"
+                          : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                      )}
+                      title="Toggle fullscreen preview"
+                      aria-label="Toggle fullscreen preview"
+                    >
+                      <Maximize2 className="h-4 w-4" />
+                    </button>
+                  </SlidingHighlightContainer>
+                )
               )}
 
               {/* Favorite Button */}
@@ -701,10 +721,10 @@ ${usageSnippet}
       {/* 3. Related Components Carousel */}
       <section className="space-y-4 pt-8 border-t border-[var(--border)]">
         <ComponentCarousel
-          title="Related Components"
+          title={isMobileApp ? "Other Mobile Primitives" : "Related Components"}
           items={relatedItems}
-          seeAllHref="/components"
-          seeAllLabel="Browse all"
+          seeAllHref={isMobileApp ? "/mobile-primitives" : "/components"}
+          seeAllLabel={isMobileApp ? "Mobile Studio" : "Browse all"}
         />
       </section>
     </div>
