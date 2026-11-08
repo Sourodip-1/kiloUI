@@ -552,68 +552,65 @@ function SidebarBase({
       pillClassName="bg-[var(--surface-secondary)]/90 border border-[var(--border)]/40 rounded-md shadow-2xs"
     >
       <div className="space-y-1">
-        {/* Platform Tab Switcher: Web | Mobile | Motion (Single Line Height) */}
+        {/* Platform Tab Switcher: Web | Mobile | Motion (Single Line Height & Symmetrically Centered) */}
         {!isCollapsed ? (
-          <div className="grid grid-cols-3 p-0.5 bg-[var(--surface-primary)] border border-[var(--border)] rounded-md mb-2 gap-0.5 h-8 items-center select-none">
-            <button
-              type="button"
-              onClick={() => setActivePlatform("web")}
-              className={cn(
-                "h-7 flex items-center justify-center gap-1 px-1 rounded text-[11px] font-semibold transition-all duration-150 cursor-pointer truncate",
-                activePlatform === "web"
-                  ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] shadow-2xs border border-[var(--border)] font-bold"
-                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)] border border-transparent hover:bg-[var(--surface-secondary)]/40"
-              )}
-            >
-              <Monitor className="h-3 w-3 shrink-0" />
-              <span className="truncate">Web</span>
-              <span className="text-[9px] font-sans tabular-nums text-[var(--text-muted)]">
-                {webItemsCount}
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActivePlatform("mobile")}
-              className={cn(
-                "h-7 flex items-center justify-center gap-1 px-1 rounded text-[11px] font-semibold transition-all duration-150 cursor-pointer truncate",
-                activePlatform === "mobile"
-                  ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] shadow-2xs border border-[var(--border)] font-bold"
-                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)] border border-transparent hover:bg-[var(--surface-secondary)]/40"
-              )}
-            >
-              <Smartphone className="h-3 w-3 shrink-0" />
-              <span className="truncate">Mobile</span>
-              <span className="text-[9px] font-sans tabular-nums text-[var(--text-muted)]">
-                {mobileItems.length}
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActivePlatform("motion")}
-              className={cn(
-                "h-7 flex items-center justify-center gap-1 px-1 rounded text-[11px] font-semibold transition-all duration-150 cursor-pointer truncate",
-                activePlatform === "motion"
-                  ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] shadow-2xs border border-[var(--border)] font-bold"
-                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)] border border-transparent hover:bg-[var(--surface-secondary)]/40"
-              )}
-            >
-              <Sparkles className="h-3 w-3 shrink-0 text-[var(--accent-green)]" />
-              <span className="truncate">Motion</span>
-            </button>
-          </div>
-        ) : (
-          <div className="flex flex-col items-center gap-1 p-0.5 bg-[var(--surface-primary)] border border-[var(--border)] rounded-md mb-2">
+          <div className="flex items-center w-full p-1 bg-[var(--surface-primary)] border border-[var(--border)] rounded-lg mb-2 gap-1 select-none">
             <button
               type="button"
               onClick={() => setActivePlatform("web")}
               title={`Web App (${webItemsCount} components)`}
               className={cn(
-                "h-7 w-7 flex items-center justify-center rounded transition-all duration-150 cursor-pointer",
+                "flex-1 min-w-0 h-7 flex items-center justify-center gap-1.5 px-1 rounded-md text-[11px] font-medium transition-all duration-150 cursor-pointer",
+                activePlatform === "web"
+                  ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] shadow-2xs border border-[var(--border)] font-semibold"
+                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)] border border-transparent hover:bg-[var(--surface-secondary)]/50"
+              )}
+            >
+              <Monitor className="h-3.5 w-3.5 shrink-0" />
+              <span className="truncate">Web</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActivePlatform("mobile")}
+              title={`Mobile App (${mobileItems.length} primitives)`}
+              className={cn(
+                "flex-1 min-w-0 h-7 flex items-center justify-center gap-1.5 px-1 rounded-md text-[11px] font-medium transition-all duration-150 cursor-pointer",
+                activePlatform === "mobile"
+                  ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] shadow-2xs border border-[var(--border)] font-semibold"
+                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)] border border-transparent hover:bg-[var(--surface-secondary)]/50"
+              )}
+            >
+              <Smartphone className="h-3.5 w-3.5 shrink-0" />
+              <span className="truncate">Mobile</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActivePlatform("motion")}
+              title="Material Motion System"
+              className={cn(
+                "flex-1 min-w-0 h-7 flex items-center justify-center gap-1.5 px-1 rounded-md text-[11px] font-medium transition-all duration-150 cursor-pointer",
+                activePlatform === "motion"
+                  ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] shadow-2xs border border-[var(--border)] font-semibold"
+                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)] border border-transparent hover:bg-[var(--surface-secondary)]/50"
+              )}
+            >
+              <Sparkles className="h-3.5 w-3.5 shrink-0 text-[var(--accent-green)]" />
+              <span className="truncate">Motion</span>
+            </button>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center gap-1 p-1 bg-[var(--surface-primary)] border border-[var(--border)] rounded-lg mb-2 select-none">
+            <button
+              type="button"
+              onClick={() => setActivePlatform("web")}
+              title={`Web App (${webItemsCount} components)`}
+              className={cn(
+                "h-7 w-7 flex items-center justify-center rounded-md transition-all duration-150 cursor-pointer",
                 activePlatform === "web"
                   ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] border border-[var(--border)]"
-                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)] border border-transparent"
+                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)] border border-transparent hover:bg-[var(--surface-secondary)]/50"
               )}
             >
               <Monitor className="h-3.5 w-3.5 shrink-0" />
@@ -623,10 +620,10 @@ function SidebarBase({
               onClick={() => setActivePlatform("mobile")}
               title={`Mobile App (${mobileItems.length} components)`}
               className={cn(
-                "h-7 w-7 flex items-center justify-center rounded transition-all duration-150 cursor-pointer",
+                "h-7 w-7 flex items-center justify-center rounded-md transition-all duration-150 cursor-pointer",
                 activePlatform === "mobile"
                   ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] border border-[var(--border)]"
-                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)] border border-transparent"
+                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)] border border-transparent hover:bg-[var(--surface-secondary)]/50"
               )}
             >
               <Smartphone className="h-3.5 w-3.5 shrink-0" />
@@ -636,10 +633,10 @@ function SidebarBase({
               onClick={() => setActivePlatform("motion")}
               title="Material Motion System"
               className={cn(
-                "h-7 w-7 flex items-center justify-center rounded transition-all duration-150 cursor-pointer",
+                "h-7 w-7 flex items-center justify-center rounded-md transition-all duration-150 cursor-pointer",
                 activePlatform === "motion"
                   ? "bg-[var(--surface-secondary)] text-[var(--accent-green)] border border-[var(--border)]"
-                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)] border border-transparent"
+                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)] border border-transparent hover:bg-[var(--surface-secondary)]/50"
               )}
             >
               <Sparkles className="h-3.5 w-3.5 shrink-0" />
