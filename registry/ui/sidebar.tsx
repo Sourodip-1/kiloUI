@@ -935,32 +935,56 @@ function SidebarBase({
           </>
         ) : (
           <>
-            {/* Mobile Categories Header */}
-            <div className="flex items-center justify-between w-full rounded p-2 text-[10px] font-sans font-semibold uppercase tracking-wider text-[var(--text-muted)] select-none">
-              <div className="flex items-center flex-1 min-w-0">
-                <div
-                  className="flex h-5 w-5 shrink-0 items-center justify-center cursor-default"
-                  title={isCollapsed ? `Mobile Categories (${MOBILE_CATEGORIES.length})` : undefined}
-                >
-                  <VectorMobileIcon className="h-4 w-4 text-[var(--text-muted)]" isActive={false} animated={false} />
+            {/* Mobile Studio header with expand/collapse all button (aligned with Categories header) */}
+            <div
+              data-hover-item="true"
+              className={cn(
+                "group relative z-10 flex items-center justify-between w-full rounded p-2 text-xs font-semibold tracking-tight transition-colors duration-150 active:scale-[0.98]",
+                pathname === "/mobile-primitives"
+                  ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] border border-[var(--border)]"
+                  : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-transparent hover:bg-[var(--surface-secondary)]/50"
+              )}
+            >
+              <Link
+                href="/mobile-primitives"
+                onClick={() => onMobileOpenChange?.(false)}
+                className="flex items-center flex-1 min-w-0"
+                title={isCollapsed ? "Mobile Studio" : undefined}
+              >
+                <div className="flex h-5 w-5 shrink-0 items-center justify-center">
+                  <VectorMobileIcon
+                    isActive={pathname === "/mobile-primitives"}
+                    animated={false}
+                    className={cn(
+                      "h-4 w-4 transition-colors",
+                      pathname === "/mobile-primitives"
+                        ? "text-[var(--accent-green)]"
+                        : "text-[var(--text-primary)] group-hover:text-[var(--accent-green)]"
+                    )}
+                  />
                 </div>
-                <span
+                <div
                   className={cn(
-                    "ml-2.5 flex items-center gap-1.5 whitespace-nowrap transition-opacity duration-200",
+                    "flex items-center gap-1.5 ml-2.5 overflow-hidden transition-opacity duration-200",
                     isCollapsed && "opacity-0 pointer-events-none"
                   )}
                 >
-                  <span>Primitives</span>
-                  <span className="text-[9px] text-[var(--text-muted)] font-normal tabular-nums">({mobileItems.length})</span>
-                </span>
-              </div>
+                  <span className="whitespace-nowrap font-medium text-xs">Mobile Studio</span>
+                  <span className="text-[9px] font-mono font-medium px-1.5 py-0.5 rounded bg-[var(--surface-tertiary)] text-[var(--text-muted)]">
+                    {mobileItems.length}
+                  </span>
+                </div>
+              </Link>
 
-              {/* Expand all / Collapse all categories of primitives button */}
+              {/* Expand all / Collapse all categories of primitives */}
               <button
                 type="button"
-                onClick={handleToggleAllMobileCategories}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleToggleAllMobileCategories();
+                }}
                 className={cn(
-                  "p-1 rounded text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] transition-opacity duration-200 cursor-pointer shrink-0",
+                  "p-1 rounded text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-tertiary)] transition-colors cursor-pointer shrink-0",
                   isCollapsed && "opacity-0 pointer-events-none"
                 )}
                 title={isAllMobileCollapsed ? "Expand all categories" : "Collapse all categories"}
@@ -973,44 +997,6 @@ function SidebarBase({
                 )}
               </button>
             </div>
-
-            {/* Mobile Studio interactive canvas link */}
-            <Link
-              href="/mobile-primitives"
-              data-hover-item="true"
-              onClick={() => onMobileOpenChange?.(false)}
-              className={cn(
-                "group relative z-10 flex items-center w-full rounded p-2 text-xs font-semibold tracking-tight transition-colors duration-150 mb-1 active:scale-[0.98]",
-                pathname === "/mobile-primitives"
-                  ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] border border-[var(--border)]"
-                  : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-transparent"
-              )}
-              title={isCollapsed ? "Mobile Studio" : undefined}
-            >
-              <div className="flex h-5 w-5 shrink-0 items-center justify-center">
-                <VectorMobileIcon
-                  isActive={pathname === "/mobile-primitives"}
-                  animated={false}
-                  className={cn(
-                    "h-4 w-4 transition-colors",
-                    pathname === "/mobile-primitives"
-                      ? "text-[var(--accent-green)]"
-                      : "text-[var(--text-primary)] group-hover:text-[var(--accent-green)]"
-                  )}
-                />
-              </div>
-              <div
-                className={cn(
-                  "flex items-center justify-between flex-1 ml-2.5 overflow-hidden transition-opacity duration-200",
-                  isCollapsed && "opacity-0 pointer-events-none"
-                )}
-              >
-                <span className="whitespace-nowrap font-medium">Mobile Studio</span>
-                <span className="text-[9px] font-mono font-medium px-1.5 py-0.5 rounded bg-[var(--surface-tertiary)] text-[var(--text-muted)]">
-                  Studio
-                </span>
-              </div>
-            </Link>
 
             {/* Mobile Categories Accordion List */}
             {MOBILE_CATEGORIES.map((cat) => {
