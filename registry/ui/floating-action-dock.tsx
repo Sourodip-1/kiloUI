@@ -61,11 +61,20 @@ export function FloatingActionDock({
     return () => window.removeEventListener("scroll", handleScroll);
   }, [scrollHide]);
 
-  const positionClasses = {
-    center: "left-1/2 -translate-x-1/2",
-    left: "left-4 sm:left-6",
-    right: "right-4 sm:right-6",
-  }[position];
+  const hasCustomHorizontal =
+    className?.includes("inset-x-") ||
+    className?.includes("w-full") ||
+    className?.includes("justify-center") ||
+    className?.includes("left-") ||
+    className?.includes("right-");
+
+  const positionClasses = hasCustomHorizontal
+    ? ""
+    : {
+        center: "left-1/2 -translate-x-1/2",
+        left: "left-4 sm:left-6",
+        right: "right-4 sm:right-6",
+      }[position];
 
   return (
     <div

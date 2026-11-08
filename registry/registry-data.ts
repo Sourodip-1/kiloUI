@@ -4528,4 +4528,1164 @@ export const REGISTRY_DATA: Record<string, RegistryItem> = {
       }
     ]
   }
+,
+  "m3-button": {
+  "name": "m3-button",
+  "category": "Mobile App",
+  "title": "M3 Button",
+  "description": "Google Material 3 buttons with filled, elevated, tonal, outlined, text, and minimal SaaS design variants.",
+  "variants": [
+    "filled",
+    "elevated",
+    "tonal",
+    "outlined",
+    "text",
+    "minimal-solid",
+    "minimal-outline"
+  ],
+  "dependencies": [
+    "clsx",
+    "tailwind-merge",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "usage": "import { M3Button } from \"@/components/ui/m3-button\";\n\nexport function ButtonDemo() {\n  return (\n    <div className=\"flex flex-wrap gap-2\">\n      <M3Button variant=\"filled\">Filled</M3Button>\n      <M3Button variant=\"tonal\">Tonal</M3Button>\n      <M3Button variant=\"outlined\">Outlined</M3Button>\n      <M3Button variant=\"minimal-solid\">Minimal SaaS</M3Button>\n    </div>\n  );\n}",
+  "props": [
+    {
+      "name": "variant",
+      "type": "\"filled\" | \"elevated\" | \"tonal\" | \"outlined\" | \"text\" | \"minimal-solid\" | \"minimal-outline\" | \"minimal-ghost\"",
+      "defaultValue": "\"filled\"",
+      "description": "Visual style variant"
+    },
+    {
+      "name": "design",
+      "type": "\"m3\" | \"minimal\"",
+      "defaultValue": "\"m3\"",
+      "description": "Design token mode (Material 3 or Minimal SaaS)"
+    },
+    {
+      "name": "size",
+      "type": "\"sm\" | \"default\" | \"lg\" | \"icon\"",
+      "defaultValue": "\"default\"",
+      "description": "Button dimensions"
+    },
+    {
+      "name": "isLoading",
+      "type": "boolean",
+      "defaultValue": "false",
+      "description": "Whether button displays progress spinner"
+    },
+    {
+      "name": "leftIcon",
+      "type": "React.ReactNode",
+      "description": "Icon placed before button label"
+    },
+    {
+      "name": "rightIcon",
+      "type": "React.ReactNode",
+      "description": "Icon placed after button label"
+    }
+  ],
+  "files": [
+    {
+      "name": "m3-button.tsx",
+      "type": "components:ui",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { cn } from \"@/lib/utils\";\n\nexport type M3ButtonVariant =\n  | \"filled\"\n  | \"elevated\"\n  | \"tonal\"\n  | \"outlined\"\n  | \"text\"\n  | \"minimal-solid\"\n  | \"minimal-outline\"\n  | \"minimal-ghost\";\n\nexport type M3ButtonDesign = \"m3\" | \"minimal\";\n\nexport interface M3ButtonProps\n  extends React.ButtonHTMLAttributes<HTMLButtonElement> {\n  variant?: M3ButtonVariant;\n  design?: M3ButtonDesign;\n  size?: \"sm\" | \"default\" | \"lg\" | \"icon\";\n  isLoading?: boolean;\n  leftIcon?: React.ReactNode;\n  rightIcon?: React.ReactNode;\n}\n\nexport const M3Button = React.forwardRef<HTMLButtonElement, M3ButtonProps>(\n  (\n    {\n      className,\n      variant = \"filled\",\n      design = \"m3\",\n      size = \"default\",\n      isLoading = false,\n      leftIcon,\n      rightIcon,\n      children,\n      disabled,\n      ...props\n    },\n    ref\n  ) => {\n    const isMinimal = design === \"minimal\" || variant.startsWith(\"minimal-\");\n\n    // M3 styles with authentic shape & tonal roles\n    const m3Styles: Record<string, string> = {\n      filled:\n        \"bg-[var(--accent-green)] text-[var(--bg-main)] hover:brightness-110 active:brightness-95 shadow-xs border border-transparent font-medium rounded-full\",\n      elevated:\n        \"bg-[var(--surface-elevated)] text-[var(--accent-green)] hover:bg-[var(--surface-secondary)] active:scale-[0.99] shadow-sm border border-[var(--border)] font-medium rounded-full\",\n      tonal:\n        \"bg-[var(--accent-green-deep)] text-[var(--accent-green)] hover:brightness-110 active:scale-[0.99] border border-[var(--accent-green)]/20 font-medium rounded-full\",\n      outlined:\n        \"bg-transparent text-[var(--accent-green)] hover:bg-[var(--accent-green-subtle)] active:scale-[0.99] border border-[var(--border-hover)] font-medium rounded-full\",\n      text:\n        \"bg-transparent text-[var(--accent-green)] hover:bg-[var(--accent-green-subtle)] active:scale-[0.99] border border-transparent font-medium rounded-full\",\n      \"minimal-solid\":\n        \"bg-[var(--text-primary)] text-[var(--bg-main)] hover:opacity-90 active:scale-[0.98] font-medium rounded-lg border border-transparent shadow-2xs\",\n      \"minimal-outline\":\n        \"bg-[var(--surface-elevated)] text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] active:scale-[0.98] font-medium rounded-lg border border-[var(--border)] shadow-2xs\",\n      \"minimal-ghost\":\n        \"bg-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] active:scale-[0.98] font-medium rounded-lg border border-transparent\",\n    };\n\n    const sizeStyles: Record<string, string> = {\n      sm: isMinimal ? \"h-7 px-2.5 text-xs gap-1.5\" : \"h-8 px-3.5 text-xs gap-1.5\",\n      default: isMinimal ? \"h-9 px-3.5 text-xs gap-2\" : \"h-10 px-5 text-sm gap-2\",\n      lg: isMinimal ? \"h-10 px-4 text-sm gap-2.5\" : \"h-12 px-6 text-sm font-semibold gap-2.5\",\n      icon: isMinimal ? \"h-8 w-8 p-0 justify-center rounded-lg\" : \"h-10 w-10 p-0 justify-center rounded-full\",\n    };\n\n    return (\n      <button\n        ref={ref}\n        disabled={disabled || isLoading}\n        className={cn(\n          \"relative inline-flex items-center justify-center font-sans transition-all duration-200 select-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-green)]/40 focus-visible:ring-offset-1 disabled:pointer-events-none disabled:opacity-40\",\n          m3Styles[variant] || m3Styles.filled,\n          sizeStyles[size] || sizeStyles.default,\n          className\n        )}\n        {...props}\n      >\n        {isLoading ? (\n          <span className=\"flex items-center gap-2\">\n            <svg\n              className=\"animate-spin h-4 w-4\"\n              viewBox=\"0 0 24 24\"\n              fill=\"none\"\n              stroke=\"currentColor\"\n              strokeWidth=\"2.5\"\n            >\n              <circle\n                className=\"opacity-25\"\n                cx=\"12\"\n                cy=\"12\"\n                r=\"10\"\n                stroke=\"currentColor\"\n              />\n              <path\n                className=\"opacity-75\"\n                fill=\"currentColor\"\n                d=\"M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z\"\n              />\n            </svg>\n            <span className=\"opacity-80\">Loading...</span>\n          </span>\n        ) : (\n          <>\n            {leftIcon && <span className=\"shrink-0\">{leftIcon}</span>}\n            <span>{children}</span>\n            {rightIcon && <span className=\"shrink-0\">{rightIcon}</span>}\n          </>\n        )}\n      </button>\n    );\n  }\n);\nM3Button.displayName = \"M3Button\";\n"
+    }
+  ]
+},
+  "m3-fab": {
+  "name": "m3-fab",
+  "category": "Mobile App",
+  "title": "M3 FAB (Floating Action Button)",
+  "description": "Floating action button with standard, small, large, and extended variants with M3 and minimal SaaS styling.",
+  "variants": [
+    "standard",
+    "small",
+    "large",
+    "extended",
+    "minimal"
+  ],
+  "dependencies": [
+    "clsx",
+    "tailwind-merge",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "usage": "import { M3Fab } from \"@/components/ui/m3-fab\";\nimport { Plus } from \"lucide-react\";\n\nexport function FabDemo() {\n  return (\n    <M3Fab size=\"extended\" icon={<Plus className=\"h-5 w-5\" />} label=\"New Project\" />\n  );\n}",
+  "props": [
+    {
+      "name": "size",
+      "type": "\"sm\" | \"default\" | \"lg\" | \"extended\"",
+      "defaultValue": "\"default\"",
+      "description": "FAB container size"
+    },
+    {
+      "name": "variant",
+      "type": "\"primary\" | \"surface\" | \"secondary\" | \"minimal\"",
+      "defaultValue": "\"primary\"",
+      "description": "Container color role"
+    },
+    {
+      "name": "icon",
+      "type": "React.ReactNode",
+      "description": "Primary icon symbol"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "description": "Label text for extended FAB"
+    },
+    {
+      "name": "lowered",
+      "type": "boolean",
+      "defaultValue": "false",
+      "description": "Whether elevation is lowered to level 1"
+    }
+  ],
+  "files": [
+    {
+      "name": "m3-fab.tsx",
+      "type": "components:ui",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { cn } from \"@/lib/utils\";\n\nexport type M3FabSize = \"sm\" | \"default\" | \"lg\" | \"extended\";\nexport type M3FabVariant = \"primary\" | \"surface\" | \"secondary\" | \"minimal\";\n\nexport interface M3FabProps\n  extends React.ButtonHTMLAttributes<HTMLButtonElement> {\n  size?: M3FabSize;\n  variant?: M3FabVariant;\n  icon?: React.ReactNode;\n  label?: string;\n  lowered?: boolean;\n}\n\nexport const M3Fab = React.forwardRef<HTMLButtonElement, M3FabProps>(\n  (\n    {\n      className,\n      size = \"default\",\n      variant = \"primary\",\n      icon,\n      label,\n      lowered = false,\n      children,\n      ...props\n    },\n    ref\n  ) => {\n    const isMinimal = variant === \"minimal\";\n\n    const variantClasses = {\n      primary:\n        \"bg-[var(--accent-green)] text-[var(--bg-main)] hover:brightness-110 border border-transparent shadow-[0_4px_12px_rgba(0,0,0,0.2)]\",\n      surface:\n        \"bg-[var(--surface-elevated)] text-[var(--accent-green)] hover:bg-[var(--surface-secondary)] border border-[var(--border)] shadow-[0_4px_12px_rgba(0,0,0,0.2)]\",\n      secondary:\n        \"bg-[var(--accent-green-deep)] text-[var(--accent-green)] hover:brightness-110 border border-[var(--accent-green)]/20 shadow-[0_4px_12px_rgba(0,0,0,0.15)]\",\n      minimal:\n        \"bg-[var(--text-primary)] text-[var(--bg-main)] hover:opacity-90 border border-transparent shadow-md active:scale-95\",\n    }[variant];\n\n    const sizeClasses = {\n      sm: \"h-10 w-10 rounded-xl text-xs\",\n      default: \"h-14 w-14 rounded-2xl text-sm\",\n      lg: \"h-24 w-24 rounded-3xl text-base\",\n      extended: isMinimal\n        ? \"h-10 px-4 rounded-xl text-xs font-semibold gap-2\"\n        : \"h-14 px-5 rounded-2xl text-sm font-semibold gap-3\",\n    }[size];\n\n    return (\n      <button\n        ref={ref}\n        className={cn(\n          \"inline-flex items-center justify-center font-sans transition-all duration-200 select-none cursor-pointer active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-green)]/40\",\n          lowered ? \"shadow-none\" : \"\",\n          variantClasses,\n          sizeClasses,\n          className\n        )}\n        {...props}\n      >\n        {icon && <span className=\"shrink-0\">{icon}</span>}\n        {(label || children) && (size === \"extended\" || isMinimal) && (\n          <span className=\"truncate\">{label || children}</span>\n        )}\n      </button>\n    );\n  }\n);\nM3Fab.displayName = \"M3Fab\";\n"
+    }
+  ]
+},
+  "m3-segmented-button": {
+  "name": "m3-segmented-button",
+  "category": "Mobile App",
+  "title": "M3 Segmented Button",
+  "description": "Single-select and multi-select segmented button with animated checkmark indicator and minimal SaaS toggle.",
+  "variants": [
+    "single-select",
+    "multi-select",
+    "minimal"
+  ],
+  "dependencies": [
+    "clsx",
+    "tailwind-merge",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "usage": "import { M3SegmentedButton } from \"@/components/ui/m3-segmented-button\";\n\nexport function SegmentDemo() {\n  const [val, setVal] = React.useState(\"day\");\n  return (\n    <M3SegmentedButton\n      value={val}\n      onChange={setVal}\n      options={[{ id: \"day\", label: \"Day\" }, { id: \"week\", label: \"Week\" }, { id: \"month\", label: \"Month\" }]}\n    />\n  );\n}",
+  "props": [
+    {
+      "name": "options",
+      "type": "M3SegmentOption[]",
+      "required": true,
+      "description": "Segment options list"
+    },
+    {
+      "name": "value",
+      "type": "string | string[]",
+      "required": true,
+      "description": "Selected segment id(s)"
+    },
+    {
+      "name": "onChange",
+      "type": "(val: any) => void",
+      "required": true,
+      "description": "Callback when selection changes"
+    },
+    {
+      "name": "multiSelect",
+      "type": "boolean",
+      "defaultValue": "false",
+      "description": "Allow multiple active segments"
+    },
+    {
+      "name": "design",
+      "type": "\"m3\" | \"minimal\"",
+      "defaultValue": "\"m3\"",
+      "description": "Design variant mode"
+    }
+  ],
+  "files": [
+    {
+      "name": "m3-segmented-button.tsx",
+      "type": "components:ui",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { Check } from \"lucide-react\";\nimport { cn } from \"@/lib/utils\";\n\nexport interface M3SegmentOption {\n  id: string;\n  label: string;\n  icon?: React.ReactNode;\n  disabled?: boolean;\n}\n\nexport interface M3SegmentedButtonProps {\n  options: M3SegmentOption[];\n  value: string | string[];\n  onChange: (value: any) => void;\n  multiSelect?: boolean;\n  design?: \"m3\" | \"minimal\";\n  size?: \"sm\" | \"default\";\n  className?: string;\n}\n\nexport function M3SegmentedButton({\n  options,\n  value,\n  onChange,\n  multiSelect = false,\n  design = \"m3\",\n  size = \"default\",\n  className,\n}: M3SegmentedButtonProps) {\n  const isSelected = (id: string) => {\n    if (multiSelect && Array.isArray(value)) {\n      return value.includes(id);\n    }\n    return value === id;\n  };\n\n  const handleSelect = (id: string, disabled?: boolean) => {\n    if (disabled) return;\n    if (multiSelect) {\n      const arr = Array.isArray(value) ? [...value] : [];\n      const idx = arr.indexOf(id);\n      if (idx >= 0) {\n        arr.splice(idx, 1);\n      } else {\n        arr.push(id);\n      }\n      onChange(arr);\n    } else {\n      onChange(id);\n    }\n  };\n\n  const isMinimal = design === \"minimal\";\n\n  return (\n    <div\n      role=\"group\"\n      className={cn(\n        \"inline-flex items-center overflow-hidden border border-[var(--border)] select-none\",\n        isMinimal\n          ? \"rounded-lg p-0.5 bg-[var(--surface-secondary)]/50 gap-0.5\"\n          : \"rounded-full bg-transparent divide-x divide-[var(--border)]\",\n        className\n      )}\n    >\n      {options.map((opt, i) => {\n        const active = isSelected(opt.id);\n        const isFirst = i === 0;\n        const isLast = i === options.length - 1;\n\n        return (\n          <button\n            key={opt.id}\n            type=\"button\"\n            disabled={opt.disabled}\n            aria-pressed={active}\n            onClick={() => handleSelect(opt.id, opt.disabled)}\n            className={cn(\n              \"relative flex items-center justify-center font-sans font-medium transition-all duration-200 cursor-pointer disabled:opacity-40 disabled:pointer-events-none\",\n              size === \"sm\" ? \"h-7 px-2.5 text-xs gap-1.5\" : \"h-10 px-4 text-xs sm:text-sm gap-2\",\n              isMinimal\n                ? cn(\n                    \"rounded-md\",\n                    active\n                      ? \"bg-[var(--surface-elevated)] text-[var(--text-primary)] shadow-2xs font-semibold\"\n                      : \"text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)]\"\n                  )\n                : cn(\n                    isFirst && \"rounded-l-full\",\n                    isLast && \"rounded-r-full\",\n                    active\n                      ? \"bg-[var(--accent-green-deep)] text-[var(--accent-green)] font-semibold\"\n                      : \"bg-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)]/50\"\n                  )\n            )}\n          >\n            {active && !isMinimal && (\n              <Check className=\"h-3.5 w-3.5 shrink-0 stroke-[2.5] animate-in fade-in zoom-in-75 duration-150\" />\n            )}\n            {opt.icon && <span className=\"shrink-0\">{opt.icon}</span>}\n            <span className=\"truncate\">{opt.label}</span>\n          </button>\n        );\n      })}\n    </div>\n  );\n}\n"
+    }
+  ]
+},
+  "m3-icon-button": {
+  "name": "m3-icon-button",
+  "category": "Mobile App",
+  "title": "M3 Icon Button",
+  "description": "Compact touch-target icon button with standard, filled, tonal, outlined, and minimal SaaS toggle states.",
+  "variants": [
+    "standard",
+    "filled",
+    "tonal",
+    "outlined",
+    "minimal"
+  ],
+  "dependencies": [
+    "clsx",
+    "tailwind-merge",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "usage": "import { M3IconButton } from \"@/components/ui/m3-icon-button\";\nimport { Heart } from \"lucide-react\";\n\nexport function IconButtonDemo() {\n  const [liked, setLiked] = React.useState(false);\n  return <M3IconButton variant=\"tonal\" selected={liked} onSelectedChange={setLiked} icon={<Heart className=\"h-4 w-4\" />} />;\n}",
+  "props": [
+    {
+      "name": "variant",
+      "type": "\"standard\" | \"filled\" | \"tonal\" | \"outlined\" | \"minimal\"",
+      "defaultValue": "\"standard\"",
+      "description": "Container style"
+    },
+    {
+      "name": "selected",
+      "type": "boolean",
+      "defaultValue": "false",
+      "description": "Toggle selection state"
+    },
+    {
+      "name": "onSelectedChange",
+      "type": "(selected: boolean) => void",
+      "description": "Toggle state change callback"
+    },
+    {
+      "name": "size",
+      "type": "\"sm\" | \"default\" | \"lg\"",
+      "defaultValue": "\"default\"",
+      "description": "Touch target size"
+    }
+  ],
+  "files": [
+    {
+      "name": "m3-icon-button.tsx",
+      "type": "components:ui",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { cn } from \"@/lib/utils\";\n\nexport type M3IconButtonVariant = \"standard\" | \"filled\" | \"tonal\" | \"outlined\" | \"minimal\";\n\nexport interface M3IconButtonProps\n  extends React.ButtonHTMLAttributes<HTMLButtonElement> {\n  variant?: M3IconButtonVariant;\n  selected?: boolean;\n  onSelectedChange?: (selected: boolean) => void;\n  size?: \"sm\" | \"default\" | \"lg\";\n  icon?: React.ReactNode;\n  selectedIcon?: React.ReactNode;\n}\n\nexport const M3IconButton = React.forwardRef<HTMLButtonElement, M3IconButtonProps>(\n  (\n    {\n      className,\n      variant = \"standard\",\n      selected = false,\n      onSelectedChange,\n      size = \"default\",\n      icon,\n      selectedIcon,\n      children,\n      onClick,\n      ...props\n    },\n    ref\n  ) => {\n    const isMinimal = variant === \"minimal\";\n\n    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {\n      onSelectedChange?.(!selected);\n      onClick?.(e);\n    };\n\n    const variantStyles: Record<M3IconButtonVariant, string> = {\n      standard: selected\n        ? \"text-[var(--accent-green)] hover:bg-[var(--accent-green-subtle)]\"\n        : \"text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)]\",\n      filled: selected\n        ? \"bg-[var(--accent-green)] text-[var(--bg-main)] hover:brightness-110 shadow-xs\"\n        : \"bg-[var(--surface-secondary)] text-[var(--text-primary)] hover:bg-[var(--surface-tertiary)]\",\n      tonal: selected\n        ? \"bg-[var(--accent-green-deep)] text-[var(--accent-green)] hover:brightness-110\"\n        : \"bg-[var(--surface-secondary)] text-[var(--text-secondary)] hover:bg-[var(--surface-tertiary)] hover:text-[var(--text-primary)]\",\n      outlined: selected\n        ? \"bg-[var(--accent-green-deep)] text-[var(--accent-green)] border border-[var(--accent-green)]/40\"\n        : \"bg-transparent text-[var(--text-secondary)] border border-[var(--border)] hover:bg-[var(--surface-secondary)] hover:text-[var(--text-primary)]\",\n      minimal: selected\n        ? \"bg-[var(--surface-elevated)] text-[var(--accent-green)] border border-[var(--border)] shadow-2xs\"\n        : \"bg-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] border border-transparent\",\n    };\n\n    const sizeStyles = {\n      sm: isMinimal ? \"h-7 w-7 rounded-md p-1\" : \"h-8 w-8 rounded-full p-1.5\",\n      default: isMinimal ? \"h-9 w-9 rounded-lg p-2\" : \"h-10 w-10 rounded-full p-2.5\",\n      lg: isMinimal ? \"h-11 w-11 rounded-xl p-2.5\" : \"h-12 w-12 rounded-full p-3\",\n    }[size];\n\n    const currentIcon = selected && selectedIcon ? selectedIcon : icon || children;\n\n    return (\n      <button\n        ref={ref}\n        type=\"button\"\n        aria-pressed={selected}\n        onClick={handleClick}\n        className={cn(\n          \"inline-flex items-center justify-center transition-all duration-200 cursor-pointer active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-green)]/40 disabled:opacity-40 disabled:pointer-events-none select-none\",\n          variantStyles[variant],\n          sizeStyles,\n          className\n        )}\n        {...props}\n      >\n        {currentIcon}\n      </button>\n    );\n  }\n);\nM3IconButton.displayName = \"M3IconButton\";\n"
+    }
+  ]
+},
+  "m3-switch": {
+  "name": "m3-switch",
+  "category": "Mobile App",
+  "title": "M3 Switch",
+  "description": "Material Design 3 switch with icon-in-thumb checkmark animation and minimal SaaS toggle.",
+  "variants": [
+    "standard-m3",
+    "with-icons",
+    "minimal"
+  ],
+  "dependencies": [
+    "clsx",
+    "tailwind-merge",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "usage": "import { M3Switch } from \"@/components/ui/m3-switch\";\n\nexport function SwitchDemo() {\n  const [on, setOn] = React.useState(true);\n  return <M3Switch checked={on} onChange={setOn} label=\"Push Notifications\" description=\"Receive alert dispatches\" />;\n}",
+  "props": [
+    {
+      "name": "checked",
+      "type": "boolean",
+      "description": "Controlled switch state"
+    },
+    {
+      "name": "onChange",
+      "type": "(checked: boolean) => void",
+      "description": "State change callback"
+    },
+    {
+      "name": "showIcon",
+      "type": "boolean",
+      "defaultValue": "true",
+      "description": "Whether thumb renders check/cross iconography"
+    },
+    {
+      "name": "design",
+      "type": "\"m3\" | \"minimal\"",
+      "defaultValue": "\"m3\"",
+      "description": "Design token mode"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "description": "Label text"
+    },
+    {
+      "name": "description",
+      "type": "string",
+      "description": "Supporting description text"
+    }
+  ],
+  "files": [
+    {
+      "name": "m3-switch.tsx",
+      "type": "components:ui",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { Check, X } from \"lucide-react\";\nimport { cn } from \"@/lib/utils\";\n\nexport interface M3SwitchProps {\n  checked?: boolean;\n  defaultChecked?: boolean;\n  onChange?: (checked: boolean) => void;\n  disabled?: boolean;\n  showIcon?: boolean;\n  design?: \"m3\" | \"minimal\";\n  label?: string;\n  description?: string;\n  className?: string;\n}\n\nexport function M3Switch({\n  checked: controlledChecked,\n  defaultChecked = false,\n  onChange,\n  disabled = false,\n  showIcon = true,\n  design = \"m3\",\n  label,\n  description,\n  className,\n}: M3SwitchProps) {\n  const [uncontrolledChecked, setUncontrolledChecked] = React.useState(defaultChecked);\n  const isChecked = controlledChecked !== undefined ? controlledChecked : uncontrolledChecked;\n\n  const toggle = () => {\n    if (disabled) return;\n    const next = !isChecked;\n    if (controlledChecked === undefined) {\n      setUncontrolledChecked(next);\n    }\n    onChange?.(next);\n  };\n\n  const isMinimal = design === \"minimal\";\n\n  return (\n    <label\n      className={cn(\n        \"inline-flex items-center justify-between gap-3 cursor-pointer select-none\",\n        disabled && \"opacity-40 cursor-not-allowed pointer-events-none\",\n        className\n      )}\n    >\n      {(label || description) && (\n        <div className=\"flex flex-col\">\n          {label && (\n            <span className=\"text-sm font-medium font-sans text-[var(--text-primary)]\">\n              {label}\n            </span>\n          )}\n          {description && (\n            <span className=\"text-xs text-[var(--text-secondary)]\">\n              {description}\n            </span>\n          )}\n        </div>\n      )}\n\n      {/* Switch Track */}\n      <button\n        type=\"button\"\n        role=\"switch\"\n        aria-checked={isChecked}\n        disabled={disabled}\n        onClick={toggle}\n        className={cn(\n          \"relative inline-flex shrink-0 transition-colors duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-green)]/40\",\n          isMinimal\n            ? cn(\n                \"h-6 w-11 rounded-full p-0.5 border\",\n                isChecked\n                  ? \"bg-[var(--accent-green)] border-transparent\"\n                  : \"bg-[var(--surface-secondary)] border-[var(--border)]\"\n              )\n            : cn(\n                \"h-8 w-[52px] rounded-full p-1 border\",\n                isChecked\n                  ? \"bg-[var(--accent-green)] border-transparent\"\n                  : \"bg-[var(--surface-secondary)] border-[var(--border-hover)]\"\n              )\n        )}\n      >\n        {/* Switch Thumb */}\n        <span\n          className={cn(\n            \"pointer-events-none flex items-center justify-center rounded-full transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]\",\n            isMinimal\n              ? cn(\n                  \"h-5 w-5 bg-[var(--bg-main)] shadow-xs\",\n                  isChecked ? \"translate-x-5\" : \"translate-x-0\"\n                )\n              : cn(\n                  isChecked\n                    ? \"h-6 w-6 translate-x-5 bg-[var(--bg-main)] text-[var(--accent-green)] shadow-md\"\n                    : \"h-6 w-6 translate-x-0 bg-[var(--text-muted)] text-[var(--bg-main)]\"\n                )\n          )}\n        >\n          {showIcon && !isMinimal && (\n            isChecked ? (\n              <Check className=\"h-3.5 w-3.5 stroke-[3]\" />\n            ) : (\n              <X className=\"h-3 w-3 stroke-[2.5]\" />\n            )\n          )}\n        </span>\n      </button>\n    </label>\n  );\n}\n"
+    }
+  ]
+},
+  "m3-checkbox": {
+  "name": "m3-checkbox",
+  "category": "Mobile App",
+  "title": "M3 Checkbox",
+  "description": "Material Design 3 checkbox with rounded-xs container, checkmark, indeterminate mark, and minimal SaaS style.",
+  "variants": [
+    "standard-m3",
+    "indeterminate",
+    "minimal"
+  ],
+  "dependencies": [
+    "clsx",
+    "tailwind-merge",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "usage": "import { M3Checkbox } from \"@/components/ui/m3-checkbox\";\n\nexport function CheckboxDemo() {\n  const [checked, setChecked] = React.useState(true);\n  return <M3Checkbox checked={checked} onChange={setChecked} label=\"Enable Edge Analytics\" />;\n}",
+  "props": [
+    {
+      "name": "checked",
+      "type": "boolean",
+      "description": "Checked state"
+    },
+    {
+      "name": "indeterminate",
+      "type": "boolean",
+      "defaultValue": "false",
+      "description": "Indeterminate state"
+    },
+    {
+      "name": "onChange",
+      "type": "(checked: boolean) => void",
+      "description": "Callback when checked"
+    },
+    {
+      "name": "design",
+      "type": "\"m3\" | \"minimal\"",
+      "defaultValue": "\"m3\"",
+      "description": "Design variant"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "description": "Checkbox label"
+    }
+  ],
+  "files": [
+    {
+      "name": "m3-checkbox.tsx",
+      "type": "components:ui",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { Check, Minus } from \"lucide-react\";\nimport { cn } from \"@/lib/utils\";\n\nexport interface M3CheckboxProps {\n  checked?: boolean;\n  defaultChecked?: boolean;\n  indeterminate?: boolean;\n  onChange?: (checked: boolean) => void;\n  disabled?: boolean;\n  design?: \"m3\" | \"minimal\";\n  label?: string;\n  description?: string;\n  className?: string;\n}\n\nexport function M3Checkbox({\n  checked: controlledChecked,\n  defaultChecked = false,\n  indeterminate = false,\n  onChange,\n  disabled = false,\n  design = \"m3\",\n  label,\n  description,\n  className,\n}: M3CheckboxProps) {\n  const [uncontrolledChecked, setUncontrolledChecked] = React.useState(defaultChecked);\n  const isChecked = controlledChecked !== undefined ? controlledChecked : uncontrolledChecked;\n\n  const toggle = () => {\n    if (disabled) return;\n    const next = !isChecked;\n    if (controlledChecked === undefined) {\n      setUncontrolledChecked(next);\n    }\n    onChange?.(next);\n  };\n\n  const isMinimal = design === \"minimal\";\n\n  return (\n    <label\n      className={cn(\n        \"inline-flex items-start gap-3 cursor-pointer select-none group\",\n        disabled && \"opacity-40 cursor-not-allowed pointer-events-none\",\n        className\n      )}\n    >\n      <div className=\"relative flex items-center justify-center p-1\">\n        <button\n          type=\"button\"\n          role=\"checkbox\"\n          aria-checked={indeterminate ? \"mixed\" : isChecked}\n          disabled={disabled}\n          onClick={toggle}\n          className={cn(\n            \"flex items-center justify-center transition-all duration-150 ease-[cubic-bezier(0.16,1,0.3,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-green)]/40\",\n            isMinimal\n              ? cn(\n                  \"h-4 w-4 rounded border\",\n                  isChecked || indeterminate\n                    ? \"bg-[var(--accent-green)] border-transparent text-[var(--bg-main)]\"\n                    : \"bg-transparent border-[var(--border-hover)] group-hover:border-[var(--text-secondary)]\"\n                )\n              : cn(\n                  \"h-5 w-5 rounded-xs border-2\",\n                  isChecked || indeterminate\n                    ? \"bg-[var(--accent-green)] border-transparent text-[var(--bg-main)] shadow-2xs\"\n                    : \"bg-transparent border-[var(--border-hover)] group-hover:border-[var(--text-primary)]\"\n                )\n          )}\n        >\n          {indeterminate ? (\n            <Minus className=\"h-3.5 w-3.5 stroke-[3]\" />\n          ) : isChecked ? (\n            <Check className=\"h-3.5 w-3.5 stroke-[3]\" />\n          ) : null}\n        </button>\n      </div>\n\n      {(label || description) && (\n        <div className=\"flex flex-col pt-0.5\">\n          {label && (\n            <span className=\"text-sm font-medium font-sans text-[var(--text-primary)] leading-tight\">\n              {label}\n            </span>\n          )}\n          {description && (\n            <span className=\"text-xs text-[var(--text-secondary)] mt-0.5 leading-normal\">\n              {description}\n            </span>\n          )}\n        </div>\n      )}\n    </label>\n  );\n}\n"
+    }
+  ]
+},
+  "m3-radio": {
+  "name": "m3-radio",
+  "category": "Mobile App",
+  "title": "M3 Radio Button",
+  "description": "Concentric circle radio button group with smooth scale animations and minimal SaaS layout.",
+  "variants": [
+    "standard-m3",
+    "minimal"
+  ],
+  "dependencies": [
+    "clsx",
+    "tailwind-merge",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "usage": "import { M3RadioGroup } from \"@/components/ui/m3-radio\";\n\nexport function RadioDemo() {\n  const [sel, setSel] = React.useState(\"standard\");\n  return (\n    <M3RadioGroup\n      value={sel}\n      onChange={setSel}\n      options={[{ id: \"standard\", label: \"Standard 2-Day Air\" }, { id: \"express\", label: \"Express Overnight\" }]}\n    />\n  );\n}",
+  "props": [
+    {
+      "name": "options",
+      "type": "M3RadioOption[]",
+      "required": true,
+      "description": "Radio options list"
+    },
+    {
+      "name": "value",
+      "type": "string",
+      "required": true,
+      "description": "Selected option id"
+    },
+    {
+      "name": "onChange",
+      "type": "(val: string) => void",
+      "required": true,
+      "description": "Selection callback"
+    },
+    {
+      "name": "design",
+      "type": "\"m3\" | \"minimal\"",
+      "defaultValue": "\"m3\"",
+      "description": "Design mode"
+    }
+  ],
+  "files": [
+    {
+      "name": "m3-radio.tsx",
+      "type": "components:ui",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { cn } from \"@/lib/utils\";\n\nexport interface M3RadioOption {\n  id: string;\n  label: string;\n  description?: string;\n  disabled?: boolean;\n}\n\nexport interface M3RadioGroupProps {\n  options: M3RadioOption[];\n  value: string;\n  onChange: (value: string) => void;\n  design?: \"m3\" | \"minimal\";\n  disabled?: boolean;\n  className?: string;\n}\n\nexport function M3RadioGroup({\n  options,\n  value,\n  onChange,\n  design = \"m3\",\n  disabled = false,\n  className,\n}: M3RadioGroupProps) {\n  const isMinimal = design === \"minimal\";\n\n  return (\n    <div\n      role=\"radiogroup\"\n      className={cn(\"flex flex-col space-y-2 select-none\", className)}\n    >\n      {options.map((opt) => {\n        const isSelected = value === opt.id;\n        const isDisabled = disabled || opt.disabled;\n\n        return (\n          <label\n            key={opt.id}\n            className={cn(\n              \"inline-flex items-start gap-3 cursor-pointer group\",\n              isDisabled && \"opacity-40 cursor-not-allowed pointer-events-none\"\n            )}\n          >\n            <div className=\"relative flex items-center justify-center p-1\">\n              <button\n                type=\"button\"\n                role=\"radio\"\n                aria-checked={isSelected}\n                disabled={isDisabled}\n                onClick={() => onChange(opt.id)}\n                className={cn(\n                  \"flex items-center justify-center rounded-full transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-green)]/40\",\n                  isMinimal\n                    ? cn(\n                        \"h-4 w-4 border\",\n                        isSelected\n                          ? \"border-[var(--accent-green)]\"\n                          : \"border-[var(--border-hover)] group-hover:border-[var(--text-secondary)]\"\n                      )\n                    : cn(\n                        \"h-5 w-5 border-2\",\n                        isSelected\n                          ? \"border-[var(--accent-green)]\"\n                          : \"border-[var(--border-hover)] group-hover:border-[var(--text-primary)]\"\n                      )\n                )}\n              >\n                {isSelected && (\n                  <span\n                    className={cn(\n                      \"rounded-full bg-[var(--accent-green)] transition-transform duration-150 ease-[cubic-bezier(0.16,1,0.3,1)] scale-100\",\n                      isMinimal ? \"h-2 w-2\" : \"h-2.5 w-2.5\"\n                    )}\n                  />\n                )}\n              </button>\n            </div>\n\n            <div className=\"flex flex-col pt-0.5\">\n              <span className=\"text-sm font-medium font-sans text-[var(--text-primary)] leading-tight\">\n                {opt.label}\n              </span>\n              {opt.description && (\n                <span className=\"text-xs text-[var(--text-secondary)] mt-0.5\">\n                  {opt.description}\n                </span>\n              )}\n            </div>\n          </label>\n        );\n      })}\n    </div>\n  );\n}\n"
+    }
+  ]
+},
+  "m3-slider": {
+  "name": "m3-slider",
+  "category": "Mobile App",
+  "title": "M3 Slider",
+  "description": "Continuous and discrete slider with thick active track, tick marks, and floating value balloon indicator.",
+  "variants": [
+    "continuous",
+    "discrete",
+    "minimal"
+  ],
+  "dependencies": [
+    "clsx",
+    "tailwind-merge",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "usage": "import { M3Slider } from \"@/components/ui/m3-slider\";\n\nexport function SliderDemo() {\n  const [val, setVal] = React.useState(65);\n  return <M3Slider value={val} onChange={setVal} label=\"Volume Output\" />;\n}",
+  "props": [
+    {
+      "name": "value",
+      "type": "number",
+      "required": true,
+      "description": "Current numerical value"
+    },
+    {
+      "name": "onChange",
+      "type": "(val: number) => void",
+      "required": true,
+      "description": "Value change callback"
+    },
+    {
+      "name": "min",
+      "type": "number",
+      "defaultValue": "0",
+      "description": "Minimum limit"
+    },
+    {
+      "name": "max",
+      "type": "number",
+      "defaultValue": "100",
+      "description": "Maximum limit"
+    },
+    {
+      "name": "step",
+      "type": "number",
+      "defaultValue": "1",
+      "description": "Stepping increment"
+    },
+    {
+      "name": "showValueBubble",
+      "type": "boolean",
+      "defaultValue": "true",
+      "description": "Show balloon pin on drag"
+    }
+  ],
+  "files": [
+    {
+      "name": "m3-slider.tsx",
+      "type": "components:ui",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { cn } from \"@/lib/utils\";\n\nexport interface M3SliderProps {\n  value: number;\n  onChange: (value: number) => void;\n  min?: number;\n  max?: number;\n  step?: number;\n  discrete?: boolean;\n  showValueBubble?: boolean;\n  design?: \"m3\" | \"minimal\";\n  disabled?: boolean;\n  label?: string;\n  className?: string;\n}\n\nexport function M3Slider({\n  value,\n  onChange,\n  min = 0,\n  max = 100,\n  step = 1,\n  discrete = false,\n  showValueBubble = true,\n  design = \"m3\",\n  disabled = false,\n  label,\n  className,\n}: M3SliderProps) {\n  const [isDragging, setIsDragging] = React.useState(false);\n  const trackRef = React.useRef<HTMLDivElement>(null);\n\n  const percentage = Math.min(100, Math.max(0, ((value - min) / (max - min)) * 100));\n\n  const updateFromPointer = (clientX: number) => {\n    if (!trackRef.current || disabled) return;\n    const rect = trackRef.current.getBoundingClientRect();\n    const ratio = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));\n    const rawVal = min + ratio * (max - min);\n    const steppedVal = Math.round(rawVal / step) * step;\n    const clampedVal = Math.min(max, Math.max(min, steppedVal));\n    onChange(clampedVal);\n  };\n\n  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {\n    if (disabled) return;\n    setIsDragging(true);\n    try {\n      e.currentTarget.setPointerCapture(e.pointerId);\n    } catch {}\n    updateFromPointer(e.clientX);\n  };\n\n  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {\n    if (!isDragging) return;\n    updateFromPointer(e.clientX);\n  };\n\n  const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {\n    setIsDragging(false);\n    try {\n      e.currentTarget.releasePointerCapture(e.pointerId);\n    } catch {}\n  };\n\n  const isMinimal = design === \"minimal\";\n\n  return (\n    <div className={cn(\"w-full space-y-2 select-none\", disabled && \"opacity-40 pointer-events-none\", className)}>\n      {label && (\n        <div className=\"flex items-center justify-between text-xs font-medium font-sans\">\n          <span className=\"text-[var(--text-secondary)]\">{label}</span>\n          <span className=\"font-mono text-[var(--accent-green)] font-semibold\">{value}</span>\n        </div>\n      )}\n\n      <div\n        ref={trackRef}\n        onPointerDown={handlePointerDown}\n        onPointerMove={handlePointerMove}\n        onPointerUp={handlePointerUp}\n        onPointerCancel={handlePointerUp}\n        className=\"relative flex items-center h-8 cursor-pointer touch-none\"\n      >\n        {/* Track Background */}\n        <div\n          className={cn(\n            \"w-full rounded-full transition-colors relative overflow-hidden\",\n            isMinimal ? \"h-1.5 bg-[var(--surface-secondary)]\" : \"h-3 bg-[var(--surface-secondary)]/80\"\n          )}\n        >\n          {/* Active Filled Track */}\n          <div\n            className=\"h-full bg-[var(--accent-green)] transition-all duration-75\"\n            style={{ width: `${percentage}%` }}\n          />\n        </div>\n\n        {/* Thumb with Optional Floating Value Pin Bubble */}\n        <div\n          className=\"absolute -translate-x-1/2 flex flex-col items-center pointer-events-none\"\n          style={{ left: `${percentage}%` }}\n        >\n          {/* M3 Balloon Value Bubble on Drag */}\n          {showValueBubble && isDragging && (\n            <div className=\"absolute -top-10 px-2 py-0.5 rounded-full bg-[var(--accent-green)] text-[var(--bg-main)] font-mono text-[11px] font-bold shadow-md animate-in fade-in zoom-in-75 duration-100\">\n              {value}\n            </div>\n          )}\n\n          {/* Thumb circle */}\n          <div\n            className={cn(\n              \"rounded-full transition-transform duration-150\",\n              isMinimal\n                ? \"h-4 w-4 bg-[var(--text-primary)] border-2 border-[var(--bg-main)] shadow-sm\"\n                : \"h-5 w-5 bg-[var(--accent-green)] border-2 border-[var(--bg-main)] shadow-md\",\n              isDragging && \"scale-125\"\n            )}\n          />\n        </div>\n      </div>\n    </div>\n  );\n}\n"
+    }
+  ]
+},
+  "m3-chip": {
+  "name": "m3-chip",
+  "category": "Mobile App",
+  "title": "M3 Chip",
+  "description": "Assist, filter, input, and suggestion chips with selection checkmarks, avatars, and trailing close buttons.",
+  "variants": [
+    "assist",
+    "filter",
+    "input",
+    "suggestion",
+    "minimal"
+  ],
+  "dependencies": [
+    "clsx",
+    "tailwind-merge",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "usage": "import { M3Chip } from \"@/components/ui/m3-chip\";\n\nexport function ChipDemo() {\n  const [active, setActive] = React.useState(true);\n  return <M3Chip chipType=\"filter\" selected={active} onSelectedChange={setActive}>Material Design</M3Chip>;\n}",
+  "props": [
+    {
+      "name": "chipType",
+      "type": "\"assist\" | \"filter\" | \"input\" | \"suggestion\"",
+      "defaultValue": "\"assist\"",
+      "description": "M3 chip type"
+    },
+    {
+      "name": "selected",
+      "type": "boolean",
+      "defaultValue": "false",
+      "description": "Selected state for filter chips"
+    },
+    {
+      "name": "onSelectedChange",
+      "type": "(sel: boolean) => void",
+      "description": "Selection change callback"
+    },
+    {
+      "name": "onRemove",
+      "type": "() => void",
+      "description": "Remove action for input chips"
+    }
+  ],
+  "files": [
+    {
+      "name": "m3-chip.tsx",
+      "type": "components:ui",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { Check, X } from \"lucide-react\";\nimport { cn } from \"@/lib/utils\";\n\nexport type M3ChipType = \"assist\" | \"filter\" | \"input\" | \"suggestion\";\n\nexport interface M3ChipProps\n  extends React.ButtonHTMLAttributes<HTMLButtonElement> {\n  chipType?: M3ChipType;\n  selected?: boolean;\n  onSelectedChange?: (selected: boolean) => void;\n  onRemove?: () => void;\n  icon?: React.ReactNode;\n  avatar?: React.ReactNode;\n  design?: \"m3\" | \"minimal\";\n}\n\nexport const M3Chip = React.forwardRef<HTMLButtonElement, M3ChipProps>(\n  (\n    {\n      className,\n      chipType = \"assist\",\n      selected = false,\n      onSelectedChange,\n      onRemove,\n      icon,\n      avatar,\n      design = \"m3\",\n      children,\n      onClick,\n      ...props\n    },\n    ref\n  ) => {\n    const isMinimal = design === \"minimal\";\n\n    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {\n      if (chipType === \"filter\") {\n        onSelectedChange?.(!selected);\n      }\n      onClick?.(e);\n    };\n\n    return (\n      <button\n        ref={ref}\n        type=\"button\"\n        aria-pressed={chipType === \"filter\" ? selected : undefined}\n        onClick={handleClick}\n        className={cn(\n          \"inline-flex items-center font-sans font-medium transition-all duration-150 select-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-green)]/40 disabled:opacity-40 disabled:pointer-events-none\",\n          isMinimal\n            ? cn(\n                \"h-7 px-2.5 rounded-md text-xs gap-1.5 border\",\n                selected\n                  ? \"bg-[var(--surface-elevated)] border-[var(--accent-green)] text-[var(--accent-green)] shadow-2xs\"\n                  : \"bg-transparent border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)]\"\n              )\n            : cn(\n                \"h-8 px-3 rounded-lg text-xs gap-2 border\",\n                selected\n                  ? \"bg-[var(--accent-green-deep)] border-[var(--accent-green)]/40 text-[var(--accent-green)] font-semibold shadow-xs\"\n                  : \"bg-[var(--surface-secondary)]/50 border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)]\"\n              ),\n          className\n        )}\n        {...props}\n      >\n        {selected && chipType === \"filter\" ? (\n          <Check className=\"h-3.5 w-3.5 shrink-0 stroke-[2.5]\" />\n        ) : avatar ? (\n          <span className=\"shrink-0 -ml-1 h-5 w-5 rounded-full overflow-hidden flex items-center justify-center\">\n            {avatar}\n          </span>\n        ) : icon ? (\n          <span className=\"shrink-0\">{icon}</span>\n        ) : null}\n\n        <span className=\"truncate\">{children}</span>\n\n        {chipType === \"input\" && onRemove && (\n          <span\n            role=\"button\"\n            tabIndex={0}\n            onClick={(e) => {\n              e.stopPropagation();\n              onRemove();\n            }}\n            className=\"p-0.5 -mr-1 rounded-full hover:bg-[var(--surface-tertiary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors\"\n          >\n            <X className=\"h-3 w-3\" />\n          </span>\n        )}\n      </button>\n    );\n  }\n);\nM3Chip.displayName = \"M3Chip\";\n"
+    }
+  ]
+},
+  "m3-text-field": {
+  "name": "m3-text-field",
+  "category": "Mobile App",
+  "title": "M3 Text Field",
+  "description": "Filled and outlined text field with floating label animation, helper text, error state, and leading/trailing icons.",
+  "variants": [
+    "outlined",
+    "filled",
+    "minimal"
+  ],
+  "dependencies": [
+    "clsx",
+    "tailwind-merge",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "usage": "import { M3TextField } from \"@/components/ui/m3-text-field\";\n\nexport function InputDemo() {\n  return <M3TextField variant=\"outlined\" label=\"Account Email\" helperText=\"Your registered workspace handle\" />;\n}",
+  "props": [
+    {
+      "name": "variant",
+      "type": "\"filled\" | \"outlined\" | \"minimal\"",
+      "defaultValue": "\"outlined\"",
+      "description": "Field container variant"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "required": true,
+      "description": "Floating label text"
+    },
+    {
+      "name": "helperText",
+      "type": "string",
+      "description": "Supporting helper text"
+    },
+    {
+      "name": "error",
+      "type": "string",
+      "description": "Validation error message"
+    },
+    {
+      "name": "clearable",
+      "type": "boolean",
+      "defaultValue": "false",
+      "description": "Show clear button when filled"
+    }
+  ],
+  "files": [
+    {
+      "name": "m3-text-field.tsx",
+      "type": "components:ui",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { AlertCircle, X } from \"lucide-react\";\nimport { cn } from \"@/lib/utils\";\n\nexport type M3TextFieldVariant = \"filled\" | \"outlined\" | \"minimal\";\n\nexport interface M3TextFieldProps\n  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, \"size\"> {\n  variant?: M3TextFieldVariant;\n  label: string;\n  helperText?: string;\n  error?: string;\n  leadingIcon?: React.ReactNode;\n  trailingIcon?: React.ReactNode;\n  clearable?: boolean;\n  onClear?: () => void;\n}\n\nexport const M3TextField = React.forwardRef<HTMLInputElement, M3TextFieldProps>(\n  (\n    {\n      className,\n      variant = \"outlined\",\n      label,\n      helperText,\n      error,\n      leadingIcon,\n      trailingIcon,\n      clearable = false,\n      onClear,\n      value,\n      defaultValue,\n      onChange,\n      disabled = false,\n      ...props\n    },\n    ref\n  ) => {\n    const [isFocused, setIsFocused] = React.useState(false);\n    const [innerVal, setInnerVal] = React.useState(defaultValue || \"\");\n\n    const currentVal = value !== undefined ? value : innerVal;\n    const hasValue = String(currentVal).length > 0;\n    const isFloating = isFocused || hasValue;\n    const isMinimal = variant === \"minimal\";\n\n    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {\n      setInnerVal(e.target.value);\n      onChange?.(e);\n    };\n\n    return (\n      <div className={cn(\"w-full space-y-1.5 font-sans select-none\", disabled && \"opacity-40 pointer-events-none\", className)}>\n        {/* Minimal SaaS variant: separate label above */}\n        {isMinimal && (\n          <label className=\"block text-xs font-medium text-[var(--text-secondary)]\">\n            {label}\n          </label>\n        )}\n\n        {/* Input container */}\n        <div\n          className={cn(\n            \"relative flex items-center transition-all duration-200\",\n            isMinimal\n              ? cn(\n                  \"h-9 px-3 rounded-lg border bg-[var(--surface-elevated)]\",\n                  error\n                    ? \"border-[var(--accent-red)] ring-1 ring-[var(--accent-red)]/20\"\n                    : isFocused\n                    ? \"border-[var(--accent-green)] ring-1 ring-[var(--accent-green)]/30\"\n                    : \"border-[var(--border)] hover:border-[var(--border-hover)]\"\n                )\n              : variant === \"filled\"\n              ? cn(\n                  \"h-14 px-4 rounded-t-xl border-b-2 bg-[var(--surface-secondary)]/70\",\n                  error\n                    ? \"border-[var(--accent-red)]\"\n                    : isFocused\n                    ? \"border-[var(--accent-green)] bg-[var(--surface-secondary)]\"\n                    : \"border-[var(--border-hover)] hover:bg-[var(--surface-secondary)]/90\"\n                )\n              : cn(\n                  \"h-14 px-4 rounded-xl border\",\n                  error\n                    ? \"border-[var(--accent-red)] ring-1 ring-[var(--accent-red)]/30\"\n                    : isFocused\n                    ? \"border-2 border-[var(--accent-green)]\"\n                    : \"border-[var(--border)] hover:border-[var(--text-secondary)]\"\n                )\n          )}\n        >\n          {leadingIcon && (\n            <span className={cn(\"shrink-0 mr-3 text-[var(--text-muted)]\", isFocused && \"text-[var(--accent-green)]\")}>\n              {leadingIcon}\n            </span>\n          )}\n\n          {/* Floating label for M3 Filled / Outlined */}\n          {!isMinimal && (\n            <span\n              className={cn(\n                \"absolute left-4 transition-all duration-200 pointer-events-none truncate max-w-[80%]\",\n                leadingIcon && \"left-11\",\n                isFloating\n                  ? cn(\n                      \"-top-2.5 px-1 text-[11px] font-semibold bg-[var(--surface-elevated)] rounded\",\n                      error\n                        ? \"text-[var(--accent-red)]\"\n                        : isFocused\n                        ? \"text-[var(--accent-green)]\"\n                        : \"text-[var(--text-secondary)]\"\n                    )\n                  : \"top-4 text-sm text-[var(--text-muted)]\"\n              )}\n            >\n              {label}\n            </span>\n          )}\n\n          <input\n            ref={ref}\n            value={currentVal}\n            onChange={handleChange}\n            onFocus={() => setIsFocused(true)}\n            onBlur={() => setIsFocused(false)}\n            disabled={disabled}\n            placeholder={isMinimal ? label : isFloating ? \"\" : \"\"}\n            className={cn(\n              \"w-full bg-transparent text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none\",\n              !isMinimal && \"pt-1\"\n            )}\n            {...props}\n          />\n\n          {clearable && hasValue && (\n            <button\n              type=\"button\"\n              onClick={() => {\n                setInnerVal(\"\");\n                onClear?.();\n              }}\n              className=\"p-1 rounded-full text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors cursor-pointer\"\n            >\n              <X className=\"h-4 w-4\" />\n            </button>\n          )}\n\n          {error ? (\n            <AlertCircle className=\"h-4 w-4 text-[var(--accent-red)] shrink-0 ml-2\" />\n          ) : trailingIcon ? (\n            <span className=\"shrink-0 ml-2 text-[var(--text-muted)]\">{trailingIcon}</span>\n          ) : null}\n        </div>\n\n        {/* Supporting / Error Helper Text */}\n        {(helperText || error) && (\n          <p\n            className={cn(\n              \"text-xs px-1\",\n              error ? \"text-[var(--accent-red)] font-medium\" : \"text-[var(--text-muted)]\"\n            )}\n          >\n            {error || helperText}\n          </p>\n        )}\n      </div>\n    );\n  }\n);\nM3TextField.displayName = \"M3TextField\";\n"
+    }
+  ]
+},
+  "m3-search-bar": {
+  "name": "m3-search-bar",
+  "category": "Mobile App",
+  "title": "M3 Search Bar",
+  "description": "Docked mobile search bar expanding into full-height search view with voice search and recent query history.",
+  "variants": [
+    "standard-m3",
+    "minimal"
+  ],
+  "dependencies": [
+    "clsx",
+    "tailwind-merge",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "usage": "import { M3SearchBar } from \"@/components/ui/m3-search-bar\";\n\nexport function SearchDemo() {\n  return <M3SearchBar placeholder=\"Search documents & code...\" />;\n}",
+  "props": [
+    {
+      "name": "placeholder",
+      "type": "string",
+      "defaultValue": "\"Search...\"",
+      "description": "Search placeholder"
+    },
+    {
+      "name": "value",
+      "type": "string",
+      "description": "Controlled query value"
+    },
+    {
+      "name": "onChange",
+      "type": "(val: string) => void",
+      "description": "Input change callback"
+    },
+    {
+      "name": "onSearch",
+      "type": "(val: string) => void",
+      "description": "Search submit callback"
+    }
+  ],
+  "files": [
+    {
+      "name": "m3-search-bar.tsx",
+      "type": "components:ui",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { Search, ArrowLeft, X, Mic, Clock, ArrowUpRight } from \"lucide-react\";\nimport { cn } from \"@/lib/utils\";\n\nexport interface M3SearchBarProps {\n  placeholder?: string;\n  value?: string;\n  onChange?: (val: string) => void;\n  onSearch?: (val: string) => void;\n  design?: \"m3\" | \"minimal\";\n  suggestions?: string[];\n  avatar?: React.ReactNode;\n  className?: string;\n}\n\nexport function M3SearchBar({\n  placeholder = \"Search apps, contacts, files...\",\n  value: controlledValue,\n  onChange,\n  onSearch,\n  design = \"m3\",\n  suggestions = [\"Component library\", \"Material Design 3 tokens\", \"Mobile gesture physics\", \"Next.js Turbopack\"],\n  avatar,\n  className,\n}: M3SearchBarProps) {\n  const [uncontrolledValue, setUncontrolledValue] = React.useState(\"\");\n  const [isExpanded, setIsExpanded] = React.useState(false);\n  const searchVal = controlledValue !== undefined ? controlledValue : uncontrolledValue;\n\n  const isMinimal = design === \"minimal\";\n\n  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {\n    setUncontrolledValue(e.target.value);\n    onChange?.(e.target.value);\n  };\n\n  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {\n    if (e.key === \"Enter\") {\n      onSearch?.(searchVal);\n      setIsExpanded(false);\n    } else if (e.key === \"Escape\") {\n      setIsExpanded(false);\n    }\n  };\n\n  return (\n    <div className={cn(\"relative w-full select-none\", className)}>\n      {/* Docked Search Bar */}\n      <div\n        onClick={() => setIsExpanded(true)}\n        className={cn(\n          \"flex items-center transition-all duration-200 cursor-pointer shadow-xs\",\n          isMinimal\n            ? \"h-10 px-3 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] hover:border-[var(--border-hover)]\"\n            : \"h-14 px-4 rounded-full border border-transparent bg-[var(--surface-secondary)] hover:bg-[var(--surface-tertiary)]\"\n        )}\n      >\n        <Search className=\"h-4 w-4 text-[var(--text-muted)] shrink-0 mr-3\" />\n        <span\n          className={cn(\n            \"flex-1 text-sm truncate\",\n            searchVal ? \"text-[var(--text-primary)] font-medium\" : \"text-[var(--text-muted)]\"\n          )}\n        >\n          {searchVal || placeholder}\n        </span>\n\n        <div className=\"flex items-center gap-2 shrink-0 ml-2\">\n          {searchVal && (\n            <button\n              type=\"button\"\n              onClick={(e) => {\n                e.stopPropagation();\n                setUncontrolledValue(\"\");\n                onChange?.(\"\");\n              }}\n              className=\"p-1 rounded-full text-[var(--text-muted)] hover:text-[var(--text-primary)]\"\n            >\n              <X className=\"h-4 w-4\" />\n            </button>\n          )}\n\n          <button\n            type=\"button\"\n            className=\"p-1 rounded-full text-[var(--text-muted)] hover:text-[var(--text-primary)] cursor-pointer\"\n          >\n            <Mic className=\"h-4 w-4\" />\n          </button>\n\n          {avatar && <div className=\"shrink-0\">{avatar}</div>}\n        </div>\n      </div>\n\n      {/* Expanded Search View Overlay / Dropdown */}\n      {isExpanded && (\n        <div\n          className={cn(\n            \"absolute top-0 left-0 right-0 z-50 p-3 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl animate-in fade-in zoom-in-95 duration-150\"\n          )}\n        >\n          {/* Header Input */}\n          <div className=\"flex items-center pb-2 border-b border-[var(--border)]/60\">\n            <button\n              type=\"button\"\n              onClick={() => setIsExpanded(false)}\n              className=\"p-1.5 mr-2 rounded-full text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] cursor-pointer\"\n            >\n              <ArrowLeft className=\"h-4 w-4\" />\n            </button>\n\n            <input\n              autoFocus\n              type=\"text\"\n              value={searchVal}\n              onChange={handleInput}\n              onKeyDown={handleKeyDown}\n              placeholder={placeholder}\n              className=\"flex-1 bg-transparent text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none\"\n            />\n\n            {searchVal && (\n              <button\n                type=\"button\"\n                onClick={() => {\n                  setUncontrolledValue(\"\");\n                  onChange?.(\"\");\n                }}\n                className=\"p-1 text-[var(--text-muted)] hover:text-[var(--text-primary)] cursor-pointer\"\n              >\n                <X className=\"h-4 w-4\" />\n              </button>\n            )}\n          </div>\n\n          {/* Suggestions & Recent queries */}\n          <div className=\"pt-2 space-y-1\">\n            <div className=\"px-2 py-1 text-[10px] font-mono text-[var(--text-muted)] uppercase tracking-wider\">\n              Recent Queries\n            </div>\n            {suggestions.map((item) => (\n              <button\n                key={item}\n                type=\"button\"\n                onClick={() => {\n                  setUncontrolledValue(item);\n                  onChange?.(item);\n                  onSearch?.(item);\n                  setIsExpanded(false);\n                }}\n                className=\"flex items-center justify-between w-full px-2.5 py-2 rounded-lg text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] transition-colors text-left cursor-pointer\"\n              >\n                <div className=\"flex items-center gap-2.5\">\n                  <Clock className=\"h-3.5 w-3.5 text-[var(--text-muted)] shrink-0\" />\n                  <span>{item}</span>\n                </div>\n                <ArrowUpRight className=\"h-3.5 w-3.5 text-[var(--text-muted)]\" />\n              </button>\n            ))}\n          </div>\n        </div>\n      )}\n    </div>\n  );\n}\n"
+    }
+  ]
+},
+  "m3-navigation-bar": {
+  "name": "m3-navigation-bar",
+  "category": "Mobile App",
+  "title": "M3 Navigation Bar",
+  "description": "Bottom navigation bar with active pill indicators, destination labels, notification badges, and minimal dock.",
+  "variants": [
+    "standard-m3",
+    "minimal-dock"
+  ],
+  "dependencies": [
+    "clsx",
+    "tailwind-merge",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "usage": "import { M3NavigationBar } from \"@/components/ui/m3-navigation-bar\";\nimport { Home, Compass, Bell } from \"lucide-react\";\n\nexport function NavDemo() {\n  const [tab, setTab] = React.useState(\"home\");\n  return (\n    <M3NavigationBar\n      value={tab}\n      onChange={setTab}\n      destinations={[\n        { id: \"home\", label: \"Home\", icon: <Home className=\"h-5 w-5\" /> },\n        { id: \"explore\", label: \"Explore\", icon: <Compass className=\"h-5 w-5\" /> },\n        { id: \"alerts\", label: \"Alerts\", icon: <Bell className=\"h-5 w-5\" />, badge: 3 }\n      ]}\n    />\n  );\n}",
+  "props": [
+    {
+      "name": "destinations",
+      "type": "M3NavigationDestination[]",
+      "required": true,
+      "description": "Destinations list"
+    },
+    {
+      "name": "value",
+      "type": "string",
+      "required": true,
+      "description": "Selected destination id"
+    },
+    {
+      "name": "onChange",
+      "type": "(id: string) => void",
+      "required": true,
+      "description": "Route change callback"
+    }
+  ],
+  "files": [
+    {
+      "name": "m3-navigation-bar.tsx",
+      "type": "components:ui",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { cn } from \"@/lib/utils\";\n\nexport interface M3NavigationDestination {\n  id: string;\n  label: string;\n  icon: React.ReactNode;\n  activeIcon?: React.ReactNode;\n  badge?: string | number;\n}\n\nexport interface M3NavigationBarProps {\n  destinations: M3NavigationDestination[];\n  value: string;\n  onChange: (id: string) => void;\n  design?: \"m3\" | \"minimal\";\n  className?: string;\n}\n\nexport function M3NavigationBar({\n  destinations,\n  value,\n  onChange,\n  design = \"m3\",\n  className,\n}: M3NavigationBarProps) {\n  const isMinimal = design === \"minimal\";\n\n  return (\n    <nav\n      role=\"navigation\"\n      aria-label=\"Bottom Navigation\"\n      className={cn(\n        \"w-full flex items-center justify-around select-none border-t border-[var(--border)] transition-colors\",\n        isMinimal\n          ? \"h-14 px-2 bg-[var(--surface-elevated)]/90 backdrop-blur-md\"\n          : \"h-20 px-4 bg-[var(--surface-secondary)]/80 backdrop-blur-xl\",\n        className\n      )}\n    >\n      {destinations.map((dest) => {\n        const isActive = value === dest.id;\n\n        return (\n          <button\n            key={dest.id}\n            type=\"button\"\n            role=\"tab\"\n            aria-selected={isActive}\n            onClick={() => onChange(dest.id)}\n            className={cn(\n              \"relative flex flex-col items-center justify-center flex-1 h-full py-1 transition-all duration-200 cursor-pointer active:scale-95 group focus-visible:outline-none\"\n            )}\n          >\n            {/* Active Pill Indicator for Icon */}\n            <div\n              className={cn(\n                \"relative flex items-center justify-center transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]\",\n                isMinimal\n                  ? cn(\n                      \"h-8 px-3 rounded-lg\",\n                      isActive\n                        ? \"bg-[var(--surface-tertiary)] text-[var(--accent-green)] font-semibold\"\n                        : \"text-[var(--text-muted)] group-hover:text-[var(--text-primary)]\"\n                    )\n                  : cn(\n                      \"h-8 w-16 rounded-full\",\n                      isActive\n                        ? \"bg-[var(--accent-green-deep)] text-[var(--accent-green)] scale-100 shadow-xs\"\n                        : \"bg-transparent text-[var(--text-secondary)] group-hover:bg-[var(--surface-tertiary)]/50\"\n                    )\n              )}\n            >\n              <span className=\"shrink-0\">\n                {isActive && dest.activeIcon ? dest.activeIcon : dest.icon}\n              </span>\n\n              {/* Badge */}\n              {dest.badge !== undefined && (\n                <span\n                  className={cn(\n                    \"absolute -top-1 -right-1 flex items-center justify-center rounded-full font-mono font-bold text-[9px] text-[var(--bg-main)]\",\n                    typeof dest.badge === \"number\" || typeof dest.badge === \"string\"\n                      ? \"h-4 min-w-4 px-1 bg-[var(--accent-red)]\"\n                      : \"h-2 w-2 bg-[var(--accent-red)]\"\n                  )}\n                >\n                  {dest.badge !== true ? dest.badge : null}\n                </span>\n              )}\n            </div>\n\n            {/* Destination Label */}\n            <span\n              className={cn(\n                \"text-[11px] font-sans transition-all duration-200 mt-1 truncate max-w-[72px]\",\n                isActive\n                  ? \"font-bold text-[var(--text-primary)]\"\n                  : \"font-medium text-[var(--text-muted)] group-hover:text-[var(--text-secondary)]\"\n              )}\n            >\n              {dest.label}\n            </span>\n          </button>\n        );\n      })}\n    </nav>\n  );\n}\n"
+    }
+  ]
+},
+  "m3-top-app-bar": {
+  "name": "m3-top-app-bar",
+  "category": "Mobile App",
+  "title": "M3 Top App Bar",
+  "description": "Center-aligned, small, medium, and large top app bars with scroll elevation, title scaling, and actions.",
+  "variants": [
+    "center-aligned",
+    "small",
+    "medium",
+    "large",
+    "minimal"
+  ],
+  "dependencies": [
+    "clsx",
+    "tailwind-merge",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "usage": "import { M3TopAppBar } from \"@/components/ui/m3-top-app-bar\";\n\nexport function AppBarDemo() {\n  return <M3TopAppBar variant=\"center-aligned\" title=\"Essential Archive\" subtitle=\"Kilo Studio\" />;\n}",
+  "props": [
+    {
+      "name": "variant",
+      "type": "\"center-aligned\" | \"small\" | \"medium\" | \"large\" | \"minimal\"",
+      "defaultValue": "\"center-aligned\"",
+      "description": "Bar layout style"
+    },
+    {
+      "name": "title",
+      "type": "string",
+      "required": true,
+      "description": "Header title"
+    },
+    {
+      "name": "subtitle",
+      "type": "string",
+      "description": "Header subtitle"
+    },
+    {
+      "name": "navigationIcon",
+      "type": "React.ReactNode",
+      "description": "Leading icon (e.g. back or menu)"
+    }
+  ],
+  "files": [
+    {
+      "name": "m3-top-app-bar.tsx",
+      "type": "components:ui",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { ArrowLeft, Menu, MoreVertical } from \"lucide-react\";\nimport { cn } from \"@/lib/utils\";\n\nexport type M3TopAppBarVariant = \"center-aligned\" | \"small\" | \"medium\" | \"large\" | \"minimal\";\n\nexport interface M3TopAppBarProps {\n  variant?: M3TopAppBarVariant;\n  title: string;\n  subtitle?: string;\n  navigationIcon?: React.ReactNode;\n  onNavigationClick?: () => void;\n  actions?: React.ReactNode;\n  scrollElevated?: boolean;\n  className?: string;\n}\n\nexport function M3TopAppBar({\n  variant = \"center-aligned\",\n  title,\n  subtitle,\n  navigationIcon,\n  onNavigationClick,\n  actions,\n  scrollElevated = false,\n  className,\n}: M3TopAppBarProps) {\n  const isMinimal = variant === \"minimal\";\n\n  return (\n    <header\n      className={cn(\n        \"w-full transition-all duration-200 select-none border-b border-transparent\",\n        scrollElevated && \"bg-[var(--surface-elevated)] border-[var(--border)] shadow-xs\",\n        variant === \"center-aligned\" && \"h-16 px-4 flex items-center justify-between\",\n        variant === \"small\" && \"h-16 px-4 flex items-center justify-between\",\n        variant === \"medium\" && \"px-4 pt-3 pb-4 flex flex-col justify-between min-h-[96px]\",\n        variant === \"large\" && \"px-4 pt-4 pb-6 flex flex-col justify-between min-h-[128px]\",\n        variant === \"minimal\" && \"h-12 px-3 flex items-center justify-between border-[var(--border)] bg-[var(--surface-elevated)]\",\n        className\n      )}\n    >\n      {/* Top Icon Row */}\n      <div className={cn(\"flex items-center justify-between w-full\", (variant === \"medium\" || variant === \"large\") && \"pb-2\")}>\n        <div className=\"flex items-center gap-3\">\n          {navigationIcon ? (\n            <button\n              type=\"button\"\n              onClick={onNavigationClick}\n              className=\"p-2 -ml-2 rounded-full text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] transition-colors cursor-pointer\"\n            >\n              {navigationIcon}\n            </button>\n          ) : (\n            <button\n              type=\"button\"\n              onClick={onNavigationClick}\n              className=\"p-2 -ml-2 rounded-full text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] transition-colors cursor-pointer\"\n            >\n              <Menu className=\"h-5 w-5\" />\n            </button>\n          )}\n\n          {variant === \"small\" && (\n            <h1 className=\"text-lg font-bold font-sans text-[var(--text-primary)] truncate\">\n              {title}\n            </h1>\n          )}\n\n          {variant === \"minimal\" && (\n            <div className=\"flex items-center gap-2\">\n              <span className=\"text-xs font-bold font-mono text-[var(--accent-green)]\">{title}</span>\n              {subtitle && <span className=\"text-[10px] text-[var(--text-muted)] font-mono\">• {subtitle}</span>}\n            </div>\n          )}\n        </div>\n\n        {variant === \"center-aligned\" && (\n          <div className=\"text-center truncate px-2\">\n            <h1 className=\"text-base font-bold font-sans text-[var(--text-primary)] truncate\">\n              {title}\n            </h1>\n            {subtitle && (\n              <p className=\"text-[11px] text-[var(--text-secondary)] truncate\">\n                {subtitle}\n              </p>\n            )}\n          </div>\n        )}\n\n        {/* Trailing Actions */}\n        <div className=\"flex items-center gap-1\">\n          {actions ? (\n            actions\n          ) : (\n            <button\n              type=\"button\"\n              className=\"p-2 rounded-full text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] transition-colors cursor-pointer\"\n            >\n              <MoreVertical className=\"h-4 w-4\" />\n            </button>\n          )}\n        </div>\n      </div>\n\n      {/* Expanded Title for Medium & Large M3 variants */}\n      {(variant === \"medium\" || variant === \"large\") && (\n        <div className=\"pt-2\">\n          <h1\n            className={cn(\n              \"font-bold font-sans text-[var(--text-primary)] tracking-tight\",\n              variant === \"medium\" ? \"text-xl sm:text-2xl\" : \"text-2xl sm:text-3xl\"\n            )}\n          >\n            {title}\n          </h1>\n          {subtitle && (\n            <p className=\"text-xs text-[var(--text-secondary)] mt-0.5\">\n              {subtitle}\n            </p>\n          )}\n        </div>\n      )}\n    </header>\n  );\n}\n"
+    }
+  ]
+},
+  "m3-navigation-drawer": {
+  "name": "m3-navigation-drawer",
+  "category": "Mobile App",
+  "title": "M3 Navigation Drawer",
+  "description": "Modal navigation drawer with scrim overlay, rounded-e-3xl container, active pill items, and header.",
+  "variants": [
+    "modal-drawer",
+    "minimal"
+  ],
+  "dependencies": [
+    "clsx",
+    "tailwind-merge",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "usage": "import { M3NavigationDrawer } from \"@/components/ui/m3-navigation-drawer\";\nimport { Home, Compass } from \"lucide-react\";\n\nexport function DrawerDemo() {\n  const [open, setOpen] = React.useState(true);\n  const [val, setVal] = React.useState(\"home\");\n  return (\n    <M3NavigationDrawer\n      open={open}\n      onOpenChange={setOpen}\n      value={val}\n      onChange={setVal}\n      destinations={[{ id: \"home\", label: \"Home\", icon: <Home className=\"h-5 w-5\" /> }]}\n    />\n  );\n}",
+  "props": [
+    {
+      "name": "open",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether drawer is open"
+    },
+    {
+      "name": "onOpenChange",
+      "type": "(open: boolean) => void",
+      "required": true,
+      "description": "Open state callback"
+    },
+    {
+      "name": "destinations",
+      "type": "M3DrawerDestination[]",
+      "required": true,
+      "description": "Destination items"
+    },
+    {
+      "name": "value",
+      "type": "string",
+      "required": true,
+      "description": "Selected destination id"
+    }
+  ],
+  "files": [
+    {
+      "name": "m3-navigation-drawer.tsx",
+      "type": "components:ui",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { X } from \"lucide-react\";\nimport { cn } from \"@/lib/utils\";\n\nexport interface M3DrawerDestination {\n  id: string;\n  label: string;\n  icon: React.ReactNode;\n  badge?: string | number;\n  section?: string;\n}\n\nexport interface M3NavigationDrawerProps {\n  open: boolean;\n  onOpenChange: (open: boolean) => void;\n  destinations: M3DrawerDestination[];\n  value: string;\n  onChange: (id: string) => void;\n  title?: string;\n  subtitle?: string;\n  design?: \"m3\" | \"minimal\";\n  inline?: boolean;\n  className?: string;\n}\n\nexport function M3NavigationDrawer({\n  open,\n  onOpenChange,\n  destinations,\n  value,\n  onChange,\n  title = \"Navigation\",\n  subtitle = \"Kilo Studio\",\n  design = \"m3\",\n  inline = false,\n  className,\n}: M3NavigationDrawerProps) {\n  const isMinimal = design === \"minimal\";\n\n  if (!open) return null;\n\n  return (\n    <div\n      className={cn(\n        inline ? \"absolute inset-0 z-40\" : \"fixed inset-0 z-50\",\n        \"flex select-none\"\n      )}\n    >\n      {/* Scrim Overlay */}\n      <div\n        onClick={() => onOpenChange(false)}\n        className=\"absolute inset-0 bg-black/60 backdrop-blur-[2px] transition-opacity duration-300\"\n      />\n\n      {/* Drawer Container */}\n      <div\n        className={cn(\n          \"relative z-10 w-[82%] max-w-[320px] h-full flex flex-col p-4 shadow-2xl transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-y-auto\",\n          isMinimal\n            ? \"bg-[var(--surface-elevated)] border-r border-[var(--border)] rounded-r-2xl\"\n            : \"bg-[var(--surface-secondary)] border-r border-[var(--border)] rounded-r-3xl\",\n          className\n        )}\n      >\n        {/* Drawer Header */}\n        <div className=\"flex items-center justify-between pb-4 mb-2 border-b border-[var(--border)]/60\">\n          <div>\n            <span className=\"text-[10px] font-mono text-[var(--accent-green)] font-semibold uppercase tracking-wider block\">\n              {subtitle}\n            </span>\n            <h3 className=\"text-base font-bold font-sans text-[var(--text-primary)]\">\n              {title}\n            </h3>\n          </div>\n          <button\n            type=\"button\"\n            onClick={() => onOpenChange(false)}\n            className=\"p-1.5 rounded-full text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-tertiary)] transition-colors cursor-pointer\"\n          >\n            <X className=\"h-4 w-4\" />\n          </button>\n        </div>\n\n        {/* Destination Items */}\n        <div className=\"flex-1 space-y-1\">\n          {destinations.map((dest) => {\n            const isActive = value === dest.id;\n\n            return (\n              <button\n                key={dest.id}\n                type=\"button\"\n                onClick={() => {\n                  onChange(dest.id);\n                  onOpenChange(false);\n                }}\n                className={cn(\n                  \"flex items-center justify-between w-full px-4 py-3 transition-all duration-150 cursor-pointer text-left font-sans text-sm\",\n                  isMinimal\n                    ? cn(\n                        \"rounded-xl\",\n                        isActive\n                          ? \"bg-[var(--surface-tertiary)] text-[var(--accent-green)] font-bold border border-[var(--border)]\"\n                          : \"text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)]\"\n                      )\n                    : cn(\n                        \"rounded-full\",\n                        isActive\n                          ? \"bg-[var(--accent-green-deep)] text-[var(--accent-green)] font-bold shadow-2xs\"\n                          : \"text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-tertiary)]/60\"\n                      )\n                )}\n              >\n                <div className=\"flex items-center gap-3\">\n                  <span className=\"shrink-0\">{dest.icon}</span>\n                  <span className=\"truncate\">{dest.label}</span>\n                </div>\n\n                {dest.badge !== undefined && (\n                  <span\n                    className={cn(\n                      \"px-2 py-0.5 rounded-full text-xs font-mono font-bold\",\n                      isActive\n                        ? \"bg-[var(--accent-green)] text-[var(--bg-main)]\"\n                        : \"bg-[var(--surface-tertiary)] text-[var(--text-muted)]\"\n                    )}\n                  >\n                    {dest.badge}\n                  </span>\n                )}\n              </button>\n            );\n          })}\n        </div>\n\n        {/* Footer info */}\n        <div className=\"pt-4 border-t border-[var(--border)]/60 text-[10px] font-mono text-[var(--text-muted)]\">\n          Material 3 Navigation • v0.3.0\n        </div>\n      </div>\n    </div>\n  );\n}\n"
+    }
+  ]
+},
+  "m3-tabs": {
+  "name": "m3-tabs",
+  "category": "Mobile App",
+  "title": "M3 Tabs",
+  "description": "Primary tabs with active underline indicator, secondary tabs, and minimal SaaS sliding pills.",
+  "variants": [
+    "primary",
+    "secondary",
+    "minimal"
+  ],
+  "dependencies": [
+    "clsx",
+    "tailwind-merge",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "usage": "import { M3Tabs } from \"@/components/ui/m3-tabs\";\n\nexport function TabsDemo() {\n  const [tab, setTab] = React.useState(\"overview\");\n  return (\n    <M3Tabs\n      value={tab}\n      onChange={setTab}\n      tabs={[{ id: \"overview\", label: \"Overview\" }, { id: \"specs\", label: \"Specs\" }, { id: \"reviews\", label: \"Reviews\" }]}\n    />\n  );\n}",
+  "props": [
+    {
+      "name": "tabs",
+      "type": "M3TabItem[]",
+      "required": true,
+      "description": "Tab items array"
+    },
+    {
+      "name": "value",
+      "type": "string",
+      "required": true,
+      "description": "Active tab id"
+    },
+    {
+      "name": "onChange",
+      "type": "(id: string) => void",
+      "required": true,
+      "description": "Tab selection callback"
+    },
+    {
+      "name": "type",
+      "type": "\"primary\" | \"secondary\" | \"minimal\"",
+      "defaultValue": "\"primary\"",
+      "description": "Indicator style"
+    }
+  ],
+  "files": [
+    {
+      "name": "m3-tabs.tsx",
+      "type": "components:ui",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { cn } from \"@/lib/utils\";\n\nexport interface M3TabItem {\n  id: string;\n  label: string;\n  icon?: React.ReactNode;\n  badge?: string | number;\n}\n\nexport interface M3TabsProps {\n  tabs: M3TabItem[];\n  value: string;\n  onChange: (id: string) => void;\n  type?: \"primary\" | \"secondary\" | \"minimal\";\n  fullWidth?: boolean;\n  className?: string;\n}\n\nexport function M3Tabs({\n  tabs,\n  value,\n  onChange,\n  type = \"primary\",\n  fullWidth = true,\n  className,\n}: M3TabsProps) {\n  const isMinimal = type === \"minimal\";\n  const isSecondary = type === \"secondary\";\n\n  return (\n    <div\n      role=\"tablist\"\n      className={cn(\n        \"relative flex items-center select-none border-b border-[var(--border)] transition-colors\",\n        isMinimal && \"p-1 rounded-xl bg-[var(--surface-secondary)]/50 border\",\n        className\n      )}\n    >\n      {tabs.map((tab) => {\n        const isActive = value === tab.id;\n\n        return (\n          <button\n            key={tab.id}\n            type=\"button\"\n            role=\"tab\"\n            aria-selected={isActive}\n            onClick={() => onChange(tab.id)}\n            className={cn(\n              \"relative flex items-center justify-center font-sans transition-all duration-200 cursor-pointer focus-visible:outline-none\",\n              fullWidth ? \"flex-1\" : \"px-5\",\n              isMinimal\n                ? cn(\n                    \"h-8 rounded-lg text-xs font-semibold gap-1.5\",\n                    isActive\n                      ? \"bg-[var(--surface-elevated)] text-[var(--accent-green)] shadow-2xs border border-[var(--border)]\"\n                      : \"text-[var(--text-muted)] hover:text-[var(--text-primary)]\"\n                  )\n                : isSecondary\n                ? cn(\n                    \"h-10 text-xs font-semibold gap-2 rounded-lg m-1\",\n                    isActive\n                      ? \"bg-[var(--accent-green-deep)] text-[var(--accent-green)] font-bold\"\n                      : \"text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)]/50\"\n                  )\n                : cn(\n                    \"h-12 text-sm font-semibold gap-2\",\n                    isActive\n                      ? \"text-[var(--accent-green)] font-bold\"\n                      : \"text-[var(--text-secondary)] hover:text-[var(--text-primary)]\"\n                  )\n            )}\n          >\n            {tab.icon && <span className=\"shrink-0\">{tab.icon}</span>}\n            <span className=\"truncate\">{tab.label}</span>\n\n            {tab.badge !== undefined && (\n              <span className=\"px-1.5 py-0.2 rounded-full text-[10px] font-mono font-bold bg-[var(--surface-tertiary)] text-[var(--text-muted)]\">\n                {tab.badge}\n              </span>\n            )}\n\n            {/* M3 Primary Underline Indicator */}\n            {type === \"primary\" && isActive && (\n              <span className=\"absolute bottom-0 left-0 right-0 h-0.5 bg-[var(--accent-green)] rounded-t-full transition-all duration-200 shadow-[0_0_8px_var(--accent-green-subtle)]\" />\n            )}\n          </button>\n        );\n      })}\n    </div>\n  );\n}\n"
+    }
+  ]
+},
+  "m3-card": {
+  "name": "m3-card",
+  "category": "Mobile App",
+  "title": "M3 Card",
+  "description": "Elevated, filled, outlined, and minimal cards with media hero slot, headlines, body, and action buttons.",
+  "variants": [
+    "outlined",
+    "elevated",
+    "filled",
+    "minimal"
+  ],
+  "dependencies": [
+    "clsx",
+    "tailwind-merge",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "usage": "import { M3Card } from \"@/components/ui/m3-card\";\nimport { M3Button } from \"@/components/ui/m3-button\";\n\nexport function CardDemo() {\n  return (\n    <M3Card headline=\"Technical Shell 3L\" subhead=\"Oversized fit\" actions={<M3Button size=\"sm\">Quick Buy</M3Button>}>\n      <p>Triple dye waterproof ripstop monochrome</p>\n    </M3Card>\n  );\n}",
+  "props": [
+    {
+      "name": "variant",
+      "type": "\"elevated\" | \"filled\" | \"outlined\" | \"minimal\"",
+      "defaultValue": "\"outlined\"",
+      "description": "Card elevation style"
+    },
+    {
+      "name": "headline",
+      "type": "string",
+      "description": "Card headline title"
+    },
+    {
+      "name": "subhead",
+      "type": "string",
+      "description": "Card subhead text"
+    },
+    {
+      "name": "media",
+      "type": "React.ReactNode",
+      "description": "Media banner slot"
+    },
+    {
+      "name": "actions",
+      "type": "React.ReactNode",
+      "description": "Action buttons footer slot"
+    }
+  ],
+  "files": [
+    {
+      "name": "m3-card.tsx",
+      "type": "components:ui",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { cn } from \"@/lib/utils\";\n\nexport type M3CardVariant = \"elevated\" | \"filled\" | \"outlined\" | \"minimal\";\n\nexport interface M3CardProps extends React.HTMLAttributes<HTMLDivElement> {\n  variant?: M3CardVariant;\n  media?: React.ReactNode;\n  headline?: string;\n  subhead?: string;\n  avatar?: React.ReactNode;\n  actions?: React.ReactNode;\n}\n\nexport function M3Card({\n  variant = \"outlined\",\n  media,\n  headline,\n  subhead,\n  avatar,\n  actions,\n  children,\n  className,\n  ...props\n}: M3CardProps) {\n  const isMinimal = variant === \"minimal\";\n\n  const variantStyles: Record<M3CardVariant, string> = {\n    elevated:\n      \"bg-[var(--surface-elevated)] border border-[var(--border)] shadow-md hover:shadow-lg rounded-3xl\",\n    filled:\n      \"bg-[var(--surface-secondary)] border border-transparent shadow-xs hover:bg-[var(--surface-tertiary)] rounded-3xl\",\n    outlined:\n      \"bg-[var(--surface-elevated)]/60 border border-[var(--border)] hover:border-[var(--border-hover)] rounded-3xl shadow-2xs\",\n    minimal:\n      \"bg-[var(--surface-elevated)] border border-[var(--border)] rounded-2xl shadow-2xs hover:border-[var(--border-hover)]\",\n  };\n\n  return (\n    <div\n      className={cn(\n        \"overflow-hidden transition-all duration-200 select-none flex flex-col font-sans\",\n        variantStyles[variant],\n        className\n      )}\n      {...props}\n    >\n      {/* Optional Media Hero */}\n      {media && <div className=\"w-full overflow-hidden shrink-0\">{media}</div>}\n\n      <div className={cn(\"flex flex-col flex-1\", isMinimal ? \"p-4 space-y-2.5\" : \"p-5 space-y-3\")}>\n        {/* Header with Avatar & Headlines */}\n        {(headline || subhead || avatar) && (\n          <div className=\"flex items-start gap-3\">\n            {avatar && <div className=\"shrink-0 pt-0.5\">{avatar}</div>}\n            <div className=\"min-w-0 flex-1\">\n              {headline && (\n                <h3 className={cn(\"font-bold text-[var(--text-primary)] leading-tight truncate\", isMinimal ? \"text-sm\" : \"text-base\")}>\n                  {headline}\n                </h3>\n              )}\n              {subhead && (\n                <p className=\"text-xs text-[var(--text-secondary)] mt-0.5 truncate\">\n                  {subhead}\n                </p>\n              )}\n            </div>\n          </div>\n        )}\n\n        {/* Card Body */}\n        {children && (\n          <div className=\"text-xs text-[var(--text-secondary)] leading-relaxed flex-1\">\n            {children}\n          </div>\n        )}\n\n        {/* Actions Row */}\n        {actions && (\n          <div className=\"pt-2 flex items-center justify-end gap-2 border-t border-[var(--border)]/40 mt-auto\">\n            {actions}\n          </div>\n        )}\n      </div>\n    </div>\n  );\n}\n"
+    }
+  ]
+},
+  "m3-dialog": {
+  "name": "m3-dialog",
+  "category": "Mobile App",
+  "title": "M3 Dialog",
+  "description": "Material Design 3 alert and confirmation dialog with 28px corners, icon header, and action buttons.",
+  "variants": [
+    "alert-dialog",
+    "confirmation",
+    "minimal"
+  ],
+  "dependencies": [
+    "clsx",
+    "tailwind-merge",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "usage": "import { M3Dialog } from \"@/components/ui/m3-dialog\";\n\nexport function DialogDemo() {\n  const [open, setOpen] = React.useState(true);\n  return <M3Dialog open={open} onOpenChange={setOpen} headline=\"Confirm Dispatch\" supportingText=\"Telemetry packets will stream in real time.\" />;\n}",
+  "props": [
+    {
+      "name": "open",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether dialog is open"
+    },
+    {
+      "name": "onOpenChange",
+      "type": "(open: boolean) => void",
+      "required": true,
+      "description": "Open change callback"
+    },
+    {
+      "name": "headline",
+      "type": "string",
+      "required": true,
+      "description": "Dialog title"
+    },
+    {
+      "name": "supportingText",
+      "type": "string",
+      "description": "Dialog body text"
+    },
+    {
+      "name": "confirmText",
+      "type": "string",
+      "defaultValue": "\"Confirm\"",
+      "description": "Confirm button text"
+    }
+  ],
+  "files": [
+    {
+      "name": "m3-dialog.tsx",
+      "type": "components:ui",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { cn } from \"@/lib/utils\";\n\nexport interface M3DialogProps {\n  open: boolean;\n  onOpenChange: (open: boolean) => void;\n  icon?: React.ReactNode;\n  headline: string;\n  supportingText?: string;\n  confirmText?: string;\n  dismissText?: string;\n  onConfirm?: () => void;\n  onDismiss?: () => void;\n  destructive?: boolean;\n  design?: \"m3\" | \"minimal\";\n  inline?: boolean;\n  children?: React.ReactNode;\n  className?: string;\n}\n\nexport function M3Dialog({\n  open,\n  onOpenChange,\n  icon,\n  headline,\n  supportingText,\n  confirmText = \"Confirm\",\n  dismissText = \"Cancel\",\n  onConfirm,\n  onDismiss,\n  destructive = false,\n  design = \"m3\",\n  inline = false,\n  children,\n  className,\n}: M3DialogProps) {\n  if (!open) return null;\n\n  const isMinimal = design === \"minimal\";\n\n  return (\n    <div\n      role=\"dialog\"\n      aria-modal=\"true\"\n      className={cn(\n        inline ? \"absolute inset-0 z-50\" : \"fixed inset-0 z-50\",\n        \"flex items-center justify-center p-4 select-none\"\n      )}\n    >\n      {/* Scrim Overlay */}\n      <div\n        onClick={() => onOpenChange(false)}\n        className=\"absolute inset-0 bg-black/60 backdrop-blur-[2px] transition-opacity\"\n      />\n\n      {/* Dialog Container */}\n      <div\n        className={cn(\n          \"relative z-10 w-full max-w-sm flex flex-col p-6 shadow-2xl transition-all duration-200 border border-[var(--border)] font-sans animate-in fade-in zoom-in-95 duration-150\",\n          isMinimal\n            ? \"rounded-2xl bg-[var(--surface-elevated)] space-y-4\"\n            : \"rounded-4xl bg-[var(--surface-secondary)] space-y-5\",\n          className\n        )}\n      >\n        {/* Header Icon */}\n        {icon && (\n          <div className=\"flex items-center justify-center text-[var(--accent-green)]\">\n            <div className=\"p-3 rounded-full bg-[var(--surface-tertiary)]\">\n              {icon}\n            </div>\n          </div>\n        )}\n\n        {/* Headline & Body Text */}\n        <div className={cn(\"space-y-2\", icon ? \"text-center\" : \"text-left\")}>\n          <h2 className=\"text-xl font-bold text-[var(--text-primary)] tracking-tight\">\n            {headline}\n          </h2>\n          {supportingText && (\n            <p className=\"text-xs text-[var(--text-secondary)] leading-relaxed\">\n              {supportingText}\n            </p>\n          )}\n          {children}\n        </div>\n\n        {/* Action Buttons Row */}\n        <div className=\"flex items-center justify-end gap-2 pt-2\">\n          {dismissText && (\n            <button\n              type=\"button\"\n              onClick={() => {\n                onDismiss?.();\n                onOpenChange(false);\n              }}\n              className=\"px-4 py-2 rounded-full text-xs font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-tertiary)] transition-colors cursor-pointer\"\n            >\n              {dismissText}\n            </button>\n          )}\n\n          {confirmText && (\n            <button\n              type=\"button\"\n              onClick={() => {\n                onConfirm?.();\n                onOpenChange(false);\n              }}\n              className={cn(\n                \"px-5 py-2 rounded-full text-xs font-bold transition-all cursor-pointer shadow-xs active:scale-95\",\n                destructive\n                  ? \"bg-[var(--accent-red)] text-white hover:brightness-110\"\n                  : \"bg-[var(--accent-green)] text-[var(--bg-main)] hover:brightness-110\"\n              )}\n            >\n              {confirmText}\n            </button>\n          )}\n        </div>\n      </div>\n    </div>\n  );\n}\n"
+    }
+  ]
+},
+  "m3-snackbar": {
+  "name": "m3-snackbar",
+  "category": "Mobile App",
+  "title": "M3 Snackbar",
+  "description": "Floating mobile bottom notification banner with action button and dismiss control.",
+  "variants": [
+    "single-line",
+    "with-action",
+    "minimal"
+  ],
+  "dependencies": [
+    "clsx",
+    "tailwind-merge",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "usage": "import { M3Snackbar } from \"@/components/ui/m3-snackbar\";\n\nexport function SnackbarDemo() {\n  return <M3Snackbar message=\"Item archived to telemetry vault\" actionLabel=\"Undo\" onAction={() => {}} />;\n}",
+  "props": [
+    {
+      "name": "message",
+      "type": "string",
+      "required": true,
+      "description": "Snackbar text message"
+    },
+    {
+      "name": "actionLabel",
+      "type": "string",
+      "description": "Action button label"
+    },
+    {
+      "name": "onAction",
+      "type": "() => void",
+      "description": "Action button callback"
+    },
+    {
+      "name": "onClose",
+      "type": "() => void",
+      "description": "Dismiss callback"
+    }
+  ],
+  "files": [
+    {
+      "name": "m3-snackbar.tsx",
+      "type": "components:ui",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { X } from \"lucide-react\";\nimport { cn } from \"@/lib/utils\";\n\nexport interface M3SnackbarProps {\n  message: string;\n  actionLabel?: string;\n  onAction?: () => void;\n  onClose?: () => void;\n  design?: \"m3\" | \"minimal\";\n  className?: string;\n}\n\nexport function M3Snackbar({\n  message,\n  actionLabel = \"Action\",\n  onAction,\n  onClose,\n  design = \"m3\",\n  className,\n}: M3SnackbarProps) {\n  const isMinimal = design === \"minimal\";\n\n  return (\n    <div\n      role=\"status\"\n      className={cn(\n        \"flex items-center justify-between gap-3 p-3 select-none transition-all duration-200 shadow-xl font-sans\",\n        isMinimal\n          ? \"rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] text-[var(--text-primary)]\"\n          : \"rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-tertiary)] text-[var(--text-primary)] shadow-2xl\",\n        className\n      )}\n    >\n      <span className=\"text-xs font-medium truncate flex-1 pl-1\">\n        {message}\n      </span>\n\n      <div className=\"flex items-center gap-2 shrink-0\">\n        {actionLabel && (\n          <button\n            type=\"button\"\n            onClick={onAction}\n            className=\"px-2.5 py-1 rounded text-xs font-bold font-mono text-[var(--accent-green)] hover:bg-[var(--accent-green-subtle)] transition-colors cursor-pointer\"\n          >\n            {actionLabel}\n          </button>\n        )}\n\n        {onClose && (\n          <button\n            type=\"button\"\n            onClick={onClose}\n            className=\"p-1 rounded-full text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors cursor-pointer\"\n          >\n            <X className=\"h-3.5 w-3.5\" />\n          </button>\n        )}\n      </div>\n    </div>\n  );\n}\n"
+    }
+  ]
+},
+  "m3-progress-indicator": {
+  "name": "m3-progress-indicator",
+  "category": "Mobile App",
+  "title": "M3 Progress Indicator",
+  "description": "Determinate and indeterminate linear and circular progress indicators with buffer and percentage readout.",
+  "variants": [
+    "linear",
+    "circular",
+    "minimal"
+  ],
+  "dependencies": [
+    "clsx",
+    "tailwind-merge",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "usage": "import { M3ProgressIndicator } from \"@/components/ui/m3-progress-indicator\";\n\nexport function ProgressDemo() {\n  return <M3ProgressIndicator type=\"circular\" value={74} />;\n}",
+  "props": [
+    {
+      "name": "type",
+      "type": "\"linear\" | \"circular\"",
+      "defaultValue": "\"linear\"",
+      "description": "Indicator shape"
+    },
+    {
+      "name": "value",
+      "type": "number",
+      "description": "Determinate progress (0-100)"
+    },
+    {
+      "name": "bufferValue",
+      "type": "number",
+      "description": "Linear buffer value (0-100)"
+    },
+    {
+      "name": "size",
+      "type": "\"sm\" | \"default\" | \"lg\"",
+      "defaultValue": "\"default\"",
+      "description": "Circular dimension"
+    }
+  ],
+  "files": [
+    {
+      "name": "m3-progress-indicator.tsx",
+      "type": "components:ui",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { cn } from \"@/lib/utils\";\n\nexport interface M3ProgressIndicatorProps {\n  type?: \"linear\" | \"circular\";\n  value?: number; // 0 to 100 for determinate, undefined for indeterminate\n  bufferValue?: number; // 0 to 100 for linear buffer\n  size?: \"sm\" | \"default\" | \"lg\";\n  design?: \"m3\" | \"minimal\";\n  className?: string;\n}\n\nexport function M3ProgressIndicator({\n  type = \"linear\",\n  value,\n  bufferValue,\n  size = \"default\",\n  design = \"m3\",\n  className,\n}: M3ProgressIndicatorProps) {\n  const isDeterminate = value !== undefined;\n  const isMinimal = design === \"minimal\";\n\n  if (type === \"circular\") {\n    const sizePixels = { sm: 32, default: 44, lg: 60 }[size];\n    const strokeWidth = isMinimal ? 3 : 4;\n    const radius = (sizePixels - strokeWidth) / 2;\n    const circumference = 2 * Math.PI * radius;\n    const offset = isDeterminate\n      ? circumference - ((value || 0) / 100) * circumference\n      : 0;\n\n    return (\n      <div\n        role=\"progressbar\"\n        aria-valuenow={value}\n        aria-valuemin={0}\n        aria-valuemax={100}\n        className={cn(\"relative inline-flex items-center justify-center select-none\", className)}\n      >\n        <svg\n          width={sizePixels}\n          height={sizePixels}\n          className={cn(!isDeterminate && \"animate-spin\")}\n          style={{ animationDuration: \"1.4s\" }}\n        >\n          {/* Background track circle */}\n          <circle\n            cx={sizePixels / 2}\n            cy={sizePixels / 2}\n            r={radius}\n            fill=\"none\"\n            stroke=\"currentColor\"\n            strokeWidth={strokeWidth}\n            className=\"text-[var(--surface-secondary)]\"\n          />\n\n          {/* Active progress arc */}\n          <circle\n            cx={sizePixels / 2}\n            cy={sizePixels / 2}\n            r={radius}\n            fill=\"none\"\n            stroke=\"currentColor\"\n            strokeWidth={strokeWidth}\n            strokeDasharray={circumference}\n            strokeDashoffset={isDeterminate ? offset : circumference * 0.75}\n            strokeLinecap=\"round\"\n            className={cn(\n              \"text-[var(--accent-green)] transition-all duration-300\",\n              !isDeterminate && \"animate-pulse\"\n            )}\n            transform={`rotate(-90 ${sizePixels / 2} ${sizePixels / 2})`}\n          />\n        </svg>\n\n        {isDeterminate && size !== \"sm\" && (\n          <span className=\"absolute font-mono text-[10px] font-bold text-[var(--text-primary)]\">\n            {Math.round(value)}%\n          </span>\n        )}\n      </div>\n    );\n  }\n\n  // Linear Progress\n  return (\n    <div\n      role=\"progressbar\"\n      aria-valuenow={value}\n      aria-valuemin={0}\n      aria-valuemax={100}\n      className={cn(\n        \"relative w-full rounded-full overflow-hidden select-none\",\n        isMinimal ? \"h-1 bg-[var(--surface-secondary)]\" : \"h-1.5 bg-[var(--surface-secondary)]\",\n        className\n      )}\n    >\n      {/* Buffer bar if present */}\n      {bufferValue !== undefined && (\n        <div\n          className=\"absolute inset-y-0 left-0 bg-[var(--surface-tertiary)] transition-all duration-300\"\n          style={{ width: `${Math.min(100, Math.max(0, bufferValue))}%` }}\n        />\n      )}\n\n      {/* Active progress bar */}\n      <div\n        className={cn(\n          \"h-full bg-[var(--accent-green)] transition-all duration-300 rounded-full\",\n          !isDeterminate && \"animate-[indeterminate_1.5s_infinite_linear] w-1/3\"\n        )}\n        style={isDeterminate ? { width: `${Math.min(100, Math.max(0, value))}%` } : undefined}\n      />\n    </div>\n  );\n}\n"
+    }
+  ]
+},
+  "m3-badge": {
+  "name": "m3-badge",
+  "category": "Mobile App",
+  "title": "M3 Badge",
+  "description": "Small dot and large count badges anchored to icons, buttons, or navigation destinations.",
+  "variants": [
+    "dot",
+    "count",
+    "minimal"
+  ],
+  "dependencies": [
+    "clsx",
+    "tailwind-merge",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "usage": "import { M3Badge } from \"@/components/ui/m3-badge\";\nimport { Bell } from \"lucide-react\";\n\nexport function BadgeDemo() {\n  return <M3Badge content={5}><Bell className=\"h-6 w-6\" /></M3Badge>;\n}",
+  "props": [
+    {
+      "name": "content",
+      "type": "string | number",
+      "description": "Badge count"
+    },
+    {
+      "name": "max",
+      "type": "number",
+      "defaultValue": "99",
+      "description": "Maximum count before suffixing +"
+    },
+    {
+      "name": "dot",
+      "type": "boolean",
+      "defaultValue": "false",
+      "description": "Render small 6px dot badge"
+    },
+    {
+      "name": "color",
+      "type": "\"error\" | \"primary\" | \"secondary\" | \"minimal\"",
+      "defaultValue": "\"error\"",
+      "description": "Color container role"
+    }
+  ],
+  "files": [
+    {
+      "name": "m3-badge.tsx",
+      "type": "components:ui",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { cn } from \"@/lib/utils\";\n\nexport interface M3BadgeProps {\n  content?: string | number;\n  max?: number;\n  dot?: boolean;\n  color?: \"error\" | \"primary\" | \"secondary\" | \"minimal\";\n  children?: React.ReactNode;\n  className?: string;\n}\n\nexport function M3Badge({\n  content,\n  max = 99,\n  dot = false,\n  color = \"error\",\n  children,\n  className,\n}: M3BadgeProps) {\n  const displayContent =\n    typeof content === \"number\" && content > max ? `${max}+` : content;\n\n  const colorClasses = {\n    error: \"bg-[var(--accent-red)] text-white\",\n    primary: \"bg-[var(--accent-green)] text-[var(--bg-main)]\",\n    secondary: \"bg-[var(--accent-green-deep)] text-[var(--accent-green)] border border-[var(--accent-green)]/30\",\n    minimal: \"bg-[var(--surface-tertiary)] text-[var(--text-primary)] border border-[var(--border)]\",\n  }[color];\n\n  const badgeElement = (\n    <span\n      className={cn(\n        \"inline-flex items-center justify-center font-mono font-bold leading-none select-none rounded-full transition-transform duration-200\",\n        dot\n          ? \"h-2 w-2\"\n          : \"h-4 min-w-4 px-1 text-[10px]\",\n        colorClasses,\n        children && \"absolute -top-1 -right-1.5 shadow-xs\",\n        className\n      )}\n    >\n      {!dot && displayContent}\n    </span>\n  );\n\n  if (!children) {\n    return badgeElement;\n  }\n\n  return (\n    <div className=\"relative inline-flex shrink-0\">\n      {children}\n      {badgeElement}\n    </div>\n  );\n}\n"
+    }
+  ]
+},
+  "m3-list": {
+  "name": "m3-list",
+  "category": "Mobile App",
+  "title": "M3 List",
+  "description": "1-line, 2-line, and 3-line list items with leading avatars/icons, headlines, supporting text, and trailing metadata.",
+  "variants": [
+    "one-line",
+    "two-line",
+    "three-line",
+    "minimal"
+  ],
+  "dependencies": [
+    "clsx",
+    "tailwind-merge",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "usage": "import { M3List, M3ListItem } from \"@/components/ui/m3-list\";\nimport { ShoppingBag } from \"lucide-react\";\n\nexport function ListDemo() {\n  return (\n    <M3List header=\"Transactions\">\n      <M3ListItem headline=\"Kilo Studio\" supportingText=\"Payment completed\" trailingText=\"10:24 AM\" leading={<ShoppingBag className=\"h-5 w-5 text-emerald-500\" />} />\n    </M3List>\n  );\n}",
+  "props": [
+    {
+      "name": "headline",
+      "type": "string",
+      "required": true,
+      "description": "Primary text line"
+    },
+    {
+      "name": "supportingText",
+      "type": "string",
+      "description": "Secondary supporting text line"
+    },
+    {
+      "name": "overline",
+      "type": "string",
+      "description": "Top category overline tag"
+    },
+    {
+      "name": "leading",
+      "type": "React.ReactNode",
+      "description": "Leading avatar, icon, or checkbox"
+    },
+    {
+      "name": "trailingText",
+      "type": "string",
+      "description": "Trailing timestamp or meta"
+    }
+  ],
+  "files": [
+    {
+      "name": "m3-list.tsx",
+      "type": "components:ui",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { ChevronRight } from \"lucide-react\";\nimport { cn } from \"@/lib/utils\";\n\nexport interface M3ListItemProps {\n  headline: string;\n  supportingText?: string;\n  overline?: string;\n  leading?: React.ReactNode;\n  trailing?: React.ReactNode;\n  trailingText?: string;\n  showChevron?: boolean;\n  onClick?: () => void;\n  design?: \"m3\" | \"minimal\";\n  divider?: boolean;\n  className?: string;\n}\n\nexport function M3ListItem({\n  headline,\n  supportingText,\n  overline,\n  leading,\n  trailing,\n  trailingText,\n  showChevron = false,\n  onClick,\n  design = \"m3\",\n  divider = true,\n  className,\n}: M3ListItemProps) {\n  const isMinimal = design === \"minimal\";\n  const isClickable = Boolean(onClick);\n\n  return (\n    <div\n      onClick={onClick}\n      role={isClickable ? \"button\" : undefined}\n      tabIndex={isClickable ? 0 : undefined}\n      className={cn(\n        \"flex items-center justify-between w-full font-sans transition-colors duration-150 select-none\",\n        isClickable && \"cursor-pointer active:bg-[var(--surface-tertiary)]\",\n        isMinimal\n          ? \"px-3 py-2.5 hover:bg-[var(--surface-secondary)]/50 rounded-lg\"\n          : \"px-4 py-3 hover:bg-[var(--surface-secondary)]/70\",\n        divider && \"border-b border-[var(--border)]/50\",\n        className\n      )}\n    >\n      {/* Leading Slot */}\n      <div className=\"flex items-center gap-3.5 min-w-0 flex-1\">\n        {leading && <div className=\"shrink-0 text-[var(--text-primary)]\">{leading}</div>}\n\n        {/* Content Lines */}\n        <div className=\"min-w-0 flex-1\">\n          {overline && (\n            <span className=\"text-[10px] font-mono uppercase tracking-wider text-[var(--text-muted)] block truncate\">\n              {overline}\n            </span>\n          )}\n          <h4 className=\"text-sm font-semibold text-[var(--text-primary)] leading-snug truncate\">\n            {headline}\n          </h4>\n          {supportingText && (\n            <p className=\"text-xs text-[var(--text-secondary)] leading-normal truncate mt-0.5\">\n              {supportingText}\n            </p>\n          )}\n        </div>\n      </div>\n\n      {/* Trailing Slot */}\n      <div className=\"flex items-center gap-2 shrink-0 ml-3\">\n        {trailingText && (\n          <span className=\"text-[11px] font-mono text-[var(--text-muted)]\">\n            {trailingText}\n          </span>\n        )}\n        {trailing}\n        {showChevron && (\n          <ChevronRight className=\"h-4 w-4 text-[var(--text-muted)]\" />\n        )}\n      </div>\n    </div>\n  );\n}\n\nexport interface M3ListProps {\n  children: React.ReactNode;\n  header?: string;\n  design?: \"m3\" | \"minimal\";\n  className?: string;\n}\n\nexport function M3List({\n  children,\n  header,\n  design = \"m3\",\n  className,\n}: M3ListProps) {\n  const isMinimal = design === \"minimal\";\n\n  return (\n    <div\n      role=\"list\"\n      className={cn(\n        \"w-full flex flex-col overflow-hidden font-sans\",\n        isMinimal\n          ? \"rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] p-1 space-y-0.5 shadow-2xs\"\n          : \"rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-xs\",\n        className\n      )}\n    >\n      {header && (\n        <div className=\"px-4 pt-3 pb-1 text-[10px] font-mono font-semibold uppercase tracking-wider text-[var(--text-muted)]\">\n          {header}\n        </div>\n      )}\n      {children}\n    </div>\n  );\n}\n"
+    }
+  ]
+}
 };

@@ -1,13 +1,34 @@
 "use client";
 
 import * as React from "react";
-import { RotateCcw, Check, Copy, ChevronDown, ChevronLeft, ChevronRight, Sparkles, Mic, SlidersHorizontal, Search, Pin, Trash2, Home, Compass, Bell, Plus, ShoppingBag, Heart, Smartphone, RefreshCw, Layers, ArrowUpDown, Archive, CheckCircle2 } from "lucide-react";
+import { RotateCcw, Check, Copy, ChevronDown, ChevronLeft, ChevronRight, Sparkles, Mic, SlidersHorizontal, Search, Pin, Trash2, Home, Compass, Bell, Plus, ShoppingBag, Heart, Smartphone, RefreshCw, Layers, ArrowUpDown, Archive, CheckCircle2, User, Settings, Share2, Bookmark, Volume2, Edit3, Filter, Calendar, ArrowLeft, MoreVertical, Download, AlertCircle, CheckCheck, Star, Folder, X, Shield, Lock, Send, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { MobileBottomSheet } from "@/registry/ui/mobile-bottom-sheet";
 import { SwipeActionCard } from "@/registry/ui/swipe-action-card";
 import { ThumbSegmentController } from "@/registry/ui/thumb-segment-controller";
 import { PullToRefresh } from "@/registry/ui/pull-to-refresh";
 import { FloatingActionDock } from "@/registry/ui/floating-action-dock";
+import { M3Button } from "@/registry/ui/m3-button";
+import { M3Fab } from "@/registry/ui/m3-fab";
+import { M3SegmentedButton } from "@/registry/ui/m3-segmented-button";
+import { M3IconButton } from "@/registry/ui/m3-icon-button";
+import { M3Switch } from "@/registry/ui/m3-switch";
+import { M3Checkbox } from "@/registry/ui/m3-checkbox";
+import { M3RadioGroup } from "@/registry/ui/m3-radio";
+import { M3Slider } from "@/registry/ui/m3-slider";
+import { M3Chip } from "@/registry/ui/m3-chip";
+import { M3TextField } from "@/registry/ui/m3-text-field";
+import { M3SearchBar } from "@/registry/ui/m3-search-bar";
+import { M3NavigationBar } from "@/registry/ui/m3-navigation-bar";
+import { M3TopAppBar } from "@/registry/ui/m3-top-app-bar";
+import { M3NavigationDrawer } from "@/registry/ui/m3-navigation-drawer";
+import { M3Tabs } from "@/registry/ui/m3-tabs";
+import { M3Card } from "@/registry/ui/m3-card";
+import { M3Dialog } from "@/registry/ui/m3-dialog";
+import { M3Snackbar } from "@/registry/ui/m3-snackbar";
+import { M3ProgressIndicator } from "@/registry/ui/m3-progress-indicator";
+import { M3Badge } from "@/registry/ui/m3-badge";
+import { M3List, M3ListItem } from "@/registry/ui/m3-list";
 import { Button } from "@/registry/ui/button";
 import { Input } from "@/registry/ui/input";
 import { Switch } from "@/registry/ui/switch";
@@ -739,6 +760,116 @@ export function ComponentPreviewStage({
   const [floatingDockActive, setFloatingDockActive] = React.useState<string>("home");
   const [floatingDockShowPrimary, setFloatingDockShowPrimary] = React.useState<boolean>(true);
   const [floatingDockBadge, setFloatingDockBadge] = React.useState<number>(3);
+
+  // Material 3 Mobile Suite State
+  const [m3BtnVariant, setM3BtnVariant] = React.useState<any>(
+    item.name === "m3-button" && activeVariant ? activeVariant : "filled"
+  );
+  const [m3BtnSize, setM3BtnSize] = React.useState<any>("default");
+  const [m3BtnLabel, setM3BtnLabel] = React.useState("Action Button");
+  const [m3BtnLoading, setM3BtnLoading] = React.useState(false);
+  const [m3BtnDisabled, setM3BtnDisabled] = React.useState(false);
+
+  const [m3FabVariant, setM3FabVariant] = React.useState<any>(
+    item.name === "m3-fab" && activeVariant ? activeVariant : "extended"
+  );
+  const [m3FabSize, setM3FabSize] = React.useState<any>("extended");
+  const [m3FabLabel, setM3FabLabel] = React.useState("New Action");
+
+  const [m3SegmentVariant, setM3SegmentVariant] = React.useState<any>(
+    item.name === "m3-segmented-button" && activeVariant ? activeVariant : "single-select"
+  );
+  const [m3SegmentVal, setM3SegmentVal] = React.useState<any>("day");
+
+  const [m3IconBtnVariant, setM3IconBtnVariant] = React.useState<any>(
+    item.name === "m3-icon-button" && activeVariant ? activeVariant : "tonal"
+  );
+  const [m3IconBtnSelected, setM3IconBtnSelected] = React.useState(false);
+
+  const [m3SwitchVariant, setM3SwitchVariant] = React.useState<any>(
+    item.name === "m3-switch" && activeVariant ? activeVariant : "standard-m3"
+  );
+  const [m3SwitchChecked, setM3SwitchChecked] = React.useState(true);
+  const [m3SwitchIcons, setM3SwitchIcons] = React.useState(true);
+
+  const [m3CheckboxVariant, setM3CheckboxVariant] = React.useState<any>(
+    item.name === "m3-checkbox" && activeVariant ? activeVariant : "standard-m3"
+  );
+  const [m3CheckboxChecked, setM3CheckboxChecked] = React.useState(true);
+
+  const [m3RadioVariant, setM3RadioVariant] = React.useState<any>(
+    item.name === "m3-radio" && activeVariant ? activeVariant : "standard-m3"
+  );
+  const [m3RadioVal, setM3RadioVal] = React.useState("express");
+
+  const [m3SliderVariant, setM3SliderVariant] = React.useState<any>(
+    item.name === "m3-slider" && activeVariant ? activeVariant : "continuous"
+  );
+  const [m3SliderVal, setM3SliderVal] = React.useState(68);
+
+  const [m3ChipVariant, setM3ChipVariant] = React.useState<any>(
+    item.name === "m3-chip" && activeVariant ? activeVariant : "filter"
+  );
+  const [m3ChipSelected, setM3ChipSelected] = React.useState(true);
+
+  const [m3TextVariant, setM3TextVariant] = React.useState<any>(
+    item.name === "m3-text-field" && activeVariant ? activeVariant : "outlined"
+  );
+  const [m3TextVal, setM3TextVal] = React.useState("dev@kiloui.com");
+
+  const [m3SearchVariant, setM3SearchVariant] = React.useState<any>(
+    item.name === "m3-search-bar" && activeVariant ? activeVariant : "standard-m3"
+  );
+  const [m3SearchVal, setM3SearchVal] = React.useState("");
+
+  const [m3NavVariant, setM3NavVariant] = React.useState<any>(
+    item.name === "m3-navigation-bar" && activeVariant ? activeVariant : "standard-m3"
+  );
+  const [m3NavTab, setM3NavTab] = React.useState("home");
+
+  const [m3AppBarVariant, setM3AppBarVariant] = React.useState<any>(
+    item.name === "m3-top-app-bar" && activeVariant ? activeVariant : "center-aligned"
+  );
+
+  const [m3DrawerOpen, setM3DrawerOpen] = React.useState(false);
+  const [m3DrawerVal, setM3DrawerVal] = React.useState("inbox");
+  const [m3DrawerVariant, setM3DrawerVariant] = React.useState<any>(
+    item.name === "m3-navigation-drawer" && activeVariant ? activeVariant : "modal-drawer"
+  );
+
+  const [m3TabsVariant, setM3TabsVariant] = React.useState<any>(
+    item.name === "m3-tabs" && activeVariant ? activeVariant : "primary"
+  );
+  const [m3TabsVal, setM3TabsVal] = React.useState("overview");
+
+  const [m3CardVariant, setM3CardVariant] = React.useState<any>(
+    item.name === "m3-card" && activeVariant ? activeVariant : "outlined"
+  );
+
+  const [m3DialogOpen, setM3DialogOpen] = React.useState(false);
+  const [m3DialogVariant, setM3DialogVariant] = React.useState<any>(
+    item.name === "m3-dialog" && activeVariant ? activeVariant : "confirmation"
+  );
+
+  const [m3SnackbarVariant, setM3SnackbarVariant] = React.useState<any>(
+    item.name === "m3-snackbar" && activeVariant ? activeVariant : "with-action"
+  );
+  const [m3SnackbarMsg, setM3SnackbarMsg] = React.useState("Message archived to archive vault");
+  const [m3SnackbarOpen, setM3SnackbarOpen] = React.useState(true);
+
+  const [m3ProgressVariant, setM3ProgressVariant] = React.useState<any>(
+    item.name === "m3-progress-indicator" && activeVariant ? activeVariant : "circular"
+  );
+  const [m3ProgressVal, setM3ProgressVal] = React.useState(72);
+
+  const [m3BadgeVariant, setM3BadgeVariant] = React.useState<any>(
+    item.name === "m3-badge" && activeVariant ? activeVariant : "count"
+  );
+  const [m3BadgeVal, setM3BadgeVal] = React.useState(4);
+
+  const [m3ListVariant, setM3ListVariant] = React.useState<any>(
+    item.name === "m3-list" && activeVariant ? activeVariant : "two-line"
+  );
   // 1. Button state
   const [btnVariant, setBtnVariant] = React.useState<any>(
     item.name === "button" && activeVariant ? activeVariant : "default"
@@ -1593,6 +1724,38 @@ export function ComponentPreviewStage({
       else if (item.name === "floating-action-dock") {
         setFloatingActionDockVariant(v);
       }
+      else if (item.name === "m3-button") setM3BtnVariant(v);
+      else if (item.name === "m3-fab") {
+        setM3FabVariant(v);
+        if (v === "small" || v === "standard" || v === "large" || v === "extended") {
+          setM3FabSize(v === "small" ? "sm" : v === "standard" ? "default" : v === "large" ? "lg" : "extended");
+        }
+      }
+      else if (item.name === "m3-segmented-button") setM3SegmentVariant(v);
+      else if (item.name === "m3-icon-button") setM3IconBtnVariant(v);
+      else if (item.name === "m3-switch") setM3SwitchVariant(v);
+      else if (item.name === "m3-checkbox") setM3CheckboxVariant(v);
+      else if (item.name === "m3-radio") setM3RadioVariant(v);
+      else if (item.name === "m3-slider") setM3SliderVariant(v);
+      else if (item.name === "m3-chip") setM3ChipVariant(v);
+      else if (item.name === "m3-text-field") setM3TextVariant(v);
+      else if (item.name === "m3-search-bar") setM3SearchVariant(v);
+      else if (item.name === "m3-navigation-bar") setM3NavVariant(v);
+      else if (item.name === "m3-top-app-bar") setM3AppBarVariant(v);
+      else if (item.name === "m3-navigation-drawer") {
+        setM3DrawerVariant(v);
+        setM3DrawerOpen(true);
+      }
+      else if (item.name === "m3-tabs") setM3TabsVariant(v);
+      else if (item.name === "m3-card") setM3CardVariant(v);
+      else if (item.name === "m3-dialog") {
+        setM3DialogVariant(v);
+        setM3DialogOpen(true);
+      }
+      else if (item.name === "m3-snackbar") setM3SnackbarVariant(v);
+      else if (item.name === "m3-progress-indicator") setM3ProgressVariant(v);
+      else if (item.name === "m3-badge") setM3BadgeVariant(v);
+      else if (item.name === "m3-list") setM3ListVariant(v);
       else if (item.name === "button") setBtnVariant(v);
       else if (item.name === "magnetic-button") setMagneticVariant(v);
       else if (item.name === "border-beam-button") setBorderBeamVariant(v);
@@ -2024,6 +2187,48 @@ export function ComponentPreviewStage({
       ? pullToRefreshVariant
       : item.name === "floating-action-dock"
       ? floatingActionDockVariant
+      : item.name === "m3-button"
+      ? m3BtnVariant
+      : item.name === "m3-fab"
+      ? m3FabVariant
+      : item.name === "m3-segmented-button"
+      ? m3SegmentVariant
+      : item.name === "m3-icon-button"
+      ? m3IconBtnVariant
+      : item.name === "m3-switch"
+      ? m3SwitchVariant
+      : item.name === "m3-checkbox"
+      ? m3CheckboxVariant
+      : item.name === "m3-radio"
+      ? m3RadioVariant
+      : item.name === "m3-slider"
+      ? m3SliderVariant
+      : item.name === "m3-chip"
+      ? m3ChipVariant
+      : item.name === "m3-text-field"
+      ? m3TextVariant
+      : item.name === "m3-search-bar"
+      ? m3SearchVariant
+      : item.name === "m3-navigation-bar"
+      ? m3NavVariant
+      : item.name === "m3-top-app-bar"
+      ? m3AppBarVariant
+      : item.name === "m3-navigation-drawer"
+      ? m3DrawerVariant
+      : item.name === "m3-tabs"
+      ? m3TabsVariant
+      : item.name === "m3-card"
+      ? m3CardVariant
+      : item.name === "m3-dialog"
+      ? m3DialogVariant
+      : item.name === "m3-snackbar"
+      ? m3SnackbarVariant
+      : item.name === "m3-progress-indicator"
+      ? m3ProgressVariant
+      : item.name === "m3-badge"
+      ? m3BadgeVariant
+      : item.name === "m3-list"
+      ? m3ListVariant
       : activeVariant || variants[0] || "default";
 
   const currentIndex = Math.max(0, variants.indexOf(currentVariant));
@@ -2233,6 +2438,48 @@ export function ComponentPreviewStage({
       code = `<PullToRefresh\n  onRefresh={handleRefresh}\n  pullThreshold={${pullToRefreshThreshold}}\n  disabled={${pullToRefreshDisabled}}\n>\n  <div className="space-y-3 p-4">\n    <p className="text-sm font-semibold">Feed Updated Real-Time</p>\n  </div>\n</PullToRefresh>`;
     } else if (item.name === "floating-action-dock") {
       code = `<FloatingActionDock\n  position="${floatingActionDockVariant as any}"${floatingDockShowPrimary ? `\n  primaryAction={{\n    label: "Add",\n    icon: <Plus className="h-4 w-4" />,\n    onClick: () => console.log("Add clicked"),\n  }}` : ""}\n  items={[\n    { id: "home", label: "Home", icon: <Home className="h-4 w-4" />, active: active === "home", onClick: () => setActive("home") },\n    { id: "explore", label: "Explore", icon: <Compass className="h-4 w-4" />, active: active === "explore", onClick: () => setActive("explore") },\n    { id: "alerts", label: "Alerts", icon: <Bell className="h-4 w-4" />, badge: ${floatingDockBadge}, active: active === "alerts", onClick: () => setActive("alerts") }\n  ]}\n/>`;
+    } else if (item.name === "m3-button") {
+      code = `<M3Button variant="${m3BtnVariant}" size="${m3BtnSize}"${m3BtnLoading ? " isLoading" : ""}${m3BtnDisabled ? " disabled" : ""}>\n  ${m3BtnLabel}\n</M3Button>`;
+    } else if (item.name === "m3-fab") {
+      code = `<M3Fab size="${m3FabSize}" variant="${m3FabVariant === "minimal" ? "minimal" : "primary"}" label="${m3FabLabel}" />`;
+    } else if (item.name === "m3-segmented-button") {
+      code = `<M3SegmentedButton\n  value="${m3SegmentVal}"\n  onChange={setVal}\n  options={[{ id: "day", label: "Day" }, { id: "week", label: "Week" }, { id: "month", label: "Month" }]}\n/>`;
+    } else if (item.name === "m3-icon-button") {
+      code = `<M3IconButton variant="${m3IconBtnVariant}" selected={${m3IconBtnSelected}} onSelectedChange={setSelected} />`;
+    } else if (item.name === "m3-switch") {
+      code = `<M3Switch checked={${m3SwitchChecked}} showIcon={${m3SwitchIcons}} label="Push Telemetry" description="Real-time alerts" />`;
+    } else if (item.name === "m3-checkbox") {
+      code = `<M3Checkbox checked={${m3CheckboxChecked}} label="Enable Edge Analytics" />`;
+    } else if (item.name === "m3-radio") {
+      code = `<M3RadioGroup value="${m3RadioVal}" options={[{ id: "standard", label: "Standard 2-Day Air" }, { id: "express", label: "Express Overnight" }]} />`;
+    } else if (item.name === "m3-slider") {
+      code = `<M3Slider value={${m3SliderVal}} min={0} max={100} label="Gain Output" />`;
+    } else if (item.name === "m3-chip") {
+      code = `<M3Chip chipType="${m3ChipVariant === "minimal" ? "filter" : m3ChipVariant}" selected={${m3ChipSelected}}>Material Design</M3Chip>`;
+    } else if (item.name === "m3-text-field") {
+      code = `<M3TextField variant="${m3TextVariant}" label="Email Address" value="${m3TextVal}" helperText="Work or personal handle" />`;
+    } else if (item.name === "m3-search-bar") {
+      code = `<M3SearchBar placeholder="Search primitives..." />`;
+    } else if (item.name === "m3-navigation-bar") {
+      code = `<M3NavigationBar value="${m3NavTab}" destinations={[{ id: "home", label: "Home" }, { id: "explore", label: "Explore" }, { id: "alerts", label: "Alerts", badge: 3 }]} />`;
+    } else if (item.name === "m3-top-app-bar") {
+      code = `<M3TopAppBar variant="${m3AppBarVariant}" title="Essential Archive" subtitle="Kilo Studio" />`;
+    } else if (item.name === "m3-navigation-drawer") {
+      code = `<M3NavigationDrawer open={${m3DrawerOpen}} onOpenChange={setOpen} value="${m3DrawerVal}" destinations={[{ id: "inbox", label: "Inbox", badge: 12 }]} />`;
+    } else if (item.name === "m3-tabs") {
+      code = `<M3Tabs type="${m3TabsVariant}" value="${m3TabsVal}" tabs={[{ id: "overview", label: "Overview" }, { id: "specs", label: "Specs" }]} />`;
+    } else if (item.name === "m3-card") {
+      code = `<M3Card variant="${m3CardVariant}" headline="Technical Shell 3L" subhead="Oversized fit">\n  <p>Waterproof ripstop monochrome</p>\n</M3Card>`;
+    } else if (item.name === "m3-dialog") {
+      code = `<M3Dialog open={${m3DialogOpen}} onOpenChange={setOpen} headline="Confirm Action" supportingText="Will dispatch packet to cluster." />`;
+    } else if (item.name === "m3-snackbar") {
+      code = `<M3Snackbar message="${m3SnackbarMsg}" actionLabel="Undo" />`;
+    } else if (item.name === "m3-progress-indicator") {
+      code = `<M3ProgressIndicator type="${m3ProgressVariant === "circular" ? "circular" : "linear"}" value={${m3ProgressVal}} />`;
+    } else if (item.name === "m3-badge") {
+      code = `<M3Badge content={${m3BadgeVal}}><Bell className="h-5 w-5" /></M3Badge>`;
+    } else if (item.name === "m3-list") {
+      code = `<M3List header="Transactions">\n  <M3ListItem headline="Kilo Studio" supportingText="Payment completed" trailingText="10:24 AM" />\n</M3List>`;
     } else if (item.name === "popover-dialog") {
       code = `<PopoverDialog\n  variant="${popoverVariant}"\n  placement="${popoverPlacement}"${popoverShowArrow ? "\n  showArrow" : ""}\n  title="Node Configuration"\n  description="Adjust routing priorities and edge bandwidth limits."\n/>`;
     } else if (item.name === "command-palette") {
@@ -5657,6 +5904,814 @@ export function ComponentPreviewStage({
               </MobilePreviewChassis>
             </div>
           )}
+
+          {/* M3 Button */}
+          {item.name === "m3-button" && (
+            <div className="w-full flex justify-center py-2">
+              <MobilePreviewChassis isLightMode={isLightMode} title="Buttons" subtitle="ACTIONS">
+                <div className="flex-1 flex flex-col p-4 space-y-4 overflow-y-auto">
+                  <div className="p-4 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] space-y-3">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">Configured State</span>
+                    <div className="flex justify-center py-2">
+                      <M3Button
+                        variant={m3BtnVariant}
+                        size={m3BtnSize}
+                        isLoading={m3BtnLoading}
+                        disabled={m3BtnDisabled}
+                      >
+                        {m3BtnLabel}
+                      </M3Button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">Material 3 Variants</span>
+                    <div className="grid grid-cols-2 gap-2">
+                      <M3Button variant="filled" size="sm">Filled</M3Button>
+                      <M3Button variant="elevated" size="sm">Elevated</M3Button>
+                      <M3Button variant="tonal" size="sm">Tonal</M3Button>
+                      <M3Button variant="outlined" size="sm">Outlined</M3Button>
+                    </div>
+                    <div className="flex justify-center pt-1">
+                      <M3Button variant="text" size="sm">Text Button</M3Button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2 pt-2 border-t border-[var(--border)]/60">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">Minimal SaaS Variants</span>
+                    <div className="grid grid-cols-2 gap-2">
+                      <M3Button variant="minimal-solid" size="sm">Minimal Solid</M3Button>
+                      <M3Button variant="minimal-outline" size="sm">Minimal Outline</M3Button>
+                    </div>
+                    <div className="flex justify-center pt-1">
+                      <M3Button variant="minimal-ghost" size="sm">Minimal Ghost</M3Button>
+                    </div>
+                  </div>
+                </div>
+              </MobilePreviewChassis>
+            </div>
+          )}
+
+          {/* M3 FAB */}
+          {item.name === "m3-fab" && (
+            <div className="w-full flex justify-center py-2">
+              <MobilePreviewChassis
+                isLightMode={isLightMode}
+                title="Tasks & Notes"
+                subtitle="ACTIONS"
+                actions={<M3Fab size="sm" icon={<Plus className="h-4 w-4" />} />}
+              >
+                <div className="relative flex-1 flex flex-col p-4 overflow-y-auto">
+                  <div className="space-y-2.5 pb-20">
+                    {[
+                      { title: "Design Sprint Review", time: "10:00 AM", tag: "Design" },
+                      { title: "M3 Palette Engine Token Sync", time: "1:30 PM", tag: "Eng" },
+                      { title: "AST Guardrail Schema Test", time: "4:00 PM", tag: "Ops" },
+                    ].map((task, i) => (
+                      <div
+                        key={i}
+                        className={cn(
+                          "p-3 rounded-xl border space-y-1 transition-colors",
+                          isLightMode ? "border-neutral-200 bg-white" : "border-neutral-800 bg-neutral-900/60"
+                        )}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold">{task.title}</span>
+                          <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-neutral-200 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400">{task.tag}</span>
+                        </div>
+                        <span className="text-[10px] text-neutral-500 font-mono">{task.time}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Configured Floating FAB */}
+                  <div className="absolute bottom-4 right-4 z-20">
+                    <M3Fab
+                      size={m3FabSize}
+                      variant={m3FabVariant === "minimal" ? "minimal" : "primary"}
+                      label={m3FabLabel}
+                      icon={<Plus className="h-5 w-5" />}
+                    />
+                  </div>
+                </div>
+              </MobilePreviewChassis>
+            </div>
+          )}
+
+          {/* M3 Segmented Button */}
+          {item.name === "m3-segmented-button" && (
+            <div className="w-full flex justify-center py-2">
+              <MobilePreviewChassis isLightMode={isLightMode} title="Segmented Button" subtitle="ACTIONS">
+                <div className="flex-1 flex flex-col p-4 space-y-5 overflow-y-auto">
+                  <div className="space-y-2">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">Single Select (M3 Pill)</span>
+                    <M3SegmentedButton
+                      value={m3SegmentVal}
+                      onChange={setM3SegmentVal}
+                      options={[
+                        { id: "day", label: "Day" },
+                        { id: "week", label: "Week" },
+                        { id: "month", label: "Month" },
+                        { id: "year", label: "Year" },
+                      ]}
+                      variant={m3SegmentVariant === "minimal" ? "minimal" : "default"}
+                    />
+                  </div>
+
+                  <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] space-y-2">
+                    <span className="text-[9px] font-mono text-neutral-400 uppercase tracking-wider">Active Segment Range</span>
+                    <h4 className="text-sm font-bold font-sans">Metrics for: {String(m3SegmentVal).toUpperCase()}</h4>
+                    <p className="text-xs text-neutral-500">Live preview reacts instantly to segmented control changes with smooth M3 spring indicator.</p>
+                  </div>
+
+                  <div className="space-y-2 pt-2 border-t border-[var(--border)]/60">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">Minimal SaaS Style</span>
+                    <M3SegmentedButton
+                      value={m3SegmentVal}
+                      onChange={setM3SegmentVal}
+                      variant="minimal"
+                      options={[
+                        { id: "all", label: "All" },
+                        { id: "unread", label: "Unread", badge: 3 },
+                        { id: "flagged", label: "Flagged" },
+                      ]}
+                    />
+                  </div>
+                </div>
+              </MobilePreviewChassis>
+            </div>
+          )}
+
+          {/* M3 Icon Button */}
+          {item.name === "m3-icon-button" && (
+            <div className="w-full flex justify-center py-2">
+              <MobilePreviewChassis isLightMode={isLightMode} title="Icon Buttons" subtitle="ACTIONS">
+                <div className="flex-1 flex flex-col p-4 space-y-4 overflow-y-auto">
+                  <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] text-center space-y-2">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">Configured State</span>
+                    <div className="flex justify-center">
+                      <M3IconButton
+                        variant={m3IconBtnVariant}
+                        selected={m3IconBtnSelected}
+                        onSelectedChange={setM3IconBtnSelected}
+                        icon={<Heart className="h-5 w-5" />}
+                        selectedIcon={<Heart className="h-5 w-5 fill-red-500 text-red-500" />}
+                      />
+                    </div>
+                    <span className="text-xs text-neutral-500 block">Tap to toggle selected state</span>
+                  </div>
+
+                  <div className="space-y-2">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">M3 Styles</span>
+                    <div className="flex items-center justify-around p-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)]">
+                      <M3IconButton variant="standard" icon={<Bookmark className="h-5 w-5" />} />
+                      <M3IconButton variant="filled" icon={<Share2 className="h-5 w-5" />} />
+                      <M3IconButton variant="tonal" icon={<Star className="h-5 w-5" />} />
+                      <M3IconButton variant="outlined" icon={<Bell className="h-5 w-5" />} />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2 pt-2 border-t border-[var(--border)]/60">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">Minimal SaaS Style</span>
+                    <div className="flex items-center justify-around p-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)]">
+                      <M3IconButton variant="minimal" icon={<MoreVertical className="h-4 w-4" />} />
+                      <M3IconButton variant="minimal" icon={<Volume2 className="h-4 w-4" />} />
+                      <M3IconButton variant="minimal" icon={<Folder className="h-4 w-4" />} />
+                    </div>
+                  </div>
+                </div>
+              </MobilePreviewChassis>
+            </div>
+          )}
+
+          {/* M3 Switch */}
+          {item.name === "m3-switch" && (
+            <div className="w-full flex justify-center py-2">
+              <MobilePreviewChassis isLightMode={isLightMode} title="Switches" subtitle="SELECTION">
+                <div className="flex-1 flex flex-col p-4 space-y-4 overflow-y-auto">
+                  <div className="p-3.5 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] space-y-3">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">Configured Switch</span>
+                    <M3Switch
+                      checked={m3SwitchChecked}
+                      onChange={setM3SwitchChecked}
+                      showIcon={m3SwitchIcons}
+                      variant={m3SwitchVariant === "minimal" ? "minimal" : "default"}
+                      label="Push Notifications"
+                      description="Real-time alert delivery"
+                    />
+                  </div>
+
+                  <div className="space-y-2.5 pt-2">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">Preferences</span>
+                    <div className="p-3.5 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] space-y-3">
+                      <M3Switch
+                        defaultChecked={true}
+                        showIcon={true}
+                        label="Haptic Feedback"
+                        description="Vibrate on action triggers"
+                      />
+                      <div className="h-px bg-[var(--border)]" />
+                      <M3Switch
+                        defaultChecked={false}
+                        showIcon={true}
+                        label="Location Telemetry"
+                        description="Stream GPS positioning"
+                      />
+                      <div className="h-px bg-[var(--border)]" />
+                      <M3Switch
+                        defaultChecked={true}
+                        variant="minimal"
+                        label="Minimal SaaS Mode"
+                        description="High density 1px boundary"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </MobilePreviewChassis>
+            </div>
+          )}
+
+          {/* M3 Checkbox */}
+          {item.name === "m3-checkbox" && (
+            <div className="w-full flex justify-center py-2">
+              <MobilePreviewChassis isLightMode={isLightMode} title="Checkboxes" subtitle="SELECTION">
+                <div className="flex-1 flex flex-col p-4 space-y-4 overflow-y-auto">
+                  <div className="p-3.5 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] space-y-3">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">Configured Checkbox</span>
+                    <M3Checkbox
+                      checked={m3CheckboxChecked}
+                      onChange={setM3CheckboxChecked}
+                      variant={m3CheckboxVariant === "minimal" ? "minimal" : "default"}
+                      label="Enable Edge Analytics"
+                      description="Direct cluster sync"
+                    />
+                  </div>
+
+                  <div className="space-y-2 pt-2">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">Task Checklist</span>
+                    <div className="p-3.5 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] space-y-3">
+                      <M3Checkbox defaultChecked={true} label="Material 3 tokens synced" />
+                      <div className="h-px bg-[var(--border)]" />
+                      <M3Checkbox defaultChecked="indeterminate" label="AST verification pass" description="Partial compliance" />
+                      <div className="h-px bg-[var(--border)]" />
+                      <M3Checkbox defaultChecked={false} label="Publish to npm registry" />
+                      <div className="h-px bg-[var(--border)]" />
+                      <M3Checkbox defaultChecked={true} variant="minimal" label="Minimal SaaS Checkbox" description="Clean sharp borders" />
+                    </div>
+                  </div>
+                </div>
+              </MobilePreviewChassis>
+            </div>
+          )}
+
+          {/* M3 Radio */}
+          {item.name === "m3-radio" && (
+            <div className="w-full flex justify-center py-2">
+              <MobilePreviewChassis isLightMode={isLightMode} title="Radio Buttons" subtitle="SELECTION">
+                <div className="flex-1 flex flex-col p-4 space-y-4 overflow-y-auto">
+                  <div className="p-3.5 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] space-y-3">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">Shipping Method (M3 Concentric)</span>
+                    <M3RadioGroup
+                      value={m3RadioVal}
+                      onChange={setM3RadioVal}
+                      variant={m3RadioVariant === "minimal" ? "minimal" : "default"}
+                      options={[
+                        { id: "standard", label: "Standard Shipping", description: "3-5 business days • Free" },
+                        { id: "express", label: "Express Overnight", description: "Guaranteed 24h • $14.00" },
+                        { id: "priority", label: "Priority Courier", description: "Same day dispatch • $28.00" },
+                      ]}
+                    />
+                  </div>
+
+                  <div className="p-3.5 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] space-y-2">
+                    <span className="text-[9px] font-mono text-neutral-400 uppercase tracking-wider">Selected Carrier</span>
+                    <p className="text-xs font-mono font-bold text-[var(--text-primary)]">{m3RadioVal.toUpperCase()} SELECTED</p>
+                  </div>
+                </div>
+              </MobilePreviewChassis>
+            </div>
+          )}
+
+          {/* M3 Slider */}
+          {item.name === "m3-slider" && (
+            <div className="w-full flex justify-center py-2">
+              <MobilePreviewChassis isLightMode={isLightMode} title="Sliders" subtitle="SELECTION">
+                <div className="flex-1 flex flex-col p-4 space-y-5 overflow-y-auto">
+                  <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] space-y-3">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">Configured Slider</span>
+                    <M3Slider
+                      value={m3SliderVal}
+                      onChange={setM3SliderVal}
+                      min={0}
+                      max={100}
+                      showValue={true}
+                      label="Volume Output"
+                      variant={m3SliderVariant === "minimal" ? "minimal" : "default"}
+                    />
+                  </div>
+
+                  <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] space-y-4">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">Audio Equalizer</span>
+                    <M3Slider defaultValue={45} min={0} max={100} label="Bass Boost" showValue />
+                    <M3Slider defaultValue={80} min={0} max={100} label="Treble Frequency" showValue />
+                    <M3Slider defaultValue={60} min={0} max={100} label="Minimal SaaS Slider" variant="minimal" showValue />
+                  </div>
+                </div>
+              </MobilePreviewChassis>
+            </div>
+          )}
+
+          {/* M3 Chip */}
+          {item.name === "m3-chip" && (
+            <div className="w-full flex justify-center py-2">
+              <MobilePreviewChassis isLightMode={isLightMode} title="Chips" subtitle="SELECTION">
+                <div className="flex-1 flex flex-col p-4 space-y-4 overflow-y-auto">
+                  <div className="space-y-2">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">M3 Chip Types</span>
+                    <div className="flex flex-wrap gap-2">
+                      <M3Chip
+                        chipType={m3ChipVariant === "minimal" ? "filter" : m3ChipVariant}
+                        selected={m3ChipSelected}
+                        onSelectedChange={setM3ChipSelected}
+                        icon={<Sparkles className="h-4 w-4" />}
+                      >
+                        Filter Chip
+                      </M3Chip>
+                      <M3Chip chipType="assist" icon={<Calendar className="h-4 w-4" />}>
+                        Add to Calendar
+                      </M3Chip>
+                      <M3Chip chipType="suggestion">
+                        Suggest Next
+                      </M3Chip>
+                      <M3Chip chipType="input" onDelete={() => {}}>
+                        Alice Smith
+                      </M3Chip>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2 pt-2 border-t border-[var(--border)]/60">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">Minimal SaaS Chips</span>
+                    <div className="flex flex-wrap gap-2">
+                      <M3Chip variant="minimal" selected={true}>SaaS Active</M3Chip>
+                      <M3Chip variant="minimal">Telemetry</M3Chip>
+                      <M3Chip variant="minimal">Production</M3Chip>
+                    </div>
+                  </div>
+                </div>
+              </MobilePreviewChassis>
+            </div>
+          )}
+
+          {/* M3 Text Field */}
+          {item.name === "m3-text-field" && (
+            <div className="w-full flex justify-center py-2">
+              <MobilePreviewChassis isLightMode={isLightMode} title="Text Fields" subtitle="INPUTS">
+                <div className="flex-1 flex flex-col p-4 space-y-4 overflow-y-auto">
+                  <div className="space-y-3">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">Configured Field</span>
+                    <M3TextField
+                      variant={m3TextVariant}
+                      label="Workspace Email"
+                      value={m3TextVal}
+                      onChange={(e) => setM3TextVal(e.target.value)}
+                      helperText="Your registered team email"
+                      leadingIcon={<User className="h-4 w-4" />}
+                    />
+                  </div>
+
+                  <div className="space-y-3 pt-2">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">Outlined Notch (M3)</span>
+                    <M3TextField
+                      variant="outlined"
+                      label="Password"
+                      type="password"
+                      defaultValue="supersecret"
+                      leadingIcon={<Lock className="h-4 w-4" />}
+                      helperText="Minimum 8 characters"
+                    />
+                  </div>
+
+                  <div className="space-y-3 pt-2">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">Filled Container (M3)</span>
+                    <M3TextField
+                      variant="filled"
+                      label="Account Handle"
+                      defaultValue="@antigravity"
+                      leadingIcon={<Sparkles className="h-4 w-4" />}
+                    />
+                  </div>
+
+                  <div className="space-y-3 pt-2 border-t border-[var(--border)]/60">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">Minimal SaaS Input</span>
+                    <M3TextField
+                      variant="minimal"
+                      label="API Key"
+                      defaultValue="kilo_sec_991823a"
+                    />
+                  </div>
+                </div>
+              </MobilePreviewChassis>
+            </div>
+          )}
+
+          {/* M3 Search Bar */}
+          {item.name === "m3-search-bar" && (
+            <div className="w-full flex justify-center py-2">
+              <MobilePreviewChassis isLightMode={isLightMode} title="Search Bar" subtitle="INPUTS">
+                <div className="flex-1 flex flex-col p-4 space-y-4 overflow-y-auto">
+                  <M3SearchBar
+                    value={m3SearchVal}
+                    onChange={setM3SearchVal}
+                    placeholder="Search documents & code..."
+                    variant={m3SearchVariant === "minimal" ? "minimal" : "default"}
+                    suggestions={["Material Design 3 tokens", "Bottom sheets", "Navigation rail", "Fling gestures"]}
+                    recentSearches={["Segmented button", "Floating action dock", "Pull to refresh"]}
+                  />
+
+                  <div className="p-3.5 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] space-y-2">
+                    <span className="text-[9px] font-mono text-neutral-400 uppercase tracking-wider">Search State</span>
+                    <p className="text-xs text-neutral-500">
+                      {m3SearchVal ? `Filtering by: "${m3SearchVal}"` : "Tap search bar to view recent queries & suggestions"}
+                    </p>
+                  </div>
+                </div>
+              </MobilePreviewChassis>
+            </div>
+          )}
+
+          {/* M3 Navigation Bar */}
+          {item.name === "m3-navigation-bar" && (
+            <div className="w-full flex justify-center py-2">
+              <MobilePreviewChassis isLightMode={isLightMode} title="Navigation Bar" subtitle="NAVIGATION">
+                <div className="relative flex-1 flex flex-col justify-between overflow-hidden">
+                  <div className="p-4 space-y-3">
+                    <div className="p-3.5 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] space-y-1">
+                      <span className="text-[9px] font-mono text-neutral-400 uppercase tracking-wider">Current Screen</span>
+                      <h4 className="text-sm font-bold capitalize">{m3NavTab} Destination</h4>
+                      <p className="text-xs text-neutral-500">Notice the active pill indicator (64x32) with spring physics and badge indicators.</p>
+                    </div>
+                  </div>
+
+                  {/* Bottom Navigation Bar */}
+                  <M3NavigationBar
+                    value={m3NavTab}
+                    onChange={setM3NavTab}
+                    variant={m3NavVariant === "minimal" ? "minimal" : "default"}
+                    destinations={[
+                      { id: "home", label: "Home", icon: <Home className="h-5 w-5" /> },
+                      { id: "explore", label: "Explore", icon: <Compass className="h-5 w-5" /> },
+                      { id: "alerts", label: "Alerts", icon: <Bell className="h-5 w-5" />, badge: 3 },
+                      { id: "profile", label: "Profile", icon: <User className="h-5 w-5" /> },
+                    ]}
+                  />
+                </div>
+              </MobilePreviewChassis>
+            </div>
+          )}
+
+          {/* M3 Top App Bar */}
+          {item.name === "m3-top-app-bar" && (
+            <div className="w-full flex justify-center py-2">
+              <MobilePreviewChassis isLightMode={isLightMode}>
+                <div className="flex-1 flex flex-col overflow-hidden">
+                  <M3TopAppBar
+                    variant={m3AppBarVariant}
+                    title="Essential Archive"
+                    subtitle="Kilo Studio"
+                    navigationIcon={<ArrowLeft className="h-5 w-5" />}
+                    actions={
+                      <div className="flex items-center gap-1">
+                        <M3IconButton variant="standard" icon={<Search className="h-5 w-5" />} />
+                        <M3IconButton variant="standard" icon={<MoreVertical className="h-5 w-5" />} />
+                      </div>
+                    }
+                  />
+
+                  <div className="flex-1 p-4 space-y-2.5 overflow-y-auto">
+                    {[
+                      { title: "Technical Shell 3L", desc: "Triple dye waterproof ripstop monochrome", price: "$245" },
+                      { title: "Oversized Heavy Tee", desc: "Raw black 320gsm jersey cotton", price: "$65" },
+                      { title: "Cargo Utility Pant", desc: "Modular pouch attachments with YKK zips", price: "$180" },
+                    ].map((card, i) => (
+                      <div key={i} className="p-3 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] flex justify-between items-center">
+                        <div>
+                          <p className="text-xs font-bold">{card.title}</p>
+                          <p className="text-[10px] text-neutral-500">{card.desc}</p>
+                        </div>
+                        <span className="text-xs font-mono font-bold">{card.price}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </MobilePreviewChassis>
+            </div>
+          )}
+
+          {/* M3 Navigation Drawer */}
+          {item.name === "m3-navigation-drawer" && (
+            <div className="w-full flex justify-center py-2">
+              <MobilePreviewChassis isLightMode={isLightMode} title="Navigation Drawer" subtitle="NAVIGATION">
+                <div className="relative flex-1 flex flex-col p-4 justify-between overflow-hidden">
+                  <div className="space-y-3">
+                    <p className="text-xs text-neutral-500">M3 Modal Navigation Drawer with active destination pill, scrim overlay, and badge counters.</p>
+                    <button
+                      type="button"
+                      onClick={() => setM3DrawerOpen(true)}
+                      className={cn(
+                        "w-full py-2.5 rounded-xl text-xs font-mono font-bold transition-colors cursor-pointer",
+                        isLightMode ? "bg-black text-white hover:bg-neutral-800" : "bg-white text-black hover:bg-neutral-200"
+                      )}
+                    >
+                      Open Modal Drawer
+                    </button>
+                  </div>
+
+                  <M3NavigationDrawer
+                    open={m3DrawerOpen}
+                    onOpenChange={setM3DrawerOpen}
+                    value={m3DrawerVal}
+                    onChange={setM3DrawerVal}
+                    title="Kilo Mail"
+                    subtitle="dev@kiloui.com"
+                    variant={m3DrawerVariant === "minimal" ? "minimal" : "default"}
+                    destinations={[
+                      { id: "inbox", label: "Inbox", icon: <Bell className="h-5 w-5" />, badge: 12 },
+                      { id: "outbox", label: "Outbox", icon: <Send className="h-5 w-5" /> },
+                      { id: "favorites", label: "Favorites", icon: <Star className="h-5 w-5" />, badge: 3 },
+                      { id: "trash", label: "Trash", icon: <Trash2 className="h-5 w-5" /> },
+                    ]}
+                  />
+                </div>
+              </MobilePreviewChassis>
+            </div>
+          )}
+
+          {/* M3 Tabs */}
+          {item.name === "m3-tabs" && (
+            <div className="w-full flex justify-center py-2">
+              <MobilePreviewChassis isLightMode={isLightMode} title="Tabs" subtitle="NAVIGATION">
+                <div className="flex-1 flex flex-col overflow-hidden">
+                  <M3Tabs
+                    value={m3TabsVal}
+                    onChange={setM3TabsVal}
+                    type={m3TabsVariant === "secondary" ? "secondary" : m3TabsVariant === "minimal" ? "minimal" : "primary"}
+                    tabs={[
+                      { id: "overview", label: "Overview" },
+                      { id: "specs", label: "Specs", badge: 2 },
+                      { id: "reviews", label: "Reviews" },
+                    ]}
+                  />
+
+                  <div className="flex-1 p-4 space-y-3 overflow-y-auto">
+                    {m3TabsVal === "overview" && (
+                      <div className="p-3.5 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] space-y-1">
+                        <h4 className="text-sm font-bold">Overview Tab Content</h4>
+                        <p className="text-xs text-neutral-500">M3 Primary tabs feature underline active indicator with spring transition.</p>
+                      </div>
+                    )}
+                    {m3TabsVal === "specs" && (
+                      <div className="p-3.5 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] space-y-1">
+                        <h4 className="text-sm font-bold">Specifications</h4>
+                        <p className="text-xs text-neutral-500">320gsm heavyweight cotton, reinforced flatlock seams, waterproof zippers.</p>
+                      </div>
+                    )}
+                    {m3TabsVal === "reviews" && (
+                      <div className="p-3.5 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] space-y-1">
+                        <h4 className="text-sm font-bold">Verified Reviews (4.9/5)</h4>
+                        <p className="text-xs text-neutral-500">&quot;Exceptional material quality and clean gesture physics.&quot;</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </MobilePreviewChassis>
+            </div>
+          )}
+
+          {/* M3 Card */}
+          {item.name === "m3-card" && (
+            <div className="w-full flex justify-center py-2">
+              <MobilePreviewChassis isLightMode={isLightMode} title="Cards" subtitle="SURFACES">
+                <div className="flex-1 flex flex-col p-4 space-y-3.5 overflow-y-auto">
+                  <M3Card
+                    variant={m3CardVariant}
+                    headline="Technical Shell 3L"
+                    subhead="Oversized fit • Modular Series"
+                    media={
+                      <div className="h-32 w-full bg-gradient-to-br from-neutral-800 to-neutral-950 flex items-center justify-center">
+                        <ShoppingBag className="h-10 w-10 text-neutral-400" />
+                      </div>
+                    }
+                    actions={
+                      <div className="flex items-center justify-between w-full">
+                        <span className="font-mono text-sm font-bold">$245.00</span>
+                        <M3Button size="sm">Quick Buy</M3Button>
+                      </div>
+                    }
+                  >
+                    <p className="text-xs text-neutral-500">Triple dye waterproof ripstop monochrome with ergonomic magnetic storm hood.</p>
+                  </M3Card>
+
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">Card Variants</span>
+                    <div className="grid grid-cols-2 gap-2">
+                      <M3Card variant="elevated" headline="Elevated Card"><p className="text-[10px] text-neutral-500">M3 Surface Elevation</p></M3Card>
+                      <M3Card variant="outlined" headline="Outlined Card"><p className="text-[10px] text-neutral-500">1px Crisp Border</p></M3Card>
+                    </div>
+                  </div>
+                </div>
+              </MobilePreviewChassis>
+            </div>
+          )}
+
+          {/* M3 Dialog */}
+          {item.name === "m3-dialog" && (
+            <div className="w-full flex justify-center py-2">
+              <MobilePreviewChassis isLightMode={isLightMode} title="Dialogs" subtitle="SURFACES">
+                <div className="relative flex-1 flex flex-col p-4 justify-between overflow-hidden">
+                  <div className="space-y-3">
+                    <p className="text-xs text-neutral-500">M3 Alert Dialog featuring 28px rounded corners, header icon, and tonal buttons.</p>
+                    <button
+                      type="button"
+                      onClick={() => setM3DialogOpen(true)}
+                      className={cn(
+                        "w-full py-2.5 rounded-xl text-xs font-mono font-bold transition-colors cursor-pointer",
+                        isLightMode ? "bg-black text-white hover:bg-neutral-800" : "bg-white text-black hover:bg-neutral-200"
+                      )}
+                    >
+                      Trigger Material Dialog
+                    </button>
+                  </div>
+
+                  <M3Dialog
+                    open={m3DialogOpen}
+                    onOpenChange={setM3DialogOpen}
+                    headline="Discard draft?"
+                    supportingText="Any unsaved telemetry modifications will be permanently discarded from local device storage."
+                    confirmLabel="Discard"
+                    dismissLabel="Cancel"
+                    icon={<AlertCircle className="h-6 w-6 text-amber-500" />}
+                    variant={m3DialogVariant === "minimal" ? "minimal" : "default"}
+                    onConfirm={() => setM3DialogOpen(false)}
+                    onDismiss={() => setM3DialogOpen(false)}
+                  />
+                </div>
+              </MobilePreviewChassis>
+            </div>
+          )}
+
+          {/* M3 Snackbar */}
+          {item.name === "m3-snackbar" && (
+            <div className="w-full flex justify-center py-2">
+              <MobilePreviewChassis isLightMode={isLightMode} title="Snackbars" subtitle="FEEDBACK">
+                <div className="relative flex-1 flex flex-col p-4 justify-between overflow-hidden">
+                  <div className="space-y-3">
+                    <p className="text-xs text-neutral-500">Floating inverse-surface notification bar with action and dismiss triggers.</p>
+                    <button
+                      type="button"
+                      onClick={() => setM3SnackbarOpen(true)}
+                      className={cn(
+                        "w-full py-2.5 rounded-xl text-xs font-mono font-bold transition-colors cursor-pointer",
+                        isLightMode ? "bg-black text-white hover:bg-neutral-800" : "bg-white text-black hover:bg-neutral-200"
+                      )}
+                    >
+                      Show Snackbar
+                    </button>
+                  </div>
+
+                  {m3SnackbarOpen && (
+                    <div className="pb-2">
+                      <M3Snackbar
+                        message={m3SnackbarMsg}
+                        actionLabel="Undo"
+                        onAction={() => setM3SnackbarOpen(false)}
+                        onDismiss={() => setM3SnackbarOpen(false)}
+                        variant={m3SnackbarVariant === "minimal" ? "minimal" : "default"}
+                      />
+                    </div>
+                  )}
+                </div>
+              </MobilePreviewChassis>
+            </div>
+          )}
+
+          {/* M3 Progress Indicator */}
+          {item.name === "m3-progress-indicator" && (
+            <div className="w-full flex justify-center py-2">
+              <MobilePreviewChassis isLightMode={isLightMode} title="Progress Indicators" subtitle="FEEDBACK">
+                <div className="flex-1 flex flex-col p-4 space-y-6 overflow-y-auto">
+                  <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] space-y-4">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">Linear Progress ({m3ProgressVal}%)</span>
+                    <M3ProgressIndicator
+                      type="linear"
+                      value={m3ProgressVal}
+                      variant={m3ProgressVariant === "minimal" ? "minimal" : "default"}
+                    />
+                  </div>
+
+                  <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] space-y-4 text-center">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">Circular Determinate &amp; Indeterminate</span>
+                    <div className="flex items-center justify-around py-2">
+                      <M3ProgressIndicator
+                        type="circular"
+                        value={m3ProgressVal}
+                        variant={m3ProgressVariant === "minimal" ? "minimal" : "default"}
+                      />
+                      <M3ProgressIndicator
+                        type="circular"
+                        indeterminate={true}
+                        variant={m3ProgressVariant === "minimal" ? "minimal" : "default"}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </MobilePreviewChassis>
+            </div>
+          )}
+
+          {/* M3 Badge */}
+          {item.name === "m3-badge" && (
+            <div className="w-full flex justify-center py-2">
+              <MobilePreviewChassis isLightMode={isLightMode} title="Badges" subtitle="COMMUNICATION">
+                <div className="flex-1 flex flex-col p-4 space-y-5 overflow-y-auto">
+                  <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] space-y-4">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">Configured Badge</span>
+                    <div className="flex items-center justify-around py-2">
+                      <M3Badge
+                        content={m3BadgeVal}
+                        dot={m3BadgeVariant === "dot"}
+                        variant={m3BadgeVariant === "minimal" ? "minimal" : "default"}
+                      >
+                        <div className="p-3 rounded-full bg-neutral-200 dark:bg-neutral-800">
+                          <Bell className="h-6 w-6" />
+                        </div>
+                      </M3Badge>
+
+                      <M3Badge content={99} max={99}>
+                        <div className="p-3 rounded-full bg-neutral-200 dark:bg-neutral-800">
+                          <ShoppingBag className="h-6 w-6" />
+                        </div>
+                      </M3Badge>
+
+                      <M3Badge dot>
+                        <div className="p-3 rounded-full bg-neutral-200 dark:bg-neutral-800">
+                          <User className="h-6 w-6" />
+                        </div>
+                      </M3Badge>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2 pt-2 border-t border-[var(--border)]/60">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">Minimal SaaS Badges</span>
+                    <div className="flex items-center justify-around py-2">
+                      <M3Badge variant="minimal" content={m3BadgeVal}>
+                        <div className="p-2.5 rounded-lg border border-[var(--border)]">
+                          <Compass className="h-5 w-5" />
+                        </div>
+                      </M3Badge>
+                      <M3Badge variant="minimal" dot>
+                        <div className="p-2.5 rounded-lg border border-[var(--border)]">
+                          <Heart className="h-5 w-5" />
+                        </div>
+                      </M3Badge>
+                    </div>
+                  </div>
+                </div>
+              </MobilePreviewChassis>
+            </div>
+          )}
+
+          {/* M3 List */}
+          {item.name === "m3-list" && (
+            <div className="w-full flex justify-center py-2">
+              <MobilePreviewChassis isLightMode={isLightMode} title="Lists" subtitle="DATA DISPLAY">
+                <div className="flex-1 flex flex-col overflow-y-auto">
+                  <M3List header="Transactions" variant={m3ListVariant === "minimal" ? "minimal" : "default"}>
+                    <M3ListItem
+                      headline="Kilo Studio Apparel"
+                      supportingText="Technical Shell 3L • Express"
+                      trailingSupportingText="Just now"
+                      leading={<ShoppingBag className="h-5 w-5 text-emerald-500" />}
+                      trailing={<ChevronRight className="h-4 w-4 text-neutral-400" />}
+                    />
+                    <M3ListItem
+                      headline="Server Telemetry Sync"
+                      supportingText="AST Validation verified"
+                      trailingSupportingText="14m ago"
+                      leading={<CheckCircle2 className="h-5 w-5 text-blue-500" />}
+                      trailing={<ChevronRight className="h-4 w-4 text-neutral-400" />}
+                    />
+                    <M3ListItem
+                      headline="Security Dispatch"
+                      supportingText="Biometric face auth approved"
+                      trailingSupportingText="1h ago"
+                      leading={<Shield className="h-5 w-5 text-purple-500" />}
+                      trailing={<ChevronRight className="h-4 w-4 text-neutral-400" />}
+                    />
+                  </M3List>
+                </div>
+              </MobilePreviewChassis>
+            </div>
+          )}
         </ScaledThumbnailWrapper>
       </div>
 
@@ -7100,6 +8155,584 @@ export function ComponentPreviewStage({
                     max={9}
                     step={1}
                     formatValue={(v) => `${v}`}
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* M3 Button Controls */}
+            {item.name === "m3-button" && (
+              <>
+                <CustomizeTile label="Variant">
+                  <CustomizeSelect
+                    value={m3BtnVariant}
+                    onChange={(val) => {
+                      setM3BtnVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={[
+                      { label: "Filled (M3)", value: "filled" },
+                      { label: "Elevated (M3)", value: "elevated" },
+                      { label: "Tonal (M3)", value: "tonal" },
+                      { label: "Outlined (M3)", value: "outlined" },
+                      { label: "Text (M3)", value: "text" },
+                      { label: "Minimal Solid (SaaS)", value: "minimal-solid" },
+                      { label: "Minimal Outline (SaaS)", value: "minimal-outline" },
+                      { label: "Minimal Ghost (SaaS)", value: "minimal-ghost" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Size">
+                  <CustomizeSelect
+                    value={m3BtnSize}
+                    onChange={setM3BtnSize}
+                    options={[
+                      { label: "Small (36px)", value: "sm" },
+                      { label: "Default (40px)", value: "default" },
+                      { label: "Large (48px)", value: "lg" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Button Text">
+                  <CustomizeInput value={m3BtnLabel} onChange={setM3BtnLabel} />
+                </CustomizeTile>
+                <CustomizeTile label="Loading State">
+                  <CustomizeSwitch checked={m3BtnLoading} onChange={setM3BtnLoading} label="Show spinner" />
+                </CustomizeTile>
+                <CustomizeTile label="Disabled State">
+                  <CustomizeSwitch checked={m3BtnDisabled} onChange={setM3BtnDisabled} label="Disable button" />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* M3 FAB Controls */}
+            {item.name === "m3-fab" && (
+              <>
+                <CustomizeTile label="Variant">
+                  <CustomizeSelect
+                    value={m3FabVariant}
+                    onChange={(val) => {
+                      setM3FabVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={[
+                      { label: "Extended (M3)", value: "extended" },
+                      { label: "Standard (M3 56px)", value: "standard" },
+                      { label: "Small (M3 40px)", value: "small" },
+                      { label: "Large (M3 96px)", value: "large" },
+                      { label: "Minimal SaaS FAB", value: "minimal" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="FAB Size">
+                  <CustomizeSelect
+                    value={m3FabSize}
+                    onChange={setM3FabSize}
+                    options={[
+                      { label: "Extended Pill", value: "extended" },
+                      { label: "Standard (56px)", value: "default" },
+                      { label: "Small (40px)", value: "sm" },
+                      { label: "Large (96px)", value: "lg" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="FAB Label">
+                  <CustomizeInput value={m3FabLabel} onChange={setM3FabLabel} />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* M3 Segmented Button Controls */}
+            {item.name === "m3-segmented-button" && (
+              <>
+                <CustomizeTile label="Variant">
+                  <CustomizeSelect
+                    value={m3SegmentVariant}
+                    onChange={(val) => {
+                      setM3SegmentVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={[
+                      { label: "Single Select (M3)", value: "single-select" },
+                      { label: "Multi Select (M3)", value: "multi-select" },
+                      { label: "Minimal SaaS Style", value: "minimal" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Active Segment">
+                  <CustomizeSelect
+                    value={m3SegmentVal}
+                    onChange={setM3SegmentVal}
+                    options={[
+                      { label: "Day", value: "day" },
+                      { label: "Week", value: "week" },
+                      { label: "Month", value: "month" },
+                      { label: "Year", value: "year" },
+                    ]}
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* M3 Icon Button Controls */}
+            {item.name === "m3-icon-button" && (
+              <>
+                <CustomizeTile label="Variant">
+                  <CustomizeSelect
+                    value={m3IconBtnVariant}
+                    onChange={(val) => {
+                      setM3IconBtnVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={[
+                      { label: "Tonal (M3)", value: "tonal" },
+                      { label: "Filled (M3)", value: "filled" },
+                      { label: "Outlined (M3)", value: "outlined" },
+                      { label: "Standard (M3)", value: "standard" },
+                      { label: "Minimal (SaaS)", value: "minimal" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Selected State">
+                  <CustomizeSwitch checked={m3IconBtnSelected} onChange={setM3IconBtnSelected} label="Toggle selected state" />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* M3 Switch Controls */}
+            {item.name === "m3-switch" && (
+              <>
+                <CustomizeTile label="Variant">
+                  <CustomizeSelect
+                    value={m3SwitchVariant}
+                    onChange={(val) => {
+                      setM3SwitchVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={[
+                      { label: "Standard M3 (With Icon)", value: "standard-m3" },
+                      { label: "With Icons In Thumb", value: "with-icons" },
+                      { label: "Minimal SaaS Switch", value: "minimal" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Checked State">
+                  <CustomizeSwitch checked={m3SwitchChecked} onChange={setM3SwitchChecked} label="Switch toggled on" />
+                </CustomizeTile>
+                <CustomizeTile label="Thumb Icons">
+                  <CustomizeSwitch checked={m3SwitchIcons} onChange={setM3SwitchIcons} label="Show check/cross inside thumb" />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* M3 Checkbox Controls */}
+            {item.name === "m3-checkbox" && (
+              <>
+                <CustomizeTile label="Variant">
+                  <CustomizeSelect
+                    value={m3CheckboxVariant}
+                    onChange={(val) => {
+                      setM3CheckboxVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={[
+                      { label: "Standard M3", value: "standard-m3" },
+                      { label: "Indeterminate", value: "indeterminate" },
+                      { label: "Minimal SaaS Style", value: "minimal" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Checked State">
+                  <CustomizeSwitch checked={Boolean(m3CheckboxChecked)} onChange={setM3CheckboxChecked} label="Checkbox marked" />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* M3 Radio Controls */}
+            {item.name === "m3-radio" && (
+              <>
+                <CustomizeTile label="Variant">
+                  <CustomizeSelect
+                    value={m3RadioVariant}
+                    onChange={(val) => {
+                      setM3RadioVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={[
+                      { label: "Standard M3", value: "standard-m3" },
+                      { label: "Minimal SaaS Style", value: "minimal" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Selected Option">
+                  <CustomizeSelect
+                    value={m3RadioVal}
+                    onChange={setM3RadioVal}
+                    options={[
+                      { label: "Standard Shipping", value: "standard" },
+                      { label: "Express Overnight", value: "express" },
+                      { label: "Priority Courier", value: "priority" },
+                    ]}
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* M3 Slider Controls */}
+            {item.name === "m3-slider" && (
+              <>
+                <CustomizeTile label="Variant">
+                  <CustomizeSelect
+                    value={m3SliderVariant}
+                    onChange={(val) => {
+                      setM3SliderVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={[
+                      { label: "Continuous (M3)", value: "continuous" },
+                      { label: "Discrete Steps (M3)", value: "discrete" },
+                      { label: "Minimal SaaS Slider", value: "minimal" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Slider Value">
+                  <CustomizeSlider
+                    value={m3SliderVal}
+                    onChange={setM3SliderVal}
+                    min={0}
+                    max={100}
+                    step={1}
+                    formatValue={(v) => `${v}%`}
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* M3 Chip Controls */}
+            {item.name === "m3-chip" && (
+              <>
+                <CustomizeTile label="Chip Type">
+                  <CustomizeSelect
+                    value={m3ChipVariant}
+                    onChange={(val) => {
+                      setM3ChipVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={[
+                      { label: "Filter Chip", value: "filter" },
+                      { label: "Assist Chip", value: "assist" },
+                      { label: "Input Chip", value: "input" },
+                      { label: "Suggestion Chip", value: "suggestion" },
+                      { label: "Minimal SaaS Chip", value: "minimal" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Selected State">
+                  <CustomizeSwitch checked={m3ChipSelected} onChange={setM3ChipSelected} label="Mark as active" />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* M3 Text Field Controls */}
+            {item.name === "m3-text-field" && (
+              <>
+                <CustomizeTile label="Variant">
+                  <CustomizeSelect
+                    value={m3TextVariant}
+                    onChange={(val) => {
+                      setM3TextVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={[
+                      { label: "Outlined (M3 Notched)", value: "outlined" },
+                      { label: "Filled (M3 Floating)", value: "filled" },
+                      { label: "Minimal SaaS Input", value: "minimal" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Value">
+                  <CustomizeInput value={m3TextVal} onChange={setM3TextVal} />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* M3 Search Bar Controls */}
+            {item.name === "m3-search-bar" && (
+              <>
+                <CustomizeTile label="Variant">
+                  <CustomizeSelect
+                    value={m3SearchVariant}
+                    onChange={(val) => {
+                      setM3SearchVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={[
+                      { label: "Standard M3 Search Bar", value: "standard-m3" },
+                      { label: "Active Expanded View", value: "active-view" },
+                      { label: "Minimal SaaS Search", value: "minimal" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Search Query">
+                  <CustomizeInput value={m3SearchVal} onChange={setM3SearchVal} />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* M3 Navigation Bar Controls */}
+            {item.name === "m3-navigation-bar" && (
+              <>
+                <CustomizeTile label="Variant">
+                  <CustomizeSelect
+                    value={m3NavVariant}
+                    onChange={(val) => {
+                      setM3NavVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={[
+                      { label: "Standard M3 (64x32 Pill)", value: "standard-m3" },
+                      { label: "With Badges", value: "with-badges" },
+                      { label: "Minimal SaaS Bar", value: "minimal" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Active Destination">
+                  <CustomizeSelect
+                    value={m3NavTab}
+                    onChange={setM3NavTab}
+                    options={[
+                      { label: "Home", value: "home" },
+                      { label: "Explore", value: "explore" },
+                      { label: "Alerts", value: "alerts" },
+                      { label: "Profile", value: "profile" },
+                    ]}
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* M3 Top App Bar Controls */}
+            {item.name === "m3-top-app-bar" && (
+              <>
+                <CustomizeTile label="Variant">
+                  <CustomizeSelect
+                    value={m3AppBarVariant}
+                    onChange={(val) => {
+                      setM3AppBarVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={[
+                      { label: "Center-Aligned (M3)", value: "center-aligned" },
+                      { label: "Small (M3)", value: "small" },
+                      { label: "Medium (M3)", value: "medium" },
+                      { label: "Large (M3)", value: "large" },
+                      { label: "Minimal SaaS", value: "minimal" },
+                    ]}
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* M3 Navigation Drawer Controls */}
+            {item.name === "m3-navigation-drawer" && (
+              <>
+                <CustomizeTile label="Variant">
+                  <CustomizeSelect
+                    value={m3DrawerVariant}
+                    onChange={(val) => {
+                      setM3DrawerVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={[
+                      { label: "Modal Drawer (M3)", value: "modal-drawer" },
+                      { label: "Dismissible Drawer", value: "dismissible" },
+                      { label: "Minimal SaaS Drawer", value: "minimal" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Drawer State">
+                  <CustomizeSwitch checked={m3DrawerOpen} onChange={setM3DrawerOpen} label="Open Drawer Modal" />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* M3 Tabs Controls */}
+            {item.name === "m3-tabs" && (
+              <>
+                <CustomizeTile label="Variant">
+                  <CustomizeSelect
+                    value={m3TabsVariant}
+                    onChange={(val) => {
+                      setM3TabsVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={[
+                      { label: "Primary (M3 Underline)", value: "primary" },
+                      { label: "Secondary (M3 Tonal Pill)", value: "secondary" },
+                      { label: "Minimal SaaS Style", value: "minimal" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Active Tab">
+                  <CustomizeSelect
+                    value={m3TabsVal}
+                    onChange={setM3TabsVal}
+                    options={[
+                      { label: "Overview", value: "overview" },
+                      { label: "Specifications", value: "specs" },
+                      { label: "Reviews", value: "reviews" },
+                    ]}
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* M3 Card Controls */}
+            {item.name === "m3-card" && (
+              <>
+                <CustomizeTile label="Variant">
+                  <CustomizeSelect
+                    value={m3CardVariant}
+                    onChange={(val) => {
+                      setM3CardVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={[
+                      { label: "Outlined (M3)", value: "outlined" },
+                      { label: "Elevated (M3)", value: "elevated" },
+                      { label: "Filled (M3)", value: "filled" },
+                      { label: "Minimal SaaS Card", value: "minimal" },
+                    ]}
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* M3 Dialog Controls */}
+            {item.name === "m3-dialog" && (
+              <>
+                <CustomizeTile label="Variant">
+                  <CustomizeSelect
+                    value={m3DialogVariant}
+                    onChange={(val) => {
+                      setM3DialogVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={[
+                      { label: "Confirmation (M3 28px)", value: "confirmation" },
+                      { label: "Basic Dialog", value: "basic" },
+                      { label: "Minimal SaaS Dialog", value: "minimal" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Dialog Visibility">
+                  <CustomizeSwitch checked={m3DialogOpen} onChange={setM3DialogOpen} label="Show modal dialog" />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* M3 Snackbar Controls */}
+            {item.name === "m3-snackbar" && (
+              <>
+                <CustomizeTile label="Variant">
+                  <CustomizeSelect
+                    value={m3SnackbarVariant}
+                    onChange={(val) => {
+                      setM3SnackbarVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={[
+                      { label: "With Action (M3)", value: "with-action" },
+                      { label: "Single Line (M3)", value: "single-line" },
+                      { label: "Minimal SaaS Toast", value: "minimal" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Snackbar Active">
+                  <CustomizeSwitch checked={m3SnackbarOpen} onChange={setM3SnackbarOpen} label="Display snackbar" />
+                </CustomizeTile>
+                <CustomizeTile label="Message">
+                  <CustomizeInput value={m3SnackbarMsg} onChange={setM3SnackbarMsg} />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* M3 Progress Indicator Controls */}
+            {item.name === "m3-progress-indicator" && (
+              <>
+                <CustomizeTile label="Type">
+                  <CustomizeSelect
+                    value={m3ProgressVariant}
+                    onChange={(val) => {
+                      setM3ProgressVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={[
+                      { label: "Circular Progress", value: "circular" },
+                      { label: "Linear Progress", value: "linear" },
+                      { label: "Minimal SaaS Style", value: "minimal" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Progress Value">
+                  <CustomizeSlider
+                    value={m3ProgressVal}
+                    onChange={setM3ProgressVal}
+                    min={0}
+                    max={100}
+                    step={1}
+                    formatValue={(v) => `${v}%`}
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* M3 Badge Controls */}
+            {item.name === "m3-badge" && (
+              <>
+                <CustomizeTile label="Variant">
+                  <CustomizeSelect
+                    value={m3BadgeVariant}
+                    onChange={(val) => {
+                      setM3BadgeVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={[
+                      { label: "Count Badge (M3)", value: "count" },
+                      { label: "Dot Badge (M3)", value: "dot" },
+                      { label: "Minimal SaaS Badge", value: "minimal" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Badge Count">
+                  <CustomizeSlider
+                    value={m3BadgeVal}
+                    onChange={setM3BadgeVal}
+                    min={0}
+                    max={99}
+                    step={1}
+                    formatValue={(v) => `${v}`}
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* M3 List Controls */}
+            {item.name === "m3-list" && (
+              <>
+                <CustomizeTile label="Variant">
+                  <CustomizeSelect
+                    value={m3ListVariant}
+                    onChange={(val) => {
+                      setM3ListVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={[
+                      { label: "Two-Line (M3)", value: "two-line" },
+                      { label: "One-Line (M3)", value: "one-line" },
+                      { label: "Three-Line (M3)", value: "three-line" },
+                      { label: "Minimal SaaS List", value: "minimal" },
+                    ]}
                   />
                 </CustomizeTile>
               </>

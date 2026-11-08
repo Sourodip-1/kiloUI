@@ -1782,6 +1782,129 @@ export function VectorComponentIcon({
     );
   }
 
+  // Material 3 Components
+  if (norm.startsWith("m3-") || norm.includes("material")) {
+    if (norm.includes("fab")) {
+      return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className}>
+          <rect x="3" y="3" width="18" height="18" rx="5" className={isActive ? "fill-[var(--accent-green)]/15 stroke-[var(--accent-green)]" : ""} />
+          <line x1="12" y1="8" x2="12" y2="16" />
+          <line x1="8" y1="12" x2="16" y2="12" />
+        </svg>
+      );
+    }
+    if (norm.includes("button")) {
+      return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className}>
+          <rect x="2" y="6" width="20" height="12" rx="6" className={isActive ? "fill-[var(--accent-green)]/15 stroke-[var(--accent-green)]" : ""} />
+          <line x1="8" y1="12" x2="16" y2="12" />
+        </svg>
+      );
+    }
+    if (norm.includes("switch")) {
+      return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className}>
+          <rect x="2" y="6" width="20" height="12" rx="6" />
+          <circle cx={isActive ? 16 : 8} cy="12" r="4" className={isActive ? "fill-[var(--accent-green)] stroke-[var(--accent-green)]" : ""} />
+        </svg>
+      );
+    }
+    if (norm.includes("checkbox")) {
+      return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className}>
+          <rect x="3" y="3" width="18" height="18" rx="3" className={isActive ? "fill-[var(--accent-green)]/15 stroke-[var(--accent-green)]" : ""} />
+          <path d="M7 12l3.5 3.5 6.5-6.5" />
+        </svg>
+      );
+    }
+    if (norm.includes("radio")) {
+      return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className}>
+          <circle cx="12" cy="12" r="9" />
+          <circle cx="12" cy="12" r="4" className={isActive ? "fill-[var(--accent-green)] stroke-[var(--accent-green)]" : "fill-current"} />
+        </svg>
+      );
+    }
+    if (norm.includes("slider")) {
+      return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className}>
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <circle cx="14" cy="12" r="3.5" className={isActive ? "fill-[var(--accent-green)] stroke-[var(--accent-green)]" : "fill-current"} />
+        </svg>
+      );
+    }
+    if (norm.includes("chip")) {
+      return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className}>
+          <rect x="2" y="7" width="20" height="10" rx="5" className={isActive ? "fill-[var(--accent-green)]/15 stroke-[var(--accent-green)]" : ""} />
+          <circle cx="6" cy="12" r="1.5" fill="currentColor" />
+        </svg>
+      );
+    }
+    if (norm.includes("text-field") || norm.includes("input")) {
+      return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className}>
+          <rect x="3" y="5" width="18" height="14" rx="3" className={isActive ? "stroke-[var(--accent-green)]" : ""} />
+          <line x1="7" y1="12" x2="11" y2="12" />
+          <line x1="9" y1="9" x2="9" y2="15" />
+        </svg>
+      );
+    }
+    if (norm.includes("navigation-bar") || norm.includes("nav")) {
+      return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className}>
+          <rect x="2" y="14" width="20" height="7" rx="2" />
+          <circle cx="7" cy="17.5" r="1.5" />
+          <circle cx="12" cy="17.5" r="1.5" className={isActive ? "fill-[var(--accent-green)]" : ""} />
+          <circle cx="17" cy="17.5" r="1.5" />
+        </svg>
+      );
+    }
+    if (norm.includes("dialog")) {
+      return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className}>
+          <rect x="3" y="4" width="18" height="16" rx="4" className={isActive ? "stroke-[var(--accent-green)]" : ""} />
+          <line x1="7" y1="9" x2="17" y2="9" />
+          <line x1="13" y1="16" x2="17" y2="16" />
+        </svg>
+      );
+    }
+    if (norm.includes("progress")) {
+      return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className={className}>
+          <circle cx="12" cy="12" r="8" strokeDasharray="32" strokeDashoffset="12" className={isActive ? "stroke-[var(--accent-green)]" : ""} />
+        </svg>
+      );
+    }
+    if (norm.includes("badge")) {
+      return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className}>
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+          <circle cx="18" cy="6" r="3" fill="var(--accent-red)" stroke="var(--bg-main)" strokeWidth="1.5" />
+        </svg>
+      );
+    }
+    if (norm.includes("list")) {
+      return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className}>
+          <line x1="8" y1="6" x2="20" y2="6" />
+          <line x1="8" y1="12" x2="20" y2="12" />
+          <line x1="8" y1="18" x2="20" y2="18" />
+          <circle cx="4" cy="6" r="1" fill="currentColor" />
+          <circle cx="4" cy="12" r="1" fill="currentColor" />
+          <circle cx="4" cy="18" r="1" fill="currentColor" />
+        </svg>
+      );
+    }
+    // Generic M3 icon
+    return (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <rect x="3" y="3" width="18" height="18" rx="6" className={isActive ? "fill-[var(--accent-green)]/15 stroke-[var(--accent-green)]" : ""} />
+        <circle cx="12" cy="12" r="3" />
+      </svg>
+    );
+  }
+
   // Generic fallback
   return (
     <svg
