@@ -780,6 +780,9 @@ export function ComponentPreviewStage({
     item.name === "m3-segmented-button" && activeVariant ? activeVariant : "single-select"
   );
   const [m3SegmentVal, setM3SegmentVal] = React.useState<any>("day");
+  const [m3MultiSegmentVal, setM3MultiSegmentVal] = React.useState<string[]>(["day", "week"]);
+  const [m3ChipsList, setM3ChipsList] = React.useState(["Next.js", "Material 3", "Turbopack", "TypeScript"]);
+  const [m3SelectedChips, setM3SelectedChips] = React.useState<string[]>(["Material 3", "Turbopack"]);
 
   const [m3IconBtnVariant, setM3IconBtnVariant] = React.useState<any>(
     item.name === "m3-icon-button" && activeVariant ? activeVariant : "tonal"
@@ -5984,13 +5987,18 @@ export function ComponentPreviewStage({
                     ))}
                   </div>
 
-                  {/* Configured Floating FAB */}
+                  {/* Configured Floating FAB with Speed Dial Menu */}
                   <div className="absolute bottom-4 right-4 z-20">
                     <M3Fab
                       size={m3FabSize}
                       variant={m3FabVariant === "minimal" ? "minimal" : "primary"}
                       label={m3FabLabel}
                       icon={<Plus className="h-5 w-5" />}
+                      menuItems={[
+                        { id: "note", label: "New Task", icon: <Edit3 className="h-4 w-4" /> },
+                        { id: "sync", label: "Sync Telemetry", icon: <RefreshCw className="h-4 w-4" /> },
+                        { id: "share", label: "Share Sprint", icon: <Share2 className="h-4 w-4" /> },
+                      ]}
                     />
                   </div>
                 </div>
@@ -6004,10 +6012,13 @@ export function ComponentPreviewStage({
               <MobilePreviewChassis isLightMode={isLightMode} title="Segmented Button" subtitle="ACTIONS">
                 <div className="flex-1 flex flex-col p-4 space-y-5 overflow-y-auto">
                   <div className="space-y-2">
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">Single Select (M3 Pill)</span>
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">
+                      {m3SegmentVariant === "multi-select" ? "Multi Select (Filter Tags)" : "Single Select (M3 Pill)"}
+                    </span>
                     <M3SegmentedButton
-                      value={m3SegmentVal}
-                      onChange={setM3SegmentVal}
+                      value={m3SegmentVariant === "multi-select" ? m3MultiSegmentVal : m3SegmentVal}
+                      onChange={m3SegmentVariant === "multi-select" ? setM3MultiSegmentVal : setM3SegmentVal}
+                      multiSelect={m3SegmentVariant === "multi-select"}
                       options={[
                         { id: "day", label: "Day" },
                         { id: "week", label: "Week" },
@@ -6020,7 +6031,9 @@ export function ComponentPreviewStage({
 
                   <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] space-y-2">
                     <span className="text-[9px] font-mono text-neutral-400 uppercase tracking-wider">Active Segment Range</span>
-                    <h4 className="text-sm font-bold font-sans">Metrics for: {String(m3SegmentVal).toUpperCase()}</h4>
+                    <h4 className="text-sm font-bold font-sans">
+                      Metrics for: {Array.isArray(m3SegmentVariant === "multi-select" ? m3MultiSegmentVal : m3SegmentVal) ? (m3SegmentVariant === "multi-select" ? m3MultiSegmentVal : [m3SegmentVal]).join(", ").toUpperCase() : String(m3SegmentVal).toUpperCase()}
+                    </h4>
                     <p className="text-xs text-neutral-500">Live preview reacts instantly to segmented control changes with smooth M3 spring indicator.</p>
                   </div>
 
@@ -6225,31 +6238,52 @@ export function ComponentPreviewStage({
           {item.name === "m3-chip" && (
             <div className="w-full flex justify-center py-2">
               <MobilePreviewChassis isLightMode={isLightMode} title="Chips" subtitle="SELECTION">
-                <div className="flex-1 flex flex-col p-4 space-y-4 overflow-y-auto">
-                  <div className="space-y-2">
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">M3 Chip Types</span>
+                <div className="flex-1 flex flex-col p-4 space-y-5 overflow-y-auto">
+                  <div className="space-y-2.5">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">Interactive Filter Chips</span>
                     <div className="flex flex-wrap gap-2">
-                      <M3Chip
-                        chipType={m3ChipVariant === "minimal" ? "filter" : m3ChipVariant}
-                        selected={m3ChipSelected}
-                        onSelectedChange={setM3ChipSelected}
-                        icon={<Sparkles className="h-4 w-4" />}
-                      >
-                        Filter Chip
-                      </M3Chip>
+                      {m3ChipsList.map((chipName) => {
+                        const isSelected = m3SelectedChips.includes(chipName);
+                        return (
+                          <M3Chip
+                            key={chipName}
+                            chipType="filter"
+                            selected={isSelected}
+                            onSelectedChange={() => {
+                              setM3SelectedChips((prev) =>
+                                isSelected ? prev.filter((c) => c !== chipName) : [...prev, chipName]
+                              );
+                            }}
+                            icon={<Sparkles className="h-4 w-4" />}
+                          >
+                            {chipName}
+                          </M3Chip>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  <div className="space-y-2.5 pt-2 border-t border-[var(--border)]/60">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">Assist &amp; Input Chips</span>
+                    <div className="flex flex-wrap gap-2">
                       <M3Chip chipType="assist" icon={<Calendar className="h-4 w-4" />}>
-                        Add to Calendar
+                        Add to Sprint
                       </M3Chip>
                       <M3Chip chipType="suggestion">
-                        Suggest Next
+                        Suggest Review
                       </M3Chip>
-                      <M3Chip chipType="input" onDelete={() => {}}>
-                        Alice Smith
+                      <M3Chip
+                        chipType="input"
+                        onDelete={() => {
+                          setM3ChipsList((prev) => prev.slice(0, -1));
+                        }}
+                      >
+                        Alice (Removable)
                       </M3Chip>
                     </div>
                   </div>
 
-                  <div className="space-y-2 pt-2 border-t border-[var(--border)]/60">
+                  <div className="space-y-2.5 pt-2 border-t border-[var(--border)]/60">
                     <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">Minimal SaaS Chips</span>
                     <div className="flex flex-wrap gap-2">
                       <M3Chip variant="minimal" selected={true}>SaaS Active</M3Chip>
@@ -6266,33 +6300,35 @@ export function ComponentPreviewStage({
           {item.name === "m3-text-field" && (
             <div className="w-full flex justify-center py-2">
               <MobilePreviewChassis isLightMode={isLightMode} title="Text Fields" subtitle="INPUTS">
-                <div className="flex-1 flex flex-col p-4 space-y-4 overflow-y-auto">
-                  <div className="space-y-3">
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">Configured Field</span>
+                <div className="flex-1 flex flex-col p-4 space-y-6 overflow-y-auto">
+                  <div className="space-y-2">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 block mb-1">Configured Field</span>
                     <M3TextField
                       variant={m3TextVariant}
                       label="Workspace Email"
                       value={m3TextVal}
+                      labelBgClassName={isLightMode ? "bg-[#f8f9fa] text-neutral-900" : "bg-[#0c0d0e] text-white"}
                       onChange={(e) => setM3TextVal(e.target.value)}
                       helperText="Your registered team email"
                       leadingIcon={<User className="h-4 w-4" />}
                     />
                   </div>
 
-                  <div className="space-y-3 pt-2">
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">Outlined Notch (M3)</span>
+                  <div className="space-y-2 pt-2 border-t border-[var(--border)]/40">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 block mb-1">Outlined Notch (M3)</span>
                     <M3TextField
                       variant="outlined"
                       label="Password"
                       type="password"
                       defaultValue="supersecret"
+                      labelBgClassName={isLightMode ? "bg-[#f8f9fa] text-neutral-900" : "bg-[#0c0d0e] text-white"}
                       leadingIcon={<Lock className="h-4 w-4" />}
                       helperText="Minimum 8 characters"
                     />
                   </div>
 
-                  <div className="space-y-3 pt-2">
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">Filled Container (M3)</span>
+                  <div className="space-y-2 pt-2 border-t border-[var(--border)]/40">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 block mb-1">Filled Container (M3)</span>
                     <M3TextField
                       variant="filled"
                       label="Account Handle"
@@ -6301,8 +6337,8 @@ export function ComponentPreviewStage({
                     />
                   </div>
 
-                  <div className="space-y-3 pt-2 border-t border-[var(--border)]/60">
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">Minimal SaaS Input</span>
+                  <div className="space-y-2 pt-2 border-t border-[var(--border)]/40">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 block mb-1">Minimal SaaS Input</span>
                     <M3TextField
                       variant="minimal"
                       label="API Key"
@@ -6684,30 +6720,130 @@ export function ComponentPreviewStage({
           {item.name === "m3-list" && (
             <div className="w-full flex justify-center py-2">
               <MobilePreviewChassis isLightMode={isLightMode} title="Lists" subtitle="DATA DISPLAY">
-                <div className="flex-1 flex flex-col overflow-y-auto">
-                  <M3List header="Transactions" variant={m3ListVariant === "minimal" ? "minimal" : "default"}>
-                    <M3ListItem
-                      headline="Kilo Studio Apparel"
-                      supportingText="Technical Shell 3L • Express"
-                      trailingSupportingText="Just now"
-                      leading={<ShoppingBag className="h-5 w-5 text-emerald-500" />}
-                      trailing={<ChevronRight className="h-4 w-4 text-neutral-400" />}
-                    />
-                    <M3ListItem
-                      headline="Server Telemetry Sync"
-                      supportingText="AST Validation verified"
-                      trailingSupportingText="14m ago"
-                      leading={<CheckCircle2 className="h-5 w-5 text-blue-500" />}
-                      trailing={<ChevronRight className="h-4 w-4 text-neutral-400" />}
-                    />
-                    <M3ListItem
-                      headline="Security Dispatch"
-                      supportingText="Biometric face auth approved"
-                      trailingSupportingText="1h ago"
-                      leading={<Shield className="h-5 w-5 text-purple-500" />}
-                      trailing={<ChevronRight className="h-4 w-4 text-neutral-400" />}
-                    />
-                  </M3List>
+                <div className="flex-1 flex flex-col overflow-y-auto p-2">
+                  {m3ListVariant === "one-line" ? (
+                    <M3List header="One-Line List (56px)">
+                      <M3ListItem
+                        lines="1"
+                        headline="Inbox Messages"
+                        leading={<Bell className="h-5 w-5 text-emerald-500" />}
+                        trailingText="24"
+                        trailing={<ChevronRight className="h-4 w-4 text-neutral-400" />}
+                      />
+                      <M3ListItem
+                        lines="1"
+                        headline="Starred Projects"
+                        leading={<Star className="h-5 w-5 text-amber-500" />}
+                        trailingText="8"
+                        trailing={<ChevronRight className="h-4 w-4 text-neutral-400" />}
+                      />
+                      <M3ListItem
+                        lines="1"
+                        headline="Telemetry Archive"
+                        leading={<Archive className="h-5 w-5 text-blue-500" />}
+                        trailing={<ChevronRight className="h-4 w-4 text-neutral-400" />}
+                      />
+                      <M3ListItem
+                        lines="1"
+                        headline="Device Settings"
+                        leading={<Shield className="h-5 w-5 text-purple-500" />}
+                        trailing={<ChevronRight className="h-4 w-4 text-neutral-400" />}
+                      />
+                    </M3List>
+                  ) : m3ListVariant === "three-line" ? (
+                    <M3List header="Three-Line List (88px)">
+                      <M3ListItem
+                        lines="3"
+                        headline="Team Weekly Sprint Sync"
+                        overline="KILO STUDIO"
+                        supportingText="Reviewed component motion curves, velocity fling damping, and mobile ergonomics for M3 suite."
+                        leading={
+                          <div className="h-10 w-10 rounded-full bg-emerald-500/20 text-emerald-500 font-bold flex items-center justify-center text-xs">
+                            KS
+                          </div>
+                        }
+                        trailingSupportingText="10:42 AM"
+                        trailing={<ChevronRight className="h-4 w-4 text-neutral-400" />}
+                      />
+                      <M3ListItem
+                        lines="3"
+                        headline="Production Build Verified"
+                        overline="CI/CD PIPELINE"
+                        supportingText="All 101 routes compiled with Turbopack. Static pages collected and cached with zero errors."
+                        leading={
+                          <div className="h-10 w-10 rounded-full bg-blue-500/20 text-blue-500 font-bold flex items-center justify-center text-xs">
+                            CI
+                          </div>
+                        }
+                        trailingSupportingText="Yesterday"
+                        trailing={<ChevronRight className="h-4 w-4 text-neutral-400" />}
+                      />
+                      <M3ListItem
+                        lines="3"
+                        headline="Security Dispatch Alert"
+                        overline="SECURITY OPS"
+                        supportingText="Hardware biometric face authentication token renewed for multi-factor root cluster."
+                        leading={
+                          <div className="h-10 w-10 rounded-full bg-purple-500/20 text-purple-500 font-bold flex items-center justify-center text-xs">
+                            SO
+                          </div>
+                        }
+                        trailingSupportingText="2d ago"
+                        trailing={<ChevronRight className="h-4 w-4 text-neutral-400" />}
+                      />
+                    </M3List>
+                  ) : m3ListVariant === "minimal" ? (
+                    <M3List header="Minimal SaaS List" variant="minimal">
+                      <M3ListItem
+                        variant="minimal"
+                        headline="Kilo Studio Apparel"
+                        supportingText="Technical Shell 3L • Express"
+                        trailingSupportingText="Just now"
+                        leading={<ShoppingBag className="h-4 w-4 text-emerald-500" />}
+                      />
+                      <M3ListItem
+                        variant="minimal"
+                        headline="Server Telemetry Sync"
+                        supportingText="AST Validation verified"
+                        trailingSupportingText="14m ago"
+                        leading={<CheckCircle2 className="h-4 w-4 text-blue-500" />}
+                      />
+                      <M3ListItem
+                        variant="minimal"
+                        headline="Security Dispatch"
+                        supportingText="Biometric face auth approved"
+                        trailingSupportingText="1h ago"
+                        leading={<Shield className="h-4 w-4 text-purple-500" />}
+                      />
+                    </M3List>
+                  ) : (
+                    <M3List header="Two-Line List (72px)">
+                      <M3ListItem
+                        lines="2"
+                        headline="Kilo Studio Apparel"
+                        supportingText="Technical Shell 3L • Express Delivery"
+                        trailingSupportingText="Just now"
+                        leading={<ShoppingBag className="h-5 w-5 text-emerald-500" />}
+                        trailing={<ChevronRight className="h-4 w-4 text-neutral-400" />}
+                      />
+                      <M3ListItem
+                        lines="2"
+                        headline="Server Telemetry Sync"
+                        supportingText="AST Validation schema passed 100%"
+                        trailingSupportingText="14m ago"
+                        leading={<CheckCircle2 className="h-5 w-5 text-blue-500" />}
+                        trailing={<ChevronRight className="h-4 w-4 text-neutral-400" />}
+                      />
+                      <M3ListItem
+                        lines="2"
+                        headline="Security Dispatch"
+                        supportingText="Biometric face auth approved"
+                        trailingSupportingText="1h ago"
+                        leading={<Shield className="h-5 w-5 text-purple-500" />}
+                        trailing={<ChevronRight className="h-4 w-4 text-neutral-400" />}
+                      />
+                    </M3List>
+                  )}
                 </div>
               </MobilePreviewChassis>
             </div>

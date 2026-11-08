@@ -46,21 +46,21 @@ export const M3Button = React.forwardRef<HTMLButtonElement, M3ButtonProps>(
     // M3 styles with authentic shape & tonal roles
     const m3Styles: Record<string, string> = {
       filled:
-        "bg-[var(--accent-green)] text-[var(--bg-main)] hover:brightness-110 active:brightness-95 shadow-xs border border-transparent font-medium rounded-full",
+        "bg-[var(--accent-green)] text-[var(--bg-main)] hover:brightness-110 active:scale-[0.96] shadow-xs border border-transparent font-semibold rounded-full",
       elevated:
-        "bg-[var(--surface-elevated)] text-[var(--accent-green)] hover:bg-[var(--surface-secondary)] active:scale-[0.99] shadow-sm border border-[var(--border)] font-medium rounded-full",
+        "bg-[var(--surface-elevated)] text-[var(--accent-green)] hover:bg-[var(--surface-secondary)] active:scale-[0.96] shadow-sm hover:shadow-md border border-[var(--border)] font-semibold rounded-full",
       tonal:
-        "bg-[var(--accent-green-deep)] text-[var(--accent-green)] hover:brightness-110 active:scale-[0.99] border border-[var(--accent-green)]/20 font-medium rounded-full",
+        "bg-[var(--accent-green-deep)] text-[var(--accent-green)] hover:brightness-110 active:scale-[0.96] border border-[var(--accent-green)]/20 font-semibold rounded-full",
       outlined:
-        "bg-transparent text-[var(--accent-green)] hover:bg-[var(--accent-green-subtle)] active:scale-[0.99] border border-[var(--border-hover)] font-medium rounded-full",
+        "bg-transparent text-[var(--accent-green)] hover:bg-[var(--accent-green-subtle)] active:scale-[0.96] border border-[var(--border-hover)] font-semibold rounded-full",
       text:
-        "bg-transparent text-[var(--accent-green)] hover:bg-[var(--accent-green-subtle)] active:scale-[0.99] border border-transparent font-medium rounded-full",
+        "bg-transparent text-[var(--accent-green)] hover:bg-[var(--accent-green-subtle)] active:scale-[0.96] border border-transparent font-semibold rounded-full",
       "minimal-solid":
-        "bg-[var(--text-primary)] text-[var(--bg-main)] hover:opacity-90 active:scale-[0.98] font-medium rounded-lg border border-transparent shadow-2xs",
+        "bg-[var(--text-primary)] text-[var(--bg-main)] hover:opacity-90 active:scale-[0.96] font-semibold rounded-lg border border-transparent shadow-2xs",
       "minimal-outline":
-        "bg-[var(--surface-elevated)] text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] active:scale-[0.98] font-medium rounded-lg border border-[var(--border)] shadow-2xs",
+        "bg-[var(--surface-elevated)] text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] active:scale-[0.96] font-semibold rounded-lg border border-[var(--border)] shadow-2xs",
       "minimal-ghost":
-        "bg-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] active:scale-[0.98] font-medium rounded-lg border border-transparent",
+        "bg-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] active:scale-[0.96] font-semibold rounded-lg border border-transparent",
     };
 
     const sizeStyles: Record<string, string> = {
@@ -118,3 +118,4 @@ export const M3Button = React.forwardRef<HTMLButtonElement, M3ButtonProps>(
   }
 );
 M3Button.displayName = "M3Button";
+

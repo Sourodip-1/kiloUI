@@ -4,13 +4,15 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 export type M3IconButtonVariant = "standard" | "filled" | "tonal" | "outlined" | "minimal";
+export type M3IconButtonSize = "sm" | "default" | "lg";
 
 export interface M3IconButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: M3IconButtonVariant;
+  size?: M3IconButtonSize;
   selected?: boolean;
+  defaultSelected?: boolean;
   onSelectedChange?: (selected: boolean) => void;
-  size?: "sm" | "default" | "lg";
   icon?: React.ReactNode;
   selectedIcon?: React.ReactNode;
 }
@@ -20,9 +22,10 @@ export const M3IconButton = React.forwardRef<HTMLButtonElement, M3IconButtonProp
     {
       className,
       variant = "standard",
-      selected = false,
-      onSelectedChange,
       size = "default",
+      selected: controlledSelected,
+      defaultSelected = false,
+      onSelectedChange,
       icon,
       selectedIcon,
       children,
@@ -32,9 +35,15 @@ export const M3IconButton = React.forwardRef<HTMLButtonElement, M3IconButtonProp
     ref
   ) => {
     const isMinimal = variant === "minimal";
+    const [uncontrolledSel, setUncontrolledSel] = React.useState(defaultSelected);
+    const selected = controlledSelected !== undefined ? controlledSelected : uncontrolledSel;
 
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-      onSelectedChange?.(!selected);
+      const next = !selected;
+      if (controlledSelected === undefined) {
+        setUncontrolledSel(next);
+      }
+      onSelectedChange?.(next);
       onClick?.(e);
     };
 
@@ -52,7 +61,7 @@ export const M3IconButton = React.forwardRef<HTMLButtonElement, M3IconButtonProp
         ? "bg-[var(--accent-green-deep)] text-[var(--accent-green)] border border-[var(--accent-green)]/40"
         : "bg-transparent text-[var(--text-secondary)] border border-[var(--border)] hover:bg-[var(--surface-secondary)] hover:text-[var(--text-primary)]",
       minimal: selected
-        ? "bg-[var(--surface-elevated)] text-[var(--accent-green)] border border-[var(--border)] shadow-2xs"
+        ? "bg-[var(--surface-elevated)] text-[var(--accent-green)] border border-[var(--border)] shadow-2xs font-semibold"
         : "bg-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] border border-transparent",
     };
 
@@ -71,14 +80,17 @@ export const M3IconButton = React.forwardRef<HTMLButtonElement, M3IconButtonProp
         aria-pressed={selected}
         onClick={handleClick}
         className={cn(
-          "inline-flex items-center justify-center transition-all duration-200 cursor-pointer active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-green)]/40 disabled:opacity-40 disabled:pointer-events-none select-none",
+          "inline-flex items-center justify-center cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-green)]/40 disabled:opacity-40 disabled:pointer-events-none",
+          "transition-all duration-200 active:scale-[0.85] ease-[cubic-bezier(0.34,1.56,0.64,1)]",
           variantStyles[variant],
           sizeStyles,
           className
         )}
         {...props}
       >
-        {currentIcon}
+        <span className="shrink-0 transition-transform duration-200">
+          {currentIcon}
+        </span>
       </button>
     );
   }

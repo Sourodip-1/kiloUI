@@ -11,7 +11,7 @@ export interface M3SwitchProps {
   disabled?: boolean;
   showIcon?: boolean;
   design?: "m3" | "minimal";
-  variant?: "default" | "minimal" | string;
+  variant?: "default" | "minimal" | "standard-m3" | "with-icons" | string;
   label?: string;
   description?: string;
   className?: string;
@@ -29,9 +29,9 @@ export function M3Switch({
   description,
   className,
 }: M3SwitchProps) {
-  const isMinimal = design === "minimal" || variant === "minimal";
   const [uncontrolledChecked, setUncontrolledChecked] = React.useState(defaultChecked);
   const isChecked = controlledChecked !== undefined ? controlledChecked : uncontrolledChecked;
+  const isMinimal = design === "minimal" || variant === "minimal";
 
   const toggle = () => {
     if (disabled) return;
@@ -45,7 +45,7 @@ export function M3Switch({
   return (
     <label
       className={cn(
-        "inline-flex items-center justify-between gap-3 cursor-pointer select-none",
+        "inline-flex items-center justify-between gap-3 cursor-pointer select-none group",
         disabled && "opacity-40 cursor-not-allowed pointer-events-none",
         className
       )}
@@ -53,7 +53,7 @@ export function M3Switch({
       {(label || description) && (
         <div className="flex flex-col">
           {label && (
-            <span className="text-sm font-medium font-sans text-[var(--text-primary)]">
+            <span className="text-sm font-semibold font-sans text-[var(--text-primary)]">
               {label}
             </span>
           )}
@@ -65,7 +65,7 @@ export function M3Switch({
         </div>
       )}
 
-      {/* Switch Track */}
+      {/* Switch Track with Elastic Spring Physics */}
       <button
         type="button"
         role="switch"
@@ -73,7 +73,7 @@ export function M3Switch({
         disabled={disabled}
         onClick={toggle}
         className={cn(
-          "relative inline-flex shrink-0 transition-colors duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-green)]/40",
+          "relative inline-flex shrink-0 transition-colors duration-250 ease-[cubic-bezier(0.2,0,0,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-green)]/40 active:scale-[0.96]",
           isMinimal
             ? cn(
                 "h-6 w-11 rounded-full p-0.5 border",
@@ -84,15 +84,15 @@ export function M3Switch({
             : cn(
                 "h-8 w-[52px] rounded-full p-1 border",
                 isChecked
-                  ? "bg-[var(--accent-green)] border-transparent"
+                  ? "bg-[var(--accent-green)] border-transparent shadow-xs"
                   : "bg-[var(--surface-secondary)] border-[var(--border-hover)]"
               )
         )}
       >
-        {/* Switch Thumb */}
+        {/* Switch Thumb with Spring Stretch */}
         <span
           className={cn(
-            "pointer-events-none flex items-center justify-center rounded-full transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]",
+            "pointer-events-none flex items-center justify-center rounded-full transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-active:scale-x-125",
             isMinimal
               ? cn(
                   "h-5 w-5 bg-[var(--bg-main)] shadow-xs",
@@ -107,7 +107,7 @@ export function M3Switch({
         >
           {showIcon && !isMinimal && (
             isChecked ? (
-              <Check className="h-3.5 w-3.5 stroke-[3]" />
+              <Check className="h-3.5 w-3.5 stroke-[3] animate-in zoom-in-50 duration-150" />
             ) : (
               <X className="h-3 w-3 stroke-[2.5]" />
             )

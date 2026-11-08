@@ -32,7 +32,7 @@ export function M3Snackbar({
     <div
       role="status"
       className={cn(
-        "flex items-center justify-between gap-3 p-3 select-none transition-all duration-200 shadow-xl font-sans",
+        "flex items-center justify-between gap-3 p-3 select-none transition-all duration-200 shadow-xl font-sans animate-in fade-in slide-in-from-bottom-4 duration-300 ease-[cubic-bezier(0.05,0.7,0.1,1)]",
         isMinimal
           ? "rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] text-[var(--text-primary)]"
           : "rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-tertiary)] text-[var(--text-primary)] shadow-2xl",

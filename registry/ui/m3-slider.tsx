@@ -14,7 +14,7 @@ export interface M3SliderProps {
   showValueBubble?: boolean;
   showValue?: boolean;
   design?: "m3" | "minimal";
-  variant?: "default" | "minimal" | string;
+  variant?: "default" | "minimal" | "continuous" | "discrete" | string;
   disabled?: boolean;
   label?: string;
   className?: string;
@@ -39,6 +39,7 @@ export function M3Slider({
   const [uncontrolledValue, setUncontrolledValue] = React.useState(defaultValue);
   const value = controlledValue !== undefined ? controlledValue : uncontrolledValue;
   const isMinimal = design === "minimal" || variant === "minimal";
+  const isDiscrete = discrete || variant === "discrete";
   const [isDragging, setIsDragging] = React.useState(false);
   const trackRef = React.useRef<HTMLDivElement>(null);
 
@@ -53,23 +54,22 @@ export function M3Slider({
     if (step > 0) {
       nextVal = Math.round(nextVal / step) * step;
     }
+    const clampedVal = Math.min(max, Math.max(min, nextVal));
     if (controlledValue === undefined) {
-      setUncontrolledValue(nextVal);
+      setUncontrolledValue(clampedVal);
     }
-    onChange?.(nextVal);
+    onChange?.(clampedVal);
   };
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if (disabled) return;
     setIsDragging(true);
-    try {
-      e.currentTarget.setPointerCapture(e.pointerId);
-    } catch {}
+    e.currentTarget.setPointerCapture(e.pointerId);
     updateFromPointer(e.clientX);
   };
 
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (!isDragging) return;
+    if (!isDragging || disabled) return;
     updateFromPointer(e.clientX);
   };
 
@@ -82,10 +82,10 @@ export function M3Slider({
 
   return (
     <div className={cn("w-full space-y-2 select-none", disabled && "opacity-40 pointer-events-none", className)}>
-      {label && (
+      {(label || showValue) && (
         <div className="flex items-center justify-between text-xs font-medium font-sans">
-          <span className="text-[var(--text-secondary)]">{label}</span>
-          <span className="font-mono text-[var(--accent-green)] font-semibold">{value}</span>
+          {label && <span className="text-[var(--text-secondary)]">{label}</span>}
+          <span className="font-mono text-[var(--accent-green)] font-bold">{value}%</span>
         </div>
       )}
 
@@ -95,42 +95,64 @@ export function M3Slider({
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
-        className="relative flex items-center h-8 cursor-pointer touch-none"
+        className="relative flex items-center h-9 cursor-pointer touch-none group/slider"
       >
         {/* Track Background */}
         <div
           className={cn(
             "w-full rounded-full transition-colors relative overflow-hidden",
-            isMinimal ? "h-1.5 bg-[var(--surface-secondary)]" : "h-3 bg-[var(--surface-secondary)]/80"
+            isMinimal ? "h-1.5 bg-[var(--surface-secondary)]" : "h-3.5 bg-[var(--surface-secondary)]/80 border border-[var(--border)]/40"
           )}
         >
           {/* Active Filled Track */}
           <div
-            className="h-full bg-[var(--accent-green)] transition-all duration-75"
+            className={cn(
+              "h-full transition-all duration-100 ease-[cubic-bezier(0.2,0,0,1)]",
+              isMinimal ? "bg-[var(--text-primary)]" : "bg-[var(--accent-green)]"
+            )}
             style={{ width: `${percentage}%` }}
           />
+
+          {/* Discrete Step Markers */}
+          {isDiscrete && (
+            <div className="absolute inset-0 flex justify-between items-center px-1 pointer-events-none">
+              {[0, 25, 50, 75, 100].map((stepPct) => (
+                <div
+                  key={stepPct}
+                  className={cn(
+                    "w-1 h-1 rounded-full transition-colors",
+                    percentage >= stepPct ? "bg-[var(--bg-main)]/60" : "bg-[var(--text-muted)]/40"
+                  )}
+                />
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* Thumb with Optional Floating Value Pin Bubble */}
+        {/* Thumb with Elastic Spring Value Pin Balloon */}
         <div
-          className="absolute -translate-x-1/2 flex flex-col items-center pointer-events-none"
+          className="absolute -translate-x-1/2 flex flex-col items-center pointer-events-none transition-[left] duration-100 ease-[cubic-bezier(0.2,0,0,1)]"
           style={{ left: `${percentage}%` }}
         >
-          {/* M3 Balloon Value Bubble on Drag */}
+          {/* M3 Balloon Pin Bubble with spring pop */}
           {showValueBubble && isDragging && (
-            <div className="absolute -top-10 px-2 py-0.5 rounded-full bg-[var(--accent-green)] text-[var(--bg-main)] font-mono text-[11px] font-bold shadow-md animate-in fade-in zoom-in-75 duration-100">
-              {value}
+            <div className="absolute -top-11 flex flex-col items-center animate-in zoom-in-75 fade-in duration-200 ease-[cubic-bezier(0.34,1.56,0.64,1)]">
+              <div className="px-2.5 py-0.5 rounded-full bg-[var(--accent-green)] text-[var(--bg-main)] font-mono text-[11px] font-bold shadow-lg">
+                {value}
+              </div>
+              {/* Pointer triangle */}
+              <div className="w-2 h-1.5 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-[var(--accent-green)]" />
             </div>
           )}
 
-          {/* Thumb circle */}
+          {/* Thumb circle with Spring Halo Ring */}
           <div
             className={cn(
-              "rounded-full transition-transform duration-150",
+              "rounded-full transition-all duration-200 ease-[cubic-bezier(0.34,1.56,0.64,1)]",
               isMinimal
                 ? "h-4 w-4 bg-[var(--text-primary)] border-2 border-[var(--bg-main)] shadow-sm"
                 : "h-5 w-5 bg-[var(--accent-green)] border-2 border-[var(--bg-main)] shadow-md",
-              isDragging && "scale-125"
+              isDragging && "scale-125 ring-8 ring-[var(--accent-green)]/25"
             )}
           />
         </div>

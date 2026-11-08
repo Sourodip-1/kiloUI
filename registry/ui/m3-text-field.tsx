@@ -16,6 +16,7 @@ export interface M3TextFieldProps
   trailingIcon?: React.ReactNode;
   clearable?: boolean;
   onClear?: () => void;
+  labelBgClassName?: string;
 }
 
 export const M3TextField = React.forwardRef<HTMLInputElement, M3TextFieldProps>(
@@ -30,6 +31,7 @@ export const M3TextField = React.forwardRef<HTMLInputElement, M3TextFieldProps>(
       trailingIcon,
       clearable = false,
       onClear,
+      labelBgClassName,
       value,
       defaultValue,
       onChange,
@@ -45,6 +47,7 @@ export const M3TextField = React.forwardRef<HTMLInputElement, M3TextFieldProps>(
     const hasValue = String(currentVal).length > 0;
     const isFloating = isFocused || hasValue;
     const isMinimal = variant === "minimal";
+    const isFilled = variant === "filled";
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       setInnerVal(e.target.value);
@@ -53,9 +56,9 @@ export const M3TextField = React.forwardRef<HTMLInputElement, M3TextFieldProps>(
 
     return (
       <div className={cn("w-full space-y-1.5 font-sans select-none", disabled && "opacity-40 pointer-events-none", className)}>
-        {/* Minimal SaaS variant: separate label above */}
+        {/* Minimal SaaS variant: clean label above */}
         {isMinimal && (
-          <label className="block text-xs font-medium text-[var(--text-secondary)]">
+          <label className="block text-xs font-semibold text-[var(--text-secondary)]">
             {label}
           </label>
         )}
@@ -66,24 +69,24 @@ export const M3TextField = React.forwardRef<HTMLInputElement, M3TextFieldProps>(
             "relative flex items-center transition-all duration-200",
             isMinimal
               ? cn(
-                  "h-9 px-3 rounded-lg border bg-[var(--surface-elevated)]",
+                  "h-10 px-3 rounded-lg border bg-[var(--surface-elevated)]",
                   error
                     ? "border-[var(--accent-red)] ring-1 ring-[var(--accent-red)]/20"
                     : isFocused
                     ? "border-[var(--accent-green)] ring-1 ring-[var(--accent-green)]/30"
                     : "border-[var(--border)] hover:border-[var(--border-hover)]"
                 )
-              : variant === "filled"
+              : isFilled
               ? cn(
-                  "h-14 px-4 rounded-t-xl border-b-2 bg-[var(--surface-secondary)]/70",
+                  "h-14 px-4 rounded-t-xl border-b-2 bg-[var(--surface-secondary)]/80 transition-colors",
                   error
                     ? "border-[var(--accent-red)]"
                     : isFocused
                     ? "border-[var(--accent-green)] bg-[var(--surface-secondary)]"
-                    : "border-[var(--border-hover)] hover:bg-[var(--surface-secondary)]/90"
+                    : "border-[var(--border-hover)] hover:bg-[var(--surface-secondary)]/95"
                 )
               : cn(
-                  "h-14 px-4 rounded-xl border",
+                  "h-14 px-4 rounded-2xl border transition-colors",
                   error
                     ? "border-[var(--accent-red)] ring-1 ring-[var(--accent-red)]/30"
                     : isFocused
@@ -93,7 +96,7 @@ export const M3TextField = React.forwardRef<HTMLInputElement, M3TextFieldProps>(
           )}
         >
           {leadingIcon && (
-            <span className={cn("shrink-0 mr-3 text-[var(--text-muted)]", isFocused && "text-[var(--accent-green)]")}>
+            <span className={cn("shrink-0 mr-3 text-[var(--text-muted)] transition-colors", isFocused && "text-[var(--accent-green)]")}>
               {leadingIcon}
             </span>
           )}
@@ -102,11 +105,16 @@ export const M3TextField = React.forwardRef<HTMLInputElement, M3TextFieldProps>(
           {!isMinimal && (
             <span
               className={cn(
-                "absolute left-4 transition-all duration-200 pointer-events-none truncate max-w-[80%]",
-                leadingIcon && "left-11",
-                isFloating
+                "absolute transition-all duration-200 pointer-events-none truncate max-w-[80%]",
+                leadingIcon ? (isFloating ? "left-9" : "left-11") : "left-4",
+                isFilled
+                  ? isFloating
+                    ? "top-1.5 text-[10px] font-bold text-[var(--accent-green)] tracking-wider uppercase"
+                    : "top-4 text-sm text-[var(--text-muted)]"
+                  : isFloating
                   ? cn(
-                      "-top-2.5 px-1 text-[11px] font-semibold bg-[var(--surface-elevated)] rounded",
+                      "-top-2.5 px-1.5 text-[11px] font-bold tracking-tight rounded-xs z-10",
+                      labelBgClassName || "bg-[#0c0d0e] dark:bg-[#0c0d0e]",
                       error
                         ? "text-[var(--accent-red)]"
                         : isFocused
@@ -127,10 +135,10 @@ export const M3TextField = React.forwardRef<HTMLInputElement, M3TextFieldProps>(
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
             disabled={disabled}
-            placeholder={isMinimal ? label : isFloating ? "" : ""}
+            placeholder={isMinimal ? label : ""}
             className={cn(
-              "w-full bg-transparent text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none",
-              !isMinimal && "pt-1"
+              "w-full bg-transparent text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none font-medium",
+              isFilled && isFloating && "pt-4"
             )}
             {...props}
           />
@@ -142,14 +150,14 @@ export const M3TextField = React.forwardRef<HTMLInputElement, M3TextFieldProps>(
                 setInnerVal("");
                 onClear?.();
               }}
-              className="p-1 rounded-full text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
+              className="p-1 rounded-full text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors cursor-pointer active:scale-90"
             >
               <X className="h-4 w-4" />
             </button>
           )}
 
           {error ? (
-            <AlertCircle className="h-4 w-4 text-[var(--accent-red)] shrink-0 ml-2" />
+            <AlertCircle className="h-4 w-4 text-[var(--accent-red)] shrink-0 ml-2 animate-in zoom-in-75 duration-150" />
           ) : trailingIcon ? (
             <span className="shrink-0 ml-2 text-[var(--text-muted)]">{trailingIcon}</span>
           ) : null}
@@ -159,7 +167,7 @@ export const M3TextField = React.forwardRef<HTMLInputElement, M3TextFieldProps>(
         {(helperText || error) && (
           <p
             className={cn(
-              "text-xs px-1",
+              "text-xs px-1 pt-0.5",
               error ? "text-[var(--accent-red)] font-medium" : "text-[var(--text-muted)]"
             )}
           >

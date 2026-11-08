@@ -60,13 +60,13 @@ export function M3Dialog({
       {/* Scrim Overlay */}
       <div
         onClick={() => onOpenChange(false)}
-        className="absolute inset-0 bg-black/60 backdrop-blur-[2px] transition-opacity"
+        className="absolute inset-0 bg-black/60 backdrop-blur-[2px] transition-opacity animate-in fade-in duration-200"
       />
 
       {/* Dialog Container */}
       <div
         className={cn(
-          "relative z-10 w-full max-w-sm flex flex-col p-6 shadow-2xl transition-all duration-200 border border-[var(--border)] font-sans animate-in fade-in zoom-in-95 duration-150",
+          "relative z-10 w-full max-w-sm flex flex-col p-6 shadow-2xl transition-all border border-[var(--border)] font-sans animate-in fade-in zoom-in-90 duration-250 ease-[cubic-bezier(0.05,0.7,0.1,1)]",
           isMinimal
             ? "rounded-2xl bg-[var(--surface-elevated)] space-y-4"
             : "rounded-4xl bg-[var(--surface-secondary)] space-y-5",

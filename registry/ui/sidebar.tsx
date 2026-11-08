@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { ChevronDown, X, Menu, Terminal, ChevronsUpDown, ChevronsDownUp, Sparkles, Monitor } from "lucide-react";
+import { ChevronDown, X, Menu, Terminal, ChevronsUpDown, ChevronsDownUp, Sparkles, Monitor, Smartphone, Layers, ArrowUpDown, RefreshCw, SlidersHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   VectorLayersIcon,
@@ -225,10 +225,12 @@ function SidebarBase({
   const mobileItems = registryItems.filter((i) => i.category === "Mobile App");
   const webItemsCount = registryItems.filter((i) => i.category !== "Mobile App").length;
 
-  const [activePlatform, setActivePlatform] = React.useState<"web" | "mobile">("web");
+  const [activePlatform, setActivePlatform] = React.useState<"web" | "mobile" | "motion">("web");
 
   React.useEffect(() => {
-    if (
+    if (pathname === "/motion" || pathname?.startsWith("/motion")) {
+      setActivePlatform("motion");
+    } else if (
       pathname === "/mobile-primitives" ||
       pathname?.startsWith("/mobile-primitives") ||
       (activeComponent && REGISTRY_DATA[activeComponent]?.category === "Mobile App")
@@ -550,22 +552,22 @@ function SidebarBase({
       pillClassName="bg-[var(--surface-secondary)]/90 border border-[var(--border)]/40 rounded-md shadow-2xs"
     >
       <div className="space-y-1">
-        {/* Platform Tab Switcher */}
+        {/* Platform Tab Switcher: Web | Mobile | Motion (Single Line Height) */}
         {!isCollapsed ? (
-          <div className="p-0.5 bg-[var(--surface-primary)] border border-[var(--border)] rounded-md mb-2 flex items-center gap-0.5">
+          <div className="grid grid-cols-3 p-0.5 bg-[var(--surface-primary)] border border-[var(--border)] rounded-md mb-2 gap-0.5 h-8 items-center select-none">
             <button
               type="button"
               onClick={() => setActivePlatform("web")}
               className={cn(
-                "flex-1 flex items-center justify-center gap-1.5 py-1.5 px-2 rounded text-[11px] font-semibold transition-all duration-150 cursor-pointer select-none",
+                "h-7 flex items-center justify-center gap-1 px-1 rounded text-[11px] font-semibold transition-all duration-150 cursor-pointer truncate",
                 activePlatform === "web"
-                  ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] shadow-2xs border border-[var(--border)]"
+                  ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] shadow-2xs border border-[var(--border)] font-bold"
                   : "text-[var(--text-muted)] hover:text-[var(--text-primary)] border border-transparent hover:bg-[var(--surface-secondary)]/40"
               )}
             >
-              <Monitor className="h-3.5 w-3.5 shrink-0" />
-              <span>Web App</span>
-              <span className="text-[9px] font-sans tabular-nums text-[var(--text-muted)] ml-0.5">
+              <Monitor className="h-3 w-3 shrink-0" />
+              <span className="truncate">Web</span>
+              <span className="text-[9px] font-sans tabular-nums text-[var(--text-muted)]">
                 {webItemsCount}
               </span>
             </button>
@@ -574,17 +576,31 @@ function SidebarBase({
               type="button"
               onClick={() => setActivePlatform("mobile")}
               className={cn(
-                "flex-1 flex items-center justify-center gap-1.5 py-1.5 px-2 rounded text-[11px] font-semibold transition-all duration-150 cursor-pointer select-none",
+                "h-7 flex items-center justify-center gap-1 px-1 rounded text-[11px] font-semibold transition-all duration-150 cursor-pointer truncate",
                 activePlatform === "mobile"
-                  ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] shadow-2xs border border-[var(--border)]"
+                  ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] shadow-2xs border border-[var(--border)] font-bold"
                   : "text-[var(--text-muted)] hover:text-[var(--text-primary)] border border-transparent hover:bg-[var(--surface-secondary)]/40"
               )}
             >
-              <VectorMobileIcon className="h-3.5 w-3.5 shrink-0" isActive={activePlatform === "mobile"} animated={false} />
-              <span>Mobile App</span>
-              <span className="text-[9px] font-sans tabular-nums text-[var(--text-muted)] ml-0.5">
+              <Smartphone className="h-3 w-3 shrink-0" />
+              <span className="truncate">Mobile</span>
+              <span className="text-[9px] font-sans tabular-nums text-[var(--text-muted)]">
                 {mobileItems.length}
               </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActivePlatform("motion")}
+              className={cn(
+                "h-7 flex items-center justify-center gap-1 px-1 rounded text-[11px] font-semibold transition-all duration-150 cursor-pointer truncate",
+                activePlatform === "motion"
+                  ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] shadow-2xs border border-[var(--border)] font-bold"
+                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)] border border-transparent hover:bg-[var(--surface-secondary)]/40"
+              )}
+            >
+              <Sparkles className="h-3 w-3 shrink-0 text-[var(--accent-green)]" />
+              <span className="truncate">Motion</span>
             </button>
           </div>
         ) : (
@@ -613,7 +629,20 @@ function SidebarBase({
                   : "text-[var(--text-muted)] hover:text-[var(--text-primary)] border border-transparent"
               )}
             >
-              <VectorMobileIcon className="h-3.5 w-3.5 shrink-0" isActive={activePlatform === "mobile"} animated={false} />
+              <Smartphone className="h-3.5 w-3.5 shrink-0" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setActivePlatform("motion")}
+              title="Material Motion System"
+              className={cn(
+                "h-7 w-7 flex items-center justify-center rounded transition-all duration-150 cursor-pointer",
+                activePlatform === "motion"
+                  ? "bg-[var(--surface-secondary)] text-[var(--accent-green)] border border-[var(--border)]"
+                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)] border border-transparent"
+              )}
+            >
+              <Sparkles className="h-3.5 w-3.5 shrink-0" />
             </button>
           </div>
         )}
@@ -841,7 +870,7 @@ function SidebarBase({
           );
         })}
           </>
-        ) : (
+        ) : activePlatform === "mobile" ? (
           <>
             {/* Mobile Header */}
             <div className="flex items-center justify-between w-full rounded p-2 text-[10px] font-sans font-semibold uppercase tracking-wider text-[var(--text-muted)] select-none">
@@ -998,6 +1027,96 @@ function SidebarBase({
               })}
             </div>
           </>
+        ) : (
+          <div className="space-y-1">
+            {/* Motion Header */}
+            <div className="flex items-center justify-between w-full rounded p-2 text-[10px] font-sans font-semibold uppercase tracking-wider text-[var(--text-muted)] select-none">
+              <div className="flex items-center flex-1 min-w-0">
+                <div
+                  className="flex h-5 w-5 shrink-0 items-center justify-center cursor-default"
+                  title={isCollapsed ? "Motion Physics System" : undefined}
+                >
+                  <Sparkles className="h-4 w-4 text-[var(--accent-green)]" />
+                </div>
+                <span
+                  className={cn(
+                    "ml-2.5 flex items-center gap-1.5 whitespace-nowrap transition-opacity duration-200",
+                    isCollapsed && "opacity-0 pointer-events-none"
+                  )}
+                >
+                  <span>M3 Motion System</span>
+                </span>
+              </div>
+            </div>
+
+            {/* Motion Studio Link */}
+            <Link
+              href="/motion"
+              onClick={() => onMobileOpenChange?.(false)}
+              className={cn(
+                "group relative z-10 flex items-center justify-between w-full rounded p-2 text-xs font-semibold tracking-tight transition-colors duration-150",
+                pathname === "/motion"
+                  ? "bg-[var(--surface-secondary)] text-[var(--accent-green)] border border-[var(--border)]"
+                  : "text-[var(--text-primary)] hover:bg-[var(--surface-secondary)]/60 border border-transparent"
+              )}
+            >
+              <div className="flex items-center flex-1 min-w-0">
+                <div className="flex h-5 w-5 shrink-0 items-center justify-center">
+                  <Sparkles className="h-3.5 w-3.5 text-[var(--accent-green)]" />
+                </div>
+                <span
+                  className={cn(
+                    "ml-2.5 truncate font-semibold transition-opacity duration-200",
+                    isCollapsed && "opacity-0 pointer-events-none"
+                  )}
+                >
+                  Motion Studio
+                </span>
+              </div>
+              <span
+                className={cn(
+                  "text-[9px] font-mono font-medium px-1.5 py-0.5 rounded bg-[var(--surface-tertiary)] text-[var(--text-muted)] shrink-0 transition-opacity duration-200",
+                  isCollapsed && "opacity-0 pointer-events-none"
+                )}
+              >
+                Studio
+              </span>
+            </Link>
+
+            {/* Motion Patterns */}
+            <div className="space-y-0.5 pt-1">
+              {[
+                { title: "Container Transform", desc: "Surface morphing & expand" },
+                { title: "Shared Axis X/Y/Z", desc: "Coordinated spatial transitions" },
+                { title: "Fade Through", desc: "Cross-fade replacement" },
+                { title: "Spring Physics Engine", desc: "Mass, damping, stiffness" },
+                { title: "Velocity Fling Damping", desc: "Touch momentum dissipation" },
+              ].map((pattern, idx) => (
+                <Link
+                  key={idx}
+                  href="/motion"
+                  onClick={() => onMobileOpenChange?.(false)}
+                  className="group flex items-center justify-between w-full rounded p-2 text-xs font-medium tracking-tight text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)]/50 transition-colors"
+                  title={isCollapsed ? pattern.title : undefined}
+                >
+                  <div className="flex items-center min-w-0 flex-1">
+                    <div className="flex h-5 w-5 shrink-0 items-center justify-center text-[var(--text-muted)] group-hover:text-[var(--accent-green)] transition-colors">
+                      <SlidersHorizontal className="h-3.5 w-3.5" />
+                    </div>
+                    <div
+                      className={cn(
+                        "ml-2.5 min-w-0 transition-opacity duration-200",
+                        isCollapsed && "opacity-0 pointer-events-none"
+                      )}
+                    >
+                      <p className="truncate font-medium">{pattern.title}</p>
+                      <p className="text-[10px] text-[var(--text-muted)] truncate">{pattern.desc}</p>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
         )}
       </div>
     </SlidingHighlightContainer>

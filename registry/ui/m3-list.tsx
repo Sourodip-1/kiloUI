@@ -4,6 +4,8 @@ import * as React from "react";
 import { ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+export type M3ListLineCount = "1" | "2" | "3" | 1 | 2 | 3;
+
 export interface M3ListItemProps {
   headline: string;
   supportingText?: string;
@@ -14,8 +16,9 @@ export interface M3ListItemProps {
   trailingSupportingText?: string;
   showChevron?: boolean;
   onClick?: () => void;
+  lines?: M3ListLineCount;
   design?: "m3" | "minimal";
-  variant?: "default" | "minimal" | string;
+  variant?: "default" | "minimal" | "one-line" | "two-line" | "three-line" | string;
   divider?: boolean;
   className?: string;
 }
@@ -30,6 +33,7 @@ export function M3ListItem({
   trailingSupportingText,
   showChevron = false,
   onClick,
+  lines,
   design,
   variant,
   divider = true,
@@ -39,45 +43,80 @@ export function M3ListItem({
   const isClickable = Boolean(onClick);
   const displayTrailingText = trailingSupportingText || trailingText;
 
+  // Determine line mode: 1-line, 2-line, or 3-line
+  const activeLines =
+    lines !== undefined
+      ? String(lines)
+      : variant === "one-line"
+      ? "1"
+      : variant === "three-line"
+      ? "3"
+      : "2";
+
   return (
     <div
       onClick={onClick}
       role={isClickable ? "button" : undefined}
       tabIndex={isClickable ? 0 : undefined}
       className={cn(
-        "flex items-center justify-between w-full font-sans transition-colors duration-150 select-none",
-        isClickable && "cursor-pointer active:bg-[var(--surface-tertiary)]",
+        "flex w-full font-sans transition-all duration-150 select-none",
+        isClickable && "cursor-pointer active:bg-[var(--surface-tertiary)] active:scale-[0.99]",
         isMinimal
-          ? "px-3 py-2.5 hover:bg-[var(--surface-secondary)]/50 rounded-lg"
-          : "px-4 py-3 hover:bg-[var(--surface-secondary)]/70",
+          ? "px-3 py-2.5 min-h-[44px] items-center rounded-lg hover:bg-[var(--surface-secondary)]/50"
+          : activeLines === "1"
+          ? "px-4 h-14 min-h-[56px] items-center hover:bg-[var(--surface-secondary)]/70"
+          : activeLines === "3"
+          ? "px-4 min-h-[88px] py-3.5 items-start hover:bg-[var(--surface-secondary)]/70"
+          : "px-4 min-h-[72px] py-3 items-center hover:bg-[var(--surface-secondary)]/70",
         divider && "border-b border-[var(--border)]/50",
         className
       )}
     >
       {/* Leading Slot */}
-      <div className="flex items-center gap-3.5 min-w-0 flex-1">
-        {leading && <div className="shrink-0 text-[var(--text-primary)]">{leading}</div>}
-
-        {/* Content Lines */}
-        <div className="min-w-0 flex-1">
-          {overline && (
-            <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--text-muted)] block truncate">
-              {overline}
-            </span>
+      {leading && (
+        <div
+          className={cn(
+            "shrink-0 mr-3.5 text-[var(--text-primary)] flex items-center justify-center",
+            activeLines === "3" ? "mt-0.5" : ""
           )}
-          <h4 className="text-sm font-semibold text-[var(--text-primary)] leading-snug truncate">
-            {headline}
-          </h4>
-          {supportingText && (
-            <p className="text-xs text-[var(--text-secondary)] leading-normal truncate mt-0.5">
-              {supportingText}
-            </p>
-          )}
+        >
+          {leading}
         </div>
+      )}
+
+      {/* Content Lines */}
+      <div className="min-w-0 flex-1 pr-2">
+        {overline && (
+          <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--text-muted)] block truncate mb-0.5">
+            {overline}
+          </span>
+        )}
+        <h4 className="text-sm font-semibold text-[var(--text-primary)] leading-tight truncate">
+          {headline}
+        </h4>
+
+        {/* 2-line: single line supporting text */}
+        {activeLines === "2" && supportingText && (
+          <p className="text-xs text-[var(--text-secondary)] leading-normal truncate mt-1">
+            {supportingText}
+          </p>
+        )}
+
+        {/* 3-line: multi-line supporting text */}
+        {activeLines === "3" && supportingText && (
+          <p className="text-xs text-[var(--text-secondary)] leading-relaxed line-clamp-2 mt-1">
+            {supportingText}
+          </p>
+        )}
       </div>
 
       {/* Trailing Slot */}
-      <div className="flex items-center gap-2 shrink-0 ml-3">
+      <div
+        className={cn(
+          "flex items-center gap-2 shrink-0 ml-auto",
+          activeLines === "3" ? "mt-0.5" : ""
+        )}
+      >
         {displayTrailingText && (
           <span className="text-[11px] font-mono text-[var(--text-muted)]">
             {displayTrailingText}
@@ -116,12 +155,12 @@ export function M3List({
         "w-full flex flex-col overflow-hidden font-sans",
         isMinimal
           ? "rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] p-1 space-y-0.5 shadow-2xs"
-          : "rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-xs",
+          : "rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-xs divide-y divide-[var(--border)]/40",
         className
       )}
     >
       {header && (
-        <div className="px-4 pt-3 pb-1 text-[10px] font-mono font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+        <div className="px-4 pt-3 pb-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)] border-b border-[var(--border)]/40">
           {header}
         </div>
       )}
