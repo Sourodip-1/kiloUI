@@ -126,7 +126,31 @@ export function VectorCubeIcon({ className = "h-4 w-4", isActive = false, ...pro
  * Interactive smartphone chassis with dynamic island pulse,
  * gesture-bar swipe physics, and an emerging UI card.
  */
-export function VectorMobileIcon({ className = "h-4 w-4", isActive = false, ...props }: VectorIconProps) {
+export function VectorMobileIcon({
+  className = "h-4 w-4",
+  isActive = false,
+  animated = true,
+  ...props
+}: VectorIconProps & { animated?: boolean }) {
+  if (!animated) {
+    return (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={className}
+        {...props}
+      >
+        <rect x="5" y="2" width="14" height="20" rx="3.5" />
+        <line x1="10" y1="5" x2="14" y2="5" strokeWidth="1.5" />
+        <line x1="10" y1="19" x2="14" y2="19" strokeWidth="1.5" />
+      </svg>
+    );
+  }
+
   return (
     <svg
       viewBox="0 0 24 24"

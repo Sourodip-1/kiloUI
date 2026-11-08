@@ -580,7 +580,7 @@ function SidebarBase({
                   : "text-[var(--text-muted)] hover:text-[var(--text-primary)] border border-transparent hover:bg-[var(--surface-secondary)]/40"
               )}
             >
-              <VectorMobileIcon className="h-3.5 w-3.5 shrink-0" isActive={activePlatform === "mobile"} />
+              <VectorMobileIcon className="h-3.5 w-3.5 shrink-0" isActive={activePlatform === "mobile"} animated={false} />
               <span>Mobile App</span>
               <span className="text-[9px] font-sans tabular-nums text-[var(--text-muted)] ml-0.5">
                 {mobileItems.length}
@@ -613,7 +613,7 @@ function SidebarBase({
                   : "text-[var(--text-muted)] hover:text-[var(--text-primary)] border border-transparent"
               )}
             >
-              <VectorMobileIcon className="h-3.5 w-3.5 shrink-0" isActive={activePlatform === "mobile"} />
+              <VectorMobileIcon className="h-3.5 w-3.5 shrink-0" isActive={activePlatform === "mobile"} animated={false} />
             </button>
           </div>
         )}
@@ -850,7 +850,7 @@ function SidebarBase({
                   className="flex h-5 w-5 shrink-0 items-center justify-center cursor-default"
                   title={isCollapsed ? `Mobile Primitives (${mobileItems.length})` : undefined}
                 >
-                  <VectorMobileIcon className="h-4 w-4 text-[var(--text-muted)]" isActive={false} />
+                  <VectorMobileIcon className="h-4 w-4 text-[var(--text-muted)]" isActive={false} animated={false} />
                 </div>
                 <span
                   className={cn(
@@ -880,10 +880,11 @@ function SidebarBase({
               <div className="flex h-5 w-5 shrink-0 items-center justify-center">
                 <VectorMobileIcon
                   isActive={pathname === "/mobile-primitives"}
+                  animated={false}
                   className={cn(
-                    "h-4 w-4 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-115 group-hover:-translate-y-0.5",
+                    "h-4 w-4 transition-colors",
                     pathname === "/mobile-primitives"
-                      ? "text-[var(--accent-green)] scale-105"
+                      ? "text-[var(--accent-green)]"
                       : "text-[var(--text-primary)] group-hover:text-[var(--accent-green)]"
                   )}
                 />

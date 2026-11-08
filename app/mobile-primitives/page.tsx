@@ -18,6 +18,8 @@ import {
   Zap,
   Send,
   ArrowDownLeft,
+  ChevronRight,
+  ChevronLeft,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { MobileBottomSheet } from "@/components/ui/mobile-bottom-sheet";
@@ -33,6 +35,7 @@ type CategoryFilter = "all" | "sheets" | "gestures" | "thumb" | "floating";
 export default function MobilePrimitivesPage() {
   const [activeCategory, setActiveCategory] = React.useState<CategoryFilter>("all");
   const [presetMode, setPresetMode] = React.useState<PresetMode>("store");
+  const [isPhoneVisible, setIsPhoneVisible] = React.useState(true);
   const [copiedCli, setCopiedCli] = React.useState(false);
 
   // Store Preset state
@@ -82,7 +85,7 @@ export default function MobilePrimitivesPage() {
   };
 
   return (
-    <div className="flex-1 min-h-0 bg-[var(--bg-main)] text-[var(--text-primary)] antialiased font-sans">
+    <div className="flex-1 min-h-0 bg-[var(--bg-main)] text-[var(--text-primary)] antialiased font-sans overflow-x-clip relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-8 py-10 space-y-8">
         
         {/* ── Minimalist Clean Header ── */}
@@ -148,11 +151,18 @@ export default function MobilePrimitivesPage() {
           </SlidingHighlightContainer>
         </div>
 
-        {/* ── Two-Column Layout: Left 2x2 Clean Bento, Right Phone Simulator ── */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start pt-2">
+        {/* ── Two-Column Layout: Left Bento Grid, Right Phone Simulator ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start pt-2 relative">
           
-          {/* ── LEFT COLUMN (7 COLS): Decluttered 2x2 Primitives Grid ── */}
-          <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* ── LEFT COLUMN: Primitives Grid (Expands to full width when phone is beyond edge) ── */}
+          <div
+            className={cn(
+              "grid gap-4 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
+              isPhoneVisible
+                ? "lg:col-span-7 grid-cols-1 sm:grid-cols-2"
+                : "lg:col-span-12 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
+            )}
+          >
 
             {/* ── 01. Bottom Sheet ── */}
             <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all">
@@ -345,14 +355,31 @@ export default function MobilePrimitivesPage() {
 
           </div>
 
-          {/* ── RIGHT COLUMN (5 COLS): Minimalist Preset Phone Showcase ── */}
-          <div className="lg:col-span-5 flex flex-col items-center space-y-3">
-            
+          {/* ── RIGHT COLUMN: Minimalist Preset Phone Showcase ── */}
+          <div
+            className={cn(
+              "flex flex-col items-center space-y-3 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
+              isPhoneVisible
+                ? "lg:col-span-5 translate-x-0 opacity-100"
+                : "fixed right-0 top-32 translate-x-[120%] opacity-0 pointer-events-none z-30"
+            )}
+          >
             {/* Clean Preset Header */}
             <div className="w-full flex items-center justify-between px-1">
-              <span className="text-xs font-semibold text-[var(--text-secondary)] font-mono">
-                Preset Preview
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-semibold text-[var(--text-secondary)] font-mono">
+                  Preset Preview
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setIsPhoneVisible(false)}
+                  className="h-6 w-6 rounded-full bg-[var(--surface-secondary)] border border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:border-[var(--border-hover)] hover:scale-105 active:scale-95 flex items-center justify-center transition-all cursor-pointer"
+                  title="Move mobile view beyond right edge"
+                  aria-label="Move mobile view beyond right edge"
+                >
+                  <ChevronRight className="h-3.5 w-3.5" />
+                </button>
+              </div>
 
               <SlidingHighlightContainer
                 activeSelector='[data-state="active"]'
@@ -385,8 +412,21 @@ export default function MobilePrimitivesPage() {
               </SlidingHighlightContainer>
             </div>
 
-            {/* Sleek Minimalist Mobile Device Chassis Frame */}
-            <div className="w-[360px] sm:w-[380px] h-[700px] rounded-[44px] bg-[#0c0d0e] border-[6px] border-[#1e2022] shadow-[0_20px_50px_-15px_rgba(0,0,0,0.85)] flex flex-col overflow-hidden relative select-none">
+            {/* Phone Wrapper with circle button on the left edge */}
+            <div className="relative">
+              {/* Circle button with arrow to move mobile app template view beyond right edge */}
+              <button
+                type="button"
+                onClick={() => setIsPhoneVisible(false)}
+                className="hidden lg:flex absolute -left-4 top-1/2 -translate-y-1/2 z-40 h-8 w-8 rounded-full bg-[var(--surface-elevated)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-hover)] shadow-lg hover:scale-110 active:scale-95 items-center justify-center transition-all duration-200 cursor-pointer group"
+                title="Move mobile view beyond right edge"
+                aria-label="Move mobile view beyond right edge"
+              >
+                <ChevronRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+              </button>
+
+              {/* Sleek Minimalist Mobile Device Chassis Frame */}
+              <div className="w-[360px] sm:w-[380px] h-[700px] rounded-[44px] bg-[#0c0d0e] border-[6px] border-[#1e2022] shadow-[0_20px_50px_-15px_rgba(0,0,0,0.85)] flex flex-col overflow-hidden relative select-none">
               
               {/* Top Status Bar & Dynamic Island */}
               <div className="pt-3 pb-1 px-6 flex items-center justify-between shrink-0 z-40 bg-[#0c0d0e] text-neutral-400 text-[11px] font-mono">
@@ -724,9 +764,23 @@ export default function MobilePrimitivesPage() {
 
             </div>
           </div>
-
         </div>
+
       </div>
+    </div>
+
+      {/* Small circle button with arrow to bring mobile view back */}
+      {!isPhoneVisible && (
+        <button
+          type="button"
+          onClick={() => setIsPhoneVisible(true)}
+          className="fixed right-3 sm:right-6 top-1/2 -translate-y-1/2 z-50 h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-[var(--surface-elevated)] border border-[var(--border)] text-[var(--text-primary)] shadow-2xl hover:bg-[var(--surface-secondary)] hover:border-[var(--border-hover)] hover:scale-110 active:scale-95 flex items-center justify-center transition-all duration-300 cursor-pointer group animate-in fade-in slide-in-from-right-4 duration-300"
+          title="Bring back mobile preview"
+          aria-label="Bring back mobile preview"
+        >
+          <ChevronLeft className="h-4 w-4 transition-transform duration-200 group-hover:-translate-x-0.5" />
+        </button>
+      )}
     </div>
   );
 }
