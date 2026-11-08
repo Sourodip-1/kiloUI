@@ -4,14 +4,18 @@ import * as React from "react";
 import { Copy, Check, Terminal, Cpu, Zap, Database, Globe, ChevronDown, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// ─── Types ───────────────────────────────────────────────────────────────────
-type ConnectionMode = "cloud" | "npx" | "python";
+// ─── Client Definition Types ──────────────────────────────────────────────────
 type ClientId = "cursor" | "claude" | "vscode" | "windsurf" | "antigravity";
+type ConnectionMode = "cloud" | "npx" | "python";
 
-interface ClientSnippet {
+interface ClientConfig {
   id: ClientId;
   label: string;
   configPath: string;
+  themeColor: string;
+  badgeBg: string;
+  badgeBorder: string;
+  badgeIconColor: string;
   cloudJson: string;
   npxJson: string;
   pythonJson: string;
@@ -22,12 +26,80 @@ interface ClientSnippet {
   };
 }
 
+// ─── Client Brand Vector Icons ────────────────────────────────────────────────
+function KiloLogoIcon({ className = "w-6 h-6" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 512 512" className={className}>
+      <path
+        fill="#ffffff"
+        d="m144.4 264.7l-5.6 12.1v106.2h-79.6v-251.1h79.6v110.6l56.8-110.6h92.9l-72 120.4 72 130.7h-92.9z"
+      />
+      <path fill="#a6d33d" d="m385.2 127.1h85.2l-73.8 261.1h-79.6z" />
+    </svg>
+  );
+}
+
+function CursorLogoIcon({ className = "w-6 h-6" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="currentColor">
+      <path d="M12 2.5l7.5 4.33v8.67L12 20.17l-7.5-4.67V6.83L12 2.5zm0 2.31L6.5 7.98v6.71L12 17.86l5.5-3.17V7.98L12 4.81z" />
+      <path d="M12 5.5l5 2.89v5.78L12 17.06l-5-2.89V8.39L12 5.5z" opacity="0.85" />
+    </svg>
+  );
+}
+
+function ClaudeLogoIcon({ className = "w-6 h-6" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="currentColor">
+      <path d="M12 2a1.25 1.25 0 0 1 1.25 1.25v3.42l2.42-2.42a1.25 1.25 0 1 1 1.77 1.77l-2.42 2.42h3.42a1.25 1.25 0 1 1 0 2.5h-3.42l2.42 2.42a1.25 1.25 0 1 1-1.77 1.77l-2.42-2.42v3.42a1.25 1.25 0 1 1-2.5 0v-3.42l-2.42 2.42a1.25 1.25 0 1 1-1.77-1.77l2.42-2.42H4.81a1.25 1.25 0 0 1 0-2.5h3.42l-2.42-2.42a1.25 1.25 0 0 1 1.77-1.77l2.42 2.42V3.25A1.25 1.25 0 0 1 12 2z" />
+    </svg>
+  );
+}
+
+function VSCodeLogoIcon({ className = "w-6 h-6" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="currentColor">
+      <path d="M17.58 2.05l-7.22 6.67L5.5 5.08 2 6.77v10.46l3.5 1.69 4.86-3.64 7.22 6.67L22 20.36V3.64L17.58 2.05zM17.5 16.92l-4.73-3.6 4.73-3.6v7.2zM5.5 14.52V9.48l3.35 2.52-3.35 2.52z" />
+    </svg>
+  );
+}
+
+function WindsurfLogoIcon({ className = "w-6 h-6" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M4 15c2.5-4 5.5-6 8-6 4 0 6 3 8 3" />
+      <path d="M4 9c2-2 4.5-3 7-3 4.5 0 6.5 4 9 4" />
+      <path d="M4 20c2-1 4.5-1.5 7-1.5 3.5 0 6 1.5 9 1.5" />
+    </svg>
+  );
+}
+
+function AntigravityLogoIcon({ className = "w-6 h-6" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="currentColor">
+      <path d="M12 2c.5 4.5 3.5 7.5 8 8-4.5.5-7.5 3.5-8 8-.5-4.5-3.5-7.5-8-8 4.5-.5 7.5-3.5 8-8z" />
+    </svg>
+  );
+}
+
 // ─── Authoritative Configurations ────────────────────────────────────────────
-const CLIENTS: ClientSnippet[] = [
+const CLIENTS: ClientConfig[] = [
   {
     id: "cursor",
     label: "Cursor",
     configPath: ".cursor/mcp.json",
+    themeColor: "#ffffff",
+    badgeBg: "bg-[#18181b]",
+    badgeBorder: "border-white/15",
+    badgeIconColor: "text-white",
     cloudJson: `{
   "mcpServers": {
     "kilo-ui": {
@@ -75,8 +147,12 @@ const CLIENTS: ClientSnippet[] = [
   },
   {
     id: "claude",
-    label: "Claude Desktop",
+    label: "Claude",
     configPath: "~/.config/Claude/claude_desktop_config.json",
+    themeColor: "#d97757",
+    badgeBg: "bg-[#c25737]",
+    badgeBorder: "border-[#ea8868]/40",
+    badgeIconColor: "text-white",
     cloudJson: `{
   "mcpServers": {
     "kilo-ui": {
@@ -127,6 +203,10 @@ const CLIENTS: ClientSnippet[] = [
     id: "vscode",
     label: "VS Code",
     configPath: ".vscode/settings.json",
+    themeColor: "#007acc",
+    badgeBg: "bg-[#0066b8]",
+    badgeBorder: "border-[#40a9ff]/40",
+    badgeIconColor: "text-white",
     cloudJson: `{
   "mcpServers": {
     "kilo-ui": {
@@ -174,6 +254,10 @@ const CLIENTS: ClientSnippet[] = [
     id: "windsurf",
     label: "Windsurf",
     configPath: "~/.codeium/windsurf/mcp_config.json",
+    themeColor: "#09b6a2",
+    badgeBg: "bg-[#094843]",
+    badgeBorder: "border-[#2dd4bf]/40",
+    badgeIconColor: "text-[#2dd4bf]",
     cloudJson: `{
   "mcpServers": {
     "kilo-ui": {
@@ -221,6 +305,10 @@ const CLIENTS: ClientSnippet[] = [
     id: "antigravity",
     label: "Antigravity",
     configPath: "~/.gemini/config/mcp_config.json",
+    themeColor: "#a78bfa",
+    badgeBg: "bg-[#251b47]",
+    badgeBorder: "border-[#a78bfa]/40",
+    badgeIconColor: "text-[#c4b5fd]",
     cloudJson: `{
   "mcpServers": {
     "kilo-ui": {
@@ -271,7 +359,7 @@ const CAPABILITIES = [
   {
     icon: Database,
     title: "Registry Discovery",
-    description: "Access all 61 primitives across 9 categories with variants, props, and design rules.",
+    description: "Access 61 primitives across 9 categories with variants, props, and design rules.",
   },
   {
     icon: Cpu,
@@ -285,8 +373,8 @@ const CAPABILITIES = [
   },
 ];
 
-// ─── CopyButton ───────────────────────────────────────────────────────────────
-function CopyButton({ text }: { text: string }) {
+// ─── Copy Button ──────────────────────────────────────────────────────────────
+function CopyButton({ text, label = "Copy" }: { text: string; label?: string }) {
   const [copied, setCopied] = React.useState(false);
 
   const handleCopy = async () => {
@@ -303,28 +391,38 @@ function CopyButton({ text }: { text: string }) {
     <button
       onClick={handleCopy}
       className={cn(
-        "flex items-center gap-1.5 px-2 py-1 rounded text-[10px] font-mono font-medium transition-all duration-150 cursor-pointer",
+        "flex items-center gap-1.5 px-2.5 py-1 rounded text-[11px] font-mono font-medium transition-all duration-150 cursor-pointer select-none",
         copied
           ? "text-[var(--text-primary)] bg-[var(--surface-secondary)]"
           : "text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--surface-secondary)]"
       )}
       aria-label="Copy code"
     >
-      {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-      {copied ? "Copied" : "Copy"}
+      {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+      {copied ? "Copied" : label}
     </button>
   );
 }
 
-// ─── CodePanel ────────────────────────────────────────────────────────────────
-function CodePanel({ code, label }: { code: string; label: string }) {
+// ─── Code Panel ───────────────────────────────────────────────────────────────
+function CodePanel({ code, label, onCopyPrompt }: { code: string; label: string; onCopyPrompt?: () => void }) {
   return (
-    <div className="rounded-lg border border-[var(--border)] overflow-hidden bg-[var(--surface-primary)]">
+    <div className="rounded-xl border border-[var(--border)] overflow-hidden bg-[var(--surface-primary)] shadow-sm">
       <div className="flex items-center justify-between px-4 py-2.5 border-b border-[var(--border)] bg-[var(--surface-secondary)]/40">
         <span className="text-[10px] font-mono text-[var(--text-muted)] tracking-wider uppercase">
           {label}
         </span>
-        <CopyButton text={code} />
+        <div className="flex items-center gap-1.5">
+          {onCopyPrompt && (
+            <button
+              onClick={onCopyPrompt}
+              className="text-[11px] font-mono text-[var(--text-muted)] hover:text-[var(--text-primary)] px-2 py-1 rounded hover:bg-[var(--surface-secondary)] transition-colors cursor-pointer"
+            >
+              Copy as prompt
+            </button>
+          )}
+          <CopyButton text={code} label="Copy config" />
+        </div>
       </div>
       <pre className="p-4 text-xs font-mono text-[var(--text-secondary)] leading-relaxed overflow-x-auto whitespace-pre">
         <code>{code}</code>
@@ -351,31 +449,183 @@ export default function MCPPage() {
     activeSteps = client.steps.python;
   }
 
+  const renderClientIcon = (id: ClientId, className = "w-6 h-6") => {
+    switch (id) {
+      case "cursor":
+        return <CursorLogoIcon className={className} />;
+      case "claude":
+        return <ClaudeLogoIcon className={className} />;
+      case "vscode":
+        return <VSCodeLogoIcon className={className} />;
+      case "windsurf":
+        return <WindsurfLogoIcon className={className} />;
+      case "antigravity":
+        return <AntigravityLogoIcon className={className} />;
+    }
+  };
+
+  const handleCopyPrompt = () => {
+    const prompt = `Connect Kilo UI to my agent via MCP:
+Server endpoint: https://www.kiloui.dev/api/mcp
+Tools available: list_kilo_primitives, get_primitive_schema, calculate_m3_palette, validate_design_ast
+Resources: kilo://registry/catalog, m3://guidelines/surface-hierarchy
+Please query the Kilo UI registry whenever composing components, ensuring zero neon drop shadows, no glowing green circles, and clean Material 3 surface hierarchy.`;
+    navigator.clipboard.writeText(prompt);
+  };
+
   return (
     <div className="min-h-screen bg-[var(--surface-primary)] text-[var(--text-primary)]">
-      <div className="max-w-3xl mx-auto px-6 py-16 space-y-16">
+      <div className="max-w-3xl mx-auto px-6 py-16 space-y-12">
 
-        {/* ── Header ── */}
-        <div className="space-y-4">
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-mono font-medium text-[var(--text-muted)] tracking-widest uppercase">
-              Model Context Protocol
-            </span>
+        {/* ── Top Hero Bridge Split Badge (Inspired by 21st.dev) ── */}
+        <div className="flex flex-col items-center text-center space-y-6">
+          <div className="inline-flex items-center gap-3 p-2 rounded-full bg-[#131316] border border-white/10 shadow-[0_10px_35px_rgba(0,0,0,0.5)] backdrop-blur-md">
+            {/* Left Badge: Kilo UI */}
+            <div
+              className="flex h-14 w-14 items-center justify-center rounded-full bg-[#09090b] border border-white/15 shadow-inner transition-transform hover:scale-105"
+              title="Kilo UI"
+            >
+              <KiloLogoIcon className="h-7 w-7" />
+            </div>
+
+            {/* Split Divider / Bridge Indicator */}
+            <div className="h-5 w-px bg-white/15" />
+
+            {/* Right Badge: Selected App Logo (Dynamic) */}
+            <div
+              className={cn(
+                "flex h-14 w-14 items-center justify-center rounded-full border shadow-inner transition-all duration-300 transform",
+                client.badgeBg,
+                client.badgeBorder,
+                client.badgeIconColor
+              )}
+              title={`${client.label} Agent`}
+            >
+              {renderClientIcon(client.id, "h-7 w-7")}
+            </div>
           </div>
-          <h1 className="text-3xl font-semibold tracking-tight text-[var(--text-primary)]">
-            Connect your AI agent
-          </h1>
-          <p className="text-sm text-[var(--text-secondary)] leading-relaxed max-w-xl">
-            Give Cursor, Claude Desktop, VS Code, Windsurf, or Antigravity direct access to the Kilo UI registry, Material 3 design tokens, and AST validation. No local repository cloning or background terminal required.
-          </p>
+
+          {/* Heading */}
+          <div className="space-y-3 max-w-xl">
+            <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-[var(--text-primary)]">
+              Connect your AI agent to Kilo UI.
+            </h1>
+            <p className="text-sm sm:text-base text-[var(--text-secondary)] leading-relaxed">
+              Expose 61 primitives, Material 3 design tokens, and AST validation directly to your agent.
+            </p>
+          </div>
         </div>
 
-        {/* ── Capabilities ── */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {/* ── Client Selection Bar (Segmented like 21st.dev) ── */}
+        <div className="space-y-4">
+          <div className="p-1 rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)]/30">
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-1">
+              {CLIENTS.map((c) => {
+                const isActive = activeClient === c.id;
+                return (
+                  <button
+                    key={c.id}
+                    type="button"
+                    onClick={() => setActiveClient(c.id)}
+                    className={cn(
+                      "flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-xs font-medium transition-all duration-150 cursor-pointer select-none",
+                      isActive
+                        ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] border border-[var(--border)] shadow-xs"
+                        : "text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)]/50 border border-transparent"
+                    )}
+                  >
+                    <span className={cn("shrink-0", isActive ? c.badgeIconColor : "text-[var(--text-muted)]")}>
+                      {renderClientIcon(c.id, "h-4 w-4")}
+                    </span>
+                    <span>{c.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Secondary Bar: Connection Mode Pills + Live Endpoint */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-1">
+            <div className="inline-flex items-center gap-1 p-1 rounded-lg border border-[var(--border)] bg-[var(--surface-secondary)]/40">
+              <button
+                type="button"
+                onClick={() => setConnMode("cloud")}
+                className={cn(
+                  "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-150 cursor-pointer",
+                  connMode === "cloud"
+                    ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] border border-[var(--border)] shadow-2xs"
+                    : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+                )}
+              >
+                <Globe className="h-3.5 w-3.5" />
+                <span>Cloud Server</span>
+                <span className="text-[9px] font-mono px-1 py-0.2 rounded bg-[var(--surface-primary)] border border-[var(--border)] text-[var(--text-muted)]">
+                  Zero Install
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setConnMode("npx")}
+                className={cn(
+                  "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-150 cursor-pointer",
+                  connMode === "npx"
+                    ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] border border-[var(--border)] shadow-2xs"
+                    : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+                )}
+              >
+                <Terminal className="h-3.5 w-3.5" />
+                <span>NPX One-Liner</span>
+                <span className="text-[9px] font-mono px-1 py-0.2 rounded bg-[var(--surface-primary)] border border-[var(--border)] text-[var(--text-muted)]">
+                  Zero Clone
+                </span>
+              </button>
+            </div>
+
+            <div className="flex items-center gap-1.5 text-[11px] font-mono text-[var(--text-muted)]">
+              <span>Endpoint:</span>
+              <code className="text-[var(--text-secondary)] bg-[var(--surface-secondary)] px-2 py-0.5 rounded border border-[var(--border)]">
+                https://www.kiloui.dev/api/mcp
+              </code>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Client Configuration Block ── */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between text-xs font-mono text-[var(--text-muted)]">
+            <div className="flex items-center gap-2">
+              <span className="text-[var(--text-muted)]/60">Config target:</span>
+              <span className="text-[var(--text-secondary)] font-medium">{client.configPath}</span>
+            </div>
+          </div>
+
+          {/* Code block */}
+          <CodePanel
+            code={activeCode}
+            label={connMode === "cloud" ? `${client.label} Cloud Configuration` : `${client.label} NPX Configuration`}
+            onCopyPrompt={handleCopyPrompt}
+          />
+
+          {/* Numbered Setup Steps */}
+          <ol className="space-y-2 pt-1">
+            {activeSteps.map((step, i) => (
+              <li key={i} className="flex items-start gap-3 text-xs text-[var(--text-secondary)]">
+                <span className="shrink-0 mt-0.5 flex h-4 w-4 items-center justify-center rounded border border-[var(--border)] bg-[var(--surface-secondary)] text-[9px] font-semibold font-mono text-[var(--text-muted)]">
+                  {i + 1}
+                </span>
+                <span className="leading-relaxed">{step}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+
+        {/* ── Capabilities Grid ── */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
           {CAPABILITIES.map(({ icon: Icon, title, description }) => (
             <div
               key={title}
-              className="p-4 rounded-lg border border-[var(--border)] bg-[var(--surface-secondary)]/30 space-y-2.5"
+              className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)]/25 space-y-2.5"
             >
               <div className="flex h-7 w-7 items-center justify-center rounded border border-[var(--border)] bg-[var(--surface-secondary)]">
                 <Icon className="h-3.5 w-3.5 text-[var(--text-secondary)]" />
@@ -392,134 +642,12 @@ export default function MCPPage() {
           ))}
         </div>
 
-        {/* ── Connection Method Selector ── */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xs font-semibold tracking-widest uppercase text-[var(--text-muted)]">
-              Choose Connection Method
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {/* Mode 1: Cloud Server */}
-            <button
-              type="button"
-              onClick={() => setConnMode("cloud")}
-              className={cn(
-                "p-4 rounded-lg border text-left transition-all duration-150 cursor-pointer space-y-1.5",
-                connMode === "cloud"
-                  ? "bg-[var(--surface-secondary)] border-[var(--text-muted)] shadow-xs"
-                  : "bg-[var(--surface-secondary)]/20 border-[var(--border)] hover:border-[var(--text-muted)]/50"
-              )}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Globe className="h-4 w-4 text-[var(--text-primary)]" />
-                  <span className="text-xs font-semibold text-[var(--text-primary)]">
-                    Cloud Server
-                  </span>
-                </div>
-                <span className="text-[9px] font-mono px-1.5 py-0.5 rounded border border-[var(--border)] text-[var(--text-secondary)] bg-[var(--surface-primary)]">
-                  Recommended
-                </span>
-              </div>
-              <p className="text-[11px] text-[var(--text-muted)] leading-relaxed">
-                Zero installation. Just paste the URL into your IDE config. No terminal or Python process needed.
-              </p>
-            </button>
-
-            {/* Mode 2: NPX One-Liner */}
-            <button
-              type="button"
-              onClick={() => setConnMode("npx")}
-              className={cn(
-                "p-4 rounded-lg border text-left transition-all duration-150 cursor-pointer space-y-1.5",
-                connMode === "npx"
-                  ? "bg-[var(--surface-secondary)] border-[var(--text-muted)] shadow-xs"
-                  : "bg-[var(--surface-secondary)]/20 border-[var(--border)] hover:border-[var(--text-muted)]/50"
-              )}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Terminal className="h-4 w-4 text-[var(--text-primary)]" />
-                  <span className="text-xs font-semibold text-[var(--text-primary)]">
-                    NPX One-Liner
-                  </span>
-                </div>
-                <span className="text-[9px] font-mono px-1.5 py-0.5 rounded border border-[var(--border)] text-[var(--text-muted)] bg-[var(--surface-primary)]">
-                  Zero clone
-                </span>
-              </div>
-              <p className="text-[11px] text-[var(--text-muted)] leading-relaxed">
-                Runs locally via npx without cloning the repository or installing Python dependencies.
-              </p>
-            </button>
-          </div>
-        </div>
-
-        {/* ── Client Configuration Block ── */}
-        <div className="space-y-5">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xs font-semibold tracking-widest uppercase text-[var(--text-muted)]">
-              Client Setup
-            </h2>
-            <div className="flex items-center gap-1.5 font-mono text-[11px] text-[var(--text-muted)]">
-              <span>Endpoint:</span>
-              <code className="text-[var(--text-secondary)] bg-[var(--surface-secondary)] px-1.5 py-0.5 rounded border border-[var(--border)]">
-                https://www.kiloui.dev/api/mcp
-              </code>
-            </div>
-          </div>
-
-          {/* Client tabs */}
-          <div className="flex flex-wrap gap-1">
-            {CLIENTS.map((c) => (
-              <button
-                key={c.id}
-                onClick={() => setActiveClient(c.id)}
-                className={cn(
-                  "px-3 py-1.5 rounded text-[11px] font-medium transition-all duration-150 cursor-pointer",
-                  activeClient === c.id
-                    ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] border border-[var(--border)]"
-                    : "text-[var(--text-muted)] hover:text-[var(--text-secondary)] border border-transparent"
-                )}
-              >
-                {c.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Config file path */}
-          <div className="flex items-center gap-2 text-[11px] font-mono text-[var(--text-muted)]">
-            <span className="text-[var(--text-muted)]/60">Config file:</span>
-            <span className="text-[var(--text-secondary)]">{client.configPath}</span>
-          </div>
-
-          {/* Code panel */}
-          <CodePanel
-            code={activeCode}
-            label={connMode === "cloud" ? "Remote URL Config" : "Local Stdio Config"}
-          />
-
-          {/* Steps */}
-          <ol className="space-y-2">
-            {activeSteps.map((step, i) => (
-              <li key={i} className="flex items-start gap-3 text-xs text-[var(--text-secondary)]">
-                <span className="shrink-0 mt-0.5 flex h-4 w-4 items-center justify-center rounded border border-[var(--border)] bg-[var(--surface-secondary)] text-[9px] font-semibold font-mono text-[var(--text-muted)]">
-                  {i + 1}
-                </span>
-                <span className="leading-relaxed">{step}</span>
-              </li>
-            ))}
-          </ol>
-        </div>
-
-        {/* ── Authoritative Tools ── */}
+        {/* ── Authoritative Tools Table ── */}
         <div className="space-y-4">
           <h2 className="text-xs font-semibold tracking-widest uppercase text-[var(--text-muted)]">
-            Available Tools
+            Available Tools (4)
           </h2>
-          <div className="divide-y divide-[var(--border)] rounded-lg border border-[var(--border)] overflow-hidden">
+          <div className="divide-y divide-[var(--border)] rounded-xl border border-[var(--border)] overflow-hidden">
             {[
               {
                 tool: "list_kilo_primitives",
@@ -540,7 +668,7 @@ export default function MCPPage() {
             ].map(({ tool, desc }) => (
               <div
                 key={tool}
-                className="flex flex-col sm:flex-row sm:items-center gap-2 px-4 py-3 bg-[var(--surface-secondary)]/20 hover:bg-[var(--surface-secondary)]/40 transition-colors"
+                className="flex flex-col sm:flex-row sm:items-center gap-2 px-4 py-3 bg-[var(--surface-secondary)]/15 hover:bg-[var(--surface-secondary)]/30 transition-colors"
               >
                 <code className="text-[11px] font-mono text-[var(--text-primary)] shrink-0 w-52">
                   {tool}
@@ -554,7 +682,7 @@ export default function MCPPage() {
         </div>
 
         {/* ── Advanced: Self-Hosted Python FastMCP ── */}
-        <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-secondary)]/20 overflow-hidden">
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)]/20 overflow-hidden">
           <button
             type="button"
             onClick={() => setShowSelfHosted(!showSelfHosted)}
