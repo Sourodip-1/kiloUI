@@ -935,45 +935,30 @@ function SidebarBase({
           </>
         ) : (
           <>
-            {/* Mobile Studio header with expand/collapse all button (aligned with Categories header) */}
-            <div
-              data-hover-item="true"
-              className={cn(
-                "group relative z-10 flex items-center justify-between w-full rounded p-2 text-xs font-semibold tracking-tight transition-colors duration-150 active:scale-[0.98]",
-                pathname === "/mobile-primitives"
-                  ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] border border-[var(--border)]"
-                  : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-transparent hover:bg-[var(--surface-secondary)]/50"
-              )}
-            >
+            {/* Mobile Studio header with expand/collapse all button (aligned with Categories header, no highlight) */}
+            <div className="flex items-center justify-between w-full rounded p-2 text-[10px] font-sans font-semibold uppercase tracking-wider text-[var(--text-muted)] select-none">
               <Link
                 href="/mobile-primitives"
                 onClick={() => onMobileOpenChange?.(false)}
-                className="flex items-center flex-1 min-w-0"
+                className="flex items-center flex-1 min-w-0 hover:text-[var(--text-primary)] transition-colors group/studio"
                 title={isCollapsed ? "Mobile Studio" : undefined}
               >
                 <div className="flex h-5 w-5 shrink-0 items-center justify-center">
                   <VectorMobileIcon
-                    isActive={pathname === "/mobile-primitives"}
+                    isActive={false}
                     animated={false}
-                    className={cn(
-                      "h-4 w-4 transition-colors",
-                      pathname === "/mobile-primitives"
-                        ? "text-[var(--accent-green)]"
-                        : "text-[var(--text-primary)] group-hover:text-[var(--accent-green)]"
-                    )}
+                    className="h-4 w-4 text-[var(--text-muted)] group-hover/studio:text-[var(--text-primary)] transition-colors"
                   />
                 </div>
-                <div
+                <span
                   className={cn(
-                    "flex items-center gap-1.5 ml-2.5 overflow-hidden transition-opacity duration-200",
+                    "ml-2.5 flex items-center gap-1.5 whitespace-nowrap transition-opacity duration-200",
                     isCollapsed && "opacity-0 pointer-events-none"
                   )}
                 >
-                  <span className="whitespace-nowrap font-medium text-xs">Mobile Studio</span>
-                  <span className="text-[9px] font-mono font-medium px-1.5 py-0.5 rounded bg-[var(--surface-tertiary)] text-[var(--text-muted)]">
-                    {mobileItems.length}
-                  </span>
-                </div>
+                  <span className="group-hover/studio:text-[var(--text-primary)] transition-colors">Mobile Studio</span>
+                  <span className="text-[9px] text-[var(--text-muted)] font-normal tabular-nums">({mobileItems.length})</span>
+                </span>
               </Link>
 
               {/* Expand all / Collapse all categories of primitives */}
@@ -984,7 +969,7 @@ function SidebarBase({
                   handleToggleAllMobileCategories();
                 }}
                 className={cn(
-                  "p-1 rounded text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-tertiary)] transition-colors cursor-pointer shrink-0",
+                  "p-1 rounded text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] transition-opacity duration-200 cursor-pointer shrink-0",
                   isCollapsed && "opacity-0 pointer-events-none"
                 )}
                 title={isAllMobileCollapsed ? "Expand all categories" : "Collapse all categories"}
