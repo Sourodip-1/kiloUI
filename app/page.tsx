@@ -26,6 +26,7 @@ import { OptionWheel } from "@/registry/ui/option-wheel";
 import { Footer } from "@/components/footer";
 import { VectorKiloLogo } from "@/components/vector-icons";
 import { useAppShell } from "@/components/app-shell";
+import { McpLandingSection } from "@/components/mcp-landing-section";
 
 function LogJsonIcon({ className }: { className?: string }) {
   return (
@@ -1159,7 +1160,10 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 6. Quickstart 3-Step Continuous Pipeline */}
+      {/* 6. AI Agent Integration (MCP Server) */}
+      <McpLandingSection />
+
+      {/* 7. Quickstart 3-Step Continuous Pipeline */}
       <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-zinc-800/80">
         <div className="mb-10">
           <div className="flex items-center gap-2 text-[11px] font-mono tracking-widest uppercase text-zinc-500">

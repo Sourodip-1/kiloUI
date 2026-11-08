@@ -3,6 +3,7 @@
 import * as React from "react";
 import { Copy, Check, Terminal, Globe, ChevronDown, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { SlidingHighlightContainer } from "@/components/sliding-highlight";
 
 // ─── Client Definition Types ──────────────────────────────────────────────────
 type ClientId = "cursor" | "claude" | "vscode" | "devin" | "antigravity";
@@ -377,7 +378,7 @@ function CopyButton({ text, label = "Copy" }: { text: string; label?: string }) 
     <button
       onClick={handleCopy}
       className={cn(
-        "flex items-center gap-1.5 px-2.5 py-1 rounded text-[11px] font-mono font-medium transition-all duration-150 cursor-pointer select-none",
+        "flex items-center gap-1.5 px-2.5 py-1 rounded text-[11px] font-mono font-medium transition-all duration-150 cursor-pointer select-none active:scale-95",
         copied
           ? "text-[var(--text-primary)] bg-[var(--surface-secondary)]"
           : "text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--surface-secondary)]"
@@ -402,7 +403,7 @@ function CodePanel({ code, label, onCopyPrompt }: { code: string; label: string;
           {onCopyPrompt && (
             <button
               onClick={onCopyPrompt}
-              className="text-[11px] font-mono text-[var(--text-muted)] hover:text-[var(--text-primary)] px-2 py-1 rounded hover:bg-[var(--surface-secondary)] transition-colors cursor-pointer"
+              className="text-[11px] font-mono text-[var(--text-muted)] hover:text-[var(--text-primary)] px-2 py-1 rounded hover:bg-[var(--surface-secondary)] active:scale-95 transition-all duration-150 cursor-pointer"
             >
               Copy as prompt
             </button>
@@ -465,7 +466,7 @@ Please query the Kilo UI registry whenever composing components, ensuring zero n
 
         {/* ── Top Hero Bridge Split Badge (Inspired by 21st.dev) ── */}
         <div className="flex flex-col items-center text-center space-y-6">
-          <div className="inline-flex items-center gap-3 p-2 rounded-full bg-[#131316] border border-white/10 shadow-[0_10px_35px_rgba(0,0,0,0.5)] backdrop-blur-md">
+          <div className="inline-flex items-center gap-3 p-2 rounded-full bg-[#131316] border border-white/10 shadow-[0_10px_35px_rgba(0,0,0,0.5)] backdrop-blur-md transition-all duration-300 hover:border-white/20 select-none">
             {/* Left Badge: Kilo UI */}
             <div
               className="flex h-14 w-14 items-center justify-center rounded-full bg-[#09090b] border border-white/15 shadow-inner"
@@ -477,10 +478,11 @@ Please query the Kilo UI registry whenever composing components, ensuring zero n
             {/* Split Divider / Bridge Indicator */}
             <div className="h-5 w-px bg-white/15" />
 
-            {/* Right Badge: Selected App Logo (Dynamic) */}
+            {/* Right Badge: Selected App Logo (Dynamic with smooth spring transition) */}
             <div
+              key={client.id}
               className={cn(
-                "flex h-14 w-14 items-center justify-center rounded-full border shadow-inner transition-all duration-300 transform",
+                "flex h-14 w-14 items-center justify-center rounded-full border shadow-inner transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] transform animate-in fade-in zoom-in-95",
                 client.badgeBg,
                 client.badgeBorder,
                 client.badgeIconColor
@@ -502,22 +504,29 @@ Please query the Kilo UI registry whenever composing components, ensuring zero n
           </div>
         </div>
 
-        {/* ── Client Selection Bar (Segmented like 21st.dev) ── */}
+        {/* ── Client Selection Bar with Smooth Spring Physics ── */}
         <div className="space-y-4">
-          <div className="p-1 rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)]/30">
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-1">
+          <SlidingHighlightContainer
+            activeSelector='[data-state="active"]'
+            activeKey={activeClient}
+            className="p-1 rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)]/30"
+            pillClassName="bg-[var(--surface-secondary)] border border-[var(--border)] rounded-lg shadow-xs"
+          >
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-1 relative z-10">
               {CLIENTS.map((c) => {
                 const isActive = activeClient === c.id;
                 return (
                   <button
                     key={c.id}
                     type="button"
+                    data-hover-item="true"
+                    data-state={isActive ? "active" : "inactive"}
                     onClick={() => setActiveClient(c.id)}
                     className={cn(
-                      "flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-xs font-medium transition-all duration-150 cursor-pointer select-none",
+                      "flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-xs font-medium transition-all duration-150 cursor-pointer select-none active:scale-[0.96]",
                       isActive
-                        ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] border border-[var(--border)] shadow-xs"
-                        : "text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)]/50 border border-transparent"
+                        ? "text-[var(--text-primary)] font-semibold"
+                        : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
                     )}
                   >
                     <span className="shrink-0 flex items-center justify-center">
@@ -528,18 +537,25 @@ Please query the Kilo UI registry whenever composing components, ensuring zero n
                 );
               })}
             </div>
-          </div>
+          </SlidingHighlightContainer>
 
-          {/* Secondary Bar: Connection Mode Pills + Live Endpoint */}
+          {/* Secondary Bar: Connection Mode Pills with Spring Motion + Live Endpoint */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-1">
-            <div className="inline-flex items-center gap-1 p-1 rounded-lg border border-[var(--border)] bg-[var(--surface-secondary)]/40">
+            <SlidingHighlightContainer
+              activeSelector='[data-state="active"]'
+              activeKey={connMode}
+              className="inline-flex items-center gap-1 p-1 rounded-lg border border-[var(--border)] bg-[var(--surface-secondary)]/40"
+              pillClassName="bg-[var(--surface-secondary)] border border-[var(--border)] rounded-md shadow-2xs"
+            >
               <button
                 type="button"
+                data-hover-item="true"
+                data-state={connMode === "cloud" ? "active" : "inactive"}
                 onClick={() => setConnMode("cloud")}
                 className={cn(
-                  "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-150 cursor-pointer",
+                  "relative z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-150 cursor-pointer select-none active:scale-[0.96]",
                   connMode === "cloud"
-                    ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] border border-[var(--border)] shadow-2xs"
+                    ? "text-[var(--text-primary)] font-semibold"
                     : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
                 )}
               >
@@ -552,11 +568,13 @@ Please query the Kilo UI registry whenever composing components, ensuring zero n
 
               <button
                 type="button"
+                data-hover-item="true"
+                data-state={connMode === "npx" ? "active" : "inactive"}
                 onClick={() => setConnMode("npx")}
                 className={cn(
-                  "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-150 cursor-pointer",
+                  "relative z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-150 cursor-pointer select-none active:scale-[0.96]",
                   connMode === "npx"
-                    ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] border border-[var(--border)] shadow-2xs"
+                    ? "text-[var(--text-primary)] font-semibold"
                     : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
                 )}
               >
@@ -566,7 +584,7 @@ Please query the Kilo UI registry whenever composing components, ensuring zero n
                   Zero Clone
                 </span>
               </button>
-            </div>
+            </SlidingHighlightContainer>
 
             <div className="flex items-center gap-1.5 text-[11px] font-mono text-[var(--text-muted)]">
               <span>Endpoint:</span>
