@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { ChevronDown, X, Menu, Terminal, ChevronsUpDown, ChevronsDownUp, Sparkles } from "lucide-react";
+import { ChevronDown, X, Menu, Terminal, ChevronsUpDown, ChevronsDownUp, Sparkles, Monitor } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   VectorLayersIcon,
@@ -221,6 +221,26 @@ function SidebarBase({
 
   const registryItems = Object.values(REGISTRY_DATA);
   const categories = Array.from(new Set(registryItems.map((item) => item.category)));
+  const webCategories = categories.filter((c) => c !== "Mobile App");
+  const mobileItems = registryItems.filter((i) => i.category === "Mobile App");
+  const webItemsCount = registryItems.filter((i) => i.category !== "Mobile App").length;
+
+  const [activePlatform, setActivePlatform] = React.useState<"web" | "mobile">("web");
+
+  React.useEffect(() => {
+    if (
+      pathname === "/mobile-primitives" ||
+      pathname?.startsWith("/mobile-primitives") ||
+      (activeComponent && REGISTRY_DATA[activeComponent]?.category === "Mobile App")
+    ) {
+      setActivePlatform("mobile");
+    } else if (
+      pathname === "/components" ||
+      (activeComponent && REGISTRY_DATA[activeComponent]?.category !== "Mobile App")
+    ) {
+      setActivePlatform("web");
+    }
+  }, [pathname, activeComponent]);
 
   const [expandedCategories, setExpandedCategories] = React.useState<Record<string, boolean>>({
     Actions: true,
@@ -264,7 +284,7 @@ function SidebarBase({
 
   const expandAllCategories = () => {
     const next: Record<string, boolean> = {};
-    categories.forEach((cat) => {
+    webCategories.forEach((cat) => {
       next[cat] = true;
     });
     setExpandedCategories(next);
@@ -272,13 +292,13 @@ function SidebarBase({
 
   const collapseAllCategories = () => {
     const next: Record<string, boolean> = {};
-    categories.forEach((cat) => {
+    webCategories.forEach((cat) => {
       next[cat] = false;
     });
     setExpandedCategories(next);
   };
 
-  const isAllCollapsed = categories.every((cat) => !expandedCategories[cat]);
+  const isAllCollapsed = webCategories.every((cat) => !expandedCategories[cat]);
 
   const handleToggleAllCategories = () => {
     if (isAllCollapsed) {
@@ -475,42 +495,6 @@ function SidebarBase({
             </div>
           </Link>
 
-          {/* Mobile Primitives */}
-          <Link
-            href="/mobile-primitives"
-            data-hover-item="true"
-            onClick={() => onMobileOpenChange?.(false)}
-            className={cn(
-              "group relative z-10 flex items-center w-full rounded p-2 text-xs font-semibold tracking-tight transition-colors duration-150 active:scale-[0.98]",
-              isMobilePrimitives
-                ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] border border-[var(--border)]"
-                : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-transparent"
-            )}
-            title={isCollapsed ? "Mobile Primitives" : undefined}
-          >
-            <div className="flex h-5 w-5 shrink-0 items-center justify-center">
-              <VectorMobileIcon
-                isActive={isMobilePrimitives}
-                className={cn(
-                  "h-4 w-4 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-115 group-hover:-translate-y-0.5",
-                  isMobilePrimitives
-                    ? "text-[var(--accent-green)] scale-105"
-                    : "text-[var(--text-primary)] group-hover:text-[var(--accent-green)]"
-                )}
-              />
-            </div>
-            <div
-              className={cn(
-                "flex items-center justify-between flex-1 ml-2.5 overflow-hidden transition-opacity duration-200",
-                isCollapsed && "opacity-0 pointer-events-none"
-              )}
-            >
-              <span className="whitespace-nowrap">Mobile Primitives</span>
-              <span className="text-[10px] font-sans font-medium tabular-nums text-[var(--text-muted)]">
-                5
-              </span>
-            </div>
-          </Link>
           {/* MCP Connect */}
           <Link
             href="/mcp"
@@ -566,45 +550,116 @@ function SidebarBase({
       pillClassName="bg-[var(--surface-secondary)]/90 border border-[var(--border)]/40 rounded-md shadow-2xs"
     >
       <div className="space-y-1">
-        {/* Categories Header */}
-        <div className="flex items-center justify-between w-full rounded p-2 text-[10px] font-sans font-semibold uppercase tracking-wider text-[var(--text-muted)] select-none">
-          <div className="flex items-center flex-1 min-w-0">
-            <div
-              className="flex h-5 w-5 shrink-0 items-center justify-center cursor-default"
-              title={isCollapsed ? `Categories (${categories.length})` : undefined}
-            >
-              <VectorCategoryIcon category="all" className="h-4 w-4 text-[var(--text-muted)]" />
-            </div>
-            <span
+        {/* Platform Tab Switcher */}
+        {!isCollapsed ? (
+          <div className="p-0.5 bg-[var(--surface-primary)] border border-[var(--border)] rounded-md mb-2 flex items-center gap-0.5">
+            <button
+              type="button"
+              onClick={() => setActivePlatform("web")}
               className={cn(
-                "ml-2.5 flex items-center gap-1.5 whitespace-nowrap transition-opacity duration-200",
-                isCollapsed && "opacity-0 pointer-events-none"
+                "flex-1 flex items-center justify-center gap-1.5 py-1.5 px-2 rounded text-[11px] font-semibold transition-all duration-150 cursor-pointer select-none",
+                activePlatform === "web"
+                  ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] shadow-2xs border border-[var(--border)]"
+                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)] border border-transparent hover:bg-[var(--surface-secondary)]/40"
               )}
             >
-              <span>Categories</span>
-              <span className="text-[9px] text-[var(--text-muted)] font-normal tabular-nums">({categories.length})</span>
-            </span>
-          </div>
-          <button
-            type="button"
-            onClick={handleToggleAllCategories}
-            className={cn(
-              "p-1 rounded text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] transition-opacity duration-200 cursor-pointer shrink-0",
-              isCollapsed && "opacity-0 pointer-events-none"
-            )}
-            title={isAllCollapsed ? "Expand all categories" : "Collapse all categories"}
-            aria-label={isAllCollapsed ? "Expand all categories" : "Collapse all categories"}
-          >
-            {isAllCollapsed ? (
-              <ChevronsUpDown className="h-3.5 w-3.5" />
-            ) : (
-              <ChevronsDownUp className="h-3.5 w-3.5" />
-            )}
-          </button>
-        </div>
+              <Monitor className="h-3.5 w-3.5 shrink-0" />
+              <span>Web App</span>
+              <span className="text-[9px] font-sans tabular-nums text-[var(--text-muted)] ml-0.5">
+                {webItemsCount}
+              </span>
+            </button>
 
-        {/* Categories List */}
-        {categories.map((cat) => {
+            <button
+              type="button"
+              onClick={() => setActivePlatform("mobile")}
+              className={cn(
+                "flex-1 flex items-center justify-center gap-1.5 py-1.5 px-2 rounded text-[11px] font-semibold transition-all duration-150 cursor-pointer select-none",
+                activePlatform === "mobile"
+                  ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] shadow-2xs border border-[var(--border)]"
+                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)] border border-transparent hover:bg-[var(--surface-secondary)]/40"
+              )}
+            >
+              <VectorMobileIcon className="h-3.5 w-3.5 shrink-0" isActive={activePlatform === "mobile"} />
+              <span>Mobile App</span>
+              <span className="text-[9px] font-sans tabular-nums text-[var(--text-muted)] ml-0.5">
+                {mobileItems.length}
+              </span>
+            </button>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center gap-1 p-0.5 bg-[var(--surface-primary)] border border-[var(--border)] rounded-md mb-2">
+            <button
+              type="button"
+              onClick={() => setActivePlatform("web")}
+              title={`Web App (${webItemsCount} components)`}
+              className={cn(
+                "h-7 w-7 flex items-center justify-center rounded transition-all duration-150 cursor-pointer",
+                activePlatform === "web"
+                  ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] border border-[var(--border)]"
+                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)] border border-transparent"
+              )}
+            >
+              <Monitor className="h-3.5 w-3.5 shrink-0" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setActivePlatform("mobile")}
+              title={`Mobile App (${mobileItems.length} components)`}
+              className={cn(
+                "h-7 w-7 flex items-center justify-center rounded transition-all duration-150 cursor-pointer",
+                activePlatform === "mobile"
+                  ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] border border-[var(--border)]"
+                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)] border border-transparent"
+              )}
+            >
+              <VectorMobileIcon className="h-3.5 w-3.5 shrink-0" isActive={activePlatform === "mobile"} />
+            </button>
+          </div>
+        )}
+
+        {/* View according to activePlatform */}
+        {activePlatform === "web" ? (
+          <>
+            {/* Categories Header */}
+            <div className="flex items-center justify-between w-full rounded p-2 text-[10px] font-sans font-semibold uppercase tracking-wider text-[var(--text-muted)] select-none">
+              <div className="flex items-center flex-1 min-w-0">
+                <div
+                  className="flex h-5 w-5 shrink-0 items-center justify-center cursor-default"
+                  title={isCollapsed ? `Categories (${webCategories.length})` : undefined}
+                >
+                  <VectorCategoryIcon category="all" className="h-4 w-4 text-[var(--text-muted)]" />
+                </div>
+                <span
+                  className={cn(
+                    "ml-2.5 flex items-center gap-1.5 whitespace-nowrap transition-opacity duration-200",
+                    isCollapsed && "opacity-0 pointer-events-none"
+                  )}
+                >
+                  <span>Categories</span>
+                  <span className="text-[9px] text-[var(--text-muted)] font-normal tabular-nums">({webCategories.length})</span>
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={handleToggleAllCategories}
+                className={cn(
+                  "p-1 rounded text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] transition-opacity duration-200 cursor-pointer shrink-0",
+                  isCollapsed && "opacity-0 pointer-events-none"
+                )}
+                title={isAllCollapsed ? "Expand all categories" : "Collapse all categories"}
+                aria-label={isAllCollapsed ? "Expand all categories" : "Collapse all categories"}
+              >
+                {isAllCollapsed ? (
+                  <ChevronsUpDown className="h-3.5 w-3.5" />
+                ) : (
+                  <ChevronsDownUp className="h-3.5 w-3.5" />
+                )}
+              </button>
+            </div>
+
+            {/* Categories List */}
+            {webCategories.map((cat) => {
           const catItems = registryItems.filter((i) => i.category === cat);
           const isCategoryActive = activeCategory === cat;
           const isExpanded = expandedCategories[cat] ?? true;
@@ -785,6 +840,164 @@ function SidebarBase({
             </div>
           );
         })}
+          </>
+        ) : (
+          <>
+            {/* Mobile Header */}
+            <div className="flex items-center justify-between w-full rounded p-2 text-[10px] font-sans font-semibold uppercase tracking-wider text-[var(--text-muted)] select-none">
+              <div className="flex items-center flex-1 min-w-0">
+                <div
+                  className="flex h-5 w-5 shrink-0 items-center justify-center cursor-default"
+                  title={isCollapsed ? `Mobile Primitives (${mobileItems.length})` : undefined}
+                >
+                  <VectorMobileIcon className="h-4 w-4 text-[var(--text-muted)]" isActive={false} />
+                </div>
+                <span
+                  className={cn(
+                    "ml-2.5 flex items-center gap-1.5 whitespace-nowrap transition-opacity duration-200",
+                    isCollapsed && "opacity-0 pointer-events-none"
+                  )}
+                >
+                  <span>Primitives</span>
+                  <span className="text-[9px] text-[var(--text-muted)] font-normal tabular-nums">({mobileItems.length})</span>
+                </span>
+              </div>
+            </div>
+
+            {/* Mobile Studio interactive canvas link */}
+            <Link
+              href="/mobile-primitives"
+              data-hover-item="true"
+              onClick={() => onMobileOpenChange?.(false)}
+              className={cn(
+                "group relative z-10 flex items-center w-full rounded p-2 text-xs font-semibold tracking-tight transition-colors duration-150 mb-1 active:scale-[0.98]",
+                pathname === "/mobile-primitives"
+                  ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] border border-[var(--border)]"
+                  : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-transparent"
+              )}
+              title={isCollapsed ? "Mobile Studio" : undefined}
+            >
+              <div className="flex h-5 w-5 shrink-0 items-center justify-center">
+                <VectorMobileIcon
+                  isActive={pathname === "/mobile-primitives"}
+                  className={cn(
+                    "h-4 w-4 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-115 group-hover:-translate-y-0.5",
+                    pathname === "/mobile-primitives"
+                      ? "text-[var(--accent-green)] scale-105"
+                      : "text-[var(--text-primary)] group-hover:text-[var(--accent-green)]"
+                  )}
+                />
+              </div>
+              <div
+                className={cn(
+                  "flex items-center justify-between flex-1 ml-2.5 overflow-hidden transition-opacity duration-200",
+                  isCollapsed && "opacity-0 pointer-events-none"
+                )}
+              >
+                <span className="whitespace-nowrap font-medium">Mobile Studio</span>
+                <span className="text-[9px] font-mono font-medium px-1.5 py-0.5 rounded bg-[var(--surface-tertiary)] text-[var(--text-muted)]">
+                  Studio
+                </span>
+              </div>
+            </Link>
+
+            {/* Mobile Primitives List */}
+            <div className="space-y-0.5">
+              {mobileItems.map((comp) => {
+                const isCompActive =
+                  pathname === `/components/${comp.name}` || activeComponent === comp.name;
+                const hasVariants = Boolean(comp.variants && comp.variants.length > 0);
+                const isVariantExpanded = Boolean(expandedVariants[comp.name]);
+
+                return (
+                  <div key={comp.name} className="relative">
+                    <div
+                      data-hover-item="true"
+                      className={cn(
+                        "group/comp relative z-10 flex items-center justify-between w-full rounded p-2 text-xs font-medium tracking-tight transition-colors duration-150",
+                        isCompActive && !activeVariant
+                          ? "bg-[var(--surface-secondary)] text-[var(--accent-green)] border border-[var(--border)]"
+                          : isCompActive
+                          ? "bg-[var(--surface-secondary)]/60 text-[var(--text-primary)] border border-transparent"
+                          : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-transparent"
+                      )}
+                    >
+                      <Link
+                        href={`/components/${comp.name}`}
+                        onClick={() => onMobileOpenChange?.(false)}
+                        onMouseEnter={(e) => handleComponentMouseEnter(comp, e)}
+                        onMouseLeave={handleComponentMouseLeave}
+                        className="flex items-center flex-1 min-w-0 text-left"
+                        title={isCollapsed ? comp.title : undefined}
+                      >
+                        <div className="flex h-5 w-5 shrink-0 items-center justify-center">
+                          <VectorComponentIcon
+                            name={comp.name}
+                            className={cn(
+                              "h-3.5 w-3.5 shrink-0 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/comp:scale-120 group-hover/comp:translate-x-0.5 group-hover/comp:rotate-3",
+                              isCompActive
+                                ? "text-[var(--accent-green)] scale-105"
+                                : "text-[var(--text-primary)] group-hover/comp:text-[var(--accent-green)]"
+                            )}
+                          />
+                        </div>
+                        <span
+                          className={cn(
+                            "ml-2.5 truncate font-medium transition-opacity duration-200",
+                            isCollapsed && "opacity-0 pointer-events-none"
+                          )}
+                        >
+                          {comp.title}
+                        </span>
+                      </Link>
+
+                      {hasVariants && !isCollapsed && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            toggleComponentVariants(comp.name);
+                          }}
+                          className={cn(
+                            "flex items-center gap-0.5 px-1.5 py-0.5 mr-0.5 rounded text-[10px] font-sans font-medium tabular-nums transition-colors cursor-pointer select-none",
+                            isCompActive
+                              ? "text-[var(--accent-green)] hover:bg-[var(--accent-green)]/15"
+                              : "text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-tertiary)]"
+                          )}
+                          title={`${isVariantExpanded ? "Hide" : "Show"} ${comp.variants?.length} variants`}
+                          aria-label={`${isVariantExpanded ? "Hide" : "Show"} variants for ${comp.title}`}
+                        >
+                          <span className="text-[9px] font-bold opacity-80">{comp.variants?.length}</span>
+                          <ChevronDown
+                            className={cn(
+                              "h-2.5 w-2.5 transition-transform duration-200",
+                              isVariantExpanded ? "rotate-0" : "-rotate-90"
+                            )}
+                          />
+                        </button>
+                      )}
+                    </div>
+
+                    {hasVariants && (
+                      <ComponentVariantsTree
+                        comp={comp}
+                        isCompActive={isCompActive}
+                        activeVariant={activeVariant}
+                        isCollapsed={isCollapsed}
+                        isVariantExpanded={isVariantExpanded}
+                        onMobileOpenChange={onMobileOpenChange}
+                        onMouseEnter={handleComponentMouseEnter}
+                        onMouseLeave={handleComponentMouseLeave}
+                        onVariantSelect={() => setHoverState(null)}
+                      />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </>
+        )}
       </div>
     </SlidingHighlightContainer>
   );
