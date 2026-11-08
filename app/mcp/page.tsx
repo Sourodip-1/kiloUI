@@ -70,21 +70,25 @@ function VSCodeLogoIcon({ className = "w-6 h-6" }: { className?: string }) {
   );
 }
 
-// Official Devin Icon (devin.ai)
+// Official Devin Icon (devin.ai/icon.png)
 function DevinLogoIcon({ className = "w-6 h-6" }: { className?: string }) {
   return (
-    <svg viewBox="0 0 425 425" className={className} fill="currentColor">
-      <path d="M70 159.333V91.3471C70 88.3592 71.594 85.5983 74.1816 84.1044L133.043 50.1205C135.631 48.6265 138.819 48.6265 141.407 50.1205L200.269 84.1044C202.856 85.5983 204.45 88.3592 204.45 91.3471V126.068C204.708 137.606 210.806 148.734 221.531 154.926C232.256 161.117 244.942 160.834 255.063 155.289L285.132 137.929C287.719 136.435 290.907 136.435 293.495 137.929L352.357 171.913C354.944 173.406 356.538 176.167 356.538 179.155V247.123C356.538 250.111 354.944 252.872 352.357 254.366L293.495 288.35C290.907 289.844 287.719 289.844 285.132 288.35L255.306 271.13C245.146 265.456 232.344 265.117 221.534 271.358C210.809 277.55 204.711 288.678 204.453 300.215V334.926C204.453 337.914 202.859 340.675 200.271 342.169L141.41 376.153C138.822 377.647 135.634 377.647 133.046 376.153L74.1845 342.169C71.5969 340.675 70.0028 337.914 70.0028 334.926V266.959C70.0029 263.971 71.5969 261.21 74.1845 259.716L133.046 225.732C135.634 224.238 138.822 224.238 141.41 225.732L171.547 243.132C181.656 248.638 194.306 248.906 205.005 242.729C215.815 236.488 221.922 225.231 222.088 213.595C221.83 202.057 215.732 189.737 205.008 183.545C194.283 177.353 181.597 177.636 171.476 183.181L141.269 200.72C138.67 202.229 135.461 202.228 132.864 200.716L74.1576 166.562C71.5835 165.065 70 162.311 70 159.333Z" />
-    </svg>
+    <img
+      src="/images/agents/devin.png"
+      alt="Devin"
+      className={cn(className, "object-contain rounded-full select-none")}
+    />
   );
 }
 
-// Official Google Antigravity Icon (antigravity.google/press)
+// Official Google Antigravity Icon (antigravity.google full-color)
 function AntigravityLogoIcon({ className = "w-6 h-6" }: { className?: string }) {
   return (
-    <svg viewBox="0 0 180 180" className={className} fill="currentColor">
-      <path d="M144.248 149.062C151.748 154.688 162.998 150.938 152.685 140.625C121.748 110.625 128.31 28.125 89.8727 28.125C51.4352 28.125 57.9977 110.625 27.0602 140.625C15.8102 151.875 27.9977 154.688 35.4977 149.062C64.5602 129.375 62.6852 94.6875 89.8727 94.6875C117.06 94.6875 115.185 129.375 144.248 149.062Z" />
-    </svg>
+    <img
+      src="/images/agents/antigravity.png"
+      alt="Antigravity"
+      className={cn(className, "object-contain select-none")}
+    />
   );
 }
 
@@ -253,9 +257,9 @@ const CLIENTS: ClientConfig[] = [
     label: "Devin",
     configPath: "devin.json / MCP Settings",
     themeColor: "#10b981",
-    badgeBg: "bg-[#062419]",
-    badgeBorder: "border-[#10b981]/35",
-    badgeIconColor: "text-[#34d399]",
+    badgeBg: "bg-[#0e1015]",
+    badgeBorder: "border-white/15",
+    badgeIconColor: "text-white",
     cloudJson: `{
   "mcpServers": {
     "kilo-ui": {
@@ -304,9 +308,9 @@ const CLIENTS: ClientConfig[] = [
     label: "Antigravity",
     configPath: "~/.gemini/config/mcp_config.json",
     themeColor: "#3186FF",
-    badgeBg: "bg-[#141b36]",
-    badgeBorder: "border-[#3186FF]/40",
-    badgeIconColor: "text-[#82b1ff]",
+    badgeBg: "bg-[#09090b]",
+    badgeBorder: "border-white/15",
+    badgeIconColor: "text-white",
     cloudJson: `{
   "mcpServers": {
     "kilo-ui": {
@@ -480,7 +484,7 @@ Please query the Kilo UI registry whenever composing components, ensuring zero n
           <div className="inline-flex items-center gap-3 p-2 rounded-full bg-[#131316] border border-white/10 shadow-[0_10px_35px_rgba(0,0,0,0.5)] backdrop-blur-md">
             {/* Left Badge: Kilo UI */}
             <div
-              className="flex h-14 w-14 items-center justify-center rounded-full bg-[#09090b] border border-white/15 shadow-inner transition-transform hover:scale-105"
+              className="flex h-14 w-14 items-center justify-center rounded-full bg-[#09090b] border border-white/15 shadow-inner"
               title="Kilo UI"
             >
               <KiloLogoIcon className="h-7 w-7" />
