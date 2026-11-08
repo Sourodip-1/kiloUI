@@ -84,6 +84,36 @@ export function VectorCubeIcon({ className = "h-4 w-4", isActive = false, ...pro
 }
 
 /**
+ * 1c. Vector Mobile Device Icon (Mobile Primitives section)
+ * Clean smartphone chassis with dynamic island / gesture bar.
+ */
+export function VectorMobileIcon({ className = "h-4 w-4", isActive = false, ...props }: VectorIconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={`${className} overflow-visible transition-colors`}
+      {...props}
+    >
+      <rect
+        x="5"
+        y="2"
+        width="14"
+        height="20"
+        rx="3.5"
+        className={isActive ? "stroke-[var(--accent-green)] fill-[var(--accent-green)]/10" : "group-hover:stroke-[var(--accent-green)]"}
+      />
+      <line x1="10" y1="5" x2="14" y2="5" className={isActive ? "stroke-[var(--accent-green)]" : "group-hover:stroke-[var(--accent-green)]"} strokeWidth="1.5" />
+      <line x1="9" y1="19" x2="15" y2="19" className="opacity-60" strokeWidth="1.5" />
+    </svg>
+  );
+}
+
+/**
  * 2. Vector Folder & Blueprint Icon (Overview)
  * Interactive project deck folder: on hover, the front pocket flexes open
  * and an interior blueprint document sheet smoothly rises upward with spring physics.
@@ -783,6 +813,34 @@ export function VectorCategoryIcon({
         <path d="M4 4l7.07 17 2.51-7.39L21 11.07 4 4z" />
         <path d="M14 14l6 6" />
         <circle cx="19" cy="19" r="1.5" className={isActive ? "fill-[var(--accent-green)]" : ""} />
+      </svg>
+    );
+  }
+
+  // 9. Mobile App Primitives -> Smartphone Chassis with Gesture Bar
+  if (norm.includes("mobile")) {
+    return (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={`${className} transition-colors ${
+          isActive ? "stroke-[var(--accent-green)]" : "group-hover:stroke-[var(--accent-green)]"
+        }`}
+      >
+        <rect
+          x="5"
+          y="2"
+          width="14"
+          height="20"
+          rx="3.5"
+          className="transition-colors duration-200"
+        />
+        <line x1="10" y1="5" x2="14" y2="5" className="stroke-[var(--accent-green)]" strokeWidth="1.5" />
+        <line x1="9" y1="19" x2="15" y2="19" className="opacity-70" strokeWidth="1.5" />
       </svg>
     );
   }

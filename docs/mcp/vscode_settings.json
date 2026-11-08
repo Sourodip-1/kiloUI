@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "kilo-ui": {
+      "command": "python3",
+      "args": [
+        "${workspaceFolder}/server/mcp_server.py",
+        "--transport",
+        "stdio"
+      ],
+      "env": {
+        "PYTHONUNBUFFERED": "1",
+        "PYTHONPATH": "${workspaceFolder}"
+      }
+    },
+    "kilo-ui-sse": {
+      "url": "http://127.0.0.1:8000/sse"
+    }
+  }
+}

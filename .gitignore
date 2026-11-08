@@ -43,3 +43,5 @@ next-env.d.ts
 # memory & scratch
 .kontext/
 scratch/
+
+/.agents/
