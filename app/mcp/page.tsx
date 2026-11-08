@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Copy, Check, Terminal, Cpu, Zap, Database, Globe, ChevronDown, ChevronRight } from "lucide-react";
+import { Copy, Check, Terminal, Globe, ChevronDown, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 // ─── Client Definition Types ──────────────────────────────────────────────────
@@ -358,24 +358,6 @@ const CLIENTS: ClientConfig[] = [
   },
 ];
 
-// ─── Capability Cards ─────────────────────────────────────────────────────────
-const CAPABILITIES = [
-  {
-    icon: Database,
-    title: "Registry Discovery",
-    description: "Access 61 primitives across 9 categories with variants, props, and design rules.",
-  },
-  {
-    icon: Cpu,
-    title: "M3 Palette Engine",
-    description: "Generate complete tonal palettes and --md-sys-color-* variables from any hex seed.",
-  },
-  {
-    icon: Zap,
-    title: "AST Validation",
-    description: "Validate declarative design AST trees with strict monochrome aesthetic guardrails.",
-  },
-];
 
 // ─── Copy Button ──────────────────────────────────────────────────────────────
 function CopyButton({ text, label = "Copy" }: { text: string; label?: string }) {
@@ -624,27 +606,6 @@ Please query the Kilo UI registry whenever composing components, ensuring zero n
           </ol>
         </div>
 
-        {/* ── Capabilities Grid ── */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
-          {CAPABILITIES.map(({ icon: Icon, title, description }) => (
-            <div
-              key={title}
-              className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)]/25 space-y-2.5"
-            >
-              <div className="flex h-7 w-7 items-center justify-center rounded border border-[var(--border)] bg-[var(--surface-secondary)]">
-                <Icon className="h-3.5 w-3.5 text-[var(--text-secondary)]" />
-              </div>
-              <div>
-                <p className="text-xs font-semibold text-[var(--text-primary)] mb-1">
-                  {title}
-                </p>
-                <p className="text-[11px] text-[var(--text-muted)] leading-relaxed">
-                  {description}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
 
         {/* ── Authoritative Tools Table ── */}
         <div className="space-y-4">
