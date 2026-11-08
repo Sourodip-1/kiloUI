@@ -260,6 +260,8 @@ function SidebarBase({
     badge: true,
   });
 
+  const [isPrimitivesExpanded, setIsPrimitivesExpanded] = React.useState<boolean>(true);
+
   // Automatically expand variant tree when activeComponent is selected
   React.useEffect(() => {
     if (activeComponent) {
@@ -267,6 +269,9 @@ function SidebarBase({
         ...prev,
         [activeComponent]: true,
       }));
+      if (REGISTRY_DATA[activeComponent]?.category === "Mobile App") {
+        setIsPrimitivesExpanded(true);
+      }
     }
   }, [activeComponent]);
 
@@ -686,197 +691,201 @@ function SidebarBase({
 
             {/* Categories List */}
             {webCategories.map((cat) => {
-          const catItems = registryItems.filter((i) => i.category === cat);
-          const isCategoryActive = activeCategory === cat;
-          const isExpanded = expandedCategories[cat] ?? true;
+              const catItems = registryItems.filter((i) => i.category === cat);
+              const isCategoryActive = activeCategory === cat;
+              const isExpanded = expandedCategories[cat] ?? true;
 
-          return (
-            <div key={cat} className="space-y-0.5">
-              <div
-                data-hover-item="true"
-                className={cn(
-                  "group/cat relative z-10 flex w-full items-center justify-between rounded p-2 text-xs font-semibold tracking-tight transition-colors duration-150",
-                  isCategoryActive
-                    ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] border border-[var(--border)]"
-                    : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-transparent"
-                )}
-              >
-                <Link
-                  href={`/components?category=${encodeURIComponent(cat)}`}
-                  onClick={() => onMobileOpenChange?.(false)}
-                  onMouseEnter={(e) => {
-                    if (isCollapsed && catItems[0]) {
-                      handleComponentMouseEnter(catItems[0], e);
-                    }
-                  }}
-                  onMouseLeave={() => {
-                    if (isCollapsed) handleComponentMouseLeave();
-                  }}
-                  className="flex items-center flex-1 min-w-0 text-left"
-                  title={isCollapsed ? `${cat} (${catItems.length})` : undefined}
-                >
-                  <div className="flex h-5 w-5 shrink-0 items-center justify-center">
-                    <VectorCategoryIcon
-                      category={cat}
-                      isActive={isCategoryActive}
-                      className={cn(
-                        "h-4 w-4 shrink-0 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/cat:scale-115 group-hover/cat:-translate-y-0.5",
-                        isCategoryActive
-                          ? "text-[var(--accent-green)] scale-105"
-                          : "text-[var(--text-primary)] group-hover/cat:text-[var(--accent-green)]"
-                      )}
-                    />
-                  </div>
-                  <span
+              return (
+                <div key={cat} className="space-y-0.5">
+                  <div
+                    data-hover-item="true"
                     className={cn(
-                      "ml-2.5 truncate whitespace-nowrap transition-opacity duration-200",
-                      isCollapsed && "opacity-0 pointer-events-none"
+                      "group/cat relative z-10 flex w-full items-center justify-between rounded p-2 text-xs font-semibold tracking-tight transition-colors duration-150",
+                      isCategoryActive
+                        ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] border border-[var(--border)]"
+                        : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-transparent"
                     )}
                   >
-                    {cat}
-                  </span>
-                </Link>
-
-                <div
-                  className={cn(
-                    "flex items-center gap-1 transition-opacity duration-200 shrink-0",
-                    isCollapsed && "opacity-0 pointer-events-none"
-                  )}
-                >
-                  <span className="text-[10px] font-sans font-medium tabular-nums text-[var(--text-muted)]">
-                    {catItems.length}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleCategory(cat);
-                    }}
-                    className="p-0.5 rounded hover:bg-[var(--surface-tertiary)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-transform cursor-pointer"
-                    title={isExpanded ? "Collapse" : "Expand"}
-                  >
-                    <ChevronDown
-                      className={cn(
-                        "h-3 w-3 transition-transform duration-200",
-                        isExpanded ? "rotate-0" : "-rotate-90"
-                      )}
-                    />
-                  </button>
-                </div>
-              </div>
-
-              {/* Sub-items with smooth expand/collapse transition */}
-              <div
-                className={cn(
-                  "grid transition-[grid-template-rows,opacity] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]",
-                  !isCollapsed && isExpanded
-                    ? "grid-rows-[1fr] opacity-100"
-                    : "grid-rows-[0fr] opacity-0 pointer-events-none"
-                )}
-              >
-                <div className="overflow-hidden">
-                  <div className="ml-3.5 pl-2 border-l border-[var(--border)] py-0.5 space-y-1">
-                    {catItems.map((comp) => {
-                      const isCompActive =
-                        pathname === `/components/${comp.name}` || activeComponent === comp.name;
-                      const hasVariants = Boolean(comp.variants && comp.variants.length > 0);
-                      const isVariantExpanded = Boolean(expandedVariants[comp.name]);
-
-                      return (
-                        <div key={comp.name} className="relative">
-                          <div
-                            data-hover-item="true"
-                            className={cn(
-                              "group/comp relative z-10 flex items-center justify-between w-full rounded text-xs font-medium tracking-tight transition-colors duration-150",
-                              isCompActive && !activeVariant
-                                ? "bg-[var(--surface-secondary)] text-[var(--accent-green)] border border-[var(--border)]"
-                                : isCompActive
-                                ? "bg-[var(--surface-secondary)]/60 text-[var(--text-primary)] border border-transparent"
-                                : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-transparent"
-                            )}
-                          >
-                            <Link
-                              href={`/components/${comp.name}`}
-                              onClick={() => onMobileOpenChange?.(false)}
-                              onMouseEnter={(e) => handleComponentMouseEnter(comp, e)}
-                              onMouseLeave={handleComponentMouseLeave}
-                              className="flex items-center gap-2 flex-1 min-w-0 px-2 py-1 text-left"
-                              title={comp.title}
-                            >
-                              <VectorComponentIcon
-                                name={comp.name}
-                                className={cn(
-                                  "h-3 w-3 shrink-0 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/comp:scale-120 group-hover/comp:translate-x-0.5 group-hover/comp:rotate-3",
-                                  isCompActive
-                                    ? "text-[var(--accent-green)] scale-105"
-                                    : "text-[var(--text-primary)] group-hover/comp:text-[var(--accent-green)]"
-                                )}
-                              />
-                              <span className="truncate font-medium">{comp.title}</span>
-                            </Link>
-
-                            {hasVariants && (
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  toggleComponentVariants(comp.name);
-                                }}
-                                className={cn(
-                                  "flex items-center gap-0.5 px-1.5 py-0.5 mr-1 rounded text-[10px] font-sans font-medium tabular-nums transition-colors cursor-pointer select-none",
-                                  isCompActive
-                                    ? "text-[var(--accent-green)] hover:bg-[var(--accent-green)]/15"
-                                    : "text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-tertiary)]"
-                                )}
-                                title={`${isVariantExpanded ? "Hide" : "Show"} ${comp.variants?.length} variants`}
-                                aria-label={`${isVariantExpanded ? "Hide" : "Show"} variants for ${comp.title}`}
-                              >
-                                <span className="text-[9px] font-bold opacity-80">{comp.variants?.length}</span>
-                                <ChevronDown
-                                  className={cn(
-                                    "h-2.5 w-2.5 transition-transform duration-200",
-                                    isVariantExpanded ? "rotate-0" : "-rotate-90"
-                                  )}
-                                />
-                              </button>
-                            )}
-                          </div>
-
-                          {/* Expandable Variants Tree with animated glide & height transitions */}
-                          {hasVariants && (
-                            <ComponentVariantsTree
-                              comp={comp}
-                              isCompActive={isCompActive}
-                              activeVariant={activeVariant}
-                              isCollapsed={isCollapsed}
-                              isVariantExpanded={isVariantExpanded}
-                              onMobileOpenChange={onMobileOpenChange}
-                              onMouseEnter={handleComponentMouseEnter}
-                              onMouseLeave={handleComponentMouseLeave}
-                              onVariantSelect={() => setHoverState(null)}
-                            />
+                    <Link
+                      href={`/components?category=${encodeURIComponent(cat)}`}
+                      onClick={() => onMobileOpenChange?.(false)}
+                      onMouseEnter={(e) => {
+                        if (isCollapsed && catItems[0]) {
+                          handleComponentMouseEnter(catItems[0], e);
+                        }
+                      }}
+                      onMouseLeave={() => {
+                        if (isCollapsed) handleComponentMouseLeave();
+                      }}
+                      className="flex items-center flex-1 min-w-0 text-left"
+                      title={isCollapsed ? `${cat} (${catItems.length})` : undefined}
+                    >
+                      <div className="flex h-5 w-5 shrink-0 items-center justify-center">
+                        <VectorCategoryIcon
+                          category={cat}
+                          isActive={isCategoryActive}
+                          className={cn(
+                            "h-4 w-4 shrink-0 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/cat:scale-115 group-hover/cat:-translate-y-0.5",
+                            isCategoryActive
+                              ? "text-[var(--accent-green)] scale-105"
+                              : "text-[var(--text-primary)] group-hover/cat:text-[var(--accent-green)]"
                           )}
-                        </div>
-                      );
-                    })}
+                        />
+                      </div>
+                      <span
+                        className={cn(
+                          "ml-2.5 truncate whitespace-nowrap transition-opacity duration-200",
+                          isCollapsed && "opacity-0 pointer-events-none"
+                        )}
+                      >
+                        {cat}
+                      </span>
+                    </Link>
+
+                    <div
+                      className={cn(
+                        "flex items-center gap-1 transition-opacity duration-200 shrink-0",
+                        isCollapsed && "opacity-0 pointer-events-none"
+                      )}
+                    >
+                      <span className="text-[10px] font-sans font-medium tabular-nums text-[var(--text-muted)]">
+                        {catItems.length}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleCategory(cat);
+                        }}
+                        className="p-0.5 rounded hover:bg-[var(--surface-tertiary)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-transform cursor-pointer"
+                        title={isExpanded ? "Collapse" : "Expand"}
+                      >
+                        <ChevronDown
+                          className={cn(
+                            "h-3 w-3 transition-transform duration-200",
+                            isExpanded ? "rotate-0" : "-rotate-90"
+                          )}
+                        />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Sub-items with smooth expand/collapse transition */}
+                  <div
+                    className={cn(
+                      "grid transition-[grid-template-rows,opacity] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]",
+                      !isCollapsed && isExpanded
+                        ? "grid-rows-[1fr] opacity-100"
+                        : "grid-rows-[0fr] opacity-0 pointer-events-none"
+                    )}
+                  >
+                    <div className="overflow-hidden">
+                      <div className="ml-3.5 pl-2 border-l border-[var(--border)] py-0.5 space-y-1">
+                        {catItems.map((comp) => {
+                          const isCompActive =
+                            pathname === `/components/${comp.name}` || activeComponent === comp.name;
+                          const hasVariants = Boolean(comp.variants && comp.variants.length > 0);
+                          const isVariantExpanded = Boolean(expandedVariants[comp.name]);
+
+                          return (
+                            <div key={comp.name} className="relative">
+                              <div
+                                data-hover-item="true"
+                                className={cn(
+                                  "group/comp relative z-10 flex items-center justify-between w-full rounded text-xs font-medium tracking-tight transition-colors duration-150",
+                                  isCompActive && !activeVariant
+                                    ? "bg-[var(--surface-secondary)] text-[var(--accent-green)] border border-[var(--border)]"
+                                    : isCompActive
+                                      ? "bg-[var(--surface-secondary)]/60 text-[var(--text-primary)] border border-transparent"
+                                      : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-transparent"
+                                )}
+                              >
+                                <Link
+                                  href={`/components/${comp.name}`}
+                                  onClick={() => onMobileOpenChange?.(false)}
+                                  onMouseEnter={(e) => handleComponentMouseEnter(comp, e)}
+                                  onMouseLeave={handleComponentMouseLeave}
+                                  className="flex items-center gap-2 flex-1 min-w-0 px-2 py-1 text-left"
+                                  title={comp.title}
+                                >
+                                  <VectorComponentIcon
+                                    name={comp.name}
+                                    className={cn(
+                                      "h-3 w-3 shrink-0 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/comp:scale-120 group-hover/comp:translate-x-0.5 group-hover/comp:rotate-3",
+                                      isCompActive
+                                        ? "text-[var(--accent-green)] scale-105"
+                                        : "text-[var(--text-primary)] group-hover/comp:text-[var(--accent-green)]"
+                                    )}
+                                  />
+                                  <span className="truncate font-medium">{comp.title}</span>
+                                </Link>
+
+                                {hasVariants && (
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+                                      toggleComponentVariants(comp.name);
+                                    }}
+                                    className={cn(
+                                      "flex items-center gap-0.5 px-1.5 py-0.5 mr-1 rounded text-[10px] font-sans font-medium tabular-nums transition-colors cursor-pointer select-none",
+                                      isCompActive
+                                        ? "text-[var(--accent-green)] hover:bg-[var(--accent-green)]/15"
+                                        : "text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-tertiary)]"
+                                    )}
+                                    title={`${isVariantExpanded ? "Hide" : "Show"} ${comp.variants?.length} variants`}
+                                    aria-label={`${isVariantExpanded ? "Hide" : "Show"} variants for ${comp.title}`}
+                                  >
+                                    <span className="text-[9px] font-bold opacity-80">{comp.variants?.length}</span>
+                                    <ChevronDown
+                                      className={cn(
+                                        "h-2.5 w-2.5 transition-transform duration-200",
+                                        isVariantExpanded ? "rotate-0" : "-rotate-90"
+                                      )}
+                                    />
+                                  </button>
+                                )}
+                              </div>
+
+                              {/* Expandable Variants Tree with animated glide & height transitions */}
+                              {hasVariants && (
+                                <ComponentVariantsTree
+                                  comp={comp}
+                                  isCompActive={isCompActive}
+                                  activeVariant={activeVariant}
+                                  isCollapsed={isCollapsed}
+                                  isVariantExpanded={isVariantExpanded}
+                                  onMobileOpenChange={onMobileOpenChange}
+                                  onMouseEnter={handleComponentMouseEnter}
+                                  onMouseLeave={handleComponentMouseLeave}
+                                  onVariantSelect={() => setHoverState(null)}
+                                />
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          );
-        })}
+              );
+            })}
           </>
         ) : activePlatform === "mobile" ? (
           <>
-            {/* Mobile Header */}
+            {/* Mobile Header with Expand/Collapse button */}
             <div className="flex items-center justify-between w-full rounded p-2 text-[10px] font-sans font-semibold uppercase tracking-wider text-[var(--text-muted)] select-none">
-              <div className="flex items-center flex-1 min-w-0">
+              <button
+                type="button"
+                onClick={() => setIsPrimitivesExpanded((prev) => !prev)}
+                className="flex items-center flex-1 min-w-0 text-left cursor-pointer group"
+              >
                 <div
-                  className="flex h-5 w-5 shrink-0 items-center justify-center cursor-default"
+                  className="flex h-5 w-5 shrink-0 items-center justify-center"
                   title={isCollapsed ? `Mobile Primitives (${mobileItems.length})` : undefined}
                 >
-                  <VectorMobileIcon className="h-4 w-4 text-[var(--text-muted)]" isActive={false} animated={false} />
+                  <VectorMobileIcon className="h-4 w-4 text-[var(--text-muted)] group-hover:text-[var(--text-primary)] transition-colors" isActive={false} animated={false} />
                 </div>
                 <span
                   className={cn(
@@ -884,11 +893,40 @@ function SidebarBase({
                     isCollapsed && "opacity-0 pointer-events-none"
                   )}
                 >
-                  <span>Primitives</span>
+                  <span className="group-hover:text-[var(--text-primary)] transition-colors">Primitives</span>
                   <span className="text-[9px] text-[var(--text-muted)] font-normal tabular-nums">({mobileItems.length})</span>
                 </span>
-              </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setIsPrimitivesExpanded((prev) => !prev)}
+                className={cn(
+                  "p-1 rounded text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] transition-all duration-200 cursor-pointer shrink-0",
+                  isCollapsed && "opacity-0 pointer-events-none"
+                )}
+                title={isPrimitivesExpanded ? "Collapse primitives" : "Expand primitives"}
+                aria-label={isPrimitivesExpanded ? "Collapse primitives" : "Expand primitives"}
+              >
+                <ChevronDown
+                  className={cn(
+                    "h-3.5 w-3.5 transition-transform duration-200",
+                    isPrimitivesExpanded ? "rotate-0" : "-rotate-90"
+                  )}
+                />
+              </button>
             </div>
+
+            {/* Collapsible Primitives Content */}
+            <div
+              className={cn(
+                "grid transition-[grid-template-rows,opacity] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]",
+                !isCollapsed && isPrimitivesExpanded
+                  ? "grid-rows-[1fr] opacity-100"
+                  : "grid-rows-[0fr] opacity-0 pointer-events-none"
+              )}
+            >
+              <div className="overflow-hidden space-y-0.5">
 
             {/* Mobile Studio interactive canvas link */}
             <Link
@@ -945,8 +983,8 @@ function SidebarBase({
                         isCompActive && !activeVariant
                           ? "bg-[var(--surface-secondary)] text-[var(--accent-green)] border border-[var(--border)]"
                           : isCompActive
-                          ? "bg-[var(--surface-secondary)]/60 text-[var(--text-primary)] border border-transparent"
-                          : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-transparent"
+                            ? "bg-[var(--surface-secondary)]/60 text-[var(--text-primary)] border border-transparent"
+                            : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-transparent"
                       )}
                     >
                       <Link
@@ -1022,6 +1060,8 @@ function SidebarBase({
                   </div>
                 );
               })}
+                </div>
+              </div>
             </div>
           </>
         ) : (
