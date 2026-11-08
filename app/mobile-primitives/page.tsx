@@ -418,11 +418,11 @@ export default function MobilePrimitivesPage() {
               <button
                 type="button"
                 onClick={() => setIsPhoneVisible(false)}
-                className="hidden lg:flex absolute -left-4 top-1/2 -translate-y-1/2 z-40 h-8 w-8 rounded-full bg-[var(--surface-elevated)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-hover)] shadow-lg hover:scale-110 active:scale-95 items-center justify-center transition-all duration-200 cursor-pointer group"
+                className="flex absolute -left-4.5 top-1/2 -translate-y-1/2 z-40 h-9 w-9 rounded-full bg-[var(--surface-elevated)] border-2 border-[var(--border)] text-[var(--text-primary)] hover:border-[var(--accent-green)] hover:text-[var(--accent-green)] shadow-xl hover:scale-110 active:scale-95 items-center justify-center transition-all duration-200 cursor-pointer group"
                 title="Move mobile view beyond right edge"
                 aria-label="Move mobile view beyond right edge"
               >
-                <ChevronRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+                <ChevronRight className="h-4.5 w-4.5 transition-transform duration-200 group-hover:translate-x-0.5" />
               </button>
 
               {/* Sleek Minimalist Mobile Device Chassis Frame */}
@@ -774,11 +774,11 @@ export default function MobilePrimitivesPage() {
         <button
           type="button"
           onClick={() => setIsPhoneVisible(true)}
-          className="fixed right-3 sm:right-6 top-1/2 -translate-y-1/2 z-50 h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-[var(--surface-elevated)] border border-[var(--border)] text-[var(--text-primary)] shadow-2xl hover:bg-[var(--surface-secondary)] hover:border-[var(--border-hover)] hover:scale-110 active:scale-95 flex items-center justify-center transition-all duration-300 cursor-pointer group animate-in fade-in slide-in-from-right-4 duration-300"
+          className="fixed right-3 sm:right-6 top-1/2 -translate-y-1/2 z-50 h-9 w-9 rounded-full bg-[var(--surface-elevated)] border-2 border-[var(--border)] text-[var(--text-primary)] shadow-2xl hover:bg-[var(--surface-secondary)] hover:border-[var(--accent-green)] hover:text-[var(--accent-green)] hover:scale-115 active:scale-95 flex items-center justify-center transition-all duration-300 cursor-pointer group animate-in fade-in slide-in-from-right-4 duration-300"
           title="Bring back mobile preview"
           aria-label="Bring back mobile preview"
         >
-          <ChevronLeft className="h-4 w-4 transition-transform duration-200 group-hover:-translate-x-0.5" />
+          <ChevronLeft className="h-4.5 w-4.5 transition-transform duration-200 group-hover:-translate-x-0.5" />
         </button>
       )}
     </div>
