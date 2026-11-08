@@ -247,3 +247,4 @@ export function McpLandingSection() {
     </section>
   );
 }
+

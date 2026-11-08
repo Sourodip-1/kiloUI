@@ -59,7 +59,9 @@ export function VectorLayersIcon({ className = "h-4 w-4", isActive = false, ...p
 
 /**
  * 1b. Vector Cube Icon (Icons section)
- * Isometric 3D package/cube with facet lighting matching Image 1.
+ * Precision exploded 3D isometric package:
+ * On hover, the top diamond lid lifts upward with spring dampening
+ * while the isometric facets expand and an internal core axis illuminates.
  */
 export function VectorCubeIcon({ className = "h-4 w-4", isActive = false, ...props }: VectorIconProps) {
   return (
@@ -73,19 +75,56 @@ export function VectorCubeIcon({ className = "h-4 w-4", isActive = false, ...pro
       className={`${className} overflow-visible transition-colors`}
       {...props}
     >
-      <path
-        d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
-        className={isActive ? "stroke-[var(--accent-green)] fill-[var(--accent-green)]/10" : "group-hover:stroke-[var(--accent-green)]"}
+      {/* Top Floating Diamond Lid */}
+      <polygon
+        points="12,2 20.5,6.8 12,11.6 3.5,6.8"
+        className={`transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] origin-center ${
+          isActive
+            ? "-translate-y-1.5 stroke-[var(--accent-green)] fill-[var(--accent-green)]/15"
+            : "group-hover:-translate-y-1.5 group-hover:stroke-[var(--accent-green)] group-hover:fill-[var(--accent-green)]/10"
+        }`}
       />
-      <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
-      <line x1="12" y1="22.08" x2="12" y2="12" />
+
+      {/* Internal Core Axis (Revealed as lid opens) */}
+      <line
+        x1="12"
+        y1="7"
+        x2="12"
+        y2="11.5"
+        strokeWidth="1.25"
+        strokeDasharray="1.5 1.5"
+        className={`transition-opacity duration-300 ${
+          isActive ? "opacity-100 stroke-[var(--accent-green)]" : "opacity-0 group-hover:opacity-100 group-hover:stroke-[var(--accent-green)]"
+        }`}
+      />
+
+      {/* Left Facet Wall */}
+      <path
+        d="M3.5 6.8V16.8a1.5 1.5 0 0 0 .75 1.3L12 22.5V11.6L3.5 6.8Z"
+        className={`transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          isActive
+            ? "stroke-[var(--accent-green)] -translate-x-0.5"
+            : "group-hover:-translate-x-0.5 group-hover:stroke-[var(--text-primary)]"
+        }`}
+      />
+
+      {/* Right Facet Wall */}
+      <path
+        d="M20.5 6.8V16.8a1.5 1.5 0 0 1-.75 1.3L12 22.5V11.6L20.5 6.8Z"
+        className={`transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          isActive
+            ? "stroke-[var(--accent-green)] translate-x-0.5 opacity-90"
+            : "group-hover:translate-x-0.5 group-hover:stroke-[var(--text-primary)]"
+        }`}
+      />
     </svg>
   );
 }
 
 /**
  * 1c. Vector Mobile Device Icon (Mobile Primitives section)
- * Clean smartphone chassis with dynamic island / gesture bar.
+ * Interactive smartphone chassis with dynamic island pulse,
+ * gesture-bar swipe physics, and an emerging UI card.
  */
 export function VectorMobileIcon({ className = "h-4 w-4", isActive = false, ...props }: VectorIconProps) {
   return (
@@ -99,16 +138,74 @@ export function VectorMobileIcon({ className = "h-4 w-4", isActive = false, ...p
       className={`${className} overflow-visible transition-colors`}
       {...props}
     >
+      {/* Outer Phone Chassis */}
       <rect
         x="5"
         y="2"
         width="14"
         height="20"
         rx="3.5"
-        className={isActive ? "stroke-[var(--accent-green)] fill-[var(--accent-green)]/10" : "group-hover:stroke-[var(--accent-green)]"}
+        className={`transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          isActive
+            ? "stroke-[var(--accent-green)] fill-[var(--accent-green)]/10 -translate-y-0.5"
+            : "group-hover:-translate-y-0.5 group-hover:stroke-[var(--accent-green)]"
+        }`}
       />
-      <line x1="10" y1="5" x2="14" y2="5" className={isActive ? "stroke-[var(--accent-green)]" : "group-hover:stroke-[var(--accent-green)]"} strokeWidth="1.5" />
-      <line x1="9" y1="19" x2="15" y2="19" className="opacity-60" strokeWidth="1.5" />
+
+      {/* Dynamic Island Speaker / Sensor Bar */}
+      <line
+        x1="10"
+        y1="5"
+        x2="14"
+        y2="5"
+        strokeWidth="1.5"
+        className={`transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] origin-center ${
+          isActive
+            ? "stroke-[var(--accent-green)] scale-x-125"
+            : "group-hover:scale-x-125 group-hover:stroke-[var(--accent-green)]"
+        }`}
+      />
+
+      {/* Screen Mini App Wireframe (Slides in on hover/active) */}
+      <g
+        className={`transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          isActive
+            ? "opacity-100 -translate-y-0.5"
+            : "opacity-0 group-hover:opacity-100 group-hover:-translate-y-0.5"
+        }`}
+      >
+        <rect
+          x="7.5"
+          y="8"
+          width="9"
+          height="5.5"
+          rx="1"
+          strokeWidth="1.2"
+          className="stroke-[var(--accent-green)] fill-[var(--accent-green)]/15"
+        />
+        <line
+          x1="9"
+          y1="10.8"
+          x2="15"
+          y2="10.8"
+          strokeWidth="1"
+          className="stroke-[var(--accent-green)]"
+        />
+      </g>
+
+      {/* Bottom Gesture Indicator (Animated Swipe-Up Physics) */}
+      <line
+        x1="9"
+        y1="19"
+        x2="15"
+        y2="19"
+        strokeWidth="1.5"
+        className={`transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          isActive
+            ? "stroke-[var(--accent-green)] -translate-y-1 opacity-100"
+            : "opacity-60 group-hover:-translate-y-1 group-hover:opacity-100 group-hover:stroke-[var(--accent-green)]"
+        }`}
+      />
     </svg>
   );
 }
