@@ -5532,11 +5532,15 @@ export const REGISTRY_DATA: Record<string, RegistryItem> = {
   "m3-progress-indicator": {
   "name": "m3-progress-indicator",
   "category": "Mobile App",
-  "title": "M3 Progress Indicator",
-  "description": "Determinate and indeterminate linear and circular progress indicators with buffer and percentage readout.",
+  "title": "M3 Progress Indicator & Physics Loaders",
+  "description": "Linear and circular progress indicators, Google Android 14+ squiggly sinusoidal wave loaders, random shape-morph spinners, and elastic membrane punch-through physics loaders.",
   "variants": [
     "linear",
     "circular",
+    "squiggly-horizontal",
+    "squiggly-circular",
+    "shape-morph",
+    "elastic-line",
     "minimal"
   ],
   "dependencies": [

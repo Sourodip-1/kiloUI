@@ -50,6 +50,7 @@ import {
   Share2,
   Calendar,
   CheckCircle,
+  ChevronDown,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
@@ -77,6 +78,8 @@ import { M3Card } from "@/registry/ui/m3-card";
 import { M3Dialog } from "@/registry/ui/m3-dialog";
 import { M3Snackbar } from "@/registry/ui/m3-snackbar";
 import { M3ProgressIndicator } from "@/registry/ui/m3-progress-indicator";
+import { M3SquigglyLoader } from "@/components/ui/m3-squiggly-loader";
+import { M3PhysicsLoader } from "@/components/ui/m3-physics-loader";
 import { M3Badge } from "@/registry/ui/m3-badge";
 import { M3List, M3ListItem } from "@/registry/ui/m3-list";
 import { SlidingHighlightContainer } from "@/components/sliding-highlight";
@@ -90,6 +93,16 @@ type PresetMode =
   | "pulse-projects"
   | "otp-verify"
   | "wallet";
+
+const PRESET_OPTIONS: { id: PresetMode; label: string; sub: string; icon: React.ReactNode }[] = [
+  { id: "store", label: "Store", sub: "Essential Archive", icon: <ShoppingBag className="h-3.5 w-3.5 text-emerald-400" /> },
+  { id: "feed", label: "Feed", sub: "Communication", icon: <Radio className="h-3.5 w-3.5 text-blue-400" /> },
+  { id: "pulse-sync", label: "Pulse Sync", sub: "Cloud Engine", icon: <RefreshCw className="h-3.5 w-3.5 text-purple-400" /> },
+  { id: "pulse-security", label: "Security", sub: "Biometrics", icon: <Shield className="h-3.5 w-3.5 text-amber-400" /> },
+  { id: "pulse-projects", label: "Projects", sub: "Sprint Board", icon: <Layers className="h-3.5 w-3.5 text-cyan-400" /> },
+  { id: "otp-verify", label: "OTP Verify", sub: "Auth Shield", icon: <Key className="h-3.5 w-3.5 text-rose-400" /> },
+  { id: "wallet", label: "Wallet", sub: "Telemetry", icon: <Zap className="h-3.5 w-3.5 text-amber-300" /> },
+];
 
 type CategoryFilter = "all" | "actions" | "forms" | "navigation" | "overlays" | "data-display";
 
@@ -114,8 +127,41 @@ export default function MobilePrimitivesPage() {
   const [activeCategory, setActiveCategory] = React.useState<CategoryFilter>("all");
   const [searchQuery, setSearchQuery] = React.useState("");
   const [presetMode, setPresetMode] = React.useState<PresetMode>("store");
+  const [isPresetDropdownOpen, setIsPresetDropdownOpen] = React.useState(false);
   const [isPhoneVisible, setIsPhoneVisible] = React.useState(true);
   const [copiedCli, setCopiedCli] = React.useState(false);
+
+  // ── Phone Wheel Scroll Chaining ──
+  const phoneChassisRef = React.useRef<HTMLDivElement>(null);
+  const phoneScrollRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const chassis = phoneChassisRef.current;
+    if (!chassis) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      const scrollable = phoneScrollRef.current;
+      if (!scrollable) return;
+
+      const { scrollTop, scrollHeight, clientHeight } = scrollable;
+      const isDown = e.deltaY > 0;
+      const isUp = e.deltaY < 0;
+
+      // Has scroll headroom inside the phone?
+      const canScrollDown = scrollTop + clientHeight < scrollHeight - 2;
+      const canScrollUp = scrollTop > 2;
+
+      if ((isDown && canScrollDown) || (isUp && canScrollUp)) {
+        // Intercept: scroll phone content only, do not scroll page
+        e.preventDefault();
+        scrollable.scrollTop += e.deltaY;
+      }
+      // Reached bottom or top: let event propagate naturally to scroll window/page!
+    };
+
+    chassis.addEventListener("wheel", handleWheel, { passive: false });
+    return () => chassis.removeEventListener("wheel", handleWheel);
+  }, [presetMode]);
 
   // ── Bento Grid Interactive States ──
   // Actions
@@ -150,6 +196,17 @@ export default function MobilePrimitivesPage() {
 
   // Data Display
   const [demoProgressVal, setDemoProgressVal] = React.useState(74);
+
+  // Squiggly Loader Controls
+  const [squigglyVariant, setSquigglyVariant] = React.useState<"circular" | "horizontal">("circular");
+  const [squigglesCount, setSquigglesCount] = React.useState(14);
+  const [squigglyAmp, setSquigglyAmp] = React.useState(4);
+  const [squigglyColor, setSquigglyColor] = React.useState<"google" | "accent" | "monochrome">("google");
+
+  // Physics Loader Controls
+  const [physicsVariant, setPhysicsVariant] = React.useState<"shape-morph" | "elastic-line">("elastic-line");
+  const [physicsTheme, setPhysicsTheme] = React.useState<"google" | "minimal">("google");
+  const [physicsResistance, setPhysicsResistance] = React.useState(1);
 
   // ── Phone Frame Preset States ──
   // Store Preset
@@ -229,10 +286,6 @@ export default function MobilePrimitivesPage() {
         {/* ── Header ── */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 pb-2">
           <div className="space-y-1.5">
-            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full border border-[var(--border)] bg-[var(--surface-secondary)]/60 text-[11px] font-mono text-[var(--accent-green)]">
-              <Sparkles className="h-3 w-3" />
-              <span>Material Design 3 & Minimal SaaS Mobile Primitives</span>
-            </div>
             <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-[var(--text-primary)] font-sans">
               Mobile Primitives
             </h1>
@@ -1311,6 +1364,259 @@ export default function MobilePrimitivesPage() {
                     </div>
                   </div>
                 )}
+
+                {/* 24. M3 Squiggly Loaders (Google Android 14+) */}
+                {matchesSearch("M3 Squiggly Loader", "Squiggly horizontal circular undulating wave android sine", "Data Display") && (
+                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all">
+                    <div className="flex items-center justify-between">
+                      <div className="text-xs font-semibold text-[var(--text-primary)] flex items-center gap-1.5">
+                        <Sparkles className="h-3.5 w-3.5 text-blue-400" />
+                        <span>M3 Squiggly Loaders</span>
+                      </div>
+                      <span className="text-[10px] font-mono text-[var(--text-muted)]">Android 14+</span>
+                    </div>
+
+                    <div className="py-2 flex flex-col items-center justify-center space-y-4">
+                      {squigglyVariant === "circular" ? (
+                        <div className="py-2 flex items-center justify-center">
+                          <M3SquigglyLoader
+                            variant="circular"
+                            size={72}
+                            squiggles={squigglesCount}
+                            amplitude={squigglyAmp}
+                            color={squigglyColor}
+                            strokeWidth={3.5}
+                            glow
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-full py-4 px-2">
+                          <M3SquigglyLoader
+                            variant="horizontal"
+                            squiggles={squigglesCount}
+                            amplitude={squigglyAmp}
+                            color={squigglyColor}
+                            strokeWidth={3.5}
+                            glow
+                          />
+                        </div>
+                      )}
+
+                      {/* Interactive Controls Bar */}
+                      <div className="w-full space-y-2 pt-2 border-t border-[var(--border)]/40 text-xs font-mono">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-1 bg-[var(--surface-secondary)] p-0.5 rounded-lg border border-[var(--border)] text-[10px]">
+                            <button
+                              type="button"
+                              onClick={() => setSquigglyVariant("circular")}
+                              className={cn(
+                                "px-2 py-0.5 rounded-md transition-all cursor-pointer",
+                                squigglyVariant === "circular"
+                                  ? "bg-[var(--surface-tertiary)] text-[var(--text-primary)] font-bold shadow-2xs"
+                                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                              )}
+                            >
+                              Circular
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setSquigglyVariant("horizontal")}
+                              className={cn(
+                                "px-2 py-0.5 rounded-md transition-all cursor-pointer",
+                                squigglyVariant === "horizontal"
+                                  ? "bg-[var(--surface-tertiary)] text-[var(--text-primary)] font-bold shadow-2xs"
+                                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                              )}
+                            >
+                              Horizontal
+                            </button>
+                          </div>
+
+                          {/* Color Switcher */}
+                          <div className="flex items-center gap-1 text-[10px]">
+                            <button
+                              type="button"
+                              onClick={() => setSquigglyColor("google")}
+                              className={cn(
+                                "px-2 py-0.5 rounded-md border transition-all cursor-pointer",
+                                squigglyColor === "google"
+                                  ? "bg-[var(--surface-secondary)] border-blue-500/60 text-blue-400 font-bold"
+                                  : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                              )}
+                            >
+                              Google
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setSquigglyColor("accent")}
+                              className={cn(
+                                "px-2 py-0.5 rounded-md border transition-all cursor-pointer",
+                                squigglyColor === "accent"
+                                  ? "bg-[var(--surface-secondary)] border-emerald-500/60 text-emerald-400 font-bold"
+                                  : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                              )}
+                            >
+                              Emerald
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Sliders for Squiggliness & Amplitude */}
+                        <div className="grid grid-cols-2 gap-2 pt-1 text-[10px]">
+                          <div>
+                            <div className="flex justify-between text-[var(--text-muted)] mb-1">
+                              <span>Squiggles:</span>
+                              <span className="font-bold text-[var(--text-primary)]">{squigglesCount}</span>
+                            </div>
+                            <input
+                              type="range"
+                              min={8}
+                              max={24}
+                              value={squigglesCount}
+                              onChange={(e) => setSquigglesCount(Number(e.target.value))}
+                              className="w-full accent-[var(--accent-green)] cursor-pointer h-1"
+                            />
+                          </div>
+
+                          <div>
+                            <div className="flex justify-between text-[var(--text-muted)] mb-1">
+                              <span>Amplitude:</span>
+                              <span className="font-bold text-[var(--text-primary)]">{squigglyAmp}px</span>
+                            </div>
+                            <input
+                              type="range"
+                              min={2}
+                              max={8}
+                              value={squigglyAmp}
+                              onChange={(e) => setSquigglyAmp(Number(e.target.value))}
+                              className="w-full accent-[var(--accent-green)] cursor-pointer h-1"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between text-[11px] font-mono text-[var(--text-muted)] pt-1">
+                      <span>Configurable waves</span>
+                      <span className="text-[var(--accent-green)]">Sine Physics</span>
+                    </div>
+                  </div>
+                )}
+
+                {/* 25. M3 Physics & Shape Morph Loaders */}
+                {matchesSearch("M3 Physics Loader", "Shape morph spin elastic membrane punch through resistance physics", "Data Display") && (
+                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all">
+                    <div className="flex items-center justify-between">
+                      <div className="text-xs font-semibold text-[var(--text-primary)] flex items-center gap-1.5">
+                        <Activity className="h-3.5 w-3.5 text-purple-400" />
+                        <span>M3 Physics Loaders</span>
+                      </div>
+                      <span className="text-[10px] font-mono text-[var(--text-muted)]">Morph &amp; Elastic</span>
+                    </div>
+
+                    <div className="py-2 flex flex-col items-center justify-center space-y-4">
+                      {physicsVariant === "elastic-line" ? (
+                        <M3PhysicsLoader
+                          variant="elastic-line"
+                          theme={physicsTheme}
+                          resistance={physicsResistance}
+                          size={64}
+                        />
+                      ) : (
+                        <div className="py-5 flex items-center justify-center">
+                          <M3PhysicsLoader
+                            variant="shape-morph"
+                            theme={physicsTheme}
+                            size={72}
+                          />
+                        </div>
+                      )}
+
+                      {/* Interactive Controls Bar */}
+                      <div className="w-full space-y-2 pt-2 border-t border-[var(--border)]/40 text-xs font-mono">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-1 bg-[var(--surface-secondary)] p-0.5 rounded-lg border border-[var(--border)] text-[10px]">
+                            <button
+                              type="button"
+                              onClick={() => setPhysicsVariant("elastic-line")}
+                              className={cn(
+                                "px-2 py-0.5 rounded-md transition-all cursor-pointer",
+                                physicsVariant === "elastic-line"
+                                  ? "bg-[var(--surface-tertiary)] text-[var(--text-primary)] font-bold shadow-2xs"
+                                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                              )}
+                            >
+                              Elastic Membrane
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setPhysicsVariant("shape-morph")}
+                              className={cn(
+                                "px-2 py-0.5 rounded-md transition-all cursor-pointer",
+                                physicsVariant === "shape-morph"
+                                  ? "bg-[var(--surface-tertiary)] text-[var(--text-primary)] font-bold shadow-2xs"
+                                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                              )}
+                            >
+                              Shape Morph
+                            </button>
+                          </div>
+
+                          {/* Theme Switcher */}
+                          <div className="flex items-center gap-1 text-[10px]">
+                            <button
+                              type="button"
+                              onClick={() => setPhysicsTheme("google")}
+                              className={cn(
+                                "px-2 py-0.5 rounded-md border transition-all cursor-pointer",
+                                physicsTheme === "google"
+                                  ? "bg-[var(--surface-secondary)] border-blue-500/60 text-blue-400 font-bold"
+                                  : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                              )}
+                            >
+                              Google
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setPhysicsTheme("minimal")}
+                              className={cn(
+                                "px-2 py-0.5 rounded-md border transition-all cursor-pointer",
+                                physicsTheme === "minimal"
+                                  ? "bg-[var(--surface-secondary)] border-emerald-500/60 text-emerald-400 font-bold"
+                                  : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                              )}
+                            >
+                              Minimal
+                            </button>
+                          </div>
+                        </div>
+
+                        {physicsVariant === "elastic-line" && (
+                          <div className="pt-1 text-[10px]">
+                            <div className="flex justify-between text-[var(--text-muted)] mb-1">
+                              <span>Membrane Resistance:</span>
+                              <span className="font-bold text-[var(--text-primary)]">{physicsResistance.toFixed(1)}x</span>
+                            </div>
+                            <input
+                              type="range"
+                              min={0.6}
+                              max={1.8}
+                              step={0.1}
+                              value={physicsResistance}
+                              onChange={(e) => setPhysicsResistance(Number(e.target.value))}
+                              className="w-full accent-[var(--accent-green)] cursor-pointer h-1"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between text-[11px] font-mono text-[var(--text-muted)] pt-1">
+                      <span>Resistance &amp; breakthrough</span>
+                      <span className="text-[var(--accent-green)]">Damped Physics</span>
+                    </div>
+                  </div>
+                )}
               </>
             )}
 
@@ -1342,20 +1648,66 @@ export default function MobilePrimitivesPage() {
                 </button>
               </div>
 
-              {/* Preset Selector */}
-              <select
-                value={presetMode}
-                onChange={(e) => setPresetMode(e.target.value as PresetMode)}
-                className="px-2.5 py-1 rounded-lg text-xs font-mono border border-[var(--border)] bg-[var(--surface-secondary)] text-[var(--text-primary)] cursor-pointer focus:outline-none"
-              >
-                <option value="store">Store (Essential Archive)</option>
-                <option value="feed">Feed (Communication)</option>
-                <option value="pulse-sync">Pulse Sync (Engine)</option>
-                <option value="pulse-security">Security (Biometrics)</option>
-                <option value="pulse-projects">Projects (Sprint Board)</option>
-                <option value="otp-verify">OTP Verify (Auth)</option>
-                <option value="wallet">Wallet (Telemetry)</option>
-              </select>
+              {/* Custom Animated Preset Selector */}
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setIsPresetDropdownOpen(!isPresetDropdownOpen)}
+                  className="h-7 px-2.5 rounded-lg text-xs font-mono border border-[var(--border)] bg-[var(--surface-secondary)] hover:bg-[var(--surface-secondary)]/80 text-[var(--text-primary)] flex items-center gap-1.5 cursor-pointer transition-all shadow-2xs select-none"
+                >
+                  {PRESET_OPTIONS.find((p) => p.id === presetMode)?.icon}
+                  <span className="font-semibold">{PRESET_OPTIONS.find((p) => p.id === presetMode)?.label}</span>
+                  <ChevronDown className={cn("h-3 w-3 text-[var(--text-muted)] transition-transform duration-200", isPresetDropdownOpen && "rotate-180")} />
+                </button>
+
+                <AnimatePresence>
+                  {isPresetDropdownOpen && (
+                    <>
+                      <div className="fixed inset-0 z-40" onClick={() => setIsPresetDropdownOpen(false)} />
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.95, y: -4 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95, y: -4 }}
+                        transition={{ type: "spring", stiffness: 450, damping: 28 }}
+                        className="absolute right-0 top-full mt-1.5 w-56 p-1 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)]/95 backdrop-blur-xl shadow-2xl z-50 divide-y divide-[var(--border)]/30 font-mono text-xs select-none"
+                      >
+                        <div className="p-1 space-y-0.5">
+                          {PRESET_OPTIONS.map((opt) => {
+                            const isSelected = presetMode === opt.id;
+                            return (
+                              <button
+                                key={opt.id}
+                                type="button"
+                                onClick={() => {
+                                  setPresetMode(opt.id);
+                                  setIsPresetDropdownOpen(false);
+                                }}
+                                className={cn(
+                                  "w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg transition-all cursor-pointer text-left",
+                                  isSelected
+                                    ? "bg-[var(--surface-tertiary)] text-[var(--text-primary)] font-semibold shadow-2xs"
+                                    : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)]/60"
+                                )}
+                              >
+                                <div className="flex items-center gap-2 min-w-0">
+                                  {opt.icon}
+                                  <div className="truncate">
+                                    <div className="leading-tight">{opt.label}</div>
+                                    <div className="text-[10px] text-[var(--text-muted)] leading-tight">{opt.sub}</div>
+                                  </div>
+                                </div>
+                                {isSelected && (
+                                  <Check className="h-3.5 w-3.5 text-[var(--accent-green)] shrink-0 ml-1.5" />
+                                )}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </motion.div>
+                    </>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
 
             {/* Phone Wrapper with hide toggle */}
@@ -1372,7 +1724,10 @@ export default function MobilePrimitivesPage() {
               </button>
 
               {/* Mobile Device Chassis Frame - Rims ALWAYS black */}
-              <div className="w-[360px] sm:w-[380px] h-[720px] rounded-[44px] bg-[#0c0d0e] border-[7px] border-[#18191b] shadow-[0_20px_50px_-15px_rgba(0,0,0,0.85)] ring-1 ring-black/80 flex flex-col overflow-hidden relative select-none">
+              <div
+                ref={phoneChassisRef}
+                className="w-[360px] sm:w-[380px] h-[720px] rounded-[44px] bg-[#0c0d0e] border-[7px] border-[#18191b] shadow-[0_20px_50px_-15px_rgba(0,0,0,0.85)] ring-1 ring-black/80 flex flex-col overflow-hidden relative select-none"
+              >
               
                 {/* Top Status Bar & Dynamic Island */}
                 <div
@@ -1402,6 +1757,7 @@ export default function MobilePrimitivesPage() {
                 {/* ════ PRESET 1: STORE PRESET ════ */}
                 {presetMode === "store" && (
                   <div
+                    ref={phoneScrollRef}
                     className={cn(
                       "flex-1 flex flex-col justify-between overflow-y-auto px-4 py-3 space-y-4 transition-colors",
                       isLightMode ? "bg-[#f8f9fa] text-neutral-900" : "bg-[#0c0d0e] text-white"
@@ -1508,6 +1864,7 @@ export default function MobilePrimitivesPage() {
                 {/* ════ PRESET 2: FEED PRESET ════ */}
                 {presetMode === "feed" && (
                   <div
+                    ref={phoneScrollRef}
                     className={cn(
                       "flex-1 flex flex-col justify-between overflow-y-auto px-4 py-3 space-y-4 transition-colors",
                       isLightMode ? "bg-[#f8f9fa] text-neutral-900" : "bg-[#0c0d0e] text-white"
@@ -1547,6 +1904,7 @@ export default function MobilePrimitivesPage() {
                 {/* ════ PRESET 3: PULSE SYNC (Stitch Screen 1) ════ */}
                 {presetMode === "pulse-sync" && (
                   <div
+                    ref={phoneScrollRef}
                     className={cn(
                       "flex-1 flex flex-col justify-between overflow-y-auto px-4 py-3 space-y-4 transition-colors",
                       isLightMode ? "bg-[#f8f9fa] text-neutral-900" : "bg-[#0c0d0e] text-white"
@@ -1609,6 +1967,7 @@ export default function MobilePrimitivesPage() {
                 {/* ════ PRESET 4: PULSE SECURITY (Stitch Screen 2) ════ */}
                 {presetMode === "pulse-security" && (
                   <div
+                    ref={phoneScrollRef}
                     className={cn(
                       "flex-1 flex flex-col justify-between overflow-y-auto px-4 py-3 space-y-4 transition-colors",
                       isLightMode ? "bg-[#f8f9fa] text-neutral-900" : "bg-[#0c0d0e] text-white"
@@ -1666,6 +2025,7 @@ export default function MobilePrimitivesPage() {
                 {/* ════ PRESET 5: PULSE PROJECTS (Stitch Screen 3) ════ */}
                 {presetMode === "pulse-projects" && (
                   <div
+                    ref={phoneScrollRef}
                     className={cn(
                       "flex-1 flex flex-col justify-between overflow-y-auto px-4 py-3 space-y-4 transition-colors",
                       isLightMode ? "bg-[#f8f9fa] text-neutral-900" : "bg-[#0c0d0e] text-white"
@@ -1723,6 +2083,7 @@ export default function MobilePrimitivesPage() {
                 {/* ════ PRESET 6: OTP VERIFY (Stitch Screen 6) ════ */}
                 {presetMode === "otp-verify" && (
                   <div
+                    ref={phoneScrollRef}
                     className={cn(
                       "flex-1 flex flex-col justify-between overflow-y-auto px-4 py-4 space-y-5 transition-colors text-center",
                       isLightMode ? "bg-[#f8f9fa] text-neutral-900" : "bg-[#0c0d0e] text-white"
@@ -1781,6 +2142,7 @@ export default function MobilePrimitivesPage() {
                 {/* ════ PRESET 7: WALLET PRESET ════ */}
                 {presetMode === "wallet" && (
                   <div
+                    ref={phoneScrollRef}
                     className={cn(
                       "flex-1 flex flex-col justify-between overflow-y-auto px-4 py-3 space-y-4 transition-colors",
                       isLightMode ? "bg-[#f8f9fa] text-neutral-900" : "bg-[#0c0d0e] text-white"

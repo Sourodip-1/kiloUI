@@ -27,6 +27,8 @@ import { M3Card } from "@/registry/ui/m3-card";
 import { M3Dialog } from "@/registry/ui/m3-dialog";
 import { M3Snackbar } from "@/registry/ui/m3-snackbar";
 import { M3ProgressIndicator } from "@/registry/ui/m3-progress-indicator";
+import { M3SquigglyLoader } from "@/components/ui/m3-squiggly-loader";
+import { M3PhysicsLoader } from "@/components/ui/m3-physics-loader";
 import { M3Badge } from "@/registry/ui/m3-badge";
 import { M3List, M3ListItem } from "@/registry/ui/m3-list";
 import { Button } from "@/registry/ui/button";
@@ -2478,7 +2480,17 @@ export function ComponentPreviewStage({
     } else if (item.name === "m3-snackbar") {
       code = `<M3Snackbar message="${m3SnackbarMsg}" actionLabel="Undo" />`;
     } else if (item.name === "m3-progress-indicator") {
-      code = `<M3ProgressIndicator type="${m3ProgressVariant === "circular" ? "circular" : "linear"}" value={${m3ProgressVal}} />`;
+      if (m3ProgressVariant === "squiggly-horizontal") {
+        code = `<M3SquigglyLoader variant="horizontal" squiggles={14} amplitude={4} color="google" />`;
+      } else if (m3ProgressVariant === "squiggly-circular") {
+        code = `<M3SquigglyLoader variant="circular" squiggles={14} amplitude={4} color="google" size={64} />`;
+      } else if (m3ProgressVariant === "shape-morph") {
+        code = `<M3PhysicsLoader variant="shape-morph" theme="google" size={64} />`;
+      } else if (m3ProgressVariant === "elastic-line") {
+        code = `<M3PhysicsLoader variant="elastic-line" theme="google" resistance={1} />`;
+      } else {
+        code = `<M3ProgressIndicator type="${m3ProgressVariant === "circular" ? "circular" : "linear"}" value={${m3ProgressVal}} />`;
+      }
     } else if (item.name === "m3-badge") {
       code = `<M3Badge content={${m3BadgeVal}}><Bell className="h-5 w-5" /></M3Badge>`;
     } else if (item.name === "m3-list") {
@@ -6630,33 +6642,50 @@ export function ComponentPreviewStage({
             </div>
           )}
 
-          {/* M3 Progress Indicator */}
+          {/* M3 Progress Indicator & Physics Loaders */}
           {item.name === "m3-progress-indicator" && (
             <div className="w-full flex justify-center py-2">
-              <MobilePreviewChassis isLightMode={isLightMode} title="Progress Indicators" subtitle="FEEDBACK">
-                <div className="flex-1 flex flex-col p-4 space-y-6 overflow-y-auto">
-                  <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] space-y-4">
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">Linear Progress ({m3ProgressVal}%)</span>
-                    <M3ProgressIndicator
-                      type="linear"
-                      value={m3ProgressVal}
-                      variant={m3ProgressVariant === "minimal" ? "minimal" : "default"}
-                    />
+              <MobilePreviewChassis isLightMode={isLightMode} title="Loaders & Progress" subtitle="FEEDBACK">
+                <div className="flex-1 flex flex-col p-4 space-y-5 overflow-y-auto">
+                  {/* Active Selected Loader */}
+                  <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] space-y-3">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 block">
+                      Active: {m3ProgressVariant}
+                    </span>
+                    <div className="flex items-center justify-center py-2">
+                      {m3ProgressVariant === "squiggly-horizontal" ? (
+                        <M3SquigglyLoader variant="horizontal" squiggles={14} amplitude={4} color="google" strokeWidth={3.5} glow />
+                      ) : m3ProgressVariant === "squiggly-circular" ? (
+                        <M3SquigglyLoader variant="circular" squiggles={14} amplitude={4} color="google" size={68} strokeWidth={3.5} glow />
+                      ) : m3ProgressVariant === "shape-morph" ? (
+                        <M3PhysicsLoader variant="shape-morph" theme="google" size={68} />
+                      ) : m3ProgressVariant === "elastic-line" ? (
+                        <M3PhysicsLoader variant="elastic-line" theme="google" resistance={1} />
+                      ) : m3ProgressVariant === "circular" ? (
+                        <M3ProgressIndicator type="circular" value={m3ProgressVal} />
+                      ) : (
+                        <M3ProgressIndicator type="linear" value={m3ProgressVal} variant={m3ProgressVariant === "minimal" ? "minimal" : "default"} />
+                      )}
+                    </div>
                   </div>
 
-                  <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] space-y-4 text-center">
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">Circular Determinate &amp; Indeterminate</span>
-                    <div className="flex items-center justify-around py-2">
-                      <M3ProgressIndicator
-                        type="circular"
-                        value={m3ProgressVal}
-                        variant={m3ProgressVariant === "minimal" ? "minimal" : "default"}
-                      />
-                      <M3ProgressIndicator
-                        type="circular"
-                        indeterminate={true}
-                        variant={m3ProgressVariant === "minimal" ? "minimal" : "default"}
-                      />
+                  {/* Squiggly Wave Showcase */}
+                  <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] space-y-3 text-center">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 block">Squiggly Waves (Android 14+)</span>
+                    <div className="flex items-center justify-around py-1">
+                      <M3SquigglyLoader variant="circular" size={54} squiggles={12} amplitude={3.5} color="google" />
+                      <M3SquigglyLoader variant="circular" size={54} squiggles={16} amplitude={4} color="accent" />
+                    </div>
+                    <div className="px-1 pt-1">
+                      <M3SquigglyLoader variant="horizontal" squiggles={14} amplitude={3.5} color="google" />
+                    </div>
+                  </div>
+
+                  {/* Physics & Shape-Morph Showcase */}
+                  <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] space-y-3">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 block text-center">Shape Morph &amp; Elastic Physics</span>
+                    <div className="flex justify-center py-1">
+                      <M3PhysicsLoader variant="elastic-line" theme="google" size={54} />
                     </div>
                   </div>
                 </div>
@@ -8806,6 +8835,10 @@ export function ComponentPreviewStage({
                     options={[
                       { label: "Circular Progress", value: "circular" },
                       { label: "Linear Progress", value: "linear" },
+                      { label: "Squiggly Circular (M3)", value: "squiggly-circular" },
+                      { label: "Squiggly Horizontal (M3)", value: "squiggly-horizontal" },
+                      { label: "Shape Morph Spin (Google)", value: "shape-morph" },
+                      { label: "Elastic Line Physics", value: "elastic-line" },
                       { label: "Minimal SaaS Style", value: "minimal" },
                     ]}
                   />
