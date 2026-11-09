@@ -123,80 +123,81 @@ function ElasticCordPhysicsEngine({
       let sx = 1;
       let sy = 1;
 
-      // ── C^1 Continuous Trajectory Timeline ──
-      // [0.00 -> 0.25]: Pop up from 0 to apex -A
-      // [0.25 -> 0.45]: Gravity fall from -A to contact cord at 0
-      // [0.45 -> 0.58]: Elastic contact, resistance and cord stretch from 0 to +D
-      // [0.58 -> 0.70]: PUNCH-THROUGH DOWN! Cord twangs, shape shoots to bottom apex +A
-      // [0.70 -> 0.85]: Bottom apex reversal and rise upward from +A to 0
-      // [0.85 -> 0.95]: Upward contact, resistance and cord stretch from 0 to -D
-      // [0.95 -> 1.00]: PUNCH-THROUGH UP! Cord twangs, shape shoots to 0 and loops
+      // ── Fully Symmetric C^1 Continuous Physics Timeline ──
+      // [0.00 -> 0.15]: Contact cord from above, stretch cord DOWN from 0 to +D
+      // [0.15 -> 0.32]: PUNCH-THROUGH DOWN! Cord twangs back to 0, shape morphs & shoots to bottom apex +A
+      // [0.32 -> 0.50]: Bottom apex reversal and smooth rise upward from +A to cord at 0
+      // [0.50 -> 0.65]: Contact cord from below, stretch cord UP from 0 to -D
+      // [0.65 -> 0.82]: PUNCH-THROUGH UP! Cord twangs back to 0, shape morphs & shoots to top apex -A
+      // [0.82 -> 1.00]: Top apex reversal and smooth fall downward from -A to cord at 0 (loops seamlessly)
 
-      if (p < 0.25) {
-        const t = p / 0.25;
-        shapeY = -A * Math.sin((t * Math.PI) / 2);
-        cordY = 0;
-        sx = 0.94 + 0.06 * t;
-        sy = 1.06 - 0.06 * t;
-      } else if (p < 0.45) {
-        const t = (p - 0.25) / 0.20;
-        shapeY = -A * Math.cos((t * Math.PI) / 2);
-        cordY = 0;
-        sx = 0.92;
-        sy = 1.08;
-      } else if (p < 0.58) {
-        const t = (p - 0.45) / 0.13;
+      if (p < 0.15) {
+        // Phase 1: Downward stretch
+        const t = p / 0.15;
         const stretch = Math.sin((t * Math.PI) / 2);
         shapeY = D * stretch;
         cordY = shapeY;
-        sx = 1 + stretch * 0.26;
-        sy = 1 - stretch * 0.18;
-      } else if (p < 0.70) {
-        const t = (p - 0.58) / 0.12;
+        sx = 1 + stretch * 0.22;
+        sy = 1 - stretch * 0.16;
+      } else if (p < 0.32) {
+        // Phase 2: Downward punch-through to +A
+        const t = (p - 0.15) / 0.17;
         shapeY = D + (A - D) * Math.sin((t * Math.PI) / 2);
         // Cord damped harmonic recoil from +D back to 0
         cordY = D * Math.exp(-6 * t) * Math.cos(t * Math.PI * 4);
-        sx = 0.95;
-        sy = 1.05;
+        sx = 0.92;
+        sy = 1.10;
 
-        // Shape morphs on downward breakthrough
+        // Trigger morph on downward breach
         if (lastBreachStage !== 1) {
           lastBreachStage = 1;
           setShapeIndex((idx) => (idx + 1) % M3_MORPH_SHAPES.length);
         }
-      } else if (p < 0.85) {
-        const t = (p - 0.70) / 0.15;
+      } else if (p < 0.50) {
+        // Phase 3: Rise from +A to 0
+        const t = (p - 0.32) / 0.18;
         shapeY = A * Math.cos((t * Math.PI) / 2);
         cordY = 0;
-        sx = 0.92;
-        sy = 1.08;
-      } else if (p < 0.95) {
-        const t = (p - 0.85) / 0.10;
+        sx = 0.96;
+        sy = 1.04;
+      } else if (p < 0.65) {
+        // Phase 4: Upward stretch
+        const t = (p - 0.50) / 0.15;
         const stretch = Math.sin((t * Math.PI) / 2);
         shapeY = -D * stretch;
         cordY = shapeY;
-        sx = 1 + stretch * 0.26;
-        sy = 1 - stretch * 0.18;
-      } else {
-        const t = (p - 0.95) / 0.05;
-        shapeY = -D * (1 - Math.sin((t * Math.PI) / 2));
+        sx = 1 + stretch * 0.22;
+        sy = 1 - stretch * 0.16;
+      } else if (p < 0.82) {
+        // Phase 5: Upward punch-through to -A
+        const t = (p - 0.65) / 0.17;
+        shapeY = -D - (A - D) * Math.sin((t * Math.PI) / 2);
         // Cord damped harmonic recoil from -D back to 0
         cordY = -D * Math.exp(-6 * t) * Math.cos(t * Math.PI * 4);
-        sx = 0.95;
-        sy = 1.05;
+        sx = 0.92;
+        sy = 1.10;
 
-        // Shape morphs on upward breakthrough
+        // Trigger morph on upward breach
         if (lastBreachStage !== 2) {
           lastBreachStage = 2;
           setShapeIndex((idx) => (idx + 1) % M3_MORPH_SHAPES.length);
         }
+      } else {
+        // Phase 6: Fall from -A to 0
+        const t = (p - 0.82) / 0.18;
+        shapeY = -A * Math.cos((t * Math.PI) / 2);
+        cordY = 0;
+        sx = 0.96;
+        sy = 1.04;
       }
 
       // Direct GPU transform manipulation (0ms React overhead, 100% stutter-free)
+      // Note: In quadratic Bezier Q(cx, cy), peak deflection at t=0.5 is (cy - midY)/2.
+      // Therefore cy = midY + cordY * 2 gives EXACTLY cordY deflection at the center!
       if (cordRef.current) {
         cordRef.current.setAttribute(
           "d",
-          `M 80,${midY} Q 500,${midY + cordY} 920,${midY}`
+          `M 80,${midY} Q 500,${midY + cordY * 2} 920,${midY}`
         );
         cordRef.current.setAttribute(
           "stroke-width",
@@ -277,7 +278,8 @@ function ElasticCordPhysicsEngine({
           viewBox="0 0 100 100"
           width={shapeSize}
           height={shapeSize}
-          className="overflow-visible select-none"
+          style={{ animation: `spin ${5.4 / Math.max(0.2, speed)}s linear infinite` }}
+          className="overflow-visible select-none will-change-transform"
         >
           {/* Seamless Shape Morphing on Breach: Circle -> Squircle -> Pill -> Clover -> Star -> Pentagon */}
           <motion.path
