@@ -149,7 +149,7 @@ function MobilePreviewChassis({
   return (
     <div
       className={cn(
-        "relative mx-auto w-full max-w-[340px] h-[580px] rounded-[44px] p-2.5 shadow-2xl transition-all duration-300 border-[7px] border-[#18191b] bg-[#0c0d0e] ring-1 ring-black/80 flex flex-col justify-between overflow-hidden select-none",
+        "relative mx-auto w-full max-w-[340px] h-[580px] rounded-[44px] p-2.5 shadow-2xl transition-all duration-300 border-[7px] border-[#18191b] bg-[var(--bg-main)] ring-1 ring-black/80 flex flex-col justify-between overflow-hidden select-none",
         className
       )}
     >
@@ -157,7 +157,7 @@ function MobilePreviewChassis({
       <div
         className={cn(
           "pt-2 pb-1 px-5 flex items-center justify-between shrink-0 z-30 text-[11px] font-mono transition-colors rounded-t-[34px]",
-          isLightMode ? "bg-[#f8f9fa] text-neutral-600" : "bg-[#0c0d0e] text-neutral-400"
+          isLightMode ? "bg-white text-neutral-600 border-b border-neutral-100" : "bg-[var(--bg-main)] text-neutral-400 border-b border-[var(--border)]/30"
         )}
       >
         <span className={cn("font-semibold text-xs", isLightMode ? "text-neutral-900" : "text-white")}>
@@ -184,8 +184,8 @@ function MobilePreviewChassis({
           className={cn(
             "px-4 py-2 border-b flex items-center justify-between shrink-0 z-20 transition-colors",
             isLightMode
-              ? "bg-[#f8f9fa] border-neutral-200 text-neutral-900"
-              : "bg-[#0c0d0e] border-neutral-800/80 text-white"
+              ? "bg-white border-neutral-200 text-neutral-900"
+              : "bg-[var(--bg-main)] border-[var(--border)]/80 text-[var(--text-primary)]"
           )}
         >
           <div>
@@ -208,7 +208,7 @@ function MobilePreviewChassis({
       <div
         className={cn(
           "relative flex-1 flex flex-col overflow-hidden transition-colors",
-          isLightMode ? "bg-[#f8f9fa] text-neutral-900" : "bg-[#0c0d0e] text-white"
+          isLightMode ? "bg-white text-neutral-900" : "bg-[var(--bg-main)] text-[var(--text-primary)]"
         )}
       >
         {children}
@@ -218,13 +218,13 @@ function MobilePreviewChassis({
       <div
         className={cn(
           "h-4 w-full flex items-center justify-center shrink-0 z-30 transition-colors rounded-b-[34px]",
-          isLightMode ? "bg-[#f8f9fa]" : "bg-[#0c0d0e]"
+          isLightMode ? "bg-white" : "bg-[var(--bg-main)]"
         )}
       >
         <div
           className={cn(
             "w-28 h-1 rounded-full",
-            isLightMode ? "bg-neutral-300" : "bg-neutral-600/60"
+            isLightMode ? "bg-neutral-300" : "bg-neutral-700"
           )}
         />
       </div>
@@ -6328,7 +6328,7 @@ export function ComponentPreviewStage({
                       variant={m3TextVariant}
                       label="Workspace Email"
                       value={m3TextVal}
-                      labelBgClassName={isLightMode ? "bg-[#f8f9fa]" : "bg-[#0c0d0e]"}
+                      labelBgClassName={isLightMode ? "bg-white" : "bg-[var(--bg-main)]"}
                       onChange={(e) => setM3TextVal(e.target.value)}
                       helperText="Your registered team email"
                       leadingIcon={<User className="h-4 w-4" />}
@@ -6342,7 +6342,7 @@ export function ComponentPreviewStage({
                       label="Password"
                       type="password"
                       defaultValue="supersecret"
-                      labelBgClassName={isLightMode ? "bg-[#f8f9fa]" : "bg-[#0c0d0e]"}
+                      labelBgClassName={isLightMode ? "bg-white" : "bg-[var(--bg-main)]"}
                       leadingIcon={<Lock className="h-4 w-4" />}
                       helperText="Minimum 8 characters"
                     />
@@ -6655,14 +6655,40 @@ export function ComponentPreviewStage({
           {item.name === "m3-progress-indicator" && (
             <div className="w-full flex justify-center py-2">
               <MobilePreviewChassis isLightMode={isLightMode} title="Loaders & Progress" subtitle="FEEDBACK">
-                <div className="flex-1 flex flex-col p-4 space-y-5 overflow-y-auto">
-                  {/* Active Selected Loader */}
-                  <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] p-4 space-y-3">
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 block">
-                      Active: {m3ProgressVariant}
-                    </span>
-                    <div className="flex items-center justify-center py-2">
-                      {m3ProgressVariant === "squiggly-horizontal" ? (
+                <div className="flex-1 flex flex-col p-4 space-y-4 overflow-y-auto">
+                  {/* Clean Variant Quick Filter Chips */}
+                  <div className="flex items-center gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden text-[10px] font-mono shrink-0">
+                    {[
+                      { id: "circular", label: "Circular" },
+                      { id: "linear", label: "Linear" },
+                      { id: "squiggly-circular", label: "Squiggly Circle" },
+                      { id: "squiggly-horizontal", label: "Squiggly Wave" },
+                      { id: "shape-morph", label: "M3 Morph" },
+                      { id: "elastic-line", label: "Elastic Physics" },
+                    ].map((tab) => (
+                      <button
+                        key={tab.id}
+                        type="button"
+                        onClick={() => {
+                          setM3ProgressVariant(tab.id);
+                          onVariantChange?.(tab.id);
+                        }}
+                        className={cn(
+                          "px-2.5 py-1 rounded-full whitespace-nowrap transition-all cursor-pointer font-semibold",
+                          m3ProgressVariant === tab.id
+                            ? "bg-[var(--accent-green)] text-[var(--bg-main)] shadow-xs"
+                            : "bg-[var(--surface-secondary)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                        )}
+                      >
+                        {tab.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Hero Showcase Display (Clean, Zero Box-in-Box Nesting) */}
+                  <div className="flex-1 flex flex-col items-center justify-center min-h-[260px] py-6 px-2">
+                    {m3ProgressVariant === "squiggly-horizontal" ? (
+                      <div className="w-full py-6 flex flex-col items-center justify-center space-y-4">
                         <M3SquigglyLoader
                           variant="horizontal"
                           squiggles={m3SquiggleCount}
@@ -6671,79 +6697,83 @@ export function ComponentPreviewStage({
                           strokeWidth={3.5}
                           speed={m3ProgressSpeed}
                         />
-                      ) : m3ProgressVariant === "squiggly-circular" ? (
+                        <div className="flex items-center gap-3 text-[10px] font-mono text-[var(--text-muted)] pt-2">
+                          <span>Waves: {m3SquiggleCount}</span>
+                          <span>•</span>
+                          <span>Amplitude: {m3SquiggleAmp}px</span>
+                        </div>
+                      </div>
+                    ) : m3ProgressVariant === "squiggly-circular" ? (
+                      <div className="flex flex-col items-center justify-center space-y-4 py-4">
                         <M3SquigglyLoader
                           variant="circular"
                           squiggles={m3SquiggleCount}
                           amplitude={m3SquiggleAmp}
                           color={m3ProgressColor === "google" ? "blue" : m3ProgressColor}
-                          size={m3MorphSize}
+                          size={m3MorphSize + 16}
                           strokeWidth={3.5}
                           speed={m3ProgressSpeed}
                         />
-                      ) : m3ProgressVariant === "shape-morph" ? (
+                        <span className="text-[10px] font-mono text-[var(--text-muted)]">
+                          Android 14+ Sinusoidal Wave Loop
+                        </span>
+                      </div>
+                    ) : m3ProgressVariant === "shape-morph" ? (
+                      <div className="flex flex-col items-center justify-center space-y-4 py-4">
                         <M3LoadingIndicator
                           variant={m3MorphVariant}
-                          size={m3MorphSize}
+                          size={m3MorphSize + 12}
                           color={m3ProgressColor}
                           speed={m3ProgressSpeed}
                           containerShape={m3ContainerShape}
                         />
-                      ) : m3ProgressVariant === "elastic-line" ? (
+                        <span className="text-[10px] font-mono text-[var(--text-muted)]">
+                          Material 3 Expressive Morphing Sequence
+                        </span>
+                      </div>
+                    ) : m3ProgressVariant === "elastic-line" ? (
+                      <div className="w-full flex flex-col items-center justify-center space-y-4 py-2">
                         <M3PhysicsLoader
                           variant="elastic-line"
                           theme={m3ProgressColor}
                           resistance={m3ElasticResistance}
                           speed={m3ProgressSpeed}
                         />
-                      ) : m3ProgressVariant === "circular" ? (
+                        <span className="text-[10px] font-mono text-[var(--text-muted)]">
+                          Membrane Resistance &amp; Breakthrough Harmonic Physics
+                        </span>
+                      </div>
+                    ) : m3ProgressVariant === "circular" ? (
+                      <div className="flex flex-col items-center justify-center space-y-4 py-4">
                         <M3ProgressIndicator type="circular" value={m3ProgressVal} />
-                      ) : (
-                        <M3ProgressIndicator type="linear" value={m3ProgressVal} variant={m3ProgressVariant === "minimal" ? "minimal" : "default"} />
-                      )}
-                    </div>
+                        <span className="text-xs font-mono font-bold text-[var(--text-primary)]">
+                          {m3ProgressVal}% Progress
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="w-full px-4 flex flex-col items-center justify-center space-y-4 py-6">
+                        <M3ProgressIndicator
+                          type="linear"
+                          value={m3ProgressVal}
+                          variant={m3ProgressVariant === "minimal" ? "minimal" : "default"}
+                        />
+                        <span className="text-xs font-mono font-bold text-[var(--text-primary)]">
+                          {m3ProgressVal}% Complete
+                        </span>
+                      </div>
+                    )}
                   </div>
 
-                  {/* Squiggly Wave Showcase */}
-                  <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] p-4 space-y-3 text-center">
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 block">Squiggly Waves (Android 14+)</span>
-                    <div className="flex items-center justify-around py-1">
-                      <div className="flex flex-col items-center gap-1.5">
-                        <M3SquigglyLoader variant="circular" size={52} squiggles={14} amplitude={3.5} color="blue" />
-                        <span className="text-[9px] font-mono text-[var(--text-muted)]">Royal Blue</span>
-                      </div>
-                      <div className="flex flex-col items-center gap-1.5">
-                        <M3SquigglyLoader variant="circular" size={52} squiggles={14} amplitude={3.5} color="accent" />
-                        <span className="text-[9px] font-mono text-[var(--text-muted)]">Emerald</span>
-                      </div>
+                  {/* Clean Bottom Parameters Tile */}
+                  <div className="p-3.5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/60 space-y-2 text-xs font-mono">
+                    <div className="flex items-center justify-between text-[11px]">
+                      <span className="text-[var(--text-muted)]">Speed Multiplier</span>
+                      <span className="font-bold text-[var(--accent-green)]">{m3ProgressSpeed.toFixed(1)}x</span>
                     </div>
-                    <div className="px-1 pt-1">
-                      <M3SquigglyLoader variant="horizontal" squiggles={14} amplitude={3.5} color="accent" />
+                    <div className="flex items-center justify-between text-[11px]">
+                      <span className="text-[var(--text-muted)]">Accent Color</span>
+                      <span className="font-bold uppercase text-[var(--text-primary)]">{m3ProgressColor}</span>
                     </div>
-                  </div>
-
-                  {/* M3 Expressive Loading Indicators */}
-                  <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] p-4 space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">M3 Expressive Morph</span>
-                      <span className="text-[8px] font-mono text-[var(--accent-green)]">m3.material.io</span>
-                    </div>
-                    <div className="flex items-center justify-around">
-                      <div className="flex flex-col items-center gap-1.5">
-                        <M3LoadingIndicator variant="uncontained" size={48} color="accent" />
-                        <span className="text-[8px] font-mono text-[var(--text-muted)]">Uncontained</span>
-                      </div>
-                      <div className="flex flex-col items-center gap-1.5">
-                        <M3LoadingIndicator variant="contained" size={52} color="google" containerShape="squircle" />
-                        <span className="text-[8px] font-mono text-[var(--text-muted)]">Contained</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Elastic Membrane Punch-Through — full width, no box wrapping */}
-                  <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] p-3 space-y-2">
-                    <span className="text-[9px] font-mono text-[var(--text-muted)] uppercase block">Elastic Membrane Punch-Through</span>
-                    <M3PhysicsLoader variant="elastic-line" theme="accent" resistance={1} />
                   </div>
                 </div>
               </MobilePreviewChassis>

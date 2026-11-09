@@ -110,8 +110,9 @@ function ElasticCordPhysicsEngine({
     // Full loop cycle period in seconds
     const cycleDuration = 2.4 / Math.max(0.2, speed);
     // Amplitude parameters in pixels
-    const A = 40; // apex displacement from center
-    const D = 22 * Math.min(1.5, Math.max(0.5, resistance)); // max cord deflection
+    const A = 38; // apex displacement from center
+    const D = 20 * Math.min(1.5, Math.max(0.5, resistance)); // max cord deflection
+    const contactOffset = 13; // vertical offset so shape rests against membrane boundary
 
     const tick = (now: number) => {
       if (startTime === null) startTime = now;
@@ -123,37 +124,31 @@ function ElasticCordPhysicsEngine({
       let sx = 1;
       let sy = 1;
 
-      // ── Fully Symmetric C^1 Continuous Physics Timeline ──
-      // [0.00 -> 0.15]: Contact cord from above, stretch cord DOWN from 0 to +D
-      // [0.15 -> 0.32]: PUNCH-THROUGH DOWN! Cord twangs back to 0, shape morphs & shoots to bottom apex +A
-      // [0.32 -> 0.50]: Bottom apex reversal and smooth rise upward from +A to cord at 0
-      // [0.50 -> 0.65]: Contact cord from below, stretch cord UP from 0 to -D
-      // [0.65 -> 0.82]: PUNCH-THROUGH UP! Cord twangs back to 0, shape morphs & shoots to top apex -A
-      // [0.82 -> 1.00]: Top apex reversal and smooth fall downward from -A to cord at 0 (loops seamlessly)
-
-      // Exact mechanical released spring from rest: R(0) = 1, R'(0) = 0 (zero initial snap, silky elastic recoil)
+      // Mechanical released spring with realistic damping & harmonic twang
+      // Initial value = 1, initial velocity = 0 (zero abrupt discontinuity)
       const springRecoil = (t: number) => {
-        const c = 4.0;
-        const w = 5.5;
+        const c = 2.4;
+        const w = 11.0;
         return Math.exp(-c * t) * (Math.cos(w * t) + (c / w) * Math.sin(w * t));
       };
 
       if (p < 0.15) {
-        // Phase 1: Downward stretch
+        // Phase 1: Downward stretch (shape pushes cord from above)
         const t = p / 0.15;
         const stretch = Math.sin((t * Math.PI) / 2);
-        shapeY = D * stretch;
-        cordY = shapeY;
-        sx = 1 + stretch * 0.22;
-        sy = 1 - stretch * 0.16;
+        cordY = D * stretch;
+        shapeY = cordY - contactOffset * (1 - stretch * 0.25);
+        sx = 1 + stretch * 0.18;
+        sy = 1 - stretch * 0.14;
       } else if (p < 0.32) {
         // Phase 2: Downward punch-through to +A
         const t = (p - 0.15) / 0.17;
-        shapeY = D + (A - D) * (1 - Math.cos(t * Math.PI)) / 2;
-        // Cord smooth organic spring recoil from +D back to 0
+        const startY = D - contactOffset * 0.75;
+        shapeY = startY + (A - startY) * (1 - Math.cos(t * Math.PI)) / 2;
+        // Cord organic harmonic spring recoil from +D back to 0 with visible vibration
         cordY = D * springRecoil(t);
         sx = 0.92;
-        sy = 1.10;
+        sy = 1.08;
 
         // Trigger morph on downward breach
         if (lastBreachStage !== 1) {
@@ -161,28 +156,29 @@ function ElasticCordPhysicsEngine({
           setShapeIndex((idx) => (idx + 1) % M3_MORPH_SHAPES.length);
         }
       } else if (p < 0.50) {
-        // Phase 3: Rise from +A to 0
+        // Phase 3: Smooth rise from +A to cord at 0
         const t = (p - 0.32) / 0.18;
-        shapeY = A * Math.cos((t * Math.PI) / 2);
+        shapeY = A - (A - contactOffset) * (1 - Math.cos(t * Math.PI)) / 2;
         cordY = 0;
-        sx = 0.96;
-        sy = 1.04;
+        sx = 0.97;
+        sy = 1.03;
       } else if (p < 0.65) {
-        // Phase 4: Upward stretch
+        // Phase 4: Upward stretch (shape pushes cord from underneath)
         const t = (p - 0.50) / 0.15;
         const stretch = Math.sin((t * Math.PI) / 2);
-        shapeY = -D * stretch;
-        cordY = shapeY;
-        sx = 1 + stretch * 0.22;
-        sy = 1 - stretch * 0.16;
+        cordY = -D * stretch;
+        shapeY = cordY + contactOffset * (1 - stretch * 0.25);
+        sx = 1 + stretch * 0.18;
+        sy = 1 - stretch * 0.14;
       } else if (p < 0.82) {
         // Phase 5: Upward punch-through to -A
         const t = (p - 0.65) / 0.17;
-        shapeY = -D - (A - D) * (1 - Math.cos(t * Math.PI)) / 2;
-        // Cord smooth organic spring recoil from -D back to 0
+        const startY = -D + contactOffset * 0.75;
+        shapeY = startY + (-A - startY) * (1 - Math.cos(t * Math.PI)) / 2;
+        // Cord organic harmonic spring recoil from -D back to 0 (fluid and smooth, zero instant snapping)
         cordY = -D * springRecoil(t);
         sx = 0.92;
-        sy = 1.10;
+        sy = 1.08;
 
         // Trigger morph on upward breach
         if (lastBreachStage !== 2) {
@@ -190,17 +186,15 @@ function ElasticCordPhysicsEngine({
           setShapeIndex((idx) => (idx + 1) % M3_MORPH_SHAPES.length);
         }
       } else {
-        // Phase 6: Fall from -A to 0
+        // Phase 6: Smooth fall from -A to cord at 0
         const t = (p - 0.82) / 0.18;
-        shapeY = -A * Math.cos((t * Math.PI) / 2);
+        shapeY = -A - (-A - (-contactOffset)) * (1 - Math.cos(t * Math.PI)) / 2;
         cordY = 0;
-        sx = 0.96;
-        sy = 1.04;
+        sx = 0.97;
+        sy = 1.03;
       }
 
       // Direct GPU transform manipulation (0ms React overhead, 100% stutter-free)
-      // Note: In quadratic Bezier Q(cx, cy), peak deflection at t=0.5 is (cy - midY)/2.
-      // Therefore cy = midY + cordY * 2 gives EXACTLY cordY deflection at the center!
       if (cordRef.current) {
         cordRef.current.setAttribute(
           "d",
@@ -212,8 +206,11 @@ function ElasticCordPhysicsEngine({
         );
       }
 
+      // Slow continuous organic spin (50 deg/sec) so shape morph looks natural and fluid
+      const spinDeg = (elapsed * 50 * Math.max(0.6, speed)) % 360;
+
       if (shapeWrapperRef.current) {
-        shapeWrapperRef.current.style.transform = `translate3d(0, ${shapeY}px, 0) scale(${sx}, ${sy})`;
+        shapeWrapperRef.current.style.transform = `translate3d(0, ${shapeY}px, 0) rotate(${spinDeg}deg) scale(${sx}, ${sy})`;
       }
 
       animId = requestAnimationFrame(tick);
@@ -263,9 +260,13 @@ function ElasticCordPhysicsEngine({
           strokeLinecap="round"
           vectorEffect="non-scaling-stroke"
         />
+
+        {/* Cord Terminal Anchor Pins */}
+        <circle cx="80" cy={midY} r="3.5" fill={accent} opacity="0.8" />
+        <circle cx="920" cy={midY} r="3.5" fill={accent} opacity="0.8" />
       </svg>
 
-      {/* Floating Morphing Geometry (Smooth hardware-accelerated translate3d) */}
+      {/* Floating Morphing Geometry (Smooth hardware-accelerated translate3d + rotation) */}
       {/* Centered at 50% 50% via negative margins so shapeY is relative to the exact center line */}
       <div
         ref={shapeWrapperRef}
@@ -285,8 +286,7 @@ function ElasticCordPhysicsEngine({
           viewBox="0 0 100 100"
           width={shapeSize}
           height={shapeSize}
-          style={{ animation: `spin ${5.4 / Math.max(0.2, speed)}s linear infinite` }}
-          className="overflow-visible select-none will-change-transform"
+          className="overflow-visible select-none"
         >
           {/* Seamless Shape Morphing on Breach: Circle -> Squircle -> Pill -> Clover -> Star -> Pentagon */}
           <motion.path

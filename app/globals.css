@@ -199,6 +199,17 @@ body {
   background: var(--text-muted);
 }
 
+/* Scrollbar elimination utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+.no-scrollbar {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+
 /* Subtle code typography */
 code, pre {
   font-family: var(--font-google-sans-code), "Google Sans Code", monospace;
@@ -206,6 +217,15 @@ code, pre {
 }
 
 /* --- PHYSICS & MOTION UTILITIES --- */
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
 
 @keyframes drawerSlideIn {
   from {

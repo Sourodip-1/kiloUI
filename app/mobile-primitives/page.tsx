@@ -8,6 +8,8 @@ import {
   Bookmark,
   Pin,
   Plus,
+  Minus,
+  Fingerprint,
   Home,
   Compass,
   Bell,
@@ -31,7 +33,6 @@ import {
   Eye,
   EyeOff,
   Layers,
-  Sparkles,
   Smartphone,
   CheckCircle2,
   Radio,
@@ -131,37 +132,66 @@ export default function MobilePrimitivesPage() {
   const [isPhoneVisible, setIsPhoneVisible] = React.useState(true);
   const [copiedCli, setCopiedCli] = React.useState(false);
 
-  // ── Phone Wheel Scroll Chaining ──
-  const phoneChassisRef = React.useRef<HTMLDivElement>(null);
-  const phoneScrollRef = React.useRef<HTMLDivElement>(null);
+  // ── Category Tabs Scroll Controls ──
+  const tabsContainerRef = React.useRef<HTMLDivElement>(null);
+  const [canScrollTabsLeft, setCanScrollTabsLeft] = React.useState(false);
+  const [canScrollTabsRight, setCanScrollTabsRight] = React.useState(false);
+
+  const checkTabsScroll = React.useCallback(() => {
+    const el = tabsContainerRef.current;
+    if (!el) return;
+    setCanScrollTabsLeft(el.scrollLeft > 4);
+    setCanScrollTabsRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
+  }, []);
 
   React.useEffect(() => {
-    const chassis = phoneChassisRef.current;
-    if (!chassis) return;
+    checkTabsScroll();
+    const el = tabsContainerRef.current;
+    if (!el) return;
+    el.addEventListener("scroll", checkTabsScroll, { passive: true });
+    window.addEventListener("resize", checkTabsScroll);
+    return () => {
+      el.removeEventListener("scroll", checkTabsScroll);
+      window.removeEventListener("resize", checkTabsScroll);
+    };
+  }, [checkTabsScroll]);
+
+  const scrollTabs = (dir: "left" | "right") => {
+    if (!tabsContainerRef.current) return;
+    const offset = dir === "left" ? -180 : 180;
+    tabsContainerRef.current.scrollBy({ left: offset, behavior: "smooth" });
+  };
+
+  // ── Mobile Panel Section Wheel Scroll Chaining ──
+  const mobilePanelRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const panel = mobilePanelRef.current;
+    if (!panel) return;
 
     const handleWheel = (e: WheelEvent) => {
-      const scrollable = phoneScrollRef.current;
-      if (!scrollable) return;
-
-      const { scrollTop, scrollHeight, clientHeight } = scrollable;
+      const { scrollTop, scrollHeight, clientHeight } = panel;
       const isDown = e.deltaY > 0;
       const isUp = e.deltaY < 0;
 
-      // Has scroll headroom inside the phone?
-      const canScrollDown = scrollTop + clientHeight < scrollHeight - 2;
-      const canScrollUp = scrollTop > 2;
+      // Check if mobile panel section has scroll headroom
+      const canScrollDown = scrollTop + clientHeight < scrollHeight - 3;
+      const canScrollUp = scrollTop > 3;
 
       if ((isDown && canScrollDown) || (isUp && canScrollUp)) {
-        // Intercept: scroll phone content only, do not scroll page
+        // While the mobile panel section scrolls, the primitives DO NOT scroll
         e.preventDefault();
-        scrollable.scrollTop += e.deltaY;
+        panel.scrollTop += e.deltaY;
+      } else {
+        // When the mobile panel hits the dead end, then the primitives will be scrolled
+        e.preventDefault();
+        window.scrollBy({ top: e.deltaY, behavior: "auto" });
       }
-      // Reached bottom or top: let event propagate naturally to scroll window/page!
     };
 
-    chassis.addEventListener("wheel", handleWheel, { passive: false });
-    return () => chassis.removeEventListener("wheel", handleWheel);
-  }, [presetMode]);
+    panel.addEventListener("wheel", handleWheel, { passive: false });
+    return () => panel.removeEventListener("wheel", handleWheel);
+  }, []);
 
   // ── Bento Grid Interactive States ──
   // Actions
@@ -209,6 +239,13 @@ export default function MobilePrimitivesPage() {
   const [physicsResistance, setPhysicsResistance] = React.useState(1);
   const [physicsSpeed, setPhysicsSpeed] = React.useState(1);
 
+  // ── New Unique Mobile Primitive States ──
+  const [demoQuantity, setDemoQuantity] = React.useState(2);
+  const [islandExpanded, setIslandExpanded] = React.useState(false);
+  const [snackbarActive, setSnackbarActive] = React.useState(true);
+  const [biometricScanning, setBiometricScanning] = React.useState(false);
+  const [biometricAuthenticated, setBiometricAuthenticated] = React.useState(false);
+
   // ── Phone Frame Preset States ──
   // Store Preset
   const [storeCategory, setStoreCategory] = React.useState<string>("all");
@@ -220,6 +257,11 @@ export default function MobilePrimitivesPage() {
     { id: "1", sender: "Architecture Board", subject: "M3 Surface elevation token mapping review", time: "12m" },
     { id: "2", sender: "Telemetry Core", subject: "Sub-millisecond frame dispatch rate confirmed", time: "34m" },
     { id: "3", sender: "AST Validator", subject: "All mobile primitives schema compliance check", time: "1h" },
+    { id: "4", sender: "Design Systems", subject: "Expressive cubic bezier motion token release v2.4", time: "2h" },
+    { id: "5", sender: "Security Enclave", subject: "Hardware biometrics passkey sync handshake ok", time: "3h" },
+    { id: "6", sender: "Cloud Storage", subject: "Edge replica synchronization complete in 4 regions", time: "5h" },
+    { id: "7", sender: "Kilo Studio", subject: "Spring physics membrane loader demo verified", time: "6h" },
+    { id: "8", sender: "Package Registry", subject: "CLI bundle distribution ready on npm @0.3.0", time: "1d" },
   ]);
 
   // Pulse Sync Preset (Stitch Screen 1)
@@ -312,40 +354,67 @@ export default function MobilePrimitivesPage() {
 
         {/* ── Category Filter Tabs & Instant Search Bar ── */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pt-1">
-          <SlidingHighlightContainer
-            activeSelector='[data-state="active"]'
-            activeKey={activeCategory}
-            className="flex items-center gap-1 overflow-x-auto text-xs font-mono select-none"
-            pillClassName="bg-[var(--surface-secondary)] border border-[var(--border)] rounded-lg shadow-2xs"
-          >
-            {[
-              { id: "all", label: "All Primitives" },
-              { id: "actions", label: "Actions" },
-              { id: "forms", label: "Forms & Inputs" },
-              { id: "navigation", label: "Navigation" },
-              { id: "overlays", label: "Overlays" },
-              { id: "data-display", label: "Data Display" },
-            ].map((tab) => {
-              const isSelected = activeCategory === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  type="button"
-                  data-hover-item="true"
-                  data-state={isSelected ? "active" : "inactive"}
-                  onClick={() => setActiveCategory(tab.id as CategoryFilter)}
-                  className={cn(
-                    "relative z-10 px-3.5 py-1.5 rounded-lg transition-colors cursor-pointer whitespace-nowrap active:scale-95",
-                    isSelected
-                      ? "text-[var(--text-primary)] font-semibold"
-                      : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
-                  )}
-                >
-                  {tab.label}
-                </button>
-              );
-            })}
-          </SlidingHighlightContainer>
+          <div className="relative flex items-center min-w-0 max-w-full">
+            {/* Scroll Left Arrow Button */}
+            {canScrollTabsLeft && (
+              <button
+                type="button"
+                onClick={() => scrollTabs("left")}
+                className="absolute left-0 z-20 h-7 w-7 rounded-full bg-[var(--surface-elevated)] border border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:border-[var(--accent-green)] flex items-center justify-center shadow-lg transition-all cursor-pointer active:scale-90 shrink-0"
+                aria-label="Scroll categories left"
+              >
+                <ChevronLeft className="h-3.5 w-3.5" />
+              </button>
+            )}
+
+            <SlidingHighlightContainer
+              ref={tabsContainerRef}
+              activeSelector='[data-state="active"]'
+              activeKey={activeCategory}
+              className="flex items-center gap-1 overflow-x-auto no-scrollbar scroll-smooth text-xs font-mono select-none px-2"
+              pillClassName="bg-[var(--surface-secondary)] border border-[var(--border)] rounded-lg shadow-2xs"
+            >
+              {[
+                { id: "all", label: "All Primitives" },
+                { id: "actions", label: "Actions" },
+                { id: "forms", label: "Forms & Inputs" },
+                { id: "navigation", label: "Navigation" },
+                { id: "overlays", label: "Overlays" },
+                { id: "data-display", label: "Data Display" },
+              ].map((tab) => {
+                const isSelected = activeCategory === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    data-hover-item="true"
+                    data-state={isSelected ? "active" : "inactive"}
+                    onClick={() => setActiveCategory(tab.id as CategoryFilter)}
+                    className={cn(
+                      "relative z-10 px-3.5 py-1.5 rounded-lg transition-colors cursor-pointer whitespace-nowrap active:scale-95",
+                      isSelected
+                        ? "text-[var(--text-primary)] font-semibold"
+                        : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                    )}
+                  >
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </SlidingHighlightContainer>
+
+            {/* Scroll Right Arrow Button */}
+            {canScrollTabsRight && (
+              <button
+                type="button"
+                onClick={() => scrollTabs("right")}
+                className="absolute right-0 z-20 h-7 w-7 rounded-full bg-[var(--surface-elevated)] border border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:border-[var(--accent-green)] flex items-center justify-center shadow-lg transition-all cursor-pointer active:scale-90 shrink-0"
+                aria-label="Scroll categories right"
+              >
+                <ChevronRight className="h-3.5 w-3.5" />
+              </button>
+            )}
+          </div>
 
           {/* Quick Search Field & Preset Preview Toggle */}
           <div className="flex items-center gap-2 w-full md:w-auto">
@@ -378,24 +447,17 @@ export default function MobilePrimitivesPage() {
         </div>
 
         {/* ── Two-Column Layout: Left Bento Grid, Right Phone Simulator ── */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start pt-2 relative">
+        <div className="flex flex-col lg:flex-row gap-8 items-start pt-2 relative">
           
           {/* ── LEFT COLUMN: Primitives Grid ── */}
-          <div
-            className={cn(
-              "grid gap-4 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
-              isPhoneVisible
-                ? "lg:col-span-7 grid-cols-1 sm:grid-cols-2"
-                : "lg:col-span-12 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
-            )}
-          >
+          <div className="flex-1 min-w-0 grid gap-4 grid-cols-1 sm:grid-cols-2">
 
             {/* ════════ ACTIONS CATEGORY ════════ */}
             {showCategory("actions") && (
               <>
                 {/* 01. M3 Buttons */}
                 {matchesSearch("M3 Button", "Filled Tonal Elevated Outlined Text", "Actions") && (
-                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all">
+                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all overflow-hidden">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-1.5">
                         <Link href="/components/m3-button" className="text-xs font-semibold text-[var(--text-primary)] hover:underline flex items-center gap-1">
@@ -486,7 +548,7 @@ export default function MobilePrimitivesPage() {
 
                 {/* 03. Segmented Button */}
                 {matchesSearch("Segmented Button", "Single select multi select pill", "Actions") && (
-                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all">
+                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all overflow-hidden">
                     <div className="flex items-center justify-between">
                       <Link href="/components/m3-segmented-button" className="text-xs font-semibold text-[var(--text-primary)] hover:underline flex items-center gap-1">
                         Segmented Buttons
@@ -535,7 +597,7 @@ export default function MobilePrimitivesPage() {
 
                 {/* 04. M3 Icon Buttons */}
                 {matchesSearch("M3 Icon Button", "Standard tonal outlined filled", "Actions") && (
-                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all">
+                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all overflow-hidden">
                     <div className="flex items-center justify-between">
                       <Link href="/components/m3-icon-button" className="text-xs font-semibold text-[var(--text-primary)] hover:underline flex items-center gap-1">
                         M3 Icon Buttons
@@ -578,9 +640,86 @@ export default function MobilePrimitivesPage() {
                   </div>
                 )}
 
+                {/* 04B. Mobile Biometric Pulse Scanner */}
+                {matchesSearch("Biometric Pulse Scanner", "Fingerprint TouchID face hardware sensor passkey", "Actions") && (
+                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all overflow-hidden">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold text-[var(--text-primary)]">
+                        Biometric Scanner
+                      </span>
+                      <span className="text-[10px] font-mono text-[var(--text-muted)]">Hardware Enclave</span>
+                    </div>
+
+                    <div className="py-2 flex flex-col items-center justify-center space-y-2">
+                      <button
+                        type="button"
+                        onMouseDown={() => {
+                          setBiometricScanning(true);
+                          setTimeout(() => {
+                            setBiometricAuthenticated(true);
+                            setBiometricScanning(false);
+                            showToast("Biometric passkey verified!");
+                          }, 900);
+                        }}
+                        onMouseUp={() => setBiometricScanning(false)}
+                        onTouchStart={() => {
+                          setBiometricScanning(true);
+                          setTimeout(() => {
+                            setBiometricAuthenticated(true);
+                            setBiometricScanning(false);
+                            showToast("Biometric passkey verified!");
+                          }, 900);
+                        }}
+                        onTouchEnd={() => setBiometricScanning(false)}
+                        className={cn(
+                          "relative h-15 w-15 rounded-2xl flex items-center justify-center border transition-all duration-300 cursor-pointer active:scale-95 shadow-lg select-none",
+                          biometricAuthenticated
+                            ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-400"
+                            : biometricScanning
+                            ? "bg-[var(--surface-tertiary)] border-[var(--accent-green)] text-[var(--accent-green)] ring-4 ring-[var(--accent-green)]/20"
+                            : "bg-[var(--surface-secondary)] border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:border-[var(--border-hover)]"
+                        )}
+                        title="Press and hold sensor"
+                      >
+                        <Fingerprint className={cn("h-7 w-7 transition-transform", biometricScanning && "scale-110")} />
+                        {biometricScanning && (
+                          <span className="absolute inset-0 rounded-2xl border-2 border-[var(--accent-green)] animate-ping opacity-30" />
+                        )}
+                      </button>
+
+                      <div className="text-center">
+                        <span className="text-[10px] font-mono text-[var(--text-muted)] block">
+                          {biometricAuthenticated
+                            ? "Passkey Authenticated ✓"
+                            : biometricScanning
+                            ? "Reading hardware enclave..."
+                            : "Press & hold sensor"}
+                        </span>
+                        {biometricAuthenticated && (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setBiometricAuthenticated(false);
+                            }}
+                            className="text-[9px] font-mono text-[var(--accent-green)] hover:underline mt-0.5 cursor-pointer"
+                          >
+                            Reset Sensor
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between text-[11px] font-mono text-[var(--text-muted)] pt-1">
+                      <span>WebAuthn FIDO2</span>
+                      <span className="text-[var(--accent-green)]">Tactile Touch</span>
+                    </div>
+                  </div>
+                )}
+
                 {/* 05. Floating Action Dock */}
                 {matchesSearch("Floating Action Dock", "Dock navigation anchored island", "Actions") && (
-                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all">
+                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all overflow-hidden">
                     <div className="flex items-center justify-between">
                       <Link href="/components/floating-action-dock" className="text-xs font-semibold text-[var(--text-primary)] hover:underline flex items-center gap-1">
                         Floating Action Dock
@@ -639,7 +778,7 @@ export default function MobilePrimitivesPage() {
               <>
                 {/* 06. M3 Text Fields */}
                 {matchesSearch("M3 Text Field", "Outlined Filled Floating Label Password", "Forms & Inputs") && (
-                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all">
+                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all overflow-hidden">
                     <div className="flex items-center justify-between">
                       <Link href="/components/m3-text-field" className="text-xs font-semibold text-[var(--text-primary)] hover:underline flex items-center gap-1">
                         M3 Text Fields
@@ -679,7 +818,7 @@ export default function MobilePrimitivesPage() {
 
                 {/* 07. M3 Search Bar */}
                 {matchesSearch("M3 Search Bar", "Search voice suggestions", "Forms & Inputs") && (
-                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all">
+                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all overflow-hidden">
                     <div className="flex items-center justify-between">
                       <Link href="/components/m3-search-bar" className="text-xs font-semibold text-[var(--text-primary)] hover:underline flex items-center gap-1">
                         M3 Search Bar
@@ -704,7 +843,7 @@ export default function MobilePrimitivesPage() {
 
                 {/* 08. M3 Switch */}
                 {matchesSearch("M3 Switch", "Switch toggle thumb spring", "Forms & Inputs") && (
-                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all">
+                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all overflow-hidden">
                     <div className="flex items-center justify-between">
                       <Link href="/components/m3-switch" className="text-xs font-semibold text-[var(--text-primary)] hover:underline flex items-center gap-1">
                         M3 Switches
@@ -738,7 +877,7 @@ export default function MobilePrimitivesPage() {
 
                 {/* 09. M3 Checkbox & Radio */}
                 {matchesSearch("M3 Checkbox Radio", "Checkbox Radio group spring pop", "Forms & Inputs") && (
-                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all">
+                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all overflow-hidden">
                     <div className="flex items-center justify-between">
                       <Link href="/components/m3-checkbox" className="text-xs font-semibold text-[var(--text-primary)] hover:underline flex items-center gap-1">
                         Checkbox &amp; Radio
@@ -780,7 +919,7 @@ export default function MobilePrimitivesPage() {
 
                 {/* 10. M3 Slider */}
                 {matchesSearch("M3 Slider", "Continuous discrete balloon pin bubble", "Forms & Inputs") && (
-                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all">
+                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all overflow-hidden">
                     <div className="flex items-center justify-between">
                       <Link href="/components/m3-slider" className="text-xs font-semibold text-[var(--text-primary)] hover:underline flex items-center gap-1">
                         M3 Sliders
@@ -813,7 +952,7 @@ export default function MobilePrimitivesPage() {
 
                 {/* 11. M3 Chips */}
                 {matchesSearch("M3 Chips", "Filter assist input suggestion chips", "Forms & Inputs") && (
-                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all">
+                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all overflow-hidden">
                     <div className="flex items-center justify-between">
                       <Link href="/components/m3-chip" className="text-xs font-semibold text-[var(--text-primary)] hover:underline flex items-center gap-1">
                         M3 Chips
@@ -864,7 +1003,7 @@ export default function MobilePrimitivesPage() {
 
                 {/* 12. OTP Verification Input (From Stitch Screen 6) */}
                 {matchesSearch("OTP Input", "PIN verification 6 digits auth code", "Forms & Inputs") && (
-                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all">
+                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all overflow-hidden">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-semibold text-[var(--text-primary)]">
                         OTP Code Input
@@ -896,6 +1035,72 @@ export default function MobilePrimitivesPage() {
                     </div>
                   </div>
                 )}
+
+                {/* 12B. Mobile Haptic Stepper */}
+                {matchesSearch("Mobile Haptic Stepper", "Touch quantity stepper counter reach", "Forms & Inputs") && (
+                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all overflow-hidden">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold text-[var(--text-primary)]">
+                        Haptic Stepper
+                      </span>
+                      <span className="text-[10px] font-mono text-[var(--text-muted)]">44px Reach</span>
+                    </div>
+
+                    <div className="py-2 flex flex-col items-center justify-center space-y-3">
+                      {/* Spring Stepper Pill */}
+                      <div className="inline-flex items-center p-1 rounded-full bg-[var(--surface-secondary)] border border-[var(--border)] shadow-inner">
+                        <button
+                          type="button"
+                          onClick={() => setDemoQuantity((q) => Math.max(1, q - 1))}
+                          disabled={demoQuantity <= 1}
+                          className={cn(
+                            "h-9 w-9 rounded-full flex items-center justify-center transition-all cursor-pointer active:scale-90",
+                            demoQuantity <= 1
+                              ? "text-[var(--text-muted)]/40 cursor-not-allowed"
+                              : "bg-[var(--surface-tertiary)] text-[var(--text-primary)] hover:bg-[var(--border)] shadow-2xs"
+                          )}
+                          aria-label="Decrease quantity"
+                        >
+                          <Minus className="h-4 w-4" />
+                        </button>
+                        <motion.span
+                          key={demoQuantity}
+                          initial={{ scale: 0.8, y: -2 }}
+                          animate={{ scale: 1, y: 0 }}
+                          className="w-12 text-center font-mono font-bold text-sm text-[var(--text-primary)] select-none"
+                        >
+                          {demoQuantity}
+                        </motion.span>
+                        <button
+                          type="button"
+                          onClick={() => setDemoQuantity((q) => Math.min(10, q + 1))}
+                          disabled={demoQuantity >= 10}
+                          className={cn(
+                            "h-9 w-9 rounded-full flex items-center justify-center transition-all cursor-pointer active:scale-90",
+                            demoQuantity >= 10
+                              ? "text-[var(--text-muted)]/40 cursor-not-allowed"
+                              : "bg-[var(--accent-green)] text-[var(--bg-main)] hover:brightness-110 shadow-xs font-bold"
+                          )}
+                          aria-label="Increase quantity"
+                        >
+                          <Plus className="h-4 w-4" />
+                        </button>
+                      </div>
+
+                      {/* Live Cart Calculation & Unit Metric */}
+                      <div className="flex items-center gap-2 text-xs font-mono text-[var(--text-secondary)]">
+                        <span>Items: {demoQuantity}x</span>
+                        <span>•</span>
+                        <span className="text-[var(--accent-green)] font-bold">${(demoQuantity * 45).toFixed(2)}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between text-[11px] font-mono text-[var(--text-muted)] pt-1">
+                      <span>Tactile spring limits</span>
+                      <span className="text-[var(--accent-green)]">Haptic Pop</span>
+                    </div>
+                  </div>
+                )}
               </>
             )}
 
@@ -904,7 +1109,7 @@ export default function MobilePrimitivesPage() {
               <>
                 {/* 13. M3 Navigation Bar */}
                 {matchesSearch("M3 Navigation Bar", "Bottom navigation pill active indicators", "Navigation") && (
-                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all">
+                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all overflow-hidden">
                     <div className="flex items-center justify-between">
                       <Link href="/components/m3-navigation-bar" className="text-xs font-semibold text-[var(--text-primary)] hover:underline flex items-center gap-1">
                         M3 Navigation Bar
@@ -935,7 +1140,7 @@ export default function MobilePrimitivesPage() {
 
                 {/* 14. M3 Top App Bar */}
                 {matchesSearch("M3 Top App Bar", "Center aligned small medium large toolbar", "Navigation") && (
-                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all">
+                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all overflow-hidden">
                     <div className="flex items-center justify-between">
                       <Link href="/components/m3-top-app-bar" className="text-xs font-semibold text-[var(--text-primary)] hover:underline flex items-center gap-1">
                         M3 Top App Bar
@@ -968,7 +1173,7 @@ export default function MobilePrimitivesPage() {
 
                 {/* 15. M3 Tabs */}
                 {matchesSearch("M3 Tabs", "Primary secondary minimal sliding tabs", "Navigation") && (
-                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all">
+                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all overflow-hidden">
                     <div className="flex items-center justify-between">
                       <Link href="/components/m3-tabs" className="text-xs font-semibold text-[var(--text-primary)] hover:underline flex items-center gap-1">
                         M3 Tabs
@@ -1009,7 +1214,7 @@ export default function MobilePrimitivesPage() {
 
                 {/* 16. Thumb Segment Controller */}
                 {matchesSearch("Thumb Segment", "Ergonomic thumb reach arc controller", "Navigation") && (
-                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all">
+                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all overflow-hidden">
                     <div className="flex items-center justify-between">
                       <Link href="/components/thumb-segment-controller" className="text-xs font-semibold text-[var(--text-primary)] hover:underline flex items-center gap-1">
                         Thumb Segment
@@ -1045,7 +1250,7 @@ export default function MobilePrimitivesPage() {
               <>
                 {/* 17. Mobile Bottom Sheet */}
                 {matchesSearch("Mobile Bottom Sheet", "Multi snap points gesture fling velocity", "Overlays") && (
-                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all">
+                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all overflow-hidden">
                     <div className="flex items-center justify-between">
                       <Link href="/components/mobile-bottom-sheet" className="text-xs font-semibold text-[var(--text-primary)] hover:underline flex items-center gap-1">
                         Mobile Bottom Sheet
@@ -1099,7 +1304,7 @@ export default function MobilePrimitivesPage() {
 
                 {/* 18. Swipe Action Card */}
                 {matchesSearch("Swipe Action Card", "Gesture swipe left right archive delete", "Overlays") && (
-                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all">
+                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all overflow-hidden">
                     <div className="flex items-center justify-between">
                       <Link href="/components/swipe-action-card" className="text-xs font-semibold text-[var(--text-primary)] hover:underline flex items-center gap-1">
                         Swipe Action Card
@@ -1153,7 +1358,7 @@ export default function MobilePrimitivesPage() {
 
                 {/* 19. M3 Dialog Modal */}
                 {matchesSearch("M3 Dialog Modal", "Alert confirmation dialog popup", "Overlays") && (
-                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all">
+                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all overflow-hidden">
                     <div className="flex items-center justify-between">
                       <Link href="/components/m3-dialog" className="text-xs font-semibold text-[var(--text-primary)] hover:underline flex items-center gap-1">
                         M3 Dialog
@@ -1192,6 +1397,138 @@ export default function MobilePrimitivesPage() {
                     </div>
                   </div>
                 )}
+
+                {/* 19B. Dynamic Island Live Activity */}
+                {matchesSearch("Dynamic Island Capsule", "Live activity capsule HUD status notch", "Overlays") && (
+                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all overflow-hidden">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold text-[var(--text-primary)]">
+                        Dynamic Island HUD
+                      </span>
+                      <span className="text-[10px] font-mono text-[var(--text-muted)]">Live Capsule</span>
+                    </div>
+
+                    <div className="py-2 flex flex-col items-center justify-center">
+                      <div
+                        onClick={() => setIslandExpanded(!islandExpanded)}
+                        className={cn(
+                          "relative rounded-[22px] bg-black border border-neutral-800 transition-all duration-300 cursor-pointer shadow-2xl select-none overflow-hidden",
+                          islandExpanded ? "w-full p-3.5 space-y-2.5" : "w-44 py-2 px-3 flex items-center justify-between"
+                        )}
+                      >
+                        {islandExpanded ? (
+                          <div className="space-y-2 font-mono">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <div className="h-7 w-7 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                                  <Radio className="h-3.5 w-3.5 animate-pulse" />
+                                </div>
+                                <div>
+                                  <div className="text-[11px] font-bold text-white font-sans">Edge Telemetry</div>
+                                  <div className="text-[9px] text-neutral-400">12ms • US-East Cluster</div>
+                                </div>
+                              </div>
+                              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold">
+                                ACTIVE
+                              </span>
+                            </div>
+                            <div className="w-full h-1 bg-neutral-800 rounded-full overflow-hidden">
+                              <div className="h-full bg-[var(--accent-green)] rounded-full w-[68%]" />
+                            </div>
+                            <div className="flex items-center justify-between text-[10px] text-neutral-400 pt-0.5">
+                              <span>Tap to collapse</span>
+                              <span className="text-white font-sans font-medium">99.98% Health</span>
+                            </div>
+                          </div>
+                        ) : (
+                          <>
+                            <div className="flex items-center gap-1.5">
+                              <span className="h-2 w-2 rounded-full bg-[var(--accent-green)] animate-pulse" />
+                              <span className="text-[10px] font-mono font-bold text-white">Edge Sync</span>
+                            </div>
+                            {/* Animated Mini Wave */}
+                            <div className="flex items-center gap-0.5 h-3">
+                              <span className="w-0.5 h-2 bg-emerald-400 rounded-full animate-bounce [animation-delay:0ms]" />
+                              <span className="w-0.5 h-3 bg-emerald-400 rounded-full animate-bounce [animation-delay:150ms]" />
+                              <span className="w-0.5 h-1.5 bg-emerald-400 rounded-full animate-bounce [animation-delay:300ms]" />
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between text-[11px] font-mono text-[var(--text-muted)] pt-1">
+                      <span>Gesture tap to expand</span>
+                      <span className="text-[var(--accent-green)]">Hardware Pill</span>
+                    </div>
+                  </div>
+                )}
+
+                {/* 19C. M3 Mobile Snackbar */}
+                {matchesSearch("M3 Snackbar Toast", "Floating notification bottom snackbar undo", "Overlays") && (
+                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all overflow-hidden">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold text-[var(--text-primary)]">
+                        M3 Snackbar &amp; Undo
+                      </span>
+                      <span className="text-[10px] font-mono text-[var(--text-muted)]">Bottom Anchor</span>
+                    </div>
+
+                    <div className="py-2 flex flex-col items-center justify-center space-y-2">
+                      <AnimatePresence mode="wait">
+                        {snackbarActive ? (
+                          <motion.div
+                            key="snackbar"
+                            initial={{ opacity: 0, y: 10, scale: 0.96 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: 8, scale: 0.96 }}
+                            className="w-full p-3 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-xl flex items-center justify-between gap-2"
+                          >
+                            <div className="flex items-center gap-2 min-w-0">
+                              <CheckCircle2 className="h-4 w-4 text-[var(--accent-green)] shrink-0" />
+                              <span className="text-xs font-sans text-[var(--text-primary)] truncate">Asset archived</span>
+                            </div>
+                            <div className="flex items-center gap-2 shrink-0">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setSnackbarActive(false);
+                                  showToast("Action undone!");
+                                }}
+                                className="text-xs font-mono font-bold text-[var(--accent-green)] hover:underline cursor-pointer"
+                              >
+                                Undo
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setSnackbarActive(false)}
+                                className="h-5 w-5 rounded-md flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--text-primary)] cursor-pointer text-sm"
+                              >
+                                ×
+                              </button>
+                            </div>
+                          </motion.div>
+                        ) : (
+                          <motion.button
+                            key="retrigger"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            type="button"
+                            onClick={() => setSnackbarActive(true)}
+                            className="px-3.5 py-1.5 rounded-full bg-[var(--surface-secondary)] hover:bg-[var(--surface-tertiary)] border border-[var(--border)] text-xs font-mono text-[var(--text-primary)] cursor-pointer active:scale-95 transition-all"
+                          >
+                            Summon Snackbar
+                          </motion.button>
+                        )}
+                      </AnimatePresence>
+                    </div>
+
+                    <div className="flex items-center justify-between text-[11px] font-mono text-[var(--text-muted)] pt-1">
+                      <span>Swipe or tap dismiss</span>
+                      <span className="text-[var(--accent-green)]">M3 Surface</span>
+                    </div>
+                  </div>
+                )}
               </>
             )}
 
@@ -1200,7 +1537,7 @@ export default function MobilePrimitivesPage() {
               <>
                 {/* 20. M3 Cards & Surfaces */}
                 {matchesSearch("M3 Card Surfaces", "Elevated filled outlined minimal surface", "Data Display") && (
-                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all">
+                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all overflow-hidden">
                     <div className="flex items-center justify-between">
                       <Link href="/components/m3-card" className="text-xs font-semibold text-[var(--text-primary)] hover:underline flex items-center gap-1">
                         M3 Cards
@@ -1233,7 +1570,7 @@ export default function MobilePrimitivesPage() {
 
                 {/* 21. M3 Lists */}
                 {matchesSearch("M3 List Item", "1-line 2-line 3-line list items", "Data Display") && (
-                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all">
+                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all overflow-hidden">
                     <div className="flex items-center justify-between">
                       <Link href="/components/m3-list" className="text-xs font-semibold text-[var(--text-primary)] hover:underline flex items-center gap-1">
                         M3 Lists
@@ -1271,7 +1608,7 @@ export default function MobilePrimitivesPage() {
 
                 {/* 22. M3 Progress & Step Pipeline (Stitch Screen 1 & 7) */}
                 {matchesSearch("M3 Progress Loaders", "Circular linear buffer step progression pipeline", "Data Display") && (
-                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all">
+                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all overflow-hidden">
                     <div className="flex items-center justify-between">
                       <Link href="/components/m3-progress-indicator" className="text-xs font-semibold text-[var(--text-primary)] hover:underline flex items-center gap-1">
                         Progress &amp; Pipeline
@@ -1315,7 +1652,7 @@ export default function MobilePrimitivesPage() {
 
                 {/* 23. M3 Badges & Status */}
                 {matchesSearch("M3 Badge Status", "Badges dots counter tags halo", "Data Display") && (
-                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all">
+                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all overflow-hidden">
                     <div className="flex items-center justify-between">
                       <Link href="/components/m3-badge" className="text-xs font-semibold text-[var(--text-primary)] hover:underline flex items-center gap-1">
                         M3 Badges
@@ -1368,12 +1705,15 @@ export default function MobilePrimitivesPage() {
 
                 {/* 24. M3 Squiggly Loaders (Google Android 14+) */}
                 {matchesSearch("M3 Squiggly Loader", "Squiggly horizontal circular undulating wave android sine", "Data Display") && (
-                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all">
+                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all overflow-hidden">
                     <div className="flex items-center justify-between">
-                      <div className="text-xs font-semibold text-[var(--text-primary)] flex items-center gap-1.5">
-                        <Sparkles className="h-3.5 w-3.5 text-blue-400" />
-                        <span>M3 Squiggly Loaders</span>
-                      </div>
+                      <Link
+                        href="/components/m3-progress-indicator?variant=squiggly-circular"
+                        className="text-xs font-semibold text-[var(--text-primary)] hover:underline flex items-center gap-1"
+                      >
+                        M3 Squiggly Loaders
+                        <ExternalLink className="h-3 w-3 text-[var(--text-muted)]" />
+                      </Link>
                       <span className="text-[10px] font-mono text-[var(--text-muted)]">Android 14+</span>
                     </div>
 
@@ -1403,7 +1743,7 @@ export default function MobilePrimitivesPage() {
 
                       {/* Interactive Controls Bar */}
                       <div className="w-full space-y-2 pt-2 border-t border-[var(--border)]/40 text-xs font-mono">
-                        <div className="flex items-center justify-between">
+                        <div className="flex flex-wrap items-center justify-between gap-1.5">
                           <div className="flex items-center gap-1 bg-[var(--surface-secondary)] p-0.5 rounded-lg border border-[var(--border)] text-[10px]">
                             <button
                               type="button"
@@ -1455,7 +1795,7 @@ export default function MobilePrimitivesPage() {
                                   : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]"
                               )}
                             >
-                              Royal Blue
+                              Blue
                             </button>
                           </div>
                         </div>
@@ -1473,7 +1813,7 @@ export default function MobilePrimitivesPage() {
                               max={24}
                               value={squigglesCount}
                               onChange={(e) => setSquigglesCount(Number(e.target.value))}
-                              className="w-full accent-[var(--accent-green)] cursor-pointer h-1"
+                              className="w-full accent-emerald-500 cursor-pointer h-1.5 rounded-lg bg-[var(--surface-secondary)]"
                             />
                           </div>
 
@@ -1488,7 +1828,7 @@ export default function MobilePrimitivesPage() {
                               max={8}
                               value={squigglyAmp}
                               onChange={(e) => setSquigglyAmp(Number(e.target.value))}
-                              className="w-full accent-[var(--accent-green)] cursor-pointer h-1"
+                              className="w-full accent-emerald-500 cursor-pointer h-1.5 rounded-lg bg-[var(--surface-secondary)]"
                             />
                           </div>
                         </div>
@@ -1504,12 +1844,15 @@ export default function MobilePrimitivesPage() {
 
                 {/* 25. M3 Physics & Shape Morph Loaders */}
                 {matchesSearch("M3 Physics Loader", "Shape morph spin elastic membrane punch through resistance physics", "Data Display") && (
-                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all">
+                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all overflow-hidden">
                     <div className="flex items-center justify-between">
-                      <div className="text-xs font-semibold text-[var(--text-primary)] flex items-center gap-1.5">
-                        <Activity className="h-3.5 w-3.5 text-purple-400" />
-                        <span>M3 Physics Loaders</span>
-                      </div>
+                      <Link
+                        href="/components/m3-progress-indicator?variant=elastic-line"
+                        className="text-xs font-semibold text-[var(--text-primary)] hover:underline flex items-center gap-1"
+                      >
+                        M3 Physics Loaders
+                        <ExternalLink className="h-3 w-3 text-[var(--text-muted)]" />
+                      </Link>
                       <span className="text-[10px] font-mono text-[var(--text-muted)]">Morph &amp; Elastic</span>
                     </div>
 
@@ -1536,7 +1879,7 @@ export default function MobilePrimitivesPage() {
 
                       {/* Interactive Controls Bar */}
                       <div className="w-full space-y-2 pt-2 border-t border-[var(--border)]/40 text-xs font-mono">
-                        <div className="flex items-center justify-between">
+                        <div className="flex flex-wrap items-center justify-between gap-1.5">
                           <div className="flex items-center gap-1 bg-[var(--surface-secondary)] p-0.5 rounded-lg border border-[var(--border)] text-[10px]">
                             <button
                               type="button"
@@ -1548,7 +1891,7 @@ export default function MobilePrimitivesPage() {
                                   : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
                               )}
                             >
-                              Elastic Membrane
+                              Elastic
                             </button>
                             <button
                               type="button"
@@ -1560,7 +1903,7 @@ export default function MobilePrimitivesPage() {
                                   : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
                               )}
                             >
-                              Shape Morph
+                              Morph
                             </button>
                           </div>
 
@@ -1588,7 +1931,7 @@ export default function MobilePrimitivesPage() {
                                   : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]"
                               )}
                             >
-                              Royal Blue
+                              Blue
                             </button>
                           </div>
                         </div>
@@ -1607,7 +1950,7 @@ export default function MobilePrimitivesPage() {
                                 step={0.1}
                                 value={physicsResistance}
                                 onChange={(e) => setPhysicsResistance(Number(e.target.value))}
-                                className="w-full accent-[var(--accent-green)] cursor-pointer h-1"
+                                className="w-full accent-emerald-500 cursor-pointer h-1.5 rounded-lg bg-[var(--surface-secondary)]"
                               />
                             </div>
                             <div>
@@ -1622,7 +1965,7 @@ export default function MobilePrimitivesPage() {
                                 step={0.1}
                                 value={physicsSpeed}
                                 onChange={(e) => setPhysicsSpeed(Number(e.target.value))}
-                                className="w-full accent-[var(--accent-green)] cursor-pointer h-1"
+                                className="w-full accent-emerald-500 cursor-pointer h-1.5 rounded-lg bg-[var(--surface-secondary)]"
                               />
                             </div>
                           </div>
@@ -1639,7 +1982,7 @@ export default function MobilePrimitivesPage() {
                               step={0.1}
                               value={physicsSpeed}
                               onChange={(e) => setPhysicsSpeed(Number(e.target.value))}
-                              className="w-full accent-[var(--accent-green)] cursor-pointer h-1"
+                              className="w-full accent-emerald-500 cursor-pointer h-1.5 rounded-lg bg-[var(--surface-secondary)]"
                             />
                           </div>
                         )}
@@ -1657,15 +2000,20 @@ export default function MobilePrimitivesPage() {
 
           </div>
 
-          {/* ── RIGHT COLUMN: Responsive Mobile Phone Simulator ── */}
+          {/* ── RIGHT COLUMN: Full Mobile Preview Panel Section ── */}
           <div
             className={cn(
-              "flex flex-col items-center space-y-3 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] sticky top-20",
-              isPhoneVisible
-                ? "lg:col-span-5 translate-x-0 opacity-100"
-                : "fixed right-0 top-32 translate-x-[120%] opacity-0 pointer-events-none z-30"
+              "hidden lg:block shrink-0 self-stretch transition-[width,opacity] duration-400 ease-in-out",
+              isPhoneVisible ? "w-[410px] sm:w-[430px] opacity-100" : "w-0 opacity-0 pointer-events-none overflow-hidden"
             )}
           >
+            <div
+              ref={mobilePanelRef}
+              className={cn(
+                "sticky top-20 w-full max-h-[calc(100vh-5.5rem)] overflow-y-auto no-scrollbar flex flex-col items-center pl-7 pr-3 space-y-4 pb-12 transition-transform duration-400 ease-in-out will-change-transform",
+                isPhoneVisible ? "translate-x-0" : "translate-x-full pointer-events-none"
+              )}
+            >
             {/* Clean Preset Header */}
             <div className="w-full flex items-center justify-between px-1">
               <div className="flex items-center gap-2">
@@ -1676,8 +2024,8 @@ export default function MobilePrimitivesPage() {
                   type="button"
                   onClick={() => setIsPhoneVisible(false)}
                   className="h-6 w-6 rounded-full bg-[var(--surface-secondary)] border border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:border-[var(--border-hover)] hover:scale-105 active:scale-95 flex items-center justify-center transition-all cursor-pointer"
-                  title="Move mobile view beyond right edge"
-                  aria-label="Move mobile view beyond right edge"
+                  title="Collapse preview panel"
+                  aria-label="Collapse preview panel"
                 >
                   <ChevronRight className="h-3.5 w-3.5" />
                 </button>
@@ -1747,28 +2095,27 @@ export default function MobilePrimitivesPage() {
 
             {/* Phone Wrapper with hide toggle */}
             <div className="relative">
-              {/* Circle button on left rim to push beyond right edge */}
+              {/* Circle button on left rim to push beyond right edge (never clipped) */}
               <button
                 type="button"
                 onClick={() => setIsPhoneVisible(false)}
                 className="flex absolute -left-4.5 top-1/2 -translate-y-1/2 z-40 h-9 w-9 rounded-full bg-[var(--surface-elevated)] border-2 border-[var(--border)] text-[var(--text-primary)] hover:border-[var(--accent-green)] hover:text-[var(--accent-green)] shadow-xl hover:scale-110 active:scale-95 items-center justify-center transition-all duration-200 cursor-pointer group"
-                title="Move mobile view beyond right edge"
-                aria-label="Move mobile view beyond right edge"
+                title="Collapse preview panel"
+                aria-label="Collapse preview panel"
               >
                 <ChevronRight className="h-4.5 w-4.5 transition-transform duration-200 group-hover:translate-x-0.5" />
               </button>
 
-              {/* Mobile Device Chassis Frame - Rims ALWAYS black */}
+              {/* Mobile Device Chassis Frame - Rims ALWAYS black, interior matching var(--bg-main) */}
               <div
-                ref={phoneChassisRef}
-                className="w-[360px] sm:w-[380px] h-[720px] rounded-[44px] bg-[#0c0d0e] border-[7px] border-[#18191b] shadow-[0_20px_50px_-15px_rgba(0,0,0,0.85)] ring-1 ring-black/80 flex flex-col overflow-hidden relative select-none"
+                className="w-[360px] sm:w-[380px] h-[720px] rounded-[44px] bg-[var(--bg-main)] border-[7px] border-[#18191b] shadow-[0_20px_50px_-15px_rgba(0,0,0,0.85)] ring-1 ring-black/80 flex flex-col overflow-hidden relative select-none shrink-0"
               >
               
                 {/* Top Status Bar & Dynamic Island */}
                 <div
                   className={cn(
                     "pt-2 pb-1 px-5 flex items-center justify-between shrink-0 z-30 text-[11px] font-mono transition-colors",
-                    isLightMode ? "bg-[#f8f9fa] text-neutral-600" : "bg-[#0c0d0e] text-neutral-400"
+                    isLightMode ? "bg-white text-neutral-600 border-b border-neutral-100" : "bg-[var(--bg-main)] text-neutral-400 border-b border-[var(--border)]/30"
                   )}
                 >
                   <span className={cn("font-semibold text-xs", isLightMode ? "text-neutral-900" : "text-white")}>
@@ -1792,10 +2139,9 @@ export default function MobilePrimitivesPage() {
                 {/* ════ PRESET 1: STORE PRESET ════ */}
                 {presetMode === "store" && (
                   <div
-                    ref={phoneScrollRef}
                     className={cn(
-                      "flex-1 flex flex-col justify-between overflow-y-auto px-4 py-3 space-y-4 transition-colors",
-                      isLightMode ? "bg-[#f8f9fa] text-neutral-900" : "bg-[#0c0d0e] text-white"
+                      "flex-1 flex flex-col justify-between px-4 py-3 space-y-3 transition-colors",
+                      isLightMode ? "bg-white text-neutral-900" : "bg-[var(--bg-main)] text-[var(--text-primary)]"
                     )}
                   >
                     {/* Header */}
@@ -1805,19 +2151,13 @@ export default function MobilePrimitivesPage() {
                         <h2 className="text-xl font-bold font-sans">Essential Archive</h2>
                       </div>
                       <div className="relative">
-                        <div className={cn("h-9 w-9 rounded-full flex items-center justify-center border", isLightMode ? "bg-neutral-100 border-neutral-200" : "bg-neutral-900 border-neutral-800")}>
+                        <div className={cn("h-9 w-9 rounded-full flex items-center justify-center border", isLightMode ? "bg-neutral-100 border-neutral-200" : "bg-[var(--surface-secondary)] border-[var(--border)]")}>
                           <ShoppingBag className="h-4 w-4" />
                         </div>
                         <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-[var(--accent-green)] text-[var(--bg-main)] text-[10px] font-mono font-bold flex items-center justify-center">
                           {cartCount}
                         </span>
                       </div>
-                    </div>
-
-                    {/* Search */}
-                    <div className={cn("flex items-center gap-2 px-3 py-2 rounded-xl border text-xs", isLightMode ? "bg-white border-neutral-200 text-neutral-700" : "bg-neutral-900/60 border-neutral-800 text-neutral-300")}>
-                      <Search className="h-3.5 w-3.5 text-neutral-400" />
-                      <span>Search apparel...</span>
                     </div>
 
                     {/* Filter Pills */}
@@ -1835,7 +2175,7 @@ export default function MobilePrimitivesPage() {
                                 : "bg-white text-black"
                               : isLightMode
                               ? "bg-neutral-200/60 text-neutral-700"
-                              : "bg-neutral-900 text-neutral-400"
+                              : "bg-[var(--surface-secondary)] text-[var(--text-secondary)]"
                           )}
                         >
                           {cat}
@@ -1844,7 +2184,7 @@ export default function MobilePrimitivesPage() {
                     </div>
 
                     {/* Hero Product Card */}
-                    <div className={cn("p-4 rounded-2xl border space-y-3", isLightMode ? "bg-white border-neutral-200 shadow-sm" : "bg-neutral-900/40 border-neutral-800")}>
+                    <div className={cn("p-4 rounded-2xl border space-y-2.5", isLightMode ? "bg-white border-neutral-200 shadow-sm" : "bg-[var(--surface-elevated)] border-[var(--border)]")}>
                       <div className="flex justify-between items-start">
                         <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[var(--surface-secondary)] text-[var(--text-muted)]">
                           DROP 01
@@ -1862,12 +2202,12 @@ export default function MobilePrimitivesPage() {
                         </button>
                       </div>
 
-                      <div className="h-28 rounded-xl bg-neutral-800/20 flex flex-col items-center justify-center border border-dashed border-neutral-700/40">
+                      <div className="h-24 rounded-xl bg-[var(--surface-secondary)] flex flex-col items-center justify-center border border-dashed border-[var(--border)]">
                         <span className="text-sm font-mono font-bold">[ MODULAR PARKA ]</span>
-                        <span className="text-[10px] text-neutral-500 font-mono mt-1">Interactive 3D model</span>
+                        <span className="text-[10px] text-neutral-500 font-mono mt-0.5">Interactive 3D model</span>
                       </div>
 
-                      <div className="flex items-center justify-between pt-1">
+                      <div className="flex items-center justify-between pt-0.5">
                         <div>
                           <div className="text-xs font-bold">Technical Shell 3L</div>
                           <div className="text-xs font-mono text-neutral-400">$245.00</div>
@@ -1882,16 +2222,33 @@ export default function MobilePrimitivesPage() {
                       </div>
                     </div>
 
-                    {/* Saved Swipe Items */}
-                    <div className="space-y-1.5 pt-1">
-                      <div className="flex justify-between text-xs font-mono text-neutral-400 px-1">
-                        <span>Saved</span>
-                        <span>Swipe ⇄</span>
+                    {/* Additional Product Card 2 */}
+                    <div className={cn("p-3 rounded-2xl border space-y-1.5", isLightMode ? "bg-white border-neutral-200 shadow-sm" : "bg-[var(--surface-elevated)] border-[var(--border)]")}>
+                      <div className="flex justify-between items-start">
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[var(--surface-secondary)] text-[var(--text-muted)]">
+                          DROP 02
+                        </span>
+                        <span className="text-[10px] font-mono text-[var(--accent-green)] font-semibold">In Stock</span>
                       </div>
-                      <div className={cn("p-3 rounded-xl border text-xs font-mono flex justify-between", isLightMode ? "bg-white border-neutral-200" : "bg-neutral-900/60 border-neutral-800")}>
-                        <span>Raw Black • L</span>
-                        <span className="text-[var(--accent-green)] font-bold">$65.00</span>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="text-xs font-bold">Arc Minimal Trench 2.0</div>
+                          <div className="text-xs font-mono text-neutral-400">$280.00 • Stormproof</div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setCartCount((c) => c + 1)}
+                          className="px-3 py-1 rounded-full bg-[var(--surface-secondary)] hover:bg-[var(--surface-tertiary)] text-xs font-mono font-semibold cursor-pointer active:scale-95 transition-all"
+                        >
+                          + Cart
+                        </button>
                       </div>
+                    </div>
+
+                    {/* Saved Item */}
+                    <div className={cn("p-2.5 rounded-xl border text-xs font-mono flex justify-between items-center", isLightMode ? "bg-white border-neutral-200" : "bg-[var(--surface-secondary)] border-[var(--border)]")}>
+                      <span className="text-[11px] truncate">Raw Black Overshirt • L</span>
+                      <span className="text-[var(--accent-green)] font-bold text-xs">$65.00</span>
                     </div>
                   </div>
                 )}
@@ -1899,10 +2256,9 @@ export default function MobilePrimitivesPage() {
                 {/* ════ PRESET 2: FEED PRESET ════ */}
                 {presetMode === "feed" && (
                   <div
-                    ref={phoneScrollRef}
                     className={cn(
-                      "flex-1 flex flex-col justify-between overflow-y-auto px-4 py-3 space-y-4 transition-colors",
-                      isLightMode ? "bg-[#f8f9fa] text-neutral-900" : "bg-[#0c0d0e] text-white"
+                      "flex-1 flex flex-col justify-between px-4 py-3 space-y-3 transition-colors",
+                      isLightMode ? "bg-white text-neutral-900" : "bg-[var(--bg-main)] text-[var(--text-primary)]"
                     )}
                   >
                     <div className="flex items-center justify-between">
@@ -1913,17 +2269,17 @@ export default function MobilePrimitivesPage() {
                       <button
                         type="button"
                         onClick={handleRefreshFeed}
-                        className={cn("h-8 w-8 rounded-full border flex items-center justify-center cursor-pointer active:scale-95", isLightMode ? "bg-white border-neutral-200 text-neutral-700" : "bg-neutral-900 border-neutral-800 text-neutral-300")}
+                        className={cn("h-8 w-8 rounded-full border flex items-center justify-center cursor-pointer active:scale-95", isLightMode ? "bg-white border-neutral-200 text-neutral-700" : "bg-[var(--surface-secondary)] border-[var(--border)] text-neutral-300")}
                       >
                         <RefreshCw className="h-3.5 w-3.5" />
                       </button>
                     </div>
 
                     <div className="space-y-2">
-                      {feedItems.map((item) => (
+                      {feedItems.slice(0, 4).map((item) => (
                         <div
                           key={item.id}
-                          className={cn("p-3.5 rounded-xl border space-y-1 transition-all", isLightMode ? "bg-white border-neutral-200 shadow-2xs" : "bg-neutral-900/60 border-neutral-800")}
+                          className={cn("p-3 rounded-xl border space-y-1 transition-all", isLightMode ? "bg-white border-neutral-200 shadow-2xs" : "bg-[var(--surface-elevated)] border-[var(--border)]")}
                         >
                           <div className="flex items-center justify-between">
                             <span className="text-xs font-bold font-sans">{item.sender}</span>
@@ -1939,10 +2295,9 @@ export default function MobilePrimitivesPage() {
                 {/* ════ PRESET 3: PULSE SYNC (Stitch Screen 1) ════ */}
                 {presetMode === "pulse-sync" && (
                   <div
-                    ref={phoneScrollRef}
                     className={cn(
-                      "flex-1 flex flex-col justify-between overflow-y-auto px-4 py-3 space-y-4 transition-colors",
-                      isLightMode ? "bg-[#f8f9fa] text-neutral-900" : "bg-[#0c0d0e] text-white"
+                      "flex-1 flex flex-col justify-between px-4 py-3 space-y-3 transition-colors",
+                      isLightMode ? "bg-white text-neutral-900" : "bg-[var(--bg-main)] text-[var(--text-primary)]"
                     )}
                   >
                     <div className="flex items-center justify-between">
@@ -1955,8 +2310,8 @@ export default function MobilePrimitivesPage() {
                       </span>
                     </div>
 
-                    {/* Live Telemetry Ticker from Stitch 1 */}
-                    <div className={cn("p-3 rounded-xl border flex items-center justify-between text-xs font-mono", isLightMode ? "bg-white border-neutral-200" : "bg-neutral-900/60 border-neutral-800")}>
+                    {/* Live Telemetry Ticker */}
+                    <div className={cn("p-3 rounded-xl border flex items-center justify-between text-xs font-mono", isLightMode ? "bg-white border-neutral-200" : "bg-[var(--surface-elevated)] border-[var(--border)]")}>
                       <div className="flex items-center gap-1.5">
                         <Activity className="h-4 w-4 text-[var(--accent-green)]" />
                         <span>1.42 GB/s</span>
@@ -1968,7 +2323,7 @@ export default function MobilePrimitivesPage() {
                     </div>
 
                     {/* Primary Asset Pipeline */}
-                    <div className={cn("p-4 rounded-2xl border space-y-3", isLightMode ? "bg-white border-neutral-200" : "bg-neutral-900/60 border-neutral-800")}>
+                    <div className={cn("p-3.5 rounded-2xl border space-y-2.5", isLightMode ? "bg-white border-neutral-200" : "bg-[var(--surface-elevated)] border-[var(--border)]")}>
                       <div className="flex justify-between items-center text-xs">
                         <span className="font-bold">Asset Transcode Pipeline</span>
                         <span className="font-mono text-[var(--accent-green)] font-bold">74%</span>
@@ -1988,8 +2343,8 @@ export default function MobilePrimitivesPage() {
                     <div className="space-y-1.5">
                       <span className="text-[10px] font-mono text-neutral-400 uppercase tracking-wider">Replica Health</span>
                       <div className="grid grid-cols-2 gap-2">
-                        {["US-East (Primary)", "EU-West (Hot Standby)", "AP-South (Read)", "SA-East (Replica)"].map((node, i) => (
-                          <div key={node} className={cn("p-2 rounded-xl border text-[11px] font-mono flex items-center justify-between", isLightMode ? "bg-white border-neutral-200" : "bg-neutral-900/60 border-neutral-800")}>
+                        {["US-East (Primary)", "EU-West (Hot Standby)", "AP-South (Read)", "SA-East (Replica)"].map((node) => (
+                          <div key={node} className={cn("p-2 rounded-xl border text-[11px] font-mono flex items-center justify-between", isLightMode ? "bg-white border-neutral-200" : "bg-[var(--surface-secondary)] border-[var(--border)]")}>
                             <span className="truncate">{node}</span>
                             <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0 ml-1" />
                           </div>
@@ -2002,10 +2357,9 @@ export default function MobilePrimitivesPage() {
                 {/* ════ PRESET 4: PULSE SECURITY (Stitch Screen 2) ════ */}
                 {presetMode === "pulse-security" && (
                   <div
-                    ref={phoneScrollRef}
                     className={cn(
-                      "flex-1 flex flex-col justify-between overflow-y-auto px-4 py-3 space-y-4 transition-colors",
-                      isLightMode ? "bg-[#f8f9fa] text-neutral-900" : "bg-[#0c0d0e] text-white"
+                      "flex-1 flex flex-col justify-between px-4 py-3 space-y-3 transition-colors",
+                      isLightMode ? "bg-white text-neutral-900" : "bg-[var(--bg-main)] text-[var(--text-primary)]"
                     )}
                   >
                     <div>
@@ -2013,7 +2367,7 @@ export default function MobilePrimitivesPage() {
                       <h2 className="text-xl font-bold font-sans">Sessions &amp; Auth</h2>
                     </div>
 
-                    <div className={cn("p-4 rounded-2xl border space-y-3.5", isLightMode ? "bg-white border-neutral-200" : "bg-neutral-900/60 border-neutral-800")}>
+                    <div className={cn("p-4 rounded-2xl border space-y-3.5", isLightMode ? "bg-white border-neutral-200" : "bg-[var(--surface-elevated)] border-[var(--border)]")}>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2.5">
                           <Shield className="h-5 w-5 text-[var(--accent-green)]" />
@@ -2039,14 +2393,14 @@ export default function MobilePrimitivesPage() {
 
                     <div className="space-y-2">
                       <span className="text-[10px] font-mono text-neutral-400 uppercase tracking-wider">Active Device Sessions</span>
-                      <div className={cn("p-3 rounded-xl border space-y-1 text-xs", isLightMode ? "bg-white border-neutral-200" : "bg-neutral-900/60 border-neutral-800")}>
+                      <div className={cn("p-3 rounded-xl border space-y-1 text-xs", isLightMode ? "bg-white border-neutral-200" : "bg-[var(--surface-elevated)] border-[var(--border)]")}>
                         <div className="flex justify-between font-bold">
                           <span>MacBook Pro 16&quot; (This Device)</span>
                           <span className="text-[var(--accent-green)] font-mono text-[10px]">CURRENT</span>
                         </div>
                         <div className="text-[10px] font-mono text-neutral-400">Chrome 131 • San Francisco, CA</div>
                       </div>
-                      <div className={cn("p-3 rounded-xl border space-y-1 text-xs opacity-75", isLightMode ? "bg-white border-neutral-200" : "bg-neutral-900/60 border-neutral-800")}>
+                      <div className={cn("p-3 rounded-xl border space-y-1 text-xs opacity-75", isLightMode ? "bg-white border-neutral-200" : "bg-[var(--surface-elevated)]/75 border-[var(--border)]")}>
                         <div className="flex justify-between font-bold">
                           <span>iPhone 16 Pro</span>
                           <span className="text-neutral-400 font-mono text-[10px]">2h ago</span>
@@ -2060,10 +2414,9 @@ export default function MobilePrimitivesPage() {
                 {/* ════ PRESET 5: PULSE PROJECTS (Stitch Screen 3) ════ */}
                 {presetMode === "pulse-projects" && (
                   <div
-                    ref={phoneScrollRef}
                     className={cn(
-                      "flex-1 flex flex-col justify-between overflow-y-auto px-4 py-3 space-y-4 transition-colors",
-                      isLightMode ? "bg-[#f8f9fa] text-neutral-900" : "bg-[#0c0d0e] text-white"
+                      "flex-1 flex flex-col justify-between px-4 py-3 space-y-3 transition-colors",
+                      isLightMode ? "bg-white text-neutral-900" : "bg-[var(--bg-main)] text-[var(--text-primary)]"
                     )}
                   >
                     <div>
@@ -2097,7 +2450,7 @@ export default function MobilePrimitivesPage() {
                       ].map((task, i) => (
                         <div
                           key={i}
-                          className={cn("p-3.5 rounded-xl border space-y-2", isLightMode ? "bg-white border-neutral-200 shadow-2xs" : "bg-neutral-900/60 border-neutral-800")}
+                          className={cn("p-3.5 rounded-xl border space-y-2", isLightMode ? "bg-white border-neutral-200 shadow-2xs" : "bg-[var(--surface-elevated)] border-[var(--border)]")}
                         >
                           <div className="flex justify-between items-start">
                             <span className="text-xs font-bold leading-tight">{task.title}</span>
@@ -2118,10 +2471,9 @@ export default function MobilePrimitivesPage() {
                 {/* ════ PRESET 6: OTP VERIFY (Stitch Screen 6) ════ */}
                 {presetMode === "otp-verify" && (
                   <div
-                    ref={phoneScrollRef}
                     className={cn(
-                      "flex-1 flex flex-col justify-between overflow-y-auto px-4 py-4 space-y-5 transition-colors text-center",
-                      isLightMode ? "bg-[#f8f9fa] text-neutral-900" : "bg-[#0c0d0e] text-white"
+                      "flex-1 flex flex-col justify-between px-4 py-4 space-y-4 transition-colors text-center",
+                      isLightMode ? "bg-white text-neutral-900" : "bg-[var(--bg-main)] text-[var(--text-primary)]"
                     )}
                   >
                     <div className="flex flex-col items-center space-y-2 pt-2">
@@ -2153,7 +2505,7 @@ export default function MobilePrimitivesPage() {
                       ))}
                     </div>
 
-                    <div className="space-y-3 pt-2">
+                    <div className="space-y-2.5 pt-1">
                       <button
                         type="button"
                         onClick={() => {
@@ -2177,10 +2529,9 @@ export default function MobilePrimitivesPage() {
                 {/* ════ PRESET 7: WALLET PRESET ════ */}
                 {presetMode === "wallet" && (
                   <div
-                    ref={phoneScrollRef}
                     className={cn(
-                      "flex-1 flex flex-col justify-between overflow-y-auto px-4 py-3 space-y-4 transition-colors",
-                      isLightMode ? "bg-[#f8f9fa] text-neutral-900" : "bg-[#0c0d0e] text-white"
+                      "flex-1 flex flex-col justify-between px-4 py-3 space-y-3 transition-colors",
+                      isLightMode ? "bg-white text-neutral-900" : "bg-[var(--bg-main)] text-[var(--text-primary)]"
                     )}
                   >
                     <div>
@@ -2188,12 +2539,12 @@ export default function MobilePrimitivesPage() {
                       <h2 className="text-xl font-bold font-sans">Active Liquidity</h2>
                     </div>
 
-                    <div className={cn("p-5 rounded-2xl border space-y-3", isLightMode ? "bg-white border-neutral-200 shadow-sm" : "bg-neutral-900/60 border-neutral-800")}>
+                    <div className={cn("p-4 rounded-2xl border space-y-2.5", isLightMode ? "bg-white border-neutral-200 shadow-sm" : "bg-[var(--surface-elevated)] border-[var(--border)]")}>
                       <span className="text-[10px] font-mono text-neutral-400 uppercase">Available Telemetry Credit</span>
-                      <div className="text-3xl font-mono font-bold tracking-tight text-[var(--accent-green)]">
+                      <div className="text-2xl font-mono font-bold tracking-tight text-[var(--accent-green)]">
                         $14,892.40
                       </div>
-                      <div className="grid grid-cols-2 gap-2 pt-2">
+                      <div className="grid grid-cols-2 gap-2 pt-1">
                         <button
                           type="button"
                           onClick={() => showToast("Quick Send modal opened")}
@@ -2218,8 +2569,9 @@ export default function MobilePrimitivesPage() {
                       {[
                         { title: "Validator Stake #09", time: "10m ago", amt: "+$420.00", pos: true },
                         { title: "AST Batch Verification", time: "1h ago", amt: "-$12.50", pos: false },
+                        { title: "Cluster Shard Provision", time: "3h ago", amt: "-$85.00", pos: false },
                       ].map((tx, i) => (
-                        <div key={i} className={cn("p-3 rounded-xl border flex items-center justify-between text-xs font-mono", isLightMode ? "bg-white border-neutral-200" : "bg-neutral-900/60 border-neutral-800")}>
+                        <div key={i} className={cn("p-2.5 rounded-xl border flex items-center justify-between text-xs font-mono", isLightMode ? "bg-white border-neutral-200" : "bg-[var(--surface-secondary)] border-[var(--border)]")}>
                           <div>
                             <div className="font-bold">{tx.title}</div>
                             <div className="text-[10px] text-neutral-400">{tx.time}</div>
@@ -2274,7 +2626,7 @@ export default function MobilePrimitivesPage() {
                 <div
                   className={cn(
                     "h-3 w-full flex items-center justify-center shrink-0 z-40 transition-colors",
-                    isLightMode ? "bg-[#f8f9fa]" : "bg-[#0c0d0e]"
+                    isLightMode ? "bg-white" : "bg-[var(--bg-main)]"
                   )}
                 >
                   <div className={cn("w-32 h-1 rounded-full", isLightMode ? "bg-neutral-300" : "bg-neutral-700")} />
@@ -2282,23 +2634,83 @@ export default function MobilePrimitivesPage() {
 
               </div>
             </div>
+
+            {/* ── Below Mobile Phone: Section Extension for Full Panel Scrolling ── */}
+            <div className="w-[360px] sm:w-[380px] space-y-3 pt-2">
+              {/* Preset Quick Switcher Card */}
+              <div className="w-full p-3.5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/80 backdrop-blur-md space-y-2.5 font-mono text-xs select-none shadow-xs">
+                <div className="flex items-center justify-between text-[11px] text-[var(--text-muted)]">
+                  <span className="font-semibold uppercase tracking-wider">Switch Preset Screen</span>
+                  <span className="text-[var(--accent-green)] font-bold">
+                    {PRESET_OPTIONS.find((p) => p.id === presetMode)?.label}
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 pt-0.5">
+                  {PRESET_OPTIONS.map((opt) => (
+                    <button
+                      key={opt.id}
+                      type="button"
+                      onClick={() => setPresetMode(opt.id)}
+                      className={cn(
+                        "p-2 rounded-xl border text-[11px] flex items-center gap-1.5 transition-all cursor-pointer truncate",
+                        presetMode === opt.id
+                          ? "bg-[var(--surface-tertiary)] border-[var(--accent-green)]/40 text-[var(--accent-green)] font-bold shadow-2xs"
+                          : "bg-[var(--surface-secondary)]/50 border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)]"
+                      )}
+                    >
+                      {opt.icon}
+                      <span className="truncate">{opt.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Reactive State Inspector Card */}
+              <div className="w-full p-3.5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/80 backdrop-blur-md space-y-2 font-mono text-xs select-none shadow-xs">
+                <div className="flex items-center justify-between text-[11px]">
+                  <span className="text-[var(--text-muted)]">Active Preset</span>
+                  <span className="font-bold text-[var(--accent-green)] uppercase">{presetMode}</span>
+                </div>
+                <div className="flex items-center justify-between text-[11px]">
+                  <span className="text-[var(--text-muted)]">Chassis Frame</span>
+                  <span className="text-[var(--text-primary)]">Hardware 720px M3 Glass</span>
+                </div>
+                <div className="flex items-center justify-between text-[11px]">
+                  <span className="text-[var(--text-muted)]">Scroll Chaining</span>
+                  <span className="text-[var(--accent-green)]">Panel Section Linked</span>
+                </div>
+              </div>
+
+              {/* Quick CLI Command */}
+              <div className="w-full p-3 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/80 backdrop-blur-md flex items-center justify-between font-mono text-xs select-none shadow-xs">
+                <div className="flex items-center gap-1.5 truncate text-[11px]">
+                  <span className="text-[var(--accent-green)]">$</span>
+                  <span className="text-[var(--text-muted)] truncate">npx @kilo-ui/cli add mobile</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleCopyCli}
+                  className="px-2.5 py-1 rounded-lg bg-[var(--surface-secondary)] hover:bg-[var(--surface-tertiary)] text-[10px] text-[var(--text-primary)] cursor-pointer active:scale-95 transition-all shrink-0 ml-2"
+                >
+                  {copiedCli ? "Copied" : "Copy"}
+                </button>
+              </div>
+            </div>
+
           </div>
-
         </div>
+      </div>
 
-        {/* Floating Slide-Open Handle on Right Edge when Phone is hidden */}
+        {/* Floating Slide-Open Circle Button on Right Edge when Panel is hidden */}
         {!isPhoneVisible && (
           <button
             type="button"
             onClick={() => setIsPhoneVisible(true)}
-            className="fixed right-0 top-1/2 -translate-y-1/2 z-50 flex items-center gap-1.5 py-3.5 px-2 rounded-l-2xl bg-[var(--surface-elevated)] border-l-2 border-y-2 border-[var(--border)] text-[var(--text-primary)] shadow-2xl hover:bg-[var(--surface-secondary)] hover:border-[var(--accent-green)] transition-all cursor-pointer group select-none"
-            title="Open Preset Preview Phone"
-            aria-label="Open Preset Preview Phone"
+            className="fixed right-5 top-1/2 -translate-y-1/2 z-50 h-11 w-11 rounded-full bg-[var(--surface-elevated)] border-2 border-[var(--border)] text-[var(--text-primary)] hover:border-[var(--accent-green)] hover:text-[var(--accent-green)] shadow-2xl hover:scale-110 active:scale-95 flex items-center justify-center transition-all cursor-pointer select-none group"
+            title="Open Mobile Preview Panel"
+            aria-label="Open Mobile Preview Panel"
           >
-            <ChevronLeft className="h-4 w-4 text-[var(--accent-green)] transition-transform group-hover:-translate-x-0.5" />
-            <span className="text-[10px] font-mono font-semibold tracking-wider uppercase text-[var(--text-secondary)] [writing-mode:vertical-rl] rotate-180">
-              Preset Preview
-            </span>
+            <ChevronLeft className="h-5 w-5 transition-transform group-hover:-translate-x-0.5 text-[var(--accent-green)]" />
           </button>
         )}
 
