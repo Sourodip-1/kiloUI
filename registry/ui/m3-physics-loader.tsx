@@ -65,8 +65,8 @@ export function M3PhysicsLoader({
   }
 
   // ══════════════════════════════════════════════════════════════════
-  // VARIANT 2: High-Performance Elastic Cord Punch-Through Loader
-  // 120fps direct DOM manipulation (Zero React 60fps re-render stutter)
+  // VARIANT 2: High-Precision Elastic Cord Punch-Through Loader
+  // C^1 continuous trajectory + Direct GPU transforms (Zero Stutter)
   // ══════════════════════════════════════════════════════════════════
   return (
     <ElasticCordPhysicsEngine
@@ -78,9 +78,9 @@ export function M3PhysicsLoader({
   );
 }
 
-// ── Silky 120 FPS Elastic Membrane Punch-Through Physics Engine ──
-// Uses direct DOM refs on rAF for continuous coordinate interpolation,
-// eliminating React setState reconciliation bottleneck during animation ticks.
+// ── Ultra-Smooth 120 FPS Elastic Membrane Physics Engine ──
+// Uses a C^1 continuous piecewise harmonic trajectory with 0px boundary jump.
+// High-frequency transforms manipulate DOM directly via rAF refs without React reconciliation.
 function ElasticCordPhysicsEngine({
   accent,
   speed,
@@ -93,14 +93,13 @@ function ElasticCordPhysicsEngine({
   className?: string;
 }) {
   const H = 120;
-  const midY = H / 2;
+  const midY = H / 2; // 60px
 
-  // DOM Refs for high-speed sub-millisecond transforms
   const containerRef = React.useRef<HTMLDivElement>(null);
   const cordRef = React.useRef<SVGPathElement>(null);
   const shapeWrapperRef = React.useRef<HTMLDivElement>(null);
 
-  // Low-frequency React state: ONLY updates when shape breaches line (once per ~1.2s)
+  // Shape index morphs only on breach (once every ~1.2s)
   const [shapeIndex, setShapeIndex] = React.useState(0);
 
   React.useEffect(() => {
@@ -108,87 +107,85 @@ function ElasticCordPhysicsEngine({
     let startTime: number | null = null;
     let lastBreachStage = 0;
 
-    const cycleDuration = 2.4 / speed;
-    const maxDeflection = 26 * Math.min(1.5, Math.max(0.5, resistance));
-    const topApex = 40;
-    const botApex = 40;
+    // Full loop cycle period in seconds
+    const cycleDuration = 2.4 / Math.max(0.2, speed);
+    // Amplitude parameters in pixels
+    const A = 38; // apex displacement from center
+    const D = 22 * Math.min(1.5, Math.max(0.5, resistance)); // max cord deflection
 
     const tick = (now: number) => {
       if (startTime === null) startTime = now;
       const elapsed = (now - startTime) / 1000;
-      const progress = (elapsed % cycleDuration) / cycleDuration; // 0..1
+      const p = (elapsed % cycleDuration) / cycleDuration; // 0..1
 
-      let shapeY = midY;
-      let lineDy = 0;
-      let scaleX = 1;
-      let scaleY = 1;
+      let shapeY = 0;
+      let cordY = 0;
+      let sx = 1;
+      let sy = 1;
 
-      // ── Physical Phase Timeline ──
-      // [0.00 -> 0.20] Rise up to Top Apex
-      // [0.20 -> 0.36] Natural Gravity Fall toward Line
-      // [0.36 -> 0.50] Membrane Contact & Elastic Resistance Stretch Down
-      // [0.50 -> 0.62] PUNCH-THROUGH DOWN! Line twangs, shape snaps past to bottom apex
-      // [0.62 -> 0.76] Bottom Apex Reversal & Rise toward Line
-      // [0.76 -> 0.90] Membrane Contact from below & Elastic Resistance Stretch Up
-      // [0.90 -> 1.00] PUNCH-THROUGH UP! Line twangs, shape snaps past to top apex
+      // ── C^1 Continuous Trajectory Timeline ──
+      // [0.00 -> 0.25]: Pop up from 0 to apex -A
+      // [0.25 -> 0.45]: Gravity fall from -A to contact cord at 0
+      // [0.45 -> 0.58]: Elastic contact, resistance and cord stretch from 0 to +D
+      // [0.58 -> 0.70]: PUNCH-THROUGH DOWN! Cord twangs, shape shoots to bottom apex +A
+      // [0.70 -> 0.85]: Bottom apex reversal and rise upward from +A to 0
+      // [0.85 -> 0.95]: Upward contact, resistance and cord stretch from 0 to -D
+      // [0.95 -> 1.00]: PUNCH-THROUGH UP! Cord twangs, shape shoots to 0 and loops
 
-      if (progress < 0.20) {
-        const t = progress / 0.20;
-        shapeY = midY - Math.sin((t * Math.PI) / 2) * topApex;
-        lineDy = 0;
-        scaleX = 0.92 + 0.08 * t;
-        scaleY = 1.08 - 0.08 * t;
-      } else if (progress < 0.36) {
-        const t = (progress - 0.20) / 0.16;
-        shapeY = midY - topApex + t * t * topApex; // quadratic gravity
-        lineDy = 0;
-        scaleX = 0.9;
-        scaleY = 1.1;
-      } else if (progress < 0.50) {
-        const t = (progress - 0.36) / 0.14;
+      if (p < 0.25) {
+        const t = p / 0.25;
+        shapeY = -A * Math.sin((t * Math.PI) / 2);
+        cordY = 0;
+        sx = 0.94 + 0.06 * t;
+        sy = 1.06 - 0.06 * t;
+      } else if (p < 0.45) {
+        const t = (p - 0.25) / 0.20;
+        shapeY = -A * Math.cos((t * Math.PI) / 2);
+        cordY = 0;
+        sx = 0.92;
+        sy = 1.08;
+      } else if (p < 0.58) {
+        const t = (p - 0.45) / 0.13;
         const stretch = Math.sin((t * Math.PI) / 2);
-        lineDy = stretch * maxDeflection;
-        shapeY = midY + lineDy;
-        scaleX = 1 + stretch * 0.26;
-        scaleY = 1 - stretch * 0.18;
-      } else if (progress < 0.62) {
-        const t = (progress - 0.50) / 0.12;
-        // Damped harmonic twang: e^(-6t) * cos(4.5 * PI * t)
-        const twang = Math.exp(-6 * t) * Math.cos(t * Math.PI * 4.5);
-        lineDy = -twang * maxDeflection * 0.75;
-        const punch = 1 - Math.cos((t * Math.PI) / 2);
-        shapeY = midY + maxDeflection * 0.3 + punch * (botApex - maxDeflection * 0.3);
-        scaleX = 0.95;
-        scaleY = 1.05;
+        shapeY = D * stretch;
+        cordY = shapeY;
+        sx = 1 + stretch * 0.26;
+        sy = 1 - stretch * 0.18;
+      } else if (p < 0.70) {
+        const t = (p - 0.58) / 0.12;
+        shapeY = D + (A - D) * Math.sin((t * Math.PI) / 2);
+        // Cord damped harmonic recoil from +D back to 0
+        cordY = D * Math.exp(-6 * t) * Math.cos(t * Math.PI * 4);
+        sx = 0.95;
+        sy = 1.05;
 
-        // Shape morphs cleanly on downward breach
+        // Shape morphs on downward breakthrough
         if (lastBreachStage !== 1) {
           lastBreachStage = 1;
           setShapeIndex((idx) => (idx + 1) % M3_MORPH_SHAPES.length);
         }
-      } else if (progress < 0.76) {
-        const t = (progress - 0.62) / 0.14;
-        shapeY = midY + botApex - (1 - Math.cos((t * Math.PI) / 2)) * botApex;
-        lineDy = 0;
-        scaleX = 0.92;
-        scaleY = 1.08;
-      } else if (progress < 0.90) {
-        const t = (progress - 0.76) / 0.14;
+      } else if (p < 0.85) {
+        const t = (p - 0.70) / 0.15;
+        shapeY = A * Math.cos((t * Math.PI) / 2);
+        cordY = 0;
+        sx = 0.92;
+        sy = 1.08;
+      } else if (p < 0.95) {
+        const t = (p - 0.85) / 0.10;
         const stretch = Math.sin((t * Math.PI) / 2);
-        lineDy = -stretch * maxDeflection;
-        shapeY = midY + lineDy;
-        scaleX = 1 + stretch * 0.26;
-        scaleY = 1 - stretch * 0.18;
+        shapeY = -D * stretch;
+        cordY = shapeY;
+        sx = 1 + stretch * 0.26;
+        sy = 1 - stretch * 0.18;
       } else {
-        const t = (progress - 0.90) / 0.10;
-        const twang = Math.exp(-6 * t) * Math.cos(t * Math.PI * 4.5);
-        lineDy = twang * maxDeflection * 0.75;
-        const punch = 1 - Math.cos((t * Math.PI) / 2);
-        shapeY = midY - maxDeflection * 0.3 - punch * (topApex - maxDeflection * 0.3);
-        scaleX = 0.95;
-        scaleY = 1.05;
+        const t = (p - 0.95) / 0.05;
+        shapeY = -D * (1 - Math.sin((t * Math.PI) / 2));
+        // Cord damped harmonic recoil from -D back to 0
+        cordY = -D * Math.exp(-6 * t) * Math.cos(t * Math.PI * 4);
+        sx = 0.95;
+        sy = 1.05;
 
-        // Shape morphs cleanly on upward breach
+        // Shape morphs on upward breakthrough
         if (lastBreachStage !== 2) {
           lastBreachStage = 2;
           setShapeIndex((idx) => (idx + 1) % M3_MORPH_SHAPES.length);
@@ -197,15 +194,18 @@ function ElasticCordPhysicsEngine({
 
       // Direct GPU transform manipulation (0ms React overhead, 100% stutter-free)
       if (cordRef.current) {
-        cordRef.current.setAttribute("d", `M 14,${midY} Q 50,${midY + lineDy} 86,${midY}`);
+        cordRef.current.setAttribute(
+          "d",
+          `M 80,${midY} Q 500,${midY + cordY} 920,${midY}`
+        );
         cordRef.current.setAttribute(
           "stroke-width",
-          String(Math.max(1.5, 3.0 - Math.abs(lineDy) * 0.035))
+          String(Math.max(1.8, 3.2 - Math.abs(cordY) * 0.04))
         );
       }
 
       if (shapeWrapperRef.current) {
-        shapeWrapperRef.current.style.transform = `translate3d(-50%, ${shapeY - midY}px, 0) scale(${scaleX}, ${scaleY})`;
+        shapeWrapperRef.current.style.transform = `translate3d(-50%, ${shapeY}px, 0) scale(${sx}, ${sy})`;
       }
 
       animId = requestAnimationFrame(tick);
@@ -216,7 +216,7 @@ function ElasticCordPhysicsEngine({
   }, [speed, resistance, midY]);
 
   const currentShape = M3_MORPH_SHAPES[shapeIndex];
-  const shapeSize = 30;
+  const shapeSize = 32;
 
   return (
     <div
@@ -228,34 +228,37 @@ function ElasticCordPhysicsEngine({
     >
       {/* Dynamic 100% Width Stretchable Elastic Cord (Flat, Strictly NO GLOW) */}
       <svg
-        viewBox={`0 0 100 ${H}`}
+        viewBox={`0 0 1000 ${H}`}
         preserveAspectRatio="none"
         className="absolute inset-0 w-full h-full overflow-visible pointer-events-none"
       >
         {/* Subtle resting guide track */}
         <line
-          x1="14"
+          x1="80"
           y1={midY}
-          x2="86"
+          x2="920"
           y2={midY}
           stroke="currentColor"
           strokeWidth="1"
-          strokeDasharray="2 3"
+          strokeDasharray="3 4"
+          vectorEffect="non-scaling-stroke"
           className="text-[var(--border)] opacity-35"
         />
 
-        {/* Dynamic Cord: Path d and strokeWidth updated at 120fps via ref */}
+        {/* Dynamic Cord: Uniform vector-effect stroke width and smooth deflection */}
         <path
           ref={cordRef}
-          d={`M 14,${midY} Q 50,${midY} 86,${midY}`}
+          d={`M 80,${midY} Q 500,${midY} 920,${midY}`}
           fill="none"
           stroke={accent}
           strokeWidth="3"
           strokeLinecap="round"
+          vectorEffect="non-scaling-stroke"
         />
       </svg>
 
       {/* Floating Morphing Geometry (Smooth hardware-accelerated translate3d) */}
+      {/* IMPORTANT: No conflicting transform in inline style, preventing React reconciliation jumps */}
       <div
         ref={shapeWrapperRef}
         style={{
@@ -264,7 +267,6 @@ function ElasticCordPhysicsEngine({
           top: "50%",
           width: shapeSize,
           height: shapeSize,
-          transform: "translate3d(-50%, 0px, 0) scale(1, 1)",
           willChange: "transform",
         }}
         className="flex items-center justify-center pointer-events-none z-10"
@@ -275,7 +277,7 @@ function ElasticCordPhysicsEngine({
           height={shapeSize}
           className="overflow-visible select-none"
         >
-          {/* Smooth Shape Morphing on Breach: Circle -> Squircle -> Pill -> Clover -> Star -> Pentagon */}
+          {/* Seamless Shape Morphing on Breach: Circle -> Squircle -> Pill -> Clover -> Star -> Pentagon */}
           <motion.path
             animate={{ d: currentShape.d }}
             transition={{

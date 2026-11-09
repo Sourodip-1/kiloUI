@@ -126,14 +126,11 @@ export function M3LoadingIndicator({
       style={{ width: svgSize, height: svgSize }}
       className="relative flex items-center justify-center select-none shrink-0"
     >
-      {/* Continuous GPU-composited 360 rotation wrapper (zero React re-render) */}
+      {/* Continuous GPU-composited 360 rotation wrapper (zero React re-render hitching) */}
       <motion.div
-        animate={isDeterminate ? { rotate: activeIndex * 60 } : { rotate: 360 }}
-        transition={
-          isDeterminate
-            ? { duration: 0.5, ease: "easeOut" }
-            : { repeat: Infinity, duration: 4.8 / speed, ease: "linear" }
-        }
+        animate={isDeterminate ? { rotate: activeIndex * 60 } : undefined}
+        transition={isDeterminate ? { duration: 0.5, ease: "easeOut" } : undefined}
+        style={!isDeterminate ? { animation: `spin ${4.8 / speed}s linear infinite` } : undefined}
         className="w-full h-full flex items-center justify-center will-change-transform"
       >
         <svg
