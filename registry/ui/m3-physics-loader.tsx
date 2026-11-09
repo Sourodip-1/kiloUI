@@ -110,7 +110,7 @@ function ElasticCordPhysicsEngine({
     // Full loop cycle period in seconds
     const cycleDuration = 2.4 / Math.max(0.2, speed);
     // Amplitude parameters in pixels
-    const A = 38; // apex displacement from center
+    const A = 40; // apex displacement from center
     const D = 22 * Math.min(1.5, Math.max(0.5, resistance)); // max cord deflection
 
     const tick = (now: number) => {
@@ -205,7 +205,7 @@ function ElasticCordPhysicsEngine({
       }
 
       if (shapeWrapperRef.current) {
-        shapeWrapperRef.current.style.transform = `translate3d(-50%, ${shapeY}px, 0) scale(${sx}, ${sy})`;
+        shapeWrapperRef.current.style.transform = `translate3d(0, ${shapeY}px, 0) scale(${sx}, ${sy})`;
       }
 
       animId = requestAnimationFrame(tick);
@@ -258,7 +258,7 @@ function ElasticCordPhysicsEngine({
       </svg>
 
       {/* Floating Morphing Geometry (Smooth hardware-accelerated translate3d) */}
-      {/* IMPORTANT: No conflicting transform in inline style, preventing React reconciliation jumps */}
+      {/* Centered at 50% 50% via negative margins so shapeY is relative to the exact center line */}
       <div
         ref={shapeWrapperRef}
         style={{
@@ -267,6 +267,8 @@ function ElasticCordPhysicsEngine({
           top: "50%",
           width: shapeSize,
           height: shapeSize,
+          marginTop: -shapeSize / 2,
+          marginLeft: -shapeSize / 2,
           willChange: "transform",
         }}
         className="flex items-center justify-center pointer-events-none z-10"
