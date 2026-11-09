@@ -18,11 +18,18 @@ export interface M3SquigglyLoaderProps {
   size?: number;
   /** Width for horizontal variant (defaults to 100% or size) */
   width?: number | string;
-  /** Color theme: "google" (Google 4-color gradient), "accent" (Emerald), "monochrome", or custom hex */
-  color?: "google" | "accent" | "monochrome" | string;
+  /**
+   * Single accent color:
+   * - "accent": Uses project's var(--accent-green)
+   * - "blue": Single Google Royal Blue (#2563eb)
+   * - "monochrome": Uses currentColor / text-primary
+   * - or any custom single hex color string (e.g. "#10b981", "#3b82f6")
+   * Strictly single-color — no rainbow gradients.
+   */
+  color?: "accent" | "blue" | "monochrome" | string;
   /** Animation speed multiplier (1 is normal) */
   speed?: number;
-  /** Optional glow effect */
+  /** Optional soft single-color glow effect */
   glow?: boolean;
   /** Additional CSS class names */
   className?: string;
@@ -36,7 +43,7 @@ export function M3SquigglyLoader({
   strokeWidth = 3.5,
   size = 56,
   width,
-  color = "google",
+  color = "accent",
   speed = 1,
   glow = false,
   className,
@@ -69,10 +76,15 @@ export function M3SquigglyLoader({
     };
   }, [speed]);
 
-  // Unique ID for SVG gradients
-  const gradientId = React.useId();
+  // Resolve single accent color value
+  const resolvedColor = React.useMemo(() => {
+    if (color === "accent") return "var(--accent-green)";
+    if (color === "blue") return "#2563eb";
+    if (color === "monochrome") return "currentColor";
+    return color;
+  }, [color]);
 
-  // ── Circular Squiggly Wave Generator ──
+  // ── Circular Squiggly Wave Generator (Google Android 14+ Style) ──
   if (variant === "circular") {
     const center = size / 2;
     const baseRadius = center - amplitude - strokeWidth;
@@ -80,10 +92,11 @@ export function M3SquigglyLoader({
     const progressFactor = isDeterminate ? Math.min(1, Math.max(0, (value || 0) / 100)) : 1;
 
     // Generate circular sinusoidal path points
-    const points: string[] = [];
-    const totalAngle = isDeterminate ? Math.PI * 2 * progressFactor : Math.PI * 1.85;
-    const startAngle = isDeterminate ? -Math.PI / 2 : phase * 0.8;
+    // When indeterminate, an open 35-degree gap glides around the squiggly perimeter
+    const totalAngle = isDeterminate ? Math.PI * 2 * progressFactor : Math.PI * 1.82;
+    const startAngle = isDeterminate ? -Math.PI / 2 : phase * 0.85;
 
+    const points: string[] = [];
     for (let i = 0; i <= numPoints; i++) {
       const t = i / numPoints;
       if (t > progressFactor && isDeterminate) break;
@@ -113,52 +126,28 @@ export function M3SquigglyLoader({
         style={{ width: size, height: size }}
         className={cn(
           "relative inline-flex items-center justify-center select-none shrink-0",
-          glow && "drop-shadow-[0_0_8px_rgba(66,133,244,0.45)]",
+          glow && "drop-shadow-[0_0_10px_rgba(37,99,235,0.4)] dark:drop-shadow-[0_0_10px_rgba(16,185,129,0.35)]",
           className
         )}
       >
         <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="overflow-visible">
-          <defs>
-            {/* Google 4-color gradient */}
-            <linearGradient id={`${gradientId}-google`} x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#4285F4" />
-              <stop offset="35%" stopColor="#EA4335" />
-              <stop offset="70%" stopColor="#FBBC05" />
-              <stop offset="100%" stopColor="#34A853" />
-            </linearGradient>
-
-            {/* Accent Emerald gradient */}
-            <linearGradient id={`${gradientId}-accent`} x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#34d399" />
-              <stop offset="100%" stopColor="#059669" />
-            </linearGradient>
-          </defs>
-
-          {/* Background guide track */}
+          {/* Subtle guide track */}
           <circle
             cx={center}
             cy={center}
             r={baseRadius}
             fill="none"
             stroke="currentColor"
-            strokeWidth={strokeWidth * 0.4}
+            strokeWidth={strokeWidth * 0.45}
             strokeDasharray="2 3"
-            className="text-[var(--border)] opacity-40"
+            className="text-[var(--border)] opacity-35"
           />
 
-          {/* Active Squiggly Path */}
+          {/* Active Single-Accent Squiggly Ring Path */}
           <path
             d={pathData}
             fill="none"
-            stroke={
-              color === "google"
-                ? `url(#${gradientId}-google)`
-                : color === "accent"
-                ? `url(#${gradientId}-accent)`
-                : color === "monochrome"
-                ? "currentColor"
-                : color
-            }
+            stroke={resolvedColor}
             strokeWidth={strokeWidth}
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -178,7 +167,7 @@ export function M3SquigglyLoader({
   // ── Horizontal Squiggly Wave Generator ──
   const height = Math.max(24, amplitude * 3 + strokeWidth * 2);
   const containerWidth = typeof width === "number" ? width : 240;
-  const numSteps = Math.max(60, squiggles * 8);
+  const numSteps = Math.max(64, squiggles * 8);
   const stepX = containerWidth / numSteps;
   const centerY = height / 2;
 
@@ -213,7 +202,7 @@ export function M3SquigglyLoader({
       style={{ width: width || "100%", height }}
       className={cn(
         "relative flex items-center select-none overflow-hidden",
-        glow && "drop-shadow-[0_0_8px_rgba(66,133,244,0.35)]",
+        glow && "drop-shadow-[0_0_8px_rgba(16,185,129,0.3)]",
         className
       )}
     >
@@ -224,20 +213,6 @@ export function M3SquigglyLoader({
         preserveAspectRatio="none"
         className="w-full h-full overflow-visible"
       >
-        <defs>
-          <linearGradient id={`${gradientId}-h-google`} x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#4285F4" />
-            <stop offset="35%" stopColor="#EA4335" />
-            <stop offset="70%" stopColor="#FBBC05" />
-            <stop offset="100%" stopColor="#34A853" />
-          </linearGradient>
-
-          <linearGradient id={`${gradientId}-h-accent`} x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#10b981" />
-            <stop offset="100%" stopColor="#34d399" />
-          </linearGradient>
-        </defs>
-
         {/* Inactive flat track when in determinate mode */}
         {isDeterminate && progressPercent < 100 && (
           <line
@@ -248,23 +223,15 @@ export function M3SquigglyLoader({
             stroke="currentColor"
             strokeWidth={strokeWidth * 0.75}
             strokeLinecap="round"
-            className="text-[var(--border)] opacity-50"
+            className="text-[var(--border)] opacity-40"
           />
         )}
 
-        {/* Active Squiggly Wave Path */}
+        {/* Active Single-Accent Squiggly Wave Path */}
         <path
           d={squigglyPath}
           fill="none"
-          stroke={
-            color === "google"
-              ? `url(#${gradientId}-h-google)`
-              : color === "accent"
-              ? `url(#${gradientId}-h-accent)`
-              : color === "monochrome"
-              ? "currentColor"
-              : color
-          }
+          stroke={resolvedColor}
           strokeWidth={strokeWidth}
           strokeLinecap="round"
           strokeLinejoin="round"

@@ -201,11 +201,11 @@ export default function MobilePrimitivesPage() {
   const [squigglyVariant, setSquigglyVariant] = React.useState<"circular" | "horizontal">("circular");
   const [squigglesCount, setSquigglesCount] = React.useState(14);
   const [squigglyAmp, setSquigglyAmp] = React.useState(4);
-  const [squigglyColor, setSquigglyColor] = React.useState<"google" | "accent" | "monochrome">("google");
+  const [squigglyColor, setSquigglyColor] = React.useState<"accent" | "blue" | "monochrome">("accent");
 
   // Physics Loader Controls
   const [physicsVariant, setPhysicsVariant] = React.useState<"shape-morph" | "elastic-line">("elastic-line");
-  const [physicsTheme, setPhysicsTheme] = React.useState<"google" | "minimal">("google");
+  const [physicsTheme, setPhysicsTheme] = React.useState<"accent" | "google">("accent");
   const [physicsResistance, setPhysicsResistance] = React.useState(1);
 
   // ── Phone Frame Preset States ──
@@ -1432,20 +1432,8 @@ export default function MobilePrimitivesPage() {
                             </button>
                           </div>
 
-                          {/* Color Switcher */}
+                          {/* Single Accent Color Switcher */}
                           <div className="flex items-center gap-1 text-[10px]">
-                            <button
-                              type="button"
-                              onClick={() => setSquigglyColor("google")}
-                              className={cn(
-                                "px-2 py-0.5 rounded-md border transition-all cursor-pointer",
-                                squigglyColor === "google"
-                                  ? "bg-[var(--surface-secondary)] border-blue-500/60 text-blue-400 font-bold"
-                                  : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]"
-                              )}
-                            >
-                              Google
-                            </button>
                             <button
                               type="button"
                               onClick={() => setSquigglyColor("accent")}
@@ -1457,6 +1445,18 @@ export default function MobilePrimitivesPage() {
                               )}
                             >
                               Emerald
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setSquigglyColor("blue")}
+                              className={cn(
+                                "px-2 py-0.5 rounded-md border transition-all cursor-pointer",
+                                squigglyColor === "blue"
+                                  ? "bg-[var(--surface-secondary)] border-blue-500/60 text-blue-400 font-bold"
+                                  : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                              )}
+                            >
+                              Royal Blue
                             </button>
                           </div>
                         </div>
@@ -1562,8 +1562,20 @@ export default function MobilePrimitivesPage() {
                             </button>
                           </div>
 
-                          {/* Theme Switcher */}
+                          {/* Accent Color Switcher */}
                           <div className="flex items-center gap-1 text-[10px]">
+                            <button
+                              type="button"
+                              onClick={() => setPhysicsTheme("accent")}
+                              className={cn(
+                                "px-2 py-0.5 rounded-md border transition-all cursor-pointer",
+                                physicsTheme === "accent"
+                                  ? "bg-[var(--surface-secondary)] border-emerald-500/60 text-emerald-400 font-bold"
+                                  : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                              )}
+                            >
+                              Emerald
+                            </button>
                             <button
                               type="button"
                               onClick={() => setPhysicsTheme("google")}
@@ -1574,19 +1586,7 @@ export default function MobilePrimitivesPage() {
                                   : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]"
                               )}
                             >
-                              Google
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => setPhysicsTheme("minimal")}
-                              className={cn(
-                                "px-2 py-0.5 rounded-md border transition-all cursor-pointer",
-                                physicsTheme === "minimal"
-                                  ? "bg-[var(--surface-secondary)] border-emerald-500/60 text-emerald-400 font-bold"
-                                  : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]"
-                              )}
-                            >
-                              Minimal
+                              Royal Blue
                             </button>
                           </div>
                         </div>

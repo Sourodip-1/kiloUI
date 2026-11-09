@@ -6654,13 +6654,13 @@ export function ComponentPreviewStage({
                     </span>
                     <div className="flex items-center justify-center py-2">
                       {m3ProgressVariant === "squiggly-horizontal" ? (
-                        <M3SquigglyLoader variant="horizontal" squiggles={14} amplitude={4} color="google" strokeWidth={3.5} glow />
+                        <M3SquigglyLoader variant="horizontal" squiggles={14} amplitude={4} color="accent" strokeWidth={3.5} glow />
                       ) : m3ProgressVariant === "squiggly-circular" ? (
-                        <M3SquigglyLoader variant="circular" squiggles={14} amplitude={4} color="google" size={68} strokeWidth={3.5} glow />
+                        <M3SquigglyLoader variant="circular" squiggles={14} amplitude={4} color="blue" size={68} strokeWidth={3.5} glow />
                       ) : m3ProgressVariant === "shape-morph" ? (
-                        <M3PhysicsLoader variant="shape-morph" theme="google" size={68} />
+                        <M3PhysicsLoader variant="shape-morph" theme="accent" size={68} />
                       ) : m3ProgressVariant === "elastic-line" ? (
-                        <M3PhysicsLoader variant="elastic-line" theme="google" resistance={1} />
+                        <M3PhysicsLoader variant="elastic-line" theme="accent" resistance={1} />
                       ) : m3ProgressVariant === "circular" ? (
                         <M3ProgressIndicator type="circular" value={m3ProgressVal} />
                       ) : (
@@ -6669,23 +6669,42 @@ export function ComponentPreviewStage({
                     </div>
                   </div>
 
-                  {/* Squiggly Wave Showcase */}
+                  {/* Squiggly Wave Showcase (Single Accent Colors) */}
                   <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] space-y-3 text-center">
                     <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 block">Squiggly Waves (Android 14+)</span>
                     <div className="flex items-center justify-around py-1">
-                      <M3SquigglyLoader variant="circular" size={54} squiggles={12} amplitude={3.5} color="google" />
-                      <M3SquigglyLoader variant="circular" size={54} squiggles={16} amplitude={4} color="accent" />
+                      <div className="flex flex-col items-center gap-1.5">
+                        <M3SquigglyLoader variant="circular" size={56} squiggles={14} amplitude={3.5} color="blue" glow />
+                        <span className="text-[9px] font-mono text-[var(--text-muted)]">Google Royal Blue</span>
+                      </div>
+                      <div className="flex flex-col items-center gap-1.5">
+                        <M3SquigglyLoader variant="circular" size={56} squiggles={14} amplitude={3.5} color="accent" glow />
+                        <span className="text-[9px] font-mono text-[var(--text-muted)]">Emerald Accent</span>
+                      </div>
                     </div>
-                    <div className="px-1 pt-1">
-                      <M3SquigglyLoader variant="horizontal" squiggles={14} amplitude={3.5} color="google" />
+                    <div className="px-1 pt-2">
+                      <M3SquigglyLoader variant="horizontal" squiggles={14} amplitude={3.5} color="accent" />
                     </div>
                   </div>
 
                   {/* Physics & Shape-Morph Showcase */}
-                  <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] space-y-3">
+                  <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] space-y-4">
                     <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 block text-center">Shape Morph &amp; Elastic Physics</span>
-                    <div className="flex justify-center py-1">
-                      <M3PhysicsLoader variant="elastic-line" theme="google" size={54} />
+                    
+                    {/* Shape Morph Spinner */}
+                    <div className="p-3 rounded-lg bg-[var(--surface-secondary)]/50 border border-[var(--border)]/60 flex flex-col items-center gap-2">
+                      <span className="text-[9px] font-mono text-[var(--text-muted)] uppercase">Shape Morph Spinner</span>
+                      <div className="py-2 flex justify-center">
+                        <M3PhysicsLoader variant="shape-morph" theme="accent" size={60} />
+                      </div>
+                    </div>
+
+                    {/* Elastic Line Physics */}
+                    <div className="p-3 rounded-lg bg-[var(--surface-secondary)]/50 border border-[var(--border)]/60 flex flex-col items-center gap-2">
+                      <span className="text-[9px] font-mono text-[var(--text-muted)] uppercase">Elastic Membrane Punch-Through</span>
+                      <div className="py-1 flex justify-center w-full">
+                        <M3PhysicsLoader variant="elastic-line" theme="accent" size={56} resistance={1} />
+                      </div>
                     </div>
                   </div>
                 </div>
