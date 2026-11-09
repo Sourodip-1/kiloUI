@@ -6649,7 +6649,7 @@ export function ComponentPreviewStage({
               <MobilePreviewChassis isLightMode={isLightMode} title="Loaders & Progress" subtitle="FEEDBACK">
                 <div className="flex-1 flex flex-col p-4 space-y-5 overflow-y-auto">
                   {/* Active Selected Loader */}
-                  <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] space-y-3">
+                  <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] p-4 space-y-3">
                     <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 block">
                       Active: {m3ProgressVariant}
                     </span>
@@ -6670,53 +6670,46 @@ export function ComponentPreviewStage({
                     </div>
                   </div>
 
-                  {/* Squiggly Wave Showcase (Flat Vector — Strictly NO GLOW) */}
-                  <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] space-y-3 text-center">
+                  {/* Squiggly Wave Showcase */}
+                  <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] p-4 space-y-3 text-center">
                     <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 block">Squiggly Waves (Android 14+)</span>
                     <div className="flex items-center justify-around py-1">
                       <div className="flex flex-col items-center gap-1.5">
-                        <M3SquigglyLoader variant="circular" size={56} squiggles={14} amplitude={3.5} color="blue" />
-                        <span className="text-[9px] font-mono text-[var(--text-muted)]">Google Royal Blue</span>
+                        <M3SquigglyLoader variant="circular" size={52} squiggles={14} amplitude={3.5} color="blue" />
+                        <span className="text-[9px] font-mono text-[var(--text-muted)]">Royal Blue</span>
                       </div>
                       <div className="flex flex-col items-center gap-1.5">
-                        <M3SquigglyLoader variant="circular" size={56} squiggles={14} amplitude={3.5} color="accent" />
-                        <span className="text-[9px] font-mono text-[var(--text-muted)]">Emerald Accent</span>
+                        <M3SquigglyLoader variant="circular" size={52} squiggles={14} amplitude={3.5} color="accent" />
+                        <span className="text-[9px] font-mono text-[var(--text-muted)]">Emerald</span>
                       </div>
                     </div>
-                    <div className="px-1 pt-2">
+                    <div className="px-1 pt-1">
                       <M3SquigglyLoader variant="horizontal" squiggles={14} amplitude={3.5} color="accent" />
                     </div>
                   </div>
 
-                  {/* Material 3 Expressive Loading Indicators & Elastic Physics (Strictly NO GLOW) */}
-                  <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] space-y-4">
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 block text-center">M3 Expressive &amp; Elastic Physics</span>
-                    
-                    {/* Official Material 3 Expressive Loading Indicator (m3.material.io) */}
-                    <div className="p-3 rounded-lg bg-[var(--surface-secondary)]/50 border border-[var(--border)]/60 flex flex-col items-center gap-2.5">
-                      <div className="flex items-center justify-between w-full px-1">
-                        <span className="text-[9px] font-mono text-[var(--text-muted)] uppercase">M3 Expressive Morph Indicator</span>
-                        <span className="text-[8px] font-mono text-[var(--accent-green)]">m3.material.io</span>
+                  {/* M3 Expressive Loading Indicators */}
+                  <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] p-4 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">M3 Expressive Morph</span>
+                      <span className="text-[8px] font-mono text-[var(--accent-green)]">m3.material.io</span>
+                    </div>
+                    <div className="flex items-center justify-around">
+                      <div className="flex flex-col items-center gap-1.5">
+                        <M3LoadingIndicator variant="uncontained" size={48} color="accent" />
+                        <span className="text-[8px] font-mono text-[var(--text-muted)]">Uncontained</span>
                       </div>
-                      <div className="py-2 flex items-center justify-around w-full">
-                        <div className="flex flex-col items-center gap-1.5">
-                          <M3LoadingIndicator variant="uncontained" size={48} color="accent" />
-                          <span className="text-[8px] font-mono text-[var(--text-muted)]">Uncontained</span>
-                        </div>
-                        <div className="flex flex-col items-center gap-1.5">
-                          <M3LoadingIndicator variant="contained" size={54} color="google" containerShape="squircle" />
-                          <span className="text-[8px] font-mono text-[var(--text-muted)]">Contained</span>
-                        </div>
+                      <div className="flex flex-col items-center gap-1.5">
+                        <M3LoadingIndicator variant="contained" size={52} color="google" containerShape="squircle" />
+                        <span className="text-[8px] font-mono text-[var(--text-muted)]">Contained</span>
                       </div>
                     </div>
+                  </div>
 
-                    {/* Elastic Membrane Punch-Through (NO GLOW, NO PULSE RING) */}
-                    <div className="p-3 rounded-lg bg-[var(--surface-secondary)]/50 border border-[var(--border)]/60 flex flex-col items-center gap-2">
-                      <span className="text-[9px] font-mono text-[var(--text-muted)] uppercase">Elastic Membrane Punch-Through</span>
-                      <div className="py-1 flex justify-center w-full">
-                        <M3PhysicsLoader variant="elastic-line" theme="accent" size={54} resistance={1} />
-                      </div>
-                    </div>
+                  {/* Elastic Membrane Punch-Through — full width, no box wrapping */}
+                  <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] p-3 space-y-2">
+                    <span className="text-[9px] font-mono text-[var(--text-muted)] uppercase block">Elastic Membrane Punch-Through</span>
+                    <M3PhysicsLoader variant="elastic-line" theme="accent" resistance={1} />
                   </div>
                 </div>
               </MobilePreviewChassis>

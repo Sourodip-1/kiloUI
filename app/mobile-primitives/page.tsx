@@ -1514,14 +1514,15 @@ export default function MobilePrimitivesPage() {
 
                     <div className="py-2 flex flex-col items-center justify-center space-y-4">
                       {physicsVariant === "elastic-line" ? (
-                        <M3PhysicsLoader
-                          variant="elastic-line"
-                          theme={physicsTheme}
-                          resistance={physicsResistance}
-                          size={64}
-                        />
+                        <div className="w-full">
+                          <M3PhysicsLoader
+                            variant="elastic-line"
+                            theme={physicsTheme}
+                            resistance={physicsResistance}
+                          />
+                        </div>
                       ) : (
-                        <div className="py-5 flex items-center justify-center">
+                        <div className="py-4 flex items-center justify-center">
                           <M3PhysicsLoader
                             variant="shape-morph"
                             theme={physicsTheme}

@@ -1,49 +1,47 @@
 "use client";
 
 import * as React from "react";
-import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 import { M3LoadingIndicator } from "@/registry/ui/m3-loading-indicator";
 
 export interface M3PhysicsLoaderProps {
-  /**
-   * Loader style:
-   * - "shape-morph": Official Material 3 Expressive Loading Indicator (https://m3.material.io/components/loading-indicator/overview)
-   * - "elastic-line": Horizontal stretchable elastic membrane with punch-through resistance & shape transformation
-   */
   variant?: "shape-morph" | "elastic-line";
   /**
-   * Single accent theme or color:
-   * - "accent": Emerald accent (var(--accent-green))
-   * - "google": Google Material Blue (#2563eb)
-   * - "monochrome": Monochrome (var(--text-primary))
-   * - or any custom single hex color string.
-   * Strictly NO GLOW.
+   * "accent" = var(--accent-green), "google" = #2563eb, "monochrome" = currentColor,
+   * or any CSS color string. Strictly NO GLOW.
    */
   theme?: "accent" | "google" | "monochrome" | string;
-  /** Overall size in pixels */
   size?: number;
-  /** Speed multiplier (default 1) */
   speed?: number;
-  /** Elastic resistance tension for the elastic-line variant (0.5 to 2, default 1) */
+  /** Elastic resistance (0.5–2, default 1) */
   resistance?: number;
-  /** Additional CSS class names */
   className?: string;
 }
 
-// ── Official Material 3 Expressive Shapes for Elastic Breaches ──
-const M3_SHAPES = [
-  // 1. Squircle
-  { name: "squircle", borderRadius: "26%" },
-  // 2. Cookie 4-Sided / Quatrefoil
-  { name: "cookie4", borderRadius: "30% 70% 32% 68% / 65% 35% 65% 35%" },
-  // 3. SoftBurst / Star
-  { name: "softburst", borderRadius: "45% 55% 60% 40% / 50% 65% 35% 50%" },
-  // 4. Smooth Circle
-  { name: "circle", borderRadius: "50%" },
-  // 5. Pill
-  { name: "pill", borderRadius: "9999px" },
+function resolveColor(theme: string): string {
+  if (theme === "accent") return "var(--accent-green)";
+  if (theme === "google") return "#2563eb";
+  if (theme === "monochrome") return "currentColor";
+  return theme;
+}
+
+// ── Official M3 Expressive shapes for the elastic breach morph ──
+const BREACH_SHAPES = [
+  "M 50,4 C 76,4 96,24 96,50 C 96,76 76,96 50,96 C 24,96 4,76 4,50 C 4,24 24,4 50,4 Z",          // squircle
+  "M 50,6 A 44,44 0 1,1 49.99,6 Z",                                                                // circle
+  "M 50,10 C 60,10 70,20 70,30 C 70,40 90,40 90,50 C 90,60 70,60 70,70 C 70,80 60,90 50,90 C 40,90 30,80 30,70 C 30,60 10,60 10,50 C 10,40 30,40 30,30 C 30,20 40,10 50,10 Z", // clover
+  "M 50,15 C 62,15 72,25 72,38 L 72,62 C 72,75 62,85 50,85 C 38,85 28,75 28,62 L 28,38 C 28,25 38,15 50,15 Z", // pill
+  "M 50,8 C 54,8 58,14 60,18 C 62,22 68,22 72,20 C 76,18 80,22 78,26 C 76,30 80,34 84,36 C 88,38 88,44 86,48 C 84,52 86,58 84,62 C 82,66 78,66 74,70 C 70,74 72,80 68,82 C 64,84 60,82 56,82 C 52,82 50,86 50,92 C 50,86 48,82 44,82 C 40,82 36,84 32,82 C 28,80 30,74 26,70 C 22,66 18,66 16,62 C 14,58 16,52 14,48 C 12,44 12,38 16,36 C 20,34 24,30 22,26 C 20,22 24,18 28,20 C 32,22 38,22 40,18 C 42,14 46,8 50,8 Z", // 8-star
 ];
+
+// ── Elastic Physics State (all computed per-frame, no multiple setState) ──
+interface ElasticFrame {
+  shapeY: number;    // pixel Y of shape center from SVG top
+  lineDy: number;    // elastic cord center deflection (px)
+  scaleX: number;
+  scaleY: number;
+  shapeIdx: number;
+}
 
 export function M3PhysicsLoader({
   variant = "shape-morph",
@@ -53,38 +51,24 @@ export function M3PhysicsLoader({
   resistance = 1,
   className,
 }: M3PhysicsLoaderProps) {
-  // Resolve single accent color (Flat, strictly NO GLOW)
-  const accentColor = React.useMemo(() => {
-    if (theme === "accent") return "var(--accent-green)";
-    if (theme === "google") return "#2563eb";
-    if (theme === "monochrome") return "currentColor";
-    return theme;
-  }, [theme]);
+  const accent = resolveColor(theme);
 
-  // ══════════════════════════════════════════════════════════════════
-  // VARIANT 1: Material 3 Expressive Loading Indicator (Official M3)
-  // ══════════════════════════════════════════════════════════════════
   if (variant === "shape-morph") {
     return (
-      <div className={cn("flex items-center justify-center select-none shrink-0", className)}>
-        <M3LoadingIndicator
-          variant="uncontained"
-          size={size}
-          color={accentColor}
-          speed={speed}
-        />
-      </div>
+      <M3LoadingIndicator
+        variant="uncontained"
+        size={size}
+        color={accent}
+        speed={speed}
+        className={className}
+      />
     );
   }
 
-  // ══════════════════════════════════════════════════════════════════
-  // VARIANT 2: Elastic Line Punch-Through & Morph Physics Loader
-  // Strictly NO GLOW, NO PULSE CIRCULAR RING
-  // ══════════════════════════════════════════════════════════════════
   return (
-    <ElasticLinePhysicsEngine
-      size={size}
-      accentColor={accentColor}
+    <ElasticLoader
+      accent={accent}
+      theme={theme}
       speed={speed}
       resistance={resistance}
       className={className}
@@ -92,222 +76,190 @@ export function M3PhysicsLoader({
   );
 }
 
-// ── Minimalist Elastic Membrane Punch-Through Physics Engine ──
-// Pure physics: natural gravity fall, membrane tension deflection, clean punch-through,
-// damped harmonic string twang recoil, and seamless shape transformation. NO GLOW.
-function ElasticLinePhysicsEngine({
-  size,
-  accentColor,
+// ── Elastic Membrane Punch-Through ──
+// Uses a single SVG that is 100% wide, fixed height.
+// All physics computed in one rAF tick — single setState call per frame.
+function ElasticLoader({
+  accent,
+  theme,
   speed,
   resistance,
   className,
 }: {
-  size: number;
-  accentColor: string;
+  accent: string;
+  theme: string;
   speed: number;
   resistance: number;
   className?: string;
 }) {
-  const containerWidth = Math.max(size * 2.6, 210);
-  const containerHeight = Math.max(size * 1.8, 140);
-  const centerY = containerHeight / 2;
+  // Fixed display height; width is 100% of parent
+  const H = 120;
+  const midY = H / 2;
 
-  // Elastic Line displacement state: dy represents the center deflection
-  const [lineDy, setLineDy] = React.useState(0);
-  // Shape position state: Y coordinate from top
-  const [shapeY, setShapeY] = React.useState(centerY);
-  // Shape morphology index
-  const [shapeIndex, setShapeIndex] = React.useState(0);
-  // Shape squash & stretch factors
-  const [shapeScaleX, setShapeScaleX] = React.useState(1);
-  const [shapeScaleY, setShapeScaleY] = React.useState(1);
+  // Single combined state → one re-render per frame
+  const [frame, setFrame] = React.useState<ElasticFrame>({
+    shapeY: midY,
+    lineDy: 0,
+    scaleX: 1,
+    scaleY: 1,
+    shapeIdx: 0,
+  });
+
+  // Ref stores mutable values that don't need to trigger render
+  const stateRef = React.useRef({
+    startTime: null as number | null,
+    lastBreachStage: 0,
+    shapeIdx: 0,
+  });
 
   React.useEffect(() => {
-    let animId: number;
-    let startTime: number | null = null;
-    let lastBreachStage = 0;
-
-    // Full loop cycle period in seconds
-    const duration = 2.6 / speed;
-    const maxDeflection = 28 * Math.min(1.5, Math.max(0.6, resistance));
+    let rafId: number;
+    const s = stateRef.current;
+    const cycleDur = 2.4 / speed; // seconds per full loop
+    const maxDef = 26 * Math.min(1.5, Math.max(0.5, resistance));
+    const topApex = 42;   // px above midY
+    const botApex = 42;   // px below midY
 
     const tick = (now: number) => {
-      if (startTime === null) startTime = now;
-      const elapsed = (now - startTime) / 1000;
-      const progress = (elapsed % duration) / duration; // 0 to 1
+      if (s.startTime === null) s.startTime = now;
+      const p = ((now - s.startTime) / 1000 / cycleDur) % 1; // 0..1
 
-      let currShapeY = centerY;
-      let currLineDy = 0;
+      let sy = midY;
+      let dy = 0;
       let sx = 1;
-      let sy = 1;
+      let sy2 = 1; // reuse sy for Y-scale
 
-      // ── Physical Phase Timeline ──
-      // [0.00 -> 0.22] Launch from center up to Top Apex
-      // [0.22 -> 0.38] Gravity Fall down toward the Elastic Line
-      // [0.38 -> 0.52] Contact & Elastic Resistance Stretch Downward
-      // [0.52 -> 0.64] Breakthrough Snap Down, Shape Morphs, Line Twangs (No pulse ring)
-      // [0.64 -> 0.78] Bottom Apex & Launch Upward toward Elastic Line
-      // [0.78 -> 0.90] Contact from below & Elastic Resistance Stretch Upward
-      // [0.90 -> 1.00] Breakthrough Snap Up, Shape Morphs, Line Twangs
+      // ── Phase timeline ──
+      // 0.00→0.20  rise to top apex
+      // 0.20→0.36  gravity fall toward line
+      // 0.36→0.50  membrane contact + stretch down
+      // 0.50→0.62  punch-through, twang, snap to bottom
+      // 0.62→0.76  bottom reversal + rise toward line
+      // 0.76→0.90  membrane contact + stretch up
+      // 0.90→1.00  punch-through, twang, snap to top
 
-      if (progress < 0.22) {
-        // Pop up to top apex (-46px from center)
-        const p = progress / 0.22;
-        const easeUp = Math.sin((p * Math.PI) / 2);
-        currShapeY = centerY - easeUp * 46;
-        currLineDy = 0;
-        sx = 0.94 + 0.06 * (1 - p);
-        sy = 1.06 - 0.06 * (1 - p);
-      } else if (progress < 0.38) {
-        // Free fall with gravity acceleration
-        const p = (progress - 0.22) / 0.16;
-        const gravityFall = p * p;
-        currShapeY = (centerY - 46) + gravityFall * 46;
-        currLineDy = 0;
-        sx = 0.92;
-        sy = 1.08;
-      } else if (progress < 0.52) {
-        // Contact line: Membrane resists and stretches downwards
-        const p = (progress - 0.38) / 0.14;
-        const easeStretch = Math.sin((p * Math.PI) / 2);
-        currLineDy = easeStretch * maxDeflection;
-        currShapeY = centerY + currLineDy;
-        // Compression squash against elastic tension
-        sx = 1 + easeStretch * 0.3;
-        sy = 1 - easeStretch * 0.22;
-      } else if (progress < 0.64) {
-        // PUNCH-THROUGH DOWN! Line snaps back with damped harmonic twang
-        const p = (progress - 0.52) / 0.12;
-        // Damped harmonic oscillation: e^(-6p) * cos(4.5 * PI * p)
-        const twang = Math.exp(-6 * p) * Math.cos(p * Math.PI * 4.5);
-        currLineDy = -twang * (maxDeflection * 0.75);
-        // Snaps past line down to bottom apex (+48px)
-        const punchEase = 1 - Math.cos((p * Math.PI) / 2);
-        currShapeY = centerY + maxDeflection * 0.3 + punchEase * (48 - maxDeflection * 0.3);
-        sx = 0.95;
-        sy = 1.05;
-
-        // Morph shape cleanly on breach — NO PULSE RING
-        if (lastBreachStage !== 1) {
-          lastBreachStage = 1;
-          setShapeIndex((s) => (s + 1) % M3_SHAPES.length);
+      if (p < 0.20) {
+        const t = p / 0.20;
+        sy = midY - Math.sin(t * Math.PI / 2) * topApex;
+        sx = 0.9 + 0.1 * t; sy2 = 1.1 - 0.1 * t;
+      } else if (p < 0.36) {
+        const t = (p - 0.20) / 0.16;
+        sy = midY - topApex + t * t * topApex; // gravity
+        sx = 0.88; sy2 = 1.12;
+      } else if (p < 0.50) {
+        const t = (p - 0.36) / 0.14;
+        const stretch = Math.sin(t * Math.PI / 2);
+        dy = stretch * maxDef;
+        sy = midY + dy;
+        sx = 1 + stretch * 0.28; sy2 = 1 - stretch * 0.2;
+      } else if (p < 0.62) {
+        const t = (p - 0.50) / 0.12;
+        const twang = Math.exp(-6 * t) * Math.cos(t * Math.PI * 4.5);
+        dy = -twang * maxDef * 0.7;
+        sy = midY + maxDef * 0.3 + (1 - Math.cos(t * Math.PI / 2)) * (botApex - maxDef * 0.3);
+        sx = 0.95; sy2 = 1.05;
+        if (s.lastBreachStage !== 1) {
+          s.lastBreachStage = 1;
+          s.shapeIdx = (s.shapeIdx + 1) % BREACH_SHAPES.length;
         }
-      } else if (progress < 0.78) {
-        // Bottom Apex reversal & rise upward
-        const p = (progress - 0.64) / 0.14;
-        const easeRise = 1 - Math.cos((p * Math.PI) / 2);
-        currShapeY = (centerY + 48) - easeRise * 48;
-        currLineDy = 0;
-        sx = 0.94;
-        sy = 1.06;
-      } else if (progress < 0.90) {
-        // Contact from underneath: stretches line upwards
-        const p = (progress - 0.78) / 0.12;
-        const easeStretch = Math.sin((p * Math.PI) / 2);
-        currLineDy = -easeStretch * maxDeflection;
-        currShapeY = centerY + currLineDy;
-        sx = 1 + easeStretch * 0.3;
-        sy = 1 - easeStretch * 0.22;
+      } else if (p < 0.76) {
+        const t = (p - 0.62) / 0.14;
+        sy = midY + botApex - (1 - Math.cos(t * Math.PI / 2)) * botApex;
+        sx = 0.9; sy2 = 1.1;
+      } else if (p < 0.90) {
+        const t = (p - 0.76) / 0.14;
+        const stretch = Math.sin(t * Math.PI / 2);
+        dy = -stretch * maxDef;
+        sy = midY + dy;
+        sx = 1 + stretch * 0.28; sy2 = 1 - stretch * 0.2;
       } else {
-        // PUNCH-THROUGH UP! Line twangs, shape snaps past to top
-        const p = (progress - 0.90) / 0.10;
-        const twang = Math.exp(-6 * p) * Math.cos(p * Math.PI * 4.5);
-        currLineDy = twang * (maxDeflection * 0.75);
-        const punchEase = 1 - Math.cos((p * Math.PI) / 2);
-        currShapeY = centerY - maxDeflection * 0.3 - punchEase * (46 - maxDeflection * 0.3);
-        sx = 0.95;
-        sy = 1.05;
-
-        // Morph shape cleanly on upward breach — NO PULSE RING
-        if (lastBreachStage !== 2) {
-          lastBreachStage = 2;
-          setShapeIndex((s) => (s + 1) % M3_SHAPES.length);
+        const t = (p - 0.90) / 0.10;
+        const twang = Math.exp(-6 * t) * Math.cos(t * Math.PI * 4.5);
+        dy = twang * maxDef * 0.7;
+        sy = midY - maxDef * 0.3 - (1 - Math.cos(t * Math.PI / 2)) * (topApex - maxDef * 0.3);
+        sx = 0.95; sy2 = 1.05;
+        if (s.lastBreachStage !== 2) {
+          s.lastBreachStage = 2;
+          s.shapeIdx = (s.shapeIdx + 1) % BREACH_SHAPES.length;
         }
       }
 
-      setShapeY(currShapeY);
-      setLineDy(currLineDy);
-      setShapeScaleX(sx);
-      setShapeScaleY(sy);
-
-      animId = requestAnimationFrame(tick);
+      // Single setState → single re-render per frame
+      setFrame({ shapeY: sy, lineDy: dy, scaleX: sx, scaleY: sy2, shapeIdx: s.shapeIdx });
+      rafId = requestAnimationFrame(tick);
     };
 
-    animId = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(animId);
-  }, [speed, resistance, centerY]);
+    rafId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafId);
+  }, [speed, resistance, midY]);
 
-  const currentShape = M3_SHAPES[shapeIndex];
-  const shapeSize = Math.max(26, size * 0.44);
+  const { shapeY, lineDy, scaleX, scaleY, shapeIdx } = frame;
+  const shapeSize = 28;
+  const PAD = 16; // horizontal padding inside SVG
 
-  // Line endpoints: sleek horizontal line spanning container with subtle edge margins
-  const lineStartX = 14;
-  const lineEndX = containerWidth - 14;
-  const lineMidX = containerWidth / 2;
-
-  // Clean quadratic bezier curve for the flexible elastic cord (Strictly NO GLOW)
-  const curvePath = `M ${lineStartX},${centerY} Q ${lineMidX},${centerY + lineDy} ${lineEndX},${centerY}`;
+  // SVG viewBox is 0 0 W H; we use % for X so it scales with container
+  // We define the cord using 0 and 100 as X extents in viewBox "0 0 100 H"
+  const cordPath = `M ${PAD},${midY} Q 50,${midY + lineDy} ${100 - PAD},${midY}`;
 
   return (
     <div
       role="progressbar"
       aria-label="Elastic Punch-Through Physics Loader"
-      style={{ width: containerWidth, height: containerHeight }}
-      className={cn(
-        "relative flex items-center justify-center select-none overflow-hidden rounded-2xl bg-[var(--surface-primary)] border border-[var(--border)] shadow-xs",
-        className
-      )}
+      style={{ height: H, width: "100%" }}
+      className={cn("relative select-none", className)}
     >
+      {/* Full-width SVG cord — scales with container */}
       <svg
-        width={containerWidth}
-        height={containerHeight}
-        viewBox={`0 0 ${containerWidth} ${containerHeight}`}
-        className="absolute inset-0 pointer-events-none overflow-visible"
+        viewBox={`0 0 100 ${H}`}
+        preserveAspectRatio="none"
+        className="absolute inset-0 w-full h-full overflow-visible pointer-events-none"
       >
-        {/* Subtle resting baseline track guide */}
+        {/* Ghost baseline */}
         <line
-          x1={lineStartX}
-          y1={centerY}
-          x2={lineEndX}
-          y2={centerY}
+          x1={PAD} y1={midY}
+          x2={100 - PAD} y2={midY}
           stroke="currentColor"
-          strokeWidth={1}
-          strokeDasharray="2 3"
+          strokeWidth="0.6"
+          strokeDasharray="1.5 2.5"
           className="text-[var(--border)] opacity-30"
         />
-
-        {/* Dynamic Stretchable Elastic Cord (Crisp Flat Vector — NO GLOW) */}
+        {/* Elastic cord */}
         <path
-          d={curvePath}
+          d={cordPath}
           fill="none"
-          stroke={accentColor}
-          strokeWidth={Math.max(1.8, 3.2 - Math.abs(lineDy) * 0.04)} // Thins realistically as stretched
+          stroke={accent}
+          strokeWidth={Math.max(0.8, 1.6 - Math.abs(lineDy) * 0.025)}
           strokeLinecap="round"
         />
       </svg>
 
-      {/* Floating Morphing Geometry (Flat Solid Color — Strictly NO GLOW) */}
-      <motion.div
-        animate={{
-          borderRadius: currentShape.borderRadius,
-        }}
-        transition={{
-          borderRadius: { duration: 0.32, ease: [0.34, 1.56, 0.64, 1] },
-        }}
+      {/* Shape: positioned absolutely via %, centered horizontally */}
+      <div
         style={{
+          position: "absolute",
+          left: "50%",
+          top: shapeY,
+          transform: `translate(-50%, -50%) scale(${scaleX}, ${scaleY})`,
           width: shapeSize,
           height: shapeSize,
-          top: shapeY - shapeSize / 2,
-          left: `calc(50% - ${shapeSize / 2}px)`,
-          position: "absolute",
-          backgroundColor: accentColor,
-          transform: `scale(${shapeScaleX}, ${shapeScaleY}) rotate(${shapeIndex * 45}deg)`,
+          transition: "top 0s", // physics drives position, no CSS lerp
         }}
-        className="flex items-center justify-center pointer-events-none z-10"
       >
-        {/* Core tactile pip */}
-        <div className="w-1.5 h-1.5 rounded-full bg-white/90 dark:bg-black/40" />
-      </motion.div>
+        <svg
+          viewBox="0 0 100 100"
+          width={shapeSize}
+          height={shapeSize}
+          style={{
+            transition: "d 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
+          }}
+        >
+          <path
+            d={BREACH_SHAPES[shapeIdx]}
+            fill={accent}
+          />
+          <circle cx="50" cy="50" r="6" fill="rgba(255,255,255,0.8)" />
+        </svg>
+      </div>
     </div>
   );
 }

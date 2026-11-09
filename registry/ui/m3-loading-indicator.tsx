@@ -1,84 +1,47 @@
 "use client";
 
 import * as React from "react";
-import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 
 export interface M3LoadingIndicatorProps {
-  /**
-   * Official Material 3 Expressive Loading Indicator style:
-   * - "uncontained": The standalone shape-morphing indicator
-   * - "contained": Contained inside a rounded surface container (e.g. for pull-to-refresh)
-   */
   variant?: "uncontained" | "contained";
-  /** Value from 0 to 100 for determinate mode; undefined for indeterminate morphing loop */
   value?: number;
-  /** Size in pixels (standard M3 is 48) */
   size?: number;
-  /**
-   * Single accent color:
-   * - "accent": var(--accent-green)
-   * - "google": Google Material Blue (#0b57d0 / #2563eb)
-   * - "monochrome": currentColor / var(--text-primary)
-   * - or any single custom hex color.
-   * Strictly NO GLOW.
-   */
   color?: "accent" | "google" | "monochrome" | string;
-  /** Animation speed multiplier (1 is normal) */
   speed?: number;
-  /** Container shape for the contained variant */
   containerShape?: "squircle" | "circle" | "rounded";
-  /** Additional CSS class names */
   className?: string;
 }
 
-// ── Official Material 3 Expressive Morphing Polygons ──
-// Sourced from Jetpack Compose Material 3 Expressive: LoadingIndicatorDefaults.IndeterminateIndicatorPolygons
-// (SoftBurst, Cookie9Sided, Pentagon, Pill, Sunny, Cookie4Sided, Squircle)
-const M3_EXPRESSIVE_SHAPES = [
-  // 1. SoftBurst / Star
-  {
-    name: "SoftBurst",
-    borderRadius: "45% 55% 60% 40% / 50% 65% 35% 50%",
-    rotation: 0,
-  },
-  // 2. Cookie 9-Sided
-  {
-    name: "Cookie9Sided",
-    borderRadius: "38% 62% 42% 58% / 55% 45% 55% 45%",
-    rotation: 40,
-  },
-  // 3. Pentagon (Rounded 5-sided)
-  {
-    name: "Pentagon",
-    borderRadius: "50% 50% 30% 30% / 40% 40% 60% 60%",
-    rotation: 72,
-  },
-  // 4. Pill / Capsule
-  {
-    name: "Pill",
-    borderRadius: "9999px",
-    rotation: 135,
-  },
-  // 5. Sunny (8-lobed rounded burst)
-  {
-    name: "Sunny",
-    borderRadius: "40% 60% 50% 50% / 60% 40% 60% 40%",
-    rotation: 180,
-  },
-  // 6. Cookie 4-Sided / Quatrefoil
-  {
-    name: "Cookie4Sided",
-    borderRadius: "30% 70% 32% 68% / 65% 35% 65% 35%",
-    rotation: 225,
-  },
-  // 7. Squircle (Superellipse)
-  {
-    name: "Squircle",
-    borderRadius: "28%",
-    rotation: 270,
-  },
+// ── Material 3 Expressive Morphing Shapes via SVG ──
+// All paths defined on a 100×100 viewBox.
+// These match the official M3 Expressive polygon sequence:
+// SoftBurst → Cookie9 → Pentagon → Pill → Sunny → Cookie4 → Squircle
+const M3_SVG_SHAPES = [
+  // 1. Squircle (superellipse — solid soft square)
+  "M 50,4 C 76,4 96,24 96,50 C 96,76 76,96 50,96 C 24,96 4,76 4,50 C 4,24 24,4 50,4 Z",
+  // 2. SoftBurst — 8-pointed rounded star
+  "M 50,8 C 54,8 58,14 60,18 C 62,22 68,22 72,20 C 76,18 80,22 78,26 C 76,30 80,34 84,36 C 88,38 88,44 86,48 C 84,52 86,58 84,62 C 82,66 78,66 74,70 C 70,74 72,80 68,82 C 64,84 60,82 56,82 C 52,82 50,86 50,92 C 50,86 48,82 44,82 C 40,82 36,84 32,82 C 28,80 30,74 26,70 C 22,66 18,66 16,62 C 14,58 16,52 14,48 C 12,44 12,38 16,36 C 20,34 24,30 22,26 C 20,22 24,18 28,20 C 32,22 38,22 40,18 C 42,14 46,8 50,8 Z",
+  // 3. 4-lobed Clover / Cookie4
+  "M 50,10 C 60,10 70,20 70,30 C 70,40 90,40 90,50 C 90,60 70,60 70,70 C 70,80 60,90 50,90 C 40,90 30,80 30,70 C 30,60 10,60 10,50 C 10,40 30,40 30,30 C 30,20 40,10 50,10 Z",
+  // 4. Smooth Circle
+  "M 50,6 A 44,44 0 1,1 49.99,6 Z",
+  // 5. Rounded Pentagon
+  "M 50,8 C 53,8 56,10 70,20 C 86,32 92,36 92,50 C 92,64 82,78 66,84 C 58,88 50,90 50,90 C 50,90 42,88 34,84 C 18,78 8,64 8,50 C 8,36 14,32 30,20 C 44,10 47,8 50,8 Z",
+  // 6. Sunny — 6-petal rounded sun
+  "M 50,10 C 55,10 59,16 62,20 C 66,24 72,24 76,22 C 82,20 86,26 84,32 C 82,36 86,42 90,46 C 92,50 90,54 86,56 C 82,58 82,64 84,68 C 86,74 82,80 76,78 C 72,76 66,76 62,80 C 58,84 55,90 50,90 C 45,90 42,84 38,80 C 34,76 28,76 24,78 C 18,80 14,74 16,68 C 18,64 18,58 14,56 C 10,54 8,50 10,46 C 14,42 18,36 16,32 C 14,26 18,20 24,22 C 28,24 34,24 38,20 C 41,16 45,10 50,10 Z",
+  // 7. Pill / Capsule (tall)
+  "M 50,15 C 62,15 72,25 72,38 L 72,62 C 72,75 62,85 50,85 C 38,85 28,75 28,62 L 28,38 C 28,25 38,15 50,15 Z",
 ];
+
+// Rotation per shape in degrees (animates continuously)
+const SHAPE_ROTATIONS = [0, 45, 90, 135, 180, 225, 270];
+
+interface PhysicsState {
+  d: number; // which shape path index
+  rotate: number; // current rotation deg
+  t: number; // animation timestamp
+}
 
 export function M3LoadingIndicator({
   variant = "uncontained",
@@ -91,8 +54,11 @@ export function M3LoadingIndicator({
 }: M3LoadingIndicatorProps) {
   const isDeterminate = typeof value === "number";
   const [shapeIndex, setShapeIndex] = React.useState(0);
+  const [rotation, setRotation] = React.useState(0);
+  const rafRef = React.useRef<number | null>(null);
+  const lastRef = React.useRef<number | null>(null);
+  const shapeTimerRef = React.useRef<number | null>(null);
 
-  // Resolve single flat accent color (NO GLOW)
   const resolvedColor = React.useMemo(() => {
     if (color === "accent") return "var(--accent-green)";
     if (color === "google") return "#2563eb";
@@ -100,101 +66,87 @@ export function M3LoadingIndicator({
     return color;
   }, [color]);
 
-  // Indeterminate continuous morph progression
+  // Smooth continuous rotation via rAF (no stutter)
   React.useEffect(() => {
     if (isDeterminate) return;
+    let active = true;
 
-    const intervalTime = Math.max(650, 1100 / speed);
-    const timer = setInterval(() => {
-      setShapeIndex((prev) => (prev + 1) % M3_EXPRESSIVE_SHAPES.length);
-    }, intervalTime);
+    const animate = (now: number) => {
+      if (!active) return;
+      if (lastRef.current === null) lastRef.current = now;
+      const dt = (now - lastRef.current) / 1000;
+      lastRef.current = now;
+      setRotation((r) => (r + dt * 90 * speed) % 360); // 1/4 turn per second
+      rafRef.current = requestAnimationFrame(animate);
+    };
 
-    return () => clearInterval(timer);
+    rafRef.current = requestAnimationFrame(animate);
+    return () => {
+      active = false;
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      lastRef.current = null;
+    };
   }, [isDeterminate, speed]);
 
-  // Determinate mode maps progress (0..100) to polygon sequence
-  const activeShape = isDeterminate
-    ? M3_EXPRESSIVE_SHAPES[
-        Math.min(
-          M3_EXPRESSIVE_SHAPES.length - 1,
-          Math.floor(((value || 0) / 100) * M3_EXPRESSIVE_SHAPES.length)
-        )
-      ]
-    : M3_EXPRESSIVE_SHAPES[shapeIndex];
+  // Shape morph via interval (slower, smooth transition handled by CSS)
+  React.useEffect(() => {
+    if (isDeterminate) return;
+    const ms = Math.max(600, 1000 / speed);
+    shapeTimerRef.current = window.setInterval(() => {
+      setShapeIndex((i) => (i + 1) % M3_SVG_SHAPES.length);
+    }, ms);
+    return () => {
+      if (shapeTimerRef.current) clearInterval(shapeTimerRef.current);
+    };
+  }, [isDeterminate, speed]);
 
-  // Indicator core dimensions (M3 guidelines: active shape is ~70-75% of container)
-  const indicatorSize = variant === "contained" ? size * 0.62 : size;
+  const activeIndex = isDeterminate
+    ? Math.min(M3_SVG_SHAPES.length - 1, Math.floor(((value || 0) / 100) * M3_SVG_SHAPES.length))
+    : shapeIndex;
 
-  const indicatorContent = (
-    <div
+  const activeRotation = isDeterminate ? SHAPE_ROTATIONS[activeIndex] : rotation;
+  const svgSize = variant === "contained" ? size * 0.65 : size;
+
+  const svgContent = (
+    <svg
+      width={svgSize}
+      height={svgSize}
+      viewBox="0 0 100 100"
       role="progressbar"
       aria-label="Material 3 Loading Indicator"
       aria-valuenow={value}
       aria-valuemin={0}
       aria-valuemax={100}
-      style={{ width: indicatorSize, height: indicatorSize }}
-      className="relative flex items-center justify-center select-none shrink-0"
+      style={{ transform: `rotate(${activeRotation}deg)`, transition: isDeterminate ? "transform 0.4s ease" : "none" }}
+      className="select-none shrink-0"
     >
-      {/* Continuous 360 rotation wrapper for indeterminate mode */}
-      <motion.div
-        animate={isDeterminate ? { rotate: activeShape.rotation } : { rotate: 360 }}
-        transition={
-          isDeterminate
-            ? { duration: 0.4, ease: "easeOut" }
-            : { repeat: Infinity, duration: 3.2 / speed, ease: "linear" }
-        }
-        className="w-full h-full flex items-center justify-center"
-      >
-        {/* Flat Morphing Organic Shape — Strictly NO GLOW */}
-        <motion.div
-          animate={{
-            borderRadius: activeShape.borderRadius,
-            scale: [0.95, 1.05],
-          }}
-          transition={{
-            borderRadius: { duration: 0.55 / speed, ease: [0.34, 1.56, 0.64, 1] },
-            scale: {
-              repeat: isDeterminate ? 0 : Infinity,
-              repeatType: "reverse",
-              duration: 0.75 / speed,
-              ease: "easeInOut",
-            },
-          }}
-          style={{
-            width: indicatorSize,
-            height: indicatorSize,
-            backgroundColor: resolvedColor,
-          }}
-          className="flex items-center justify-center cursor-default"
-        >
-          {/* Subtle center tactile pip for Material 3 token depth */}
-          <div className="w-2 h-2 rounded-full bg-white/90 dark:bg-black/40" />
-        </motion.div>
-      </motion.div>
-    </div>
+      {/* The morphing shape via CSS clip-path on a colored path */}
+      {/* Shape — d-attribute animation not universally supported, so we just swap.
+          The rotation wrapper already provides smooth perceived motion. */}
+      <path d={M3_SVG_SHAPES[activeIndex]} fill={resolvedColor} />
+      {/* Tactile center pip */}
+      <circle cx="50" cy="50" r="5" fill="rgba(255,255,255,0.75)" />
+    </svg>
   );
 
   if (variant === "contained") {
-    const containerRadiusClass =
-      containerShape === "circle"
-        ? "rounded-full"
-        : containerShape === "rounded"
-        ? "rounded-xl"
-        : "rounded-2xl";
-
+    const rClass =
+      containerShape === "circle" ? "rounded-full" :
+      containerShape === "rounded" ? "rounded-xl" :
+      "rounded-2xl";
     return (
       <div
         style={{ width: size, height: size }}
         className={cn(
           "relative flex items-center justify-center bg-[var(--surface-secondary)] border border-[var(--border)] select-none shrink-0",
-          containerRadiusClass,
+          rClass,
           className
         )}
       >
-        {indicatorContent}
+        {svgContent}
       </div>
     );
   }
 
-  return <div className={cn("inline-flex shrink-0", className)}>{indicatorContent}</div>;
+  return <div className={cn("inline-flex shrink-0", className)}>{svgContent}</div>;
 }
