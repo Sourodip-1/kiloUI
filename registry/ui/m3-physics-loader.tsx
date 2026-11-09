@@ -119,13 +119,17 @@ export function M3PhysicsLoader({
             animate={{
               borderRadius: currentShape.borderRadius,
               backgroundColor: currentColor,
-              scale: [0.92, 1.06, 0.96],
+              scale: [0.94, 1.04],
             }}
             transition={{
-              type: "spring",
-              stiffness: 280,
-              damping: 20,
-              mass: 0.8,
+              borderRadius: { duration: 0.6 / speed, ease: "easeInOut" },
+              backgroundColor: { duration: 0.6 / speed, ease: "easeInOut" },
+              scale: {
+                repeat: Infinity,
+                repeatType: "reverse",
+                duration: 0.8 / speed,
+                ease: "easeInOut",
+              },
             }}
             style={{
               width: size * 0.72,
@@ -368,8 +372,8 @@ function ElasticLinePhysicsEngine({
         animate={{
           borderRadius: currentShape.borderRadius,
           backgroundColor: currentColor,
-          scale: isBreached ? [1.15, 0.95, 1] : 1,
-          rotate: isBreached ? [0, 45, 0] : 0,
+          scale: isBreached ? 1.15 : 1,
+          rotate: isBreached ? 30 : 0,
         }}
         transition={{
           type: "spring",
