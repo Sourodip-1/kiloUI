@@ -6302,26 +6302,26 @@ export function ComponentPreviewStage({
               <MobilePreviewChassis isLightMode={isLightMode} title="Text Fields" subtitle="INPUTS">
                 <div className="flex-1 flex flex-col p-4 space-y-6 overflow-y-auto">
                   <div className="space-y-2">
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 block mb-1">Configured Field</span>
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 block mb-2">Configured Field</span>
                     <M3TextField
                       variant={m3TextVariant}
                       label="Workspace Email"
                       value={m3TextVal}
-                      labelBgClassName={isLightMode ? "bg-[#f8f9fa] text-neutral-900" : "bg-[#0c0d0e] text-white"}
+                      labelBgClassName={isLightMode ? "bg-[#f8f9fa]" : "bg-[#0c0d0e]"}
                       onChange={(e) => setM3TextVal(e.target.value)}
                       helperText="Your registered team email"
                       leadingIcon={<User className="h-4 w-4" />}
                     />
                   </div>
 
-                  <div className="space-y-2 pt-2 border-t border-[var(--border)]/40">
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 block mb-1">Outlined Notch (M3)</span>
+                  <div className="space-y-3 pt-3 border-t border-[var(--border)]/40">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 block mb-2">Outlined Notch (M3)</span>
                     <M3TextField
                       variant="outlined"
                       label="Password"
                       type="password"
                       defaultValue="supersecret"
-                      labelBgClassName={isLightMode ? "bg-[#f8f9fa] text-neutral-900" : "bg-[#0c0d0e] text-white"}
+                      labelBgClassName={isLightMode ? "bg-[#f8f9fa]" : "bg-[#0c0d0e]"}
                       leadingIcon={<Lock className="h-4 w-4" />}
                       helperText="Minimum 8 characters"
                     />

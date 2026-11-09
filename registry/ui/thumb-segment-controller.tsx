@@ -161,7 +161,7 @@ export function ThumbSegmentController({
             disabled={item.disabled}
             onClick={() => handleSelect(item.id, item.disabled)}
             className={cn(
-              "relative z-10 flex-1 h-full flex items-center justify-center gap-1.5 px-3 rounded-lg font-medium transition-colors cursor-pointer",
+              "relative z-10 flex-1 min-w-0 h-full flex items-center justify-center gap-1 px-1.5 sm:px-2.5 rounded-lg font-medium transition-colors cursor-pointer select-none",
               isActive
                 ? "text-[var(--text-primary)] font-semibold"
                 : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]",
@@ -169,11 +169,11 @@ export function ThumbSegmentController({
             )}
           >
             {item.icon && <span className="h-4 w-4 shrink-0">{item.icon}</span>}
-            <span className="truncate">{item.label}</span>
+            <span className="truncate text-xs sm:text-sm">{item.label}</span>
             {item.badge !== undefined && (
               <span
                 className={cn(
-                  "ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] font-mono leading-tight border",
+                  "ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] font-mono leading-tight border shrink-0",
                   isActive
                     ? "bg-[var(--surface-tertiary)] text-[var(--text-primary)] border-[var(--border)]"
                     : "bg-[var(--surface-secondary)] text-[var(--text-muted)] border-[var(--border-subtle)]"

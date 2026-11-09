@@ -61,7 +61,12 @@ export function FloatingActionDock({
     return () => window.removeEventListener("scroll", handleScroll);
   }, [scrollHide]);
 
+  const isRelative = className?.includes("relative");
+  const isAbsolute = className?.includes("absolute");
+  const isCustomPosition = isRelative || isAbsolute || className?.includes("static");
+
   const hasCustomHorizontal =
+    isCustomPosition ||
     className?.includes("inset-x-") ||
     className?.includes("w-full") ||
     className?.includes("justify-center") ||
@@ -78,12 +83,17 @@ export function FloatingActionDock({
 
   return (
     <div
-      style={{
-        paddingBottom: "max(1rem, env(safe-area-inset-bottom))",
-      }}
+      style={
+        isRelative
+          ? undefined
+          : {
+              paddingBottom: "max(1rem, env(safe-area-inset-bottom))",
+            }
+      }
       className={cn(
-        className?.includes("absolute") ? "absolute" : "fixed",
-        "bottom-0 z-40 pointer-events-none transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]",
+        isRelative ? "relative" : isAbsolute ? "absolute" : "fixed",
+        !isRelative && "bottom-0",
+        "z-40 pointer-events-none transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]",
         positionClasses,
         !isVisible && "translate-y-24 opacity-0 pointer-events-none",
         className

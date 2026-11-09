@@ -38,7 +38,7 @@ export function M3NavigationBar({
       role="navigation"
       aria-label="Bottom Navigation"
       className={cn(
-        "w-full flex items-center justify-between select-none border-t border-[var(--border)] transition-colors shrink-0 px-2",
+        "w-full flex items-center justify-around select-none border-t border-[var(--border)] transition-colors shrink-0 px-1",
         isMinimal
           ? "h-14 bg-[var(--surface-elevated)]/95 backdrop-blur-md"
           : "h-20 pb-2 pt-1 bg-[var(--surface-secondary)]/90 backdrop-blur-xl",
@@ -58,7 +58,7 @@ export function M3NavigationBar({
             whileTap={{ scale: 0.92 }}
             transition={{ type: "spring", stiffness: 450, damping: 28 }}
             className={cn(
-              "relative flex-1 min-w-0 h-full flex flex-col items-center justify-center cursor-pointer group focus-visible:outline-none"
+              "relative flex-1 min-w-0 max-w-[96px] h-full flex flex-col items-center justify-center cursor-pointer group focus-visible:outline-none"
             )}
           >
             {/* Active Pill Indicator for Icon */}
@@ -74,7 +74,7 @@ export function M3NavigationBar({
                           : "text-[var(--text-muted)] group-hover:text-[var(--text-primary)]"
                       )
                     : cn(
-                        "h-8 w-13 rounded-full",
+                        "h-8 w-14 sm:w-16 rounded-full mx-auto",
                         isActive
                           ? "bg-[var(--accent-green-deep)] text-[var(--accent-green)] shadow-xs"
                           : "bg-transparent text-[var(--text-secondary)] group-hover:bg-[var(--surface-tertiary)]/50"

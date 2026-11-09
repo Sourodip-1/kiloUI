@@ -293,16 +293,33 @@ export default function MobilePrimitivesPage() {
             })}
           </SlidingHighlightContainer>
 
-          {/* Quick Search Field */}
-          <div className="relative w-full md:w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[var(--text-muted)]" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Filter primitives..."
-              className="w-full h-8.5 pl-8 pr-3 rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)]/40 text-xs font-sans text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--accent-green)] transition-colors"
-            />
+          {/* Quick Search Field & Preset Preview Toggle */}
+          <div className="flex items-center gap-2 w-full md:w-auto">
+            <div className="relative flex-1 md:w-56">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[var(--text-muted)]" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Filter primitives..."
+                className="w-full h-8.5 pl-8 pr-3 rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)]/40 text-xs font-sans text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--accent-green)] transition-colors"
+              />
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setIsPhoneVisible(!isPhoneVisible)}
+              className={cn(
+                "h-8.5 px-3 rounded-xl border text-xs font-mono font-medium flex items-center gap-1.5 transition-all cursor-pointer shrink-0 select-none",
+                isPhoneVisible
+                  ? "bg-[var(--surface-secondary)] border-[var(--border)] text-[var(--text-primary)] hover:border-[var(--border-hover)]"
+                  : "bg-[var(--accent-green-deep)] border-[var(--accent-green)]/40 text-[var(--accent-green)] font-semibold shadow-xs"
+              )}
+              title={isPhoneVisible ? "Hide Preview Phone" : "Show Preview Phone"}
+            >
+              <Smartphone className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">{isPhoneVisible ? "Hide Preview" : "Show Preview"}</span>
+            </button>
           </div>
         </div>
 
@@ -315,7 +332,7 @@ export default function MobilePrimitivesPage() {
               "grid gap-4 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
               isPhoneVisible
                 ? "lg:col-span-7 grid-cols-1 sm:grid-cols-2"
-                : "lg:col-span-12 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+                : "lg:col-span-12 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
             )}
           >
 
@@ -577,11 +594,12 @@ export default function MobilePrimitivesPage() {
                       <span className="text-[10px] font-mono text-[var(--text-muted)]">Floating Notch</span>
                     </div>
 
-                    <div className="space-y-3 py-1">
+                    <div className="space-y-4 py-2">
                       <M3TextField
                         variant="outlined"
                         label="Email Address"
                         value={demoTextVal}
+                        labelBgClassName="bg-[var(--surface-primary)]"
                         onChange={(e) => setDemoTextVal(e.target.value)}
                         leadingIcon={<User className="h-4 w-4" />}
                         helperText="Corporate SSO domain"
@@ -590,9 +608,11 @@ export default function MobilePrimitivesPage() {
                         variant="outlined"
                         label="Password"
                         type="password"
+                        labelBgClassName="bg-[var(--surface-primary)]"
                         value={demoPasswordVal}
                         onChange={(e) => setDemoPasswordVal(e.target.value)}
                         leadingIcon={<Lock className="h-4 w-4" />}
+                        helperText="Minimum 8 characters"
                       />
                     </div>
 
@@ -906,21 +926,21 @@ export default function MobilePrimitivesPage() {
                     <div className="space-y-3 py-1">
                       <M3Tabs
                         type="primary"
-                        value={demoTabsVal}
+                        value={demoTabsVal === "overview" ? "all" : demoTabsVal}
                         onChange={setDemoTabsVal}
                         tabs={[
-                          { id: "overview", label: "Overview" },
-                          { id: "pipeline", label: "Pipeline", badge: 4 },
+                          { id: "all", label: "All" },
+                          { id: "active", label: "Active", badge: 4 },
                           { id: "logs", label: "Logs" },
                         ]}
                       />
                       <M3Tabs
                         variant="minimal"
-                        value={demoTabsVal}
+                        value={demoTabsVal === "overview" ? "all" : demoTabsVal}
                         onChange={setDemoTabsVal}
                         tabs={[
-                          { id: "overview", label: "Overview" },
-                          { id: "pipeline", label: "Pipeline" },
+                          { id: "all", label: "All" },
+                          { id: "active", label: "Active" },
                           { id: "logs", label: "Logs" },
                         ]}
                       />
@@ -944,13 +964,12 @@ export default function MobilePrimitivesPage() {
                       <span className="text-[10px] font-mono text-[var(--text-muted)]">48px Reach</span>
                     </div>
 
-                    <div className="py-2">
+                    <div className="py-2 overflow-hidden">
                       <ThumbSegmentController
                         items={[
                           { id: "day", label: "Day" },
                           { id: "week", label: "Week", badge: 3 },
                           { id: "month", label: "Month" },
-                          { id: "year", label: "Year" },
                         ]}
                         value={demoThumbSegment}
                         onChange={setDemoThumbSegment}
@@ -1172,7 +1191,7 @@ export default function MobilePrimitivesPage() {
                     <div className="overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface-primary)] divide-y divide-[var(--border)]/50">
                       <M3ListItem
                         lines="1"
-                        headline="One-Line Specimen"
+                        headline="System Alert"
                         leading={<Zap className="h-4 w-4 text-amber-400" />}
                         trailingText="12m"
                         divider={false}
@@ -1180,8 +1199,8 @@ export default function MobilePrimitivesPage() {
                       />
                       <M3ListItem
                         lines="2"
-                        headline="Two-Line Specimen"
-                        supportingText="Sub-millisecond frame dispatch rate"
+                        headline="Data Pipeline"
+                        supportingText="Sub-millisecond latency confirmed"
                         leading={<Activity className="h-4 w-4 text-[var(--accent-green)]" />}
                         trailingText="Now"
                         divider={false}
@@ -1216,23 +1235,19 @@ export default function MobilePrimitivesPage() {
                         <M3ProgressIndicator type="linear" value={demoProgressVal} bufferValue={88} />
                       </div>
 
-                      {/* 4 Stepped Pills from Stitch screen 1 */}
-                      <div className="grid grid-cols-4 gap-1.5 pt-1">
-                        <div className="flex flex-col items-center gap-0.5 p-1.5 rounded-lg bg-[var(--surface-secondary)] text-center text-[10px] font-mono">
-                          <CheckCircle className="h-3.5 w-3.5 text-[var(--accent-green)]" />
-                          <span>1. Setup</span>
+                      {/* Clean 3-Stepped Pipeline */}
+                      <div className="grid grid-cols-3 gap-2 pt-1">
+                        <div className="flex flex-col items-center gap-0.5 p-2 rounded-xl bg-[var(--surface-secondary)] text-center text-[10px] font-mono">
+                          <CheckCircle className="h-4 w-4 text-[var(--accent-green)]" />
+                          <span className="font-semibold">1. Setup</span>
                         </div>
-                        <div className="flex flex-col items-center gap-0.5 p-1.5 rounded-lg bg-[var(--surface-secondary)] text-center text-[10px] font-mono">
-                          <CheckCircle className="h-3.5 w-3.5 text-[var(--accent-green)]" />
-                          <span>2. Encode</span>
+                        <div className="flex flex-col items-center gap-0.5 p-2 rounded-xl bg-[var(--accent-green-deep)] text-center text-[10px] font-mono text-[var(--accent-green)] font-bold border border-[var(--accent-green)]/30">
+                          <RefreshCw className="h-4 w-4 animate-spin" />
+                          <span>2. Sync</span>
                         </div>
-                        <div className="flex flex-col items-center gap-0.5 p-1.5 rounded-lg bg-[var(--accent-green-deep)] text-center text-[10px] font-mono text-[var(--accent-green)] font-bold">
-                          <RefreshCw className="h-3.5 w-3.5 animate-spin" />
-                          <span>3. Sync</span>
-                        </div>
-                        <div className="flex flex-col items-center gap-0.5 p-1.5 rounded-lg bg-[var(--surface-secondary)]/40 text-center text-[10px] font-mono opacity-50">
-                          <Clock className="h-3.5 w-3.5" />
-                          <span>4. Cache</span>
+                        <div className="flex flex-col items-center gap-0.5 p-2 rounded-xl bg-[var(--surface-secondary)]/50 text-center text-[10px] font-mono opacity-60">
+                          <Clock className="h-4 w-4 text-[var(--text-muted)]" />
+                          <span>3. Cache</span>
                         </div>
                       </div>
                     </div>
@@ -1255,29 +1270,39 @@ export default function MobilePrimitivesPage() {
                       <span className="text-[10px] font-mono text-[var(--text-muted)]">Dot &amp; Large</span>
                     </div>
 
-                    <div className="flex items-center justify-around py-3">
-                      <M3Badge content={3} color="primary">
-                        <div className="h-10 w-10 rounded-xl bg-[var(--surface-secondary)] flex items-center justify-center">
-                          <Bell className="h-4.5 w-4.5 text-[var(--text-secondary)]" />
-                        </div>
-                      </M3Badge>
+                    <div className="py-2 space-y-3">
+                      {/* Row 1: Anchored Icon Badges */}
+                      <div className="flex items-center justify-center gap-6">
+                        <M3Badge content={3} color="primary">
+                          <div className="h-11 w-11 rounded-xl bg-[var(--surface-secondary)] border border-[var(--border)]/50 flex items-center justify-center shadow-2xs">
+                            <Bell className="h-5 w-5 text-[var(--text-secondary)]" />
+                          </div>
+                        </M3Badge>
 
-                      <M3Badge dot color="error">
-                        <div className="h-10 w-10 rounded-xl bg-[var(--surface-secondary)] flex items-center justify-center">
-                          <Shield className="h-4.5 w-4.5 text-[var(--text-secondary)]" />
-                        </div>
-                      </M3Badge>
+                        <M3Badge dot color="error">
+                          <div className="h-11 w-11 rounded-xl bg-[var(--surface-secondary)] border border-[var(--border)]/50 flex items-center justify-center shadow-2xs">
+                            <Shield className="h-5 w-5 text-[var(--text-secondary)]" />
+                          </div>
+                        </M3Badge>
 
-                      <M3Badge content={99} color="secondary">
-                        <div className="h-10 w-10 rounded-xl bg-[var(--surface-secondary)] flex items-center justify-center">
-                          <ShoppingBag className="h-4.5 w-4.5 text-[var(--text-secondary)]" />
-                        </div>
-                      </M3Badge>
+                        <M3Badge content="99+" max={99} color="primary">
+                          <div className="h-11 w-11 rounded-xl bg-[var(--surface-secondary)] border border-[var(--border)]/50 flex items-center justify-center shadow-2xs">
+                            <ShoppingBag className="h-5 w-5 text-[var(--text-secondary)]" />
+                          </div>
+                        </M3Badge>
+                      </div>
 
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[var(--accent-green-deep)] text-[var(--accent-green)] text-xs font-mono font-bold">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-green)] animate-pulse" />
-                        Active
-                      </span>
+                      {/* Row 2: Status Badges */}
+                      <div className="flex items-center justify-center gap-2 pt-1">
+                        <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--accent-green-deep)] text-[var(--accent-green)] text-xs font-mono font-semibold border border-[var(--accent-green)]/30">
+                          <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent-green)] animate-pulse" />
+                          <span>Live Active</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[var(--surface-secondary)] text-[var(--text-secondary)] text-xs font-mono border border-[var(--border)]/40">
+                          <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />
+                          <span>Syncing</span>
+                        </div>
+                      </div>
                     </div>
 
                     <div className="flex items-center justify-between text-[11px] font-mono text-[var(--text-muted)] pt-1">
@@ -1812,7 +1837,7 @@ export default function MobilePrimitivesPage() {
                 )}
 
                 {/* Bottom Centered Island Navigation Dock */}
-                <div className="absolute inset-x-0 bottom-3 z-30 flex justify-center pointer-events-none">
+                <div className="absolute inset-x-0 bottom-4 z-30 flex justify-center pointer-events-none">
                   <FloatingActionDock
                     className="relative pointer-events-auto"
                     dockClassName="scale-90"
@@ -1863,6 +1888,22 @@ export default function MobilePrimitivesPage() {
           </div>
 
         </div>
+
+        {/* Floating Slide-Open Handle on Right Edge when Phone is hidden */}
+        {!isPhoneVisible && (
+          <button
+            type="button"
+            onClick={() => setIsPhoneVisible(true)}
+            className="fixed right-0 top-1/2 -translate-y-1/2 z-50 flex items-center gap-1.5 py-3.5 px-2 rounded-l-2xl bg-[var(--surface-elevated)] border-l-2 border-y-2 border-[var(--border)] text-[var(--text-primary)] shadow-2xl hover:bg-[var(--surface-secondary)] hover:border-[var(--accent-green)] transition-all cursor-pointer group select-none"
+            title="Open Preset Preview Phone"
+            aria-label="Open Preset Preview Phone"
+          >
+            <ChevronLeft className="h-4 w-4 text-[var(--accent-green)] transition-transform group-hover:-translate-x-0.5" />
+            <span className="text-[10px] font-mono font-semibold tracking-wider uppercase text-[var(--text-secondary)] [writing-mode:vertical-rl] rotate-180">
+              Preset Preview
+            </span>
+          </button>
+        )}
 
         {/* Global Toast Notification */}
         <AnimatePresence>

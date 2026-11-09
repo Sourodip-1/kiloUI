@@ -118,12 +118,12 @@ export const M3TextField = React.forwardRef<HTMLInputElement, M3TextFieldProps>(
                     : "top-4 text-sm text-[var(--text-muted)]"
                   : isFloating
                   ? cn(
-                      "-top-2.5 px-2 text-[11px] font-bold tracking-tight rounded-full z-10 shadow-2xs backdrop-blur-xs",
-                      labelBgClassName || "bg-[var(--surface-elevated)]",
+                      "-top-2.5 px-1.5 text-[11px] font-medium tracking-wide z-10",
+                      labelBgClassName || "bg-[var(--surface-primary)]",
                       error
                         ? "text-[var(--accent-red)]"
                         : isFocused
-                        ? "text-[var(--accent-green)]"
+                        ? "text-[var(--accent-green)] font-semibold"
                         : "text-[var(--text-secondary)]"
                     )
                   : "top-4 text-sm text-[var(--text-muted)]"
