@@ -131,6 +131,13 @@ function ElasticCordPhysicsEngine({
       // [0.65 -> 0.82]: PUNCH-THROUGH UP! Cord twangs back to 0, shape morphs & shoots to top apex -A
       // [0.82 -> 1.00]: Top apex reversal and smooth fall downward from -A to cord at 0 (loops seamlessly)
 
+      // Exact mechanical released spring from rest: R(0) = 1, R'(0) = 0 (zero initial snap, silky elastic recoil)
+      const springRecoil = (t: number) => {
+        const c = 4.0;
+        const w = 5.5;
+        return Math.exp(-c * t) * (Math.cos(w * t) + (c / w) * Math.sin(w * t));
+      };
+
       if (p < 0.15) {
         // Phase 1: Downward stretch
         const t = p / 0.15;
@@ -142,9 +149,9 @@ function ElasticCordPhysicsEngine({
       } else if (p < 0.32) {
         // Phase 2: Downward punch-through to +A
         const t = (p - 0.15) / 0.17;
-        shapeY = D + (A - D) * Math.sin((t * Math.PI) / 2);
-        // Cord damped harmonic recoil from +D back to 0
-        cordY = D * Math.exp(-6 * t) * Math.cos(t * Math.PI * 4);
+        shapeY = D + (A - D) * (1 - Math.cos(t * Math.PI)) / 2;
+        // Cord smooth organic spring recoil from +D back to 0
+        cordY = D * springRecoil(t);
         sx = 0.92;
         sy = 1.10;
 
@@ -171,9 +178,9 @@ function ElasticCordPhysicsEngine({
       } else if (p < 0.82) {
         // Phase 5: Upward punch-through to -A
         const t = (p - 0.65) / 0.17;
-        shapeY = -D - (A - D) * Math.sin((t * Math.PI) / 2);
-        // Cord damped harmonic recoil from -D back to 0
-        cordY = -D * Math.exp(-6 * t) * Math.cos(t * Math.PI * 4);
+        shapeY = -D - (A - D) * (1 - Math.cos(t * Math.PI)) / 2;
+        // Cord smooth organic spring recoil from -D back to 0
+        cordY = -D * springRecoil(t);
         sx = 0.92;
         sy = 1.10;
 
