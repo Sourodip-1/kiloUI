@@ -867,6 +867,14 @@ export function ComponentPreviewStage({
     item.name === "m3-progress-indicator" && activeVariant ? activeVariant : "circular"
   );
   const [m3ProgressVal, setM3ProgressVal] = React.useState(72);
+  const [m3ProgressColor, setM3ProgressColor] = React.useState<"accent" | "google" | "monochrome">("accent");
+  const [m3ProgressSpeed, setM3ProgressSpeed] = React.useState(1);
+  const [m3ElasticResistance, setM3ElasticResistance] = React.useState(1);
+  const [m3MorphVariant, setM3MorphVariant] = React.useState<"uncontained" | "contained">("uncontained");
+  const [m3ContainerShape, setM3ContainerShape] = React.useState<"squircle" | "circle" | "rounded">("squircle");
+  const [m3MorphSize, setM3MorphSize] = React.useState(56);
+  const [m3SquiggleCount, setM3SquiggleCount] = React.useState(14);
+  const [m3SquiggleAmp, setM3SquiggleAmp] = React.useState(3.5);
 
   const [m3BadgeVariant, setM3BadgeVariant] = React.useState<any>(
     item.name === "m3-badge" && activeVariant ? activeVariant : "count"
@@ -6655,13 +6663,39 @@ export function ComponentPreviewStage({
                     </span>
                     <div className="flex items-center justify-center py-2">
                       {m3ProgressVariant === "squiggly-horizontal" ? (
-                        <M3SquigglyLoader variant="horizontal" squiggles={14} amplitude={4} color="accent" strokeWidth={3.5} />
+                        <M3SquigglyLoader
+                          variant="horizontal"
+                          squiggles={m3SquiggleCount}
+                          amplitude={m3SquiggleAmp}
+                          color={m3ProgressColor === "google" ? "blue" : m3ProgressColor}
+                          strokeWidth={3.5}
+                          speed={m3ProgressSpeed}
+                        />
                       ) : m3ProgressVariant === "squiggly-circular" ? (
-                        <M3SquigglyLoader variant="circular" squiggles={14} amplitude={4} color="blue" size={68} strokeWidth={3.5} />
+                        <M3SquigglyLoader
+                          variant="circular"
+                          squiggles={m3SquiggleCount}
+                          amplitude={m3SquiggleAmp}
+                          color={m3ProgressColor === "google" ? "blue" : m3ProgressColor}
+                          size={m3MorphSize}
+                          strokeWidth={3.5}
+                          speed={m3ProgressSpeed}
+                        />
                       ) : m3ProgressVariant === "shape-morph" ? (
-                        <M3LoadingIndicator variant="uncontained" size={56} color="accent" />
+                        <M3LoadingIndicator
+                          variant={m3MorphVariant}
+                          size={m3MorphSize}
+                          color={m3ProgressColor}
+                          speed={m3ProgressSpeed}
+                          containerShape={m3ContainerShape}
+                        />
                       ) : m3ProgressVariant === "elastic-line" ? (
-                        <M3PhysicsLoader variant="elastic-line" theme="accent" resistance={1} />
+                        <M3PhysicsLoader
+                          variant="elastic-line"
+                          theme={m3ProgressColor}
+                          resistance={m3ElasticResistance}
+                          speed={m3ProgressSpeed}
+                        />
                       ) : m3ProgressVariant === "circular" ? (
                         <M3ProgressIndicator type="circular" value={m3ProgressVal} />
                       ) : (
@@ -8860,22 +8894,130 @@ export function ComponentPreviewStage({
                       { label: "Linear Progress", value: "linear" },
                       { label: "Squiggly Circular (M3)", value: "squiggly-circular" },
                       { label: "Squiggly Horizontal (M3)", value: "squiggly-horizontal" },
-                      { label: "Shape Morph Spin (Google)", value: "shape-morph" },
+                      { label: "Shape Morph Spin (Google M3)", value: "shape-morph" },
                       { label: "Elastic Line Physics", value: "elastic-line" },
                       { label: "Minimal SaaS Style", value: "minimal" },
                     ]}
                   />
                 </CustomizeTile>
-                <CustomizeTile label="Progress Value">
-                  <CustomizeSlider
-                    value={m3ProgressVal}
-                    onChange={setM3ProgressVal}
-                    min={0}
-                    max={100}
-                    step={1}
-                    formatValue={(v) => `${v}%`}
+
+                {/* Single Accent Color Theme */}
+                <CustomizeTile label="Accent Color">
+                  <CustomizeSelect
+                    value={m3ProgressColor}
+                    onChange={(val: any) => setM3ProgressColor(val)}
+                    options={[
+                      { label: "Emerald Accent", value: "accent" },
+                      { label: "Google Royal Blue", value: "google" },
+                      { label: "Monochrome / Minimal", value: "monochrome" },
+                    ]}
                   />
                 </CustomizeTile>
+
+                {/* Animation Speed */}
+                <CustomizeTile label="Animation Speed">
+                  <CustomizeSlider
+                    value={m3ProgressSpeed}
+                    onChange={setM3ProgressSpeed}
+                    min={0.5}
+                    max={2.5}
+                    step={0.1}
+                    formatValue={(v) => `${v.toFixed(1)}x`}
+                  />
+                </CustomizeTile>
+
+                {/* Shape Morph Specific Controls */}
+                {m3ProgressVariant === "shape-morph" && (
+                  <>
+                    <CustomizeTile label="Morph Style">
+                      <CustomizeSelect
+                        value={m3MorphVariant}
+                        onChange={(val: any) => setM3MorphVariant(val)}
+                        options={[
+                          { label: "Uncontained (M3)", value: "uncontained" },
+                          { label: "Contained Surface (M3)", value: "contained" },
+                        ]}
+                      />
+                    </CustomizeTile>
+                    {m3MorphVariant === "contained" && (
+                      <CustomizeTile label="Container Shape">
+                        <CustomizeSelect
+                          value={m3ContainerShape}
+                          onChange={(val: any) => setM3ContainerShape(val)}
+                          options={[
+                            { label: "Squircle", value: "squircle" },
+                            { label: "Circle", value: "circle" },
+                            { label: "Rounded", value: "rounded" },
+                          ]}
+                        />
+                      </CustomizeTile>
+                    )}
+                    <CustomizeTile label="Indicator Size">
+                      <CustomizeSlider
+                        value={m3MorphSize}
+                        onChange={setM3MorphSize}
+                        min={36}
+                        max={72}
+                        step={4}
+                        formatValue={(v) => `${v}px`}
+                      />
+                    </CustomizeTile>
+                  </>
+                )}
+
+                {/* Elastic Line Specific Controls */}
+                {m3ProgressVariant === "elastic-line" && (
+                  <CustomizeTile label="Membrane Tension">
+                    <CustomizeSlider
+                      value={m3ElasticResistance}
+                      onChange={setM3ElasticResistance}
+                      min={0.5}
+                      max={2.0}
+                      step={0.1}
+                      formatValue={(v) => `${v.toFixed(1)}x`}
+                    />
+                  </CustomizeTile>
+                )}
+
+                {/* Squiggly Wave Specific Controls */}
+                {(m3ProgressVariant === "squiggly-circular" || m3ProgressVariant === "squiggly-horizontal") && (
+                  <>
+                    <CustomizeTile label="Squiggle Frequency">
+                      <CustomizeSlider
+                        value={m3SquiggleCount}
+                        onChange={setM3SquiggleCount}
+                        min={8}
+                        max={24}
+                        step={1}
+                        formatValue={(v) => `${v} waves`}
+                      />
+                    </CustomizeTile>
+                    <CustomizeTile label="Wave Amplitude">
+                      <CustomizeSlider
+                        value={m3SquiggleAmp}
+                        onChange={setM3SquiggleAmp}
+                        min={2}
+                        max={8}
+                        step={0.5}
+                        formatValue={(v) => `${v}px`}
+                      />
+                    </CustomizeTile>
+                  </>
+                )}
+
+                {/* Standard Progress Controls */}
+                {(m3ProgressVariant === "circular" || m3ProgressVariant === "linear" || m3ProgressVariant === "minimal") && (
+                  <CustomizeTile label="Progress Value">
+                    <CustomizeSlider
+                      value={m3ProgressVal}
+                      onChange={setM3ProgressVal}
+                      min={0}
+                      max={100}
+                      step={1}
+                      formatValue={(v) => `${v}%`}
+                    />
+                  </CustomizeTile>
+                )}
               </>
             )}
 

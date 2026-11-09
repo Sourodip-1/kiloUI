@@ -207,6 +207,7 @@ export default function MobilePrimitivesPage() {
   const [physicsVariant, setPhysicsVariant] = React.useState<"shape-morph" | "elastic-line">("elastic-line");
   const [physicsTheme, setPhysicsTheme] = React.useState<"accent" | "google">("accent");
   const [physicsResistance, setPhysicsResistance] = React.useState(1);
+  const [physicsSpeed, setPhysicsSpeed] = React.useState(1);
 
   // ── Phone Frame Preset States ──
   // Store Preset
@@ -1519,6 +1520,7 @@ export default function MobilePrimitivesPage() {
                             variant="elastic-line"
                             theme={physicsTheme}
                             resistance={physicsResistance}
+                            speed={physicsSpeed}
                           />
                         </div>
                       ) : (
@@ -1527,6 +1529,7 @@ export default function MobilePrimitivesPage() {
                             variant="shape-morph"
                             theme={physicsTheme}
                             size={72}
+                            speed={physicsSpeed}
                           />
                         </div>
                       )}
@@ -1590,19 +1593,52 @@ export default function MobilePrimitivesPage() {
                           </div>
                         </div>
 
-                        {physicsVariant === "elastic-line" && (
+                        {physicsVariant === "elastic-line" ? (
+                          <div className="grid grid-cols-2 gap-2 pt-1 text-[10px]">
+                            <div>
+                              <div className="flex justify-between text-[var(--text-muted)] mb-1">
+                                <span>Tension:</span>
+                                <span className="font-bold text-[var(--text-primary)]">{physicsResistance.toFixed(1)}x</span>
+                              </div>
+                              <input
+                                type="range"
+                                min={0.6}
+                                max={1.8}
+                                step={0.1}
+                                value={physicsResistance}
+                                onChange={(e) => setPhysicsResistance(Number(e.target.value))}
+                                className="w-full accent-[var(--accent-green)] cursor-pointer h-1"
+                              />
+                            </div>
+                            <div>
+                              <div className="flex justify-between text-[var(--text-muted)] mb-1">
+                                <span>Speed:</span>
+                                <span className="font-bold text-[var(--text-primary)]">{physicsSpeed.toFixed(1)}x</span>
+                              </div>
+                              <input
+                                type="range"
+                                min={0.5}
+                                max={2.2}
+                                step={0.1}
+                                value={physicsSpeed}
+                                onChange={(e) => setPhysicsSpeed(Number(e.target.value))}
+                                className="w-full accent-[var(--accent-green)] cursor-pointer h-1"
+                              />
+                            </div>
+                          </div>
+                        ) : (
                           <div className="pt-1 text-[10px]">
                             <div className="flex justify-between text-[var(--text-muted)] mb-1">
-                              <span>Membrane Resistance:</span>
-                              <span className="font-bold text-[var(--text-primary)]">{physicsResistance.toFixed(1)}x</span>
+                              <span>Morph Speed:</span>
+                              <span className="font-bold text-[var(--text-primary)]">{physicsSpeed.toFixed(1)}x</span>
                             </div>
                             <input
                               type="range"
-                              min={0.6}
-                              max={1.8}
+                              min={0.5}
+                              max={2.5}
                               step={0.1}
-                              value={physicsResistance}
-                              onChange={(e) => setPhysicsResistance(Number(e.target.value))}
+                              value={physicsSpeed}
+                              onChange={(e) => setPhysicsSpeed(Number(e.target.value))}
                               className="w-full accent-[var(--accent-green)] cursor-pointer h-1"
                             />
                           </div>
