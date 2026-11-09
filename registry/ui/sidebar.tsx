@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ChevronDown, X, Menu, Terminal, ChevronsUpDown, ChevronsDownUp, Sparkles, Monitor, Smartphone, Layers, ArrowUpDown, RefreshCw, SlidersHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -210,6 +210,7 @@ function SidebarBase({
   ...props
 }: SidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const [internalCollapsed, setInternalCollapsed] = React.useState(false);
   const isCollapsed = collapsed !== undefined ? collapsed : internalCollapsed;
 
@@ -274,6 +275,14 @@ function SidebarBase({
   };
 
   const [activePlatform, setActivePlatform] = React.useState<"web" | "mobile">("web");
+
+  const handlePlatformChange = (platform: "web" | "mobile") => {
+    setActivePlatform(platform);
+    if (platform === "mobile") {
+      router.push("/mobile-primitives");
+      onMobileOpenChange?.(false);
+    }
+  };
 
   React.useEffect(() => {
     if (
@@ -651,7 +660,7 @@ function SidebarBase({
           <div className="flex items-center w-full p-1 bg-[var(--surface-primary)] border border-[var(--border)] rounded-lg mb-2 gap-1 select-none">
             <button
               type="button"
-              onClick={() => setActivePlatform("web")}
+              onClick={() => handlePlatformChange("web")}
               title={`Web App (${webItemsCount} components)`}
               className={cn(
                 "flex-1 min-w-0 h-7 flex items-center justify-center gap-1.5 px-2 rounded-md text-[11px] font-medium transition-all duration-150 cursor-pointer",
@@ -666,7 +675,7 @@ function SidebarBase({
 
             <button
               type="button"
-              onClick={() => setActivePlatform("mobile")}
+              onClick={() => handlePlatformChange("mobile")}
               title={`Mobile App (${mobileItems.length} primitives)`}
               className={cn(
                 "flex-1 min-w-0 h-7 flex items-center justify-center gap-1.5 px-2 rounded-md text-[11px] font-medium transition-all duration-150 cursor-pointer",
@@ -683,7 +692,7 @@ function SidebarBase({
           <div className="flex flex-col items-center gap-1 p-1 bg-[var(--surface-primary)] border border-[var(--border)] rounded-lg mb-2 select-none">
             <button
               type="button"
-              onClick={() => setActivePlatform("web")}
+              onClick={() => handlePlatformChange("web")}
               title={`Web App (${webItemsCount} components)`}
               className={cn(
                 "h-7 w-7 flex items-center justify-center rounded-md transition-all duration-150 cursor-pointer",
@@ -696,7 +705,7 @@ function SidebarBase({
             </button>
             <button
               type="button"
-              onClick={() => setActivePlatform("mobile")}
+              onClick={() => handlePlatformChange("mobile")}
               title={`Mobile App (${mobileItems.length} components)`}
               className={cn(
                 "h-7 w-7 flex items-center justify-center rounded-md transition-all duration-150 cursor-pointer",
