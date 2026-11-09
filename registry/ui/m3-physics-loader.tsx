@@ -1,23 +1,24 @@
 "use client";
 
 import * as React from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
+import { M3LoadingIndicator } from "@/registry/ui/m3-loading-indicator";
 
 export interface M3PhysicsLoaderProps {
   /**
    * Loader style:
-   * - "shape-morph": Google Material You rounded edges shape morphing & continuous spinning
+   * - "shape-morph": Official Material 3 Expressive Loading Indicator (https://m3.material.io/components/loading-indicator/overview)
    * - "elastic-line": Horizontal stretchable elastic membrane with punch-through resistance & shape transformation
    */
   variant?: "shape-morph" | "elastic-line";
   /**
    * Single accent theme or color:
-   * - "accent": Single Emerald accent (var(--accent-green))
-   * - "google": Single Google Royal Blue (#2563eb)
-   * - "monochrome": Single Monochrome (var(--text-primary))
-   * - or any custom single hex color string (e.g. "#10b981")
-   * Strictly single accent color — no multi-color rainbow stops.
+   * - "accent": Emerald accent (var(--accent-green))
+   * - "google": Google Material Blue (#2563eb)
+   * - "monochrome": Monochrome (var(--text-primary))
+   * - or any custom single hex color string.
+   * Strictly NO GLOW.
    */
   theme?: "accent" | "google" | "monochrome" | string;
   /** Overall size in pixels */
@@ -30,33 +31,18 @@ export interface M3PhysicsLoaderProps {
   className?: string;
 }
 
-// ── Google Material You Morphable Organic Shapes ──
-const MORPH_SHAPES = [
-  // 0. Squircle (Superellipse)
-  {
-    name: "squircle",
-    borderRadius: "26%",
-  },
-  // 1. 4-Lobed Flower / Quatrefoil (Android 14 style)
-  {
-    name: "flower",
-    borderRadius: "32% 68% 30% 70% / 60% 40% 60% 40%",
-  },
-  // 2. Rounded 8-Pointed Star / Petal (Material You)
-  {
-    name: "star",
-    borderRadius: "45% 55% 60% 40% / 50% 65% 35% 50%",
-  },
-  // 3. Smooth Circle
-  {
-    name: "circle",
-    borderRadius: "50%",
-  },
-  // 4. Soft Diamond / Shield
-  {
-    name: "shield",
-    borderRadius: "40% 40% 50% 50% / 30% 30% 70% 70%",
-  },
+// ── Official Material 3 Expressive Shapes for Elastic Breaches ──
+const M3_SHAPES = [
+  // 1. Squircle
+  { name: "squircle", borderRadius: "26%" },
+  // 2. Cookie 4-Sided / Quatrefoil
+  { name: "cookie4", borderRadius: "30% 70% 32% 68% / 65% 35% 65% 35%" },
+  // 3. SoftBurst / Star
+  { name: "softburst", borderRadius: "45% 55% 60% 40% / 50% 65% 35% 50%" },
+  // 4. Smooth Circle
+  { name: "circle", borderRadius: "50%" },
+  // 5. Pill
+  { name: "pill", borderRadius: "9999px" },
 ];
 
 export function M3PhysicsLoader({
@@ -67,7 +53,7 @@ export function M3PhysicsLoader({
   resistance = 1,
   className,
 }: M3PhysicsLoaderProps) {
-  // Resolve single accent color
+  // Resolve single accent color (Flat, strictly NO GLOW)
   const accentColor = React.useMemo(() => {
     if (theme === "accent") return "var(--accent-green)";
     if (theme === "google") return "#2563eb";
@@ -76,95 +62,29 @@ export function M3PhysicsLoader({
   }, [theme]);
 
   // ══════════════════════════════════════════════════════════════════
-  // VARIANT 1: Google Material You Shape Morph Spin Loader
+  // VARIANT 1: Material 3 Expressive Loading Indicator (Official M3)
   // ══════════════════════════════════════════════════════════════════
-  const [shapeIndex, setShapeIndex] = React.useState(0);
-
-  React.useEffect(() => {
-    if (variant !== "shape-morph") return;
-
-    const intervalTime = Math.max(800, 1500 / speed);
-    const timer = setInterval(() => {
-      setShapeIndex((prev) => (prev + 1) % MORPH_SHAPES.length);
-    }, intervalTime);
-
-    return () => clearInterval(timer);
-  }, [variant, speed]);
-
   if (variant === "shape-morph") {
-    const currentShape = MORPH_SHAPES[shapeIndex];
-
     return (
-      <div
-        role="progressbar"
-        aria-label="Google Shape Morphing Loader"
-        style={{ width: size, height: size }}
-        className={cn(
-          "relative flex items-center justify-center select-none shrink-0",
-          className
-        )}
-      >
-        {/* Continuous rotating wrapper */}
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{
-            repeat: Infinity,
-            duration: 3.4 / speed,
-            ease: "linear",
-          }}
-          className="relative w-full h-full flex items-center justify-center"
-        >
-          {/* Animated Morphing Organic Shape in Single Accent Color */}
-          <motion.div
-            layout
-            animate={{
-              borderRadius: currentShape.borderRadius,
-              scale: [0.94, 1.05],
-            }}
-            transition={{
-              borderRadius: { duration: 0.65 / speed, ease: [0.34, 1.56, 0.64, 1] },
-              scale: {
-                repeat: Infinity,
-                repeatType: "reverse",
-                duration: 0.85 / speed,
-                ease: "easeInOut",
-              },
-            }}
-            style={{
-              width: size * 0.72,
-              height: size * 0.72,
-              backgroundColor: accentColor,
-              boxShadow: `0 8px 24px -3px ${theme === "google" ? "rgba(37,99,235,0.4)" : "rgba(16,185,129,0.35)"}`,
-            }}
-            className="flex items-center justify-center cursor-default transition-all"
-          >
-            {/* Center soft inner core dot for depth */}
-            <motion.div
-              animate={{
-                scale: [0.8, 1.2, 0.9],
-                opacity: [0.4, 0.8, 0.5],
-              }}
-              transition={{
-                repeat: Infinity,
-                duration: 1.6 / speed,
-                ease: "easeInOut",
-              }}
-              className="w-2.5 h-2.5 rounded-full bg-white/85 shadow-xs"
-            />
-          </motion.div>
-        </motion.div>
+      <div className={cn("flex items-center justify-center select-none shrink-0", className)}>
+        <M3LoadingIndicator
+          variant="uncontained"
+          size={size}
+          color={accentColor}
+          speed={speed}
+        />
       </div>
     );
   }
 
   // ══════════════════════════════════════════════════════════════════
   // VARIANT 2: Elastic Line Punch-Through & Morph Physics Loader
+  // Strictly NO GLOW, NO PULSE CIRCULAR RING
   // ══════════════════════════════════════════════════════════════════
   return (
     <ElasticLinePhysicsEngine
       size={size}
       accentColor={accentColor}
-      theme={theme}
       speed={speed}
       resistance={resistance}
       className={className}
@@ -172,18 +92,18 @@ export function M3PhysicsLoader({
   );
 }
 
-// ── Realistic Elastic Membrane Punch-Through Physics Engine ──
+// ── Minimalist Elastic Membrane Punch-Through Physics Engine ──
+// Pure physics: natural gravity fall, membrane tension deflection, clean punch-through,
+// damped harmonic string twang recoil, and seamless shape transformation. NO GLOW.
 function ElasticLinePhysicsEngine({
   size,
   accentColor,
-  theme,
   speed,
   resistance,
   className,
 }: {
   size: number;
   accentColor: string;
-  theme: string;
   speed: number;
   resistance: number;
   className?: string;
@@ -201,8 +121,6 @@ function ElasticLinePhysicsEngine({
   // Shape squash & stretch factors
   const [shapeScaleX, setShapeScaleX] = React.useState(1);
   const [shapeScaleY, setShapeScaleY] = React.useState(1);
-  // Membrane breakthrough burst trigger
-  const [isBreached, setIsBreached] = React.useState(false);
 
   React.useEffect(() => {
     let animId: number;
@@ -211,7 +129,7 @@ function ElasticLinePhysicsEngine({
 
     // Full loop cycle period in seconds
     const duration = 2.6 / speed;
-    const maxDeflection = 30 * Math.min(1.6, Math.max(0.6, resistance));
+    const maxDeflection = 28 * Math.min(1.5, Math.max(0.6, resistance));
 
     const tick = (now: number) => {
       if (startTime === null) startTime = now;
@@ -227,7 +145,7 @@ function ElasticLinePhysicsEngine({
       // [0.00 -> 0.22] Launch from center up to Top Apex
       // [0.22 -> 0.38] Gravity Fall down toward the Elastic Line
       // [0.38 -> 0.52] Contact & Elastic Resistance Stretch Downward
-      // [0.52 -> 0.64] Breakthrough Snap Down, Shape Morphs, Line Twangs
+      // [0.52 -> 0.64] Breakthrough Snap Down, Shape Morphs, Line Twangs (No pulse ring)
       // [0.64 -> 0.78] Bottom Apex & Launch Upward toward Elastic Line
       // [0.78 -> 0.90] Contact from below & Elastic Resistance Stretch Upward
       // [0.90 -> 1.00] Breakthrough Snap Up, Shape Morphs, Line Twangs
@@ -238,27 +156,25 @@ function ElasticLinePhysicsEngine({
         const easeUp = Math.sin((p * Math.PI) / 2);
         currShapeY = centerY - easeUp * 46;
         currLineDy = 0;
-        // Natural airborne elongation
-        sx = 0.92 + 0.08 * (1 - p);
-        sy = 1.08 - 0.08 * (1 - p);
+        sx = 0.94 + 0.06 * (1 - p);
+        sy = 1.06 - 0.06 * (1 - p);
       } else if (progress < 0.38) {
         // Free fall with gravity acceleration
         const p = (progress - 0.22) / 0.16;
         const gravityFall = p * p;
         currShapeY = (centerY - 46) + gravityFall * 46;
         currLineDy = 0;
-        // Aerodynamic stretching during fall
-        sx = 0.9;
-        sy = 1.1;
+        sx = 0.92;
+        sy = 1.08;
       } else if (progress < 0.52) {
         // Contact line: Membrane resists and stretches downwards
         const p = (progress - 0.38) / 0.14;
         const easeStretch = Math.sin((p * Math.PI) / 2);
         currLineDy = easeStretch * maxDeflection;
         currShapeY = centerY + currLineDy;
-        // Compression squash against resistance
-        sx = 1 + easeStretch * 0.32;
-        sy = 1 - easeStretch * 0.24;
+        // Compression squash against elastic tension
+        sx = 1 + easeStretch * 0.3;
+        sy = 1 - easeStretch * 0.22;
       } else if (progress < 0.64) {
         // PUNCH-THROUGH DOWN! Line snaps back with damped harmonic twang
         const p = (progress - 0.52) / 0.12;
@@ -271,12 +187,10 @@ function ElasticLinePhysicsEngine({
         sx = 0.95;
         sy = 1.05;
 
-        // Trigger morph on breach
+        // Morph shape cleanly on breach — NO PULSE RING
         if (lastBreachStage !== 1) {
           lastBreachStage = 1;
-          setIsBreached(true);
-          setTimeout(() => setIsBreached(false), 240);
-          setShapeIndex((s) => (s + 1) % MORPH_SHAPES.length);
+          setShapeIndex((s) => (s + 1) % M3_SHAPES.length);
         }
       } else if (progress < 0.78) {
         // Bottom Apex reversal & rise upward
@@ -284,17 +198,16 @@ function ElasticLinePhysicsEngine({
         const easeRise = 1 - Math.cos((p * Math.PI) / 2);
         currShapeY = (centerY + 48) - easeRise * 48;
         currLineDy = 0;
-        sx = 0.92;
-        sy = 1.08;
+        sx = 0.94;
+        sy = 1.06;
       } else if (progress < 0.90) {
         // Contact from underneath: stretches line upwards
         const p = (progress - 0.78) / 0.12;
         const easeStretch = Math.sin((p * Math.PI) / 2);
         currLineDy = -easeStretch * maxDeflection;
         currShapeY = centerY + currLineDy;
-        // Compression squash from below
-        sx = 1 + easeStretch * 0.32;
-        sy = 1 - easeStretch * 0.24;
+        sx = 1 + easeStretch * 0.3;
+        sy = 1 - easeStretch * 0.22;
       } else {
         // PUNCH-THROUGH UP! Line twangs, shape snaps past to top
         const p = (progress - 0.90) / 0.10;
@@ -305,12 +218,10 @@ function ElasticLinePhysicsEngine({
         sx = 0.95;
         sy = 1.05;
 
-        // Trigger morph on upward breach
+        // Morph shape cleanly on upward breach — NO PULSE RING
         if (lastBreachStage !== 2) {
           lastBreachStage = 2;
-          setIsBreached(true);
-          setTimeout(() => setIsBreached(false), 240);
-          setShapeIndex((s) => (s + 1) % MORPH_SHAPES.length);
+          setShapeIndex((s) => (s + 1) % M3_SHAPES.length);
         }
       }
 
@@ -326,17 +237,16 @@ function ElasticLinePhysicsEngine({
     return () => cancelAnimationFrame(animId);
   }, [speed, resistance, centerY]);
 
-  const currentShape = MORPH_SHAPES[shapeIndex];
+  const currentShape = M3_SHAPES[shapeIndex];
   const shapeSize = Math.max(26, size * 0.44);
 
   // Line endpoints: sleek horizontal line spanning container with subtle edge margins
-  const lineStartX = 12;
-  const lineEndX = containerWidth - 12;
+  const lineStartX = 14;
+  const lineEndX = containerWidth - 14;
   const lineMidX = containerWidth / 2;
 
-  // Organic quadratic bezier curve for the flexible elastic cord
+  // Clean quadratic bezier curve for the flexible elastic cord (Strictly NO GLOW)
   const curvePath = `M ${lineStartX},${centerY} Q ${lineMidX},${centerY + lineDy} ${lineEndX},${centerY}`;
-  const isDeflected = Math.abs(lineDy) > 2;
 
   return (
     <div
@@ -354,14 +264,7 @@ function ElasticLinePhysicsEngine({
         viewBox={`0 0 ${containerWidth} ${containerHeight}`}
         className="absolute inset-0 pointer-events-none overflow-visible"
       >
-        <defs>
-          <filter id="elastic-line-glow" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="2.5" result="blur" />
-            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-          </filter>
-        </defs>
-
-        {/* Resting baseline track guide (micro-subtle) */}
+        {/* Subtle resting baseline track guide */}
         <line
           x1={lineStartX}
           y1={centerY}
@@ -373,26 +276,23 @@ function ElasticLinePhysicsEngine({
           className="text-[var(--border)] opacity-30"
         />
 
-        {/* Dynamic Stretchable Elastic Cord (Single Accent Color) */}
+        {/* Dynamic Stretchable Elastic Cord (Crisp Flat Vector — NO GLOW) */}
         <path
           d={curvePath}
           fill="none"
           stroke={accentColor}
-          strokeWidth={Math.max(2, 3.6 - Math.abs(lineDy) * 0.045)} // Thins realistically as stretched
+          strokeWidth={Math.max(1.8, 3.2 - Math.abs(lineDy) * 0.04)} // Thins realistically as stretched
           strokeLinecap="round"
-          filter={isDeflected ? "url(#elastic-line-glow)" : undefined}
-          className="transition-opacity duration-150"
-          style={{ opacity: isDeflected ? 1 : 0.8 }}
         />
       </svg>
 
-      {/* Floating Morphing Geometry with True Physical Squash & Stretch */}
+      {/* Floating Morphing Geometry (Flat Solid Color — Strictly NO GLOW) */}
       <motion.div
         animate={{
           borderRadius: currentShape.borderRadius,
         }}
         transition={{
-          borderRadius: { duration: 0.35, ease: [0.34, 1.56, 0.64, 1] },
+          borderRadius: { duration: 0.32, ease: [0.34, 1.56, 0.64, 1] },
         }}
         style={{
           width: shapeSize,
@@ -402,33 +302,12 @@ function ElasticLinePhysicsEngine({
           position: "absolute",
           backgroundColor: accentColor,
           transform: `scale(${shapeScaleX}, ${shapeScaleY}) rotate(${shapeIndex * 45}deg)`,
-          boxShadow: `0 6px 18px -2px ${theme === "google" ? "rgba(37,99,235,0.45)" : "rgba(16,185,129,0.38)"}`,
         }}
-        className="flex items-center justify-center pointer-events-none z-10 transition-shadow duration-200"
+        className="flex items-center justify-center pointer-events-none z-10"
       >
-        {/* Core highlight dot */}
-        <div className="w-1.5 h-1.5 rounded-full bg-white/90 shadow-2xs" />
+        {/* Core tactile pip */}
+        <div className="w-1.5 h-1.5 rounded-full bg-white/90 dark:bg-black/40" />
       </motion.div>
-
-      {/* Breakthrough Elastic Shockwave Ring in Single Accent Color */}
-      <AnimatePresence>
-        {isBreached && (
-          <motion.div
-            initial={{ scale: 0.6, opacity: 0.85 }}
-            animate={{ scale: 2.3, opacity: 0 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.32, ease: "easeOut" }}
-            style={{
-              width: shapeSize,
-              height: shapeSize,
-              top: centerY - shapeSize / 2,
-              left: `calc(50% - ${shapeSize / 2}px)`,
-              borderColor: accentColor,
-            }}
-            className="absolute rounded-full border-2 pointer-events-none z-0"
-          />
-        )}
-      </AnimatePresence>
     </div>
   );
 }

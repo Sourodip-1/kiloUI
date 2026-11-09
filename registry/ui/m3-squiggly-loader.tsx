@@ -24,13 +24,11 @@ export interface M3SquigglyLoaderProps {
    * - "blue": Single Google Royal Blue (#2563eb)
    * - "monochrome": Uses currentColor / text-primary
    * - or any custom single hex color string (e.g. "#10b981", "#3b82f6")
-   * Strictly single-color — no rainbow gradients.
+   * Strictly single-color, flat vector, NO GLOW.
    */
   color?: "accent" | "blue" | "monochrome" | string;
   /** Animation speed multiplier (1 is normal) */
   speed?: number;
-  /** Optional soft single-color glow effect */
-  glow?: boolean;
   /** Additional CSS class names */
   className?: string;
 }
@@ -45,7 +43,6 @@ export function M3SquigglyLoader({
   width,
   color = "accent",
   speed = 1,
-  glow = false,
   className,
 }: M3SquigglyLoaderProps) {
   const isDeterminate = typeof value === "number";
@@ -76,7 +73,7 @@ export function M3SquigglyLoader({
     };
   }, [speed]);
 
-  // Resolve single accent color value
+  // Resolve single accent color value (Flat, NO GLOW)
   const resolvedColor = React.useMemo(() => {
     if (color === "accent") return "var(--accent-green)";
     if (color === "blue") return "#2563eb";
@@ -126,7 +123,6 @@ export function M3SquigglyLoader({
         style={{ width: size, height: size }}
         className={cn(
           "relative inline-flex items-center justify-center select-none shrink-0",
-          glow && "drop-shadow-[0_0_10px_rgba(37,99,235,0.4)] dark:drop-shadow-[0_0_10px_rgba(16,185,129,0.35)]",
           className
         )}
       >
@@ -143,7 +139,7 @@ export function M3SquigglyLoader({
             className="text-[var(--border)] opacity-35"
           />
 
-          {/* Active Single-Accent Squiggly Ring Path */}
+          {/* Active Single-Accent Squiggly Ring Path (Flat, NO GLOW) */}
           <path
             d={pathData}
             fill="none"
@@ -202,7 +198,6 @@ export function M3SquigglyLoader({
       style={{ width: width || "100%", height }}
       className={cn(
         "relative flex items-center select-none overflow-hidden",
-        glow && "drop-shadow-[0_0_8px_rgba(16,185,129,0.3)]",
         className
       )}
     >
@@ -227,7 +222,7 @@ export function M3SquigglyLoader({
           />
         )}
 
-        {/* Active Single-Accent Squiggly Wave Path */}
+        {/* Active Single-Accent Squiggly Wave Path (Flat, NO GLOW) */}
         <path
           d={squigglyPath}
           fill="none"

@@ -29,6 +29,7 @@ import { M3Snackbar } from "@/registry/ui/m3-snackbar";
 import { M3ProgressIndicator } from "@/registry/ui/m3-progress-indicator";
 import { M3SquigglyLoader } from "@/components/ui/m3-squiggly-loader";
 import { M3PhysicsLoader } from "@/components/ui/m3-physics-loader";
+import { M3LoadingIndicator } from "@/registry/ui/m3-loading-indicator";
 import { M3Badge } from "@/registry/ui/m3-badge";
 import { M3List, M3ListItem } from "@/registry/ui/m3-list";
 import { Button } from "@/registry/ui/button";
@@ -6654,11 +6655,11 @@ export function ComponentPreviewStage({
                     </span>
                     <div className="flex items-center justify-center py-2">
                       {m3ProgressVariant === "squiggly-horizontal" ? (
-                        <M3SquigglyLoader variant="horizontal" squiggles={14} amplitude={4} color="accent" strokeWidth={3.5} glow />
+                        <M3SquigglyLoader variant="horizontal" squiggles={14} amplitude={4} color="accent" strokeWidth={3.5} />
                       ) : m3ProgressVariant === "squiggly-circular" ? (
-                        <M3SquigglyLoader variant="circular" squiggles={14} amplitude={4} color="blue" size={68} strokeWidth={3.5} glow />
+                        <M3SquigglyLoader variant="circular" squiggles={14} amplitude={4} color="blue" size={68} strokeWidth={3.5} />
                       ) : m3ProgressVariant === "shape-morph" ? (
-                        <M3PhysicsLoader variant="shape-morph" theme="accent" size={68} />
+                        <M3LoadingIndicator variant="uncontained" size={56} color="accent" />
                       ) : m3ProgressVariant === "elastic-line" ? (
                         <M3PhysicsLoader variant="elastic-line" theme="accent" resistance={1} />
                       ) : m3ProgressVariant === "circular" ? (
@@ -6669,16 +6670,16 @@ export function ComponentPreviewStage({
                     </div>
                   </div>
 
-                  {/* Squiggly Wave Showcase (Single Accent Colors) */}
+                  {/* Squiggly Wave Showcase (Flat Vector — Strictly NO GLOW) */}
                   <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] space-y-3 text-center">
                     <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 block">Squiggly Waves (Android 14+)</span>
                     <div className="flex items-center justify-around py-1">
                       <div className="flex flex-col items-center gap-1.5">
-                        <M3SquigglyLoader variant="circular" size={56} squiggles={14} amplitude={3.5} color="blue" glow />
+                        <M3SquigglyLoader variant="circular" size={56} squiggles={14} amplitude={3.5} color="blue" />
                         <span className="text-[9px] font-mono text-[var(--text-muted)]">Google Royal Blue</span>
                       </div>
                       <div className="flex flex-col items-center gap-1.5">
-                        <M3SquigglyLoader variant="circular" size={56} squiggles={14} amplitude={3.5} color="accent" glow />
+                        <M3SquigglyLoader variant="circular" size={56} squiggles={14} amplitude={3.5} color="accent" />
                         <span className="text-[9px] font-mono text-[var(--text-muted)]">Emerald Accent</span>
                       </div>
                     </div>
@@ -6687,23 +6688,33 @@ export function ComponentPreviewStage({
                     </div>
                   </div>
 
-                  {/* Physics & Shape-Morph Showcase */}
+                  {/* Material 3 Expressive Loading Indicators & Elastic Physics (Strictly NO GLOW) */}
                   <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] space-y-4">
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 block text-center">Shape Morph &amp; Elastic Physics</span>
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 block text-center">M3 Expressive &amp; Elastic Physics</span>
                     
-                    {/* Shape Morph Spinner */}
-                    <div className="p-3 rounded-lg bg-[var(--surface-secondary)]/50 border border-[var(--border)]/60 flex flex-col items-center gap-2">
-                      <span className="text-[9px] font-mono text-[var(--text-muted)] uppercase">Shape Morph Spinner</span>
-                      <div className="py-2 flex justify-center">
-                        <M3PhysicsLoader variant="shape-morph" theme="accent" size={60} />
+                    {/* Official Material 3 Expressive Loading Indicator (m3.material.io) */}
+                    <div className="p-3 rounded-lg bg-[var(--surface-secondary)]/50 border border-[var(--border)]/60 flex flex-col items-center gap-2.5">
+                      <div className="flex items-center justify-between w-full px-1">
+                        <span className="text-[9px] font-mono text-[var(--text-muted)] uppercase">M3 Expressive Morph Indicator</span>
+                        <span className="text-[8px] font-mono text-[var(--accent-green)]">m3.material.io</span>
+                      </div>
+                      <div className="py-2 flex items-center justify-around w-full">
+                        <div className="flex flex-col items-center gap-1.5">
+                          <M3LoadingIndicator variant="uncontained" size={48} color="accent" />
+                          <span className="text-[8px] font-mono text-[var(--text-muted)]">Uncontained</span>
+                        </div>
+                        <div className="flex flex-col items-center gap-1.5">
+                          <M3LoadingIndicator variant="contained" size={54} color="google" containerShape="squircle" />
+                          <span className="text-[8px] font-mono text-[var(--text-muted)]">Contained</span>
+                        </div>
                       </div>
                     </div>
 
-                    {/* Elastic Line Physics */}
+                    {/* Elastic Membrane Punch-Through (NO GLOW, NO PULSE RING) */}
                     <div className="p-3 rounded-lg bg-[var(--surface-secondary)]/50 border border-[var(--border)]/60 flex flex-col items-center gap-2">
                       <span className="text-[9px] font-mono text-[var(--text-muted)] uppercase">Elastic Membrane Punch-Through</span>
                       <div className="py-1 flex justify-center w-full">
-                        <M3PhysicsLoader variant="elastic-line" theme="accent" size={56} resistance={1} />
+                        <M3PhysicsLoader variant="elastic-line" theme="accent" size={54} resistance={1} />
                       </div>
                     </div>
                   </div>

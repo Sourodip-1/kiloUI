@@ -5533,7 +5533,7 @@ export const REGISTRY_DATA: Record<string, RegistryItem> = {
   "name": "m3-progress-indicator",
   "category": "Mobile App",
   "title": "M3 Progress Indicator & Physics Loaders",
-  "description": "Linear and circular progress indicators, Google Android 14+ squiggly sinusoidal wave loaders, random shape-morph spinners, and elastic membrane punch-through physics loaders.",
+  "description": "Linear and circular progress indicators, Google Android 14+ squiggly sinusoidal wave loaders, official Material 3 Expressive shape-morph loading indicators (m3.material.io), and elastic membrane punch-through physics loaders.",
   "variants": [
     "linear",
     "circular",

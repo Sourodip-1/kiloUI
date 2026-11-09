@@ -1386,7 +1386,6 @@ export default function MobilePrimitivesPage() {
                             amplitude={squigglyAmp}
                             color={squigglyColor}
                             strokeWidth={3.5}
-                            glow
                           />
                         </div>
                       ) : (
@@ -1397,7 +1396,6 @@ export default function MobilePrimitivesPage() {
                             amplitude={squigglyAmp}
                             color={squigglyColor}
                             strokeWidth={3.5}
-                            glow
                           />
                         </div>
                       )}
