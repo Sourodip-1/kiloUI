@@ -214,19 +214,13 @@ export function Depth3dCarousel({
     }
   };
 
-  const prevIdx = (activeIdx - 1 + items.length) % items.length;
-  const nextIdx = (activeIdx + 1) % items.length;
-
-  const currentItem = items[activeIdx];
-  const prevItem = items[prevIdx];
-  const nextItem = items[nextIdx];
-
   const sizeConfig = {
     sm: {
-      centerCard: "w-[195px] sm:w-[210px] h-[280px] sm:h-[300px] rounded-2xl",
-      sideLeft: "w-[155px] sm:w-[170px] h-[240px] sm:h-[255px] rounded-xl -mr-12 sm:-mr-14",
-      sideRight: "w-[155px] sm:w-[170px] h-[240px] sm:h-[255px] rounded-xl -ml-12 sm:-ml-14",
-      stageMinH: "min-h-[305px]",
+      cardWidth: 205,
+      cardHeight: 295,
+      sideOffset: 135,
+      cardRadius: "rounded-2xl",
+      stageMinH: "min-h-[320px]",
       titleText: "text-sm font-bold",
       taglineText: "text-[9px]",
       bottomPad: "p-3 pt-4",
@@ -236,10 +230,11 @@ export function Depth3dCarousel({
       heartBtn: "w-6 h-6 top-10 right-2.5",
     },
     default: {
-      centerCard: "w-[225px] sm:w-[240px] h-[325px] sm:h-[345px] rounded-2xl",
-      sideLeft: "w-[175px] sm:w-[190px] h-[275px] sm:h-[295px] rounded-xl -mr-14 sm:-mr-16",
-      sideRight: "w-[175px] sm:w-[190px] h-[275px] sm:h-[295px] rounded-xl -ml-14 sm:-ml-16",
-      stageMinH: "min-h-[355px]",
+      cardWidth: 235,
+      cardHeight: 340,
+      sideOffset: 155,
+      cardRadius: "rounded-2xl",
+      stageMinH: "min-h-[365px]",
       titleText: "text-base font-bold",
       taglineText: "text-[11px]",
       bottomPad: "p-3.5 pt-5",
@@ -249,17 +244,18 @@ export function Depth3dCarousel({
       heartBtn: "w-7 h-7 top-12 right-3",
     },
     lg: {
-      centerCard: "w-[270px] sm:w-[290px] h-[395px] sm:h-[415px] rounded-3xl",
-      sideLeft: "w-[210px] sm:w-[230px] h-[340px] sm:h-[360px] rounded-2xl -mr-16 sm:-mr-20",
-      sideRight: "w-[210px] sm:w-[230px] h-[340px] sm:h-[360px] rounded-2xl -ml-16 sm:-ml-20",
-      stageMinH: "min-h-[425px]",
+      cardWidth: 280,
+      cardHeight: 415,
+      sideOffset: 195,
+      cardRadius: "rounded-3xl",
+      stageMinH: "min-h-[440px]",
       titleText: "text-xl font-bold",
       taglineText: "text-xs",
       bottomPad: "p-5 pt-8",
       priceText: "text-lg",
       btnPad: "px-4 py-2 text-xs",
       badgePad: "px-3 py-1.5 text-xs",
-      heartBtn: "w-9 h-9 top-16 right-4",
+      heartBtn: "w-9 h-9 top-15 right-4",
     },
   }[size];
 
@@ -267,175 +263,184 @@ export function Depth3dCarousel({
     <div className={cn("relative w-full flex flex-col items-center select-none overflow-visible bg-transparent py-2", className)}>
       {/* 3D Perspective Stage */}
       <div
-        className={cn("relative z-10 flex items-center justify-center w-full px-2 overflow-visible", sizeConfig.stageMinH)}
+        className={cn("relative z-10 flex items-center justify-center w-full overflow-visible", sizeConfig.stageMinH)}
         style={{ perspective: 1200 }}
       >
-        {/* ── Left Peeking Card (Always visible, Scaled, Depth Tilt) ── */}
-        <div
-          onClick={() => handleIndexChange(activeIdx - 1)}
-          className={cn(
-            "shrink-0 block overflow-hidden relative shadow-xl transform -rotate-y-6 scale-90 opacity-70 hover:opacity-95 transition-all duration-300 cursor-pointer pointer-events-auto z-10",
-            sizeConfig.sideLeft
-          )}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={prevItem.imageUrl}
-            alt={prevItem.imageAlt}
-            className="w-full h-full object-cover object-center"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0e16] via-[#0a0e16]/50 to-transparent" />
+        {items.map((item, index) => {
+          let offset = index - activeIdx;
+          if (offset > items.length / 2) offset -= items.length;
+          if (offset < -items.length / 2) offset += items.length;
 
-          {/* Top Rating Badge */}
-          <div className={cn("absolute top-3 left-3 bg-black/60 backdrop-blur-md rounded-full flex items-center gap-1 border border-white/10", sizeConfig.badgePad)}>
-            <Star className="h-3 w-3 text-amber-400 fill-amber-400" />
-            <span className="text-[10px] font-mono text-white font-semibold">{prevItem.rating}</span>
-          </div>
+          const isCenter = offset === 0;
+          const isLeft = offset === -1;
+          const isRight = offset === 1;
+          const isVisible = isCenter || isLeft || isRight;
 
-          {/* Bottom Card Summary */}
-          <div className="absolute bottom-3 inset-x-3 flex flex-col gap-0.5">
-            <span className="text-[9px] font-mono uppercase tracking-wider text-[#4cd7f6]">{prevItem.location}</span>
-            <h4 className="text-xs font-bold text-white truncate">{prevItem.title}</h4>
-            <p className="text-[11px] text-neutral-400">${prevItem.pricePerNight} / night</p>
-          </div>
-        </div>
+          const targetX = isCenter
+            ? 0
+            : isLeft
+            ? -sizeConfig.sideOffset
+            : isRight
+            ? sizeConfig.sideOffset
+            : offset < 0
+            ? -sizeConfig.sideOffset * 1.8
+            : sizeConfig.sideOffset * 1.8;
 
-        {/* ── Center Active Card (Elevated, Specular Scrim, Touch Drag) ── */}
-        <motion.div
-          drag="x"
-          dragConstraints={{ left: 0, right: 0 }}
-          dragElastic={0.2}
-          onDragEnd={handleDragEnd}
-          className={cn(
-            "shrink-0 overflow-hidden relative shadow-2xl z-20 bg-[#141824] border border-white/10 group cursor-grab active:cursor-grabbing will-change-transform",
-            sizeConfig.centerCard
-          )}
-        >
-          {/* Background Image */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={currentItem.imageUrl}
-            alt={currentItem.imageAlt}
-            className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
-            draggable={false}
-          />
+          const targetRotateY = isCenter ? 0 : isLeft ? -7 : isRight ? 7 : 0;
+          const targetScale = isCenter ? 1 : isVisible ? 0.9 : 0.75;
+          const targetOpacity = isCenter ? 1 : isVisible ? 0.75 : 0;
+          const targetZIndex = isCenter ? 30 : isVisible ? 15 : 0;
 
-          {/* Double Specular Gradient Overlays */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0e16] via-[#0a0e16]/40 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#0a0e16]/60 via-transparent to-transparent" />
-
-          {/* Top Badges Row */}
-          <div className="absolute top-3 inset-x-3 flex items-center justify-between z-10 pointer-events-none">
-            <div className={cn("flex items-center gap-1 rounded-full bg-[#0a0e16]/80 backdrop-blur-xl border border-white/10 shadow-sm", sizeConfig.badgePad)}>
-              <MapPin className="h-3 w-3 text-[#4cd7f6]" />
-              <span className="font-sans text-white font-semibold tracking-wide truncate max-w-[110px]">
-                {currentItem.location}
-              </span>
-            </div>
-
-            <div className={cn("flex items-center gap-1 rounded-full bg-[#0a0e16]/80 backdrop-blur-xl border border-white/10 shadow-sm", sizeConfig.badgePad)}>
-              <Star className="h-3 w-3 text-amber-400 fill-amber-400" />
-              <span className="font-mono text-white font-bold">{currentItem.rating}</span>
-            </div>
-          </div>
-
-          {/* Center Interactive Bookmark Heart Button */}
-          <button
-            type="button"
-            onClick={(e) => toggleBookmark(currentItem, e)}
-            className={cn(
-              "absolute rounded-full bg-[#1c2028]/80 backdrop-blur-md flex items-center justify-center text-white hover:text-rose-400 active:scale-90 transition-all shadow-md z-10 border border-white/10 cursor-pointer",
-              sizeConfig.heartBtn
-            )}
-            title="Save Sanctuary"
-            aria-label="Save Sanctuary"
-          >
-            <Heart
+          return (
+            <motion.div
+              key={item.id}
+              initial={false}
+              animate={{
+                x: targetX,
+                scale: targetScale,
+                rotateY: targetRotateY,
+                opacity: targetOpacity,
+                zIndex: targetZIndex,
+              }}
+              transition={{
+                type: "spring",
+                stiffness: 280,
+                damping: 28,
+                mass: 0.8,
+              }}
+              drag={isCenter ? "x" : false}
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={0.25}
+              onDragEnd={handleDragEnd}
+              onClick={() => {
+                if (!isCenter) handleIndexChange(index);
+              }}
+              style={{
+                width: sizeConfig.cardWidth,
+                height: sizeConfig.cardHeight,
+                transformStyle: "preserve-3d",
+              }}
               className={cn(
-                "h-3.5 w-3.5 transition-colors",
-                bookmarkedIds[currentItem.id]
-                  ? "text-rose-500 fill-rose-500"
-                  : "text-white"
+                "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 will-change-transform select-none overflow-hidden bg-[#141824] border border-white/10 shadow-2xl",
+                sizeConfig.cardRadius,
+                isCenter
+                  ? "cursor-grab active:cursor-grabbing pointer-events-auto"
+                  : isVisible
+                  ? "cursor-pointer pointer-events-auto hover:opacity-95"
+                  : "pointer-events-none"
               )}
-            />
-          </button>
+            >
+              {/* Background Image */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={item.imageUrl}
+                alt={item.imageAlt}
+                className="w-full h-full object-cover object-center transition-transform duration-700 ease-out"
+                draggable={false}
+              />
 
-          {/* Bottom Content Scrim Shield */}
-          <div className={cn("absolute bottom-0 inset-x-0 flex flex-col gap-1.5 z-10 bg-gradient-to-t from-[#0a0e16] via-[#0a0e16]/95 to-transparent", sizeConfig.bottomPad)}>
-            <div className="flex items-center justify-between">
-              <span className="text-[9px] font-mono tracking-wider uppercase text-pink-400 font-semibold">
-                {currentItem.category}
-              </span>
-              <div className="flex items-center gap-1 text-[#4cd7f6] text-[10px] font-sans font-medium">
-                <ShieldCheck className="h-3 w-3" />
-                <span>{currentItem.badge}</span>
-              </div>
-            </div>
+              {/* Double Specular Gradient Overlays */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0a0e16] via-[#0a0e16]/40 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-b from-[#0a0e16]/60 via-transparent to-transparent" />
 
-            <div>
-              <h3 className={cn("text-white tracking-tight leading-tight", sizeConfig.titleText)}>
-                {currentItem.title}
-              </h3>
-              <p className={cn("text-neutral-300 line-clamp-1 mt-0.5 leading-relaxed", sizeConfig.taglineText)}>
-                {currentItem.tagline}
-              </p>
-            </div>
-
-            <div className="flex items-center justify-between pt-1.5 border-t border-white/10 mt-0.5">
-              <div className="flex flex-col">
-                <span className="text-[9px] font-mono text-neutral-400">Experience from</span>
-                <div className="flex items-baseline gap-1">
-                  <span className={cn("font-bold text-white font-sans", sizeConfig.priceText)}>
-                    ${currentItem.pricePerNight}
+              {/* Top Badges Row */}
+              <div className="absolute top-3 inset-x-3 flex items-center justify-between z-10 pointer-events-none">
+                <div className={cn("flex items-center gap-1 rounded-full bg-[#0a0e16]/80 backdrop-blur-xl border border-white/10 shadow-sm", sizeConfig.badgePad)}>
+                  <MapPin className="h-3 w-3 text-[#4cd7f6]" />
+                  <span className="font-sans text-white font-semibold tracking-wide truncate max-w-[110px]">
+                    {item.location}
                   </span>
-                  <span className="text-[10px] text-neutral-400 font-sans">/ night</span>
+                </div>
+
+                <div className={cn("flex items-center gap-1 rounded-full bg-[#0a0e16]/80 backdrop-blur-xl border border-white/10 shadow-sm", sizeConfig.badgePad)}>
+                  <Star className="h-3 w-3 text-amber-400 fill-amber-400" />
+                  <span className="font-mono text-white font-bold">{item.rating}</span>
                 </div>
               </div>
 
-              <button
-                type="button"
-                onClick={() => onReserve?.(currentItem)}
-                className={cn(
-                  "rounded-full bg-[#c0c1ff] text-[#1000a9] font-sans font-semibold flex items-center gap-1 shadow-lg active:scale-95 transition-transform hover:brightness-105 cursor-pointer",
-                  sizeConfig.btnPad
+              {/* Bookmark Heart Button (only on active center card) */}
+              {isCenter && (
+                <button
+                  type="button"
+                  onClick={(e) => toggleBookmark(item, e)}
+                  className={cn(
+                    "absolute rounded-full bg-[#1c2028]/80 backdrop-blur-md flex items-center justify-center text-white hover:text-rose-400 active:scale-90 transition-all shadow-md z-10 border border-white/10 cursor-pointer",
+                    sizeConfig.heartBtn
+                  )}
+                  title="Save Sanctuary"
+                  aria-label="Save Sanctuary"
+                >
+                  <Heart
+                    className={cn(
+                      "h-3.5 w-3.5 transition-colors",
+                      bookmarkedIds[item.id] ? "text-rose-500 fill-rose-500" : "text-white"
+                    )}
+                  />
+                </button>
+              )}
+
+              {/* Bottom Content Scrim Shield */}
+              <div className={cn("absolute bottom-0 inset-x-0 flex flex-col gap-1.5 z-10 bg-gradient-to-t from-[#0a0e16] via-[#0a0e16]/95 to-transparent", sizeConfig.bottomPad)}>
+                <div className="flex items-center justify-between">
+                  <span className="text-[9px] font-mono tracking-wider uppercase text-pink-400 font-semibold">
+                    {item.category}
+                  </span>
+                  <div className="flex items-center gap-1 text-[#4cd7f6] text-[10px] font-sans font-medium">
+                    <ShieldCheck className="h-3 w-3" />
+                    <span>{item.badge}</span>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className={cn("text-white tracking-tight leading-tight", sizeConfig.titleText)}>
+                    {item.title}
+                  </h3>
+                  <p className={cn("text-neutral-300 line-clamp-1 mt-0.5 leading-relaxed", sizeConfig.taglineText)}>
+                    {item.tagline}
+                  </p>
+                </div>
+
+                {isCenter ? (
+                  <div className="flex items-center justify-between pt-1.5 border-t border-white/10 mt-0.5">
+                    <div className="flex flex-col">
+                      <span className="text-[9px] font-mono text-neutral-400">Experience from</span>
+                      <div className="flex items-baseline gap-1">
+                        <span className={cn("font-bold text-white font-sans", sizeConfig.priceText)}>
+                          ${item.pricePerNight}
+                        </span>
+                        <span className="text-[10px] text-neutral-400 font-sans">/ night</span>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onReserve?.(item);
+                      }}
+                      className={cn(
+                        "rounded-full bg-[#c0c1ff] text-[#1000a9] font-sans font-semibold flex items-center gap-1 shadow-lg active:scale-95 transition-transform hover:brightness-105 cursor-pointer",
+                        sizeConfig.btnPad
+                      )}
+                    >
+                      <span>Reserve</span>
+                      <ArrowRight className="h-3 w-3" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-between pt-1 border-t border-white/10 mt-0.5">
+                    <span className="text-[11px] font-mono text-neutral-300 font-semibold">
+                      ${item.pricePerNight} / night
+                    </span>
+                    <span className="text-[10px] font-sans text-[#8083ff] font-medium">
+                      Tap to select
+                    </span>
+                  </div>
                 )}
-              >
-                <span>Reserve</span>
-                <ArrowRight className="h-3 w-3" />
-              </button>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* ── Right Peeking Card (Always visible, Scaled, Depth Tilt) ── */}
-        <div
-          onClick={() => handleIndexChange(activeIdx + 1)}
-          className={cn(
-            "shrink-0 block overflow-hidden relative shadow-xl transform rotate-y-6 scale-90 opacity-70 hover:opacity-95 transition-all duration-300 cursor-pointer pointer-events-auto z-10",
-            sizeConfig.sideRight
-          )}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={nextItem.imageUrl}
-            alt={nextItem.imageAlt}
-            className="w-full h-full object-cover object-center"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0e16] via-[#0a0e16]/50 to-transparent" />
-
-          {/* Top Rating Badge */}
-          <div className={cn("absolute top-3 right-3 bg-black/60 backdrop-blur-md rounded-full flex items-center gap-1 border border-white/10", sizeConfig.badgePad)}>
-            <Star className="h-3 w-3 text-amber-400 fill-amber-400" />
-            <span className="text-[10px] font-mono text-white font-semibold">{nextItem.rating}</span>
-          </div>
-
-          {/* Bottom Card Summary */}
-          <div className="absolute bottom-3 inset-x-3 flex flex-col gap-0.5 text-right">
-            <span className="text-[9px] font-mono uppercase tracking-wider text-[#4cd7f6]">{nextItem.location}</span>
-            <h4 className="text-xs font-bold text-white truncate">{nextItem.title}</h4>
-            <p className="text-[11px] text-neutral-400">${nextItem.pricePerNight} / night</p>
-          </div>
-        </div>
+              </div>
+            </motion.div>
+          );
+        })}
       </div>
 
       {/* ── Carousel Pagination Pill Indicators ── */}
