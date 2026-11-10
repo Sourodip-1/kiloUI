@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const VERSION = "0.3.0";
+const VERSION = "1.38.9";
 const GITHUB_RAW_BASE = "https://raw.githubusercontent.com/Sourodip-1/kiloUI/main";
 const DEFAULT_REGISTRY_URL = process.env.KILO_REGISTRY_URL || "https://www.kiloui.dev/api/registry";
 
@@ -116,6 +116,14 @@ const COMPONENT_ALIASES = {
   "filter-bar": "curated-filter-bar",
   "collection-filter-bar": "curated-filter-bar",
   "pill-filter-bar": "curated-filter-bar",
+  "phone-mockup": "phone-mockup",
+  "device-frame": "phone-mockup",
+  "mobile-frame": "phone-mockup",
+  "mockup": "phone-mockup",
+  "mobile-rating-sheet": "mobile-rating-sheet",
+  "rating-sheet": "mobile-rating-sheet",
+  "app-rating": "mobile-rating-sheet",
+  "review-sheet": "mobile-rating-sheet",
 };
 
 // Associated companion files (e.g. CSS files)
@@ -137,7 +145,8 @@ const COMPONENT_DEPS = {
     "mobile-haptic-stepper", "pull-to-refresh", "swipe-action-card", "floating-action-dock",
     "mobile-bottom-sheet", "thumb-segment-controller", "m3-top-app-bar", "m3-navigation-bar",
     "mobile-action-sheet", "mobile-numeric-keypad", "shaped-image-card", "3d-depth-carousel",
-    "specs-grid-card", "host-trust-card", "booking-action-bar", "curated-filter-bar"
+    "specs-grid-card", "host-trust-card", "booking-action-bar", "curated-filter-bar",
+    "phone-mockup", "mobile-rating-sheet"
   ],
   motion: [
     "biometric-scanner", "m3-otp-input", "mobile-haptic-stepper", "dynamic-island-banner",
@@ -145,7 +154,8 @@ const COMPONENT_DEPS = {
     "blurred-carousel", "concave-carousel", "content-slider", "bento-cluster",
     "motion-engine", "drawer-dialog", "popover-dialog", "toast-stack",
     "mobile-action-sheet", "mobile-numeric-keypad", "shaped-image-card", "3d-depth-carousel",
-    "specs-grid-card", "host-trust-card", "booking-action-bar", "curated-filter-bar"
+    "specs-grid-card", "host-trust-card", "booking-action-bar", "curated-filter-bar",
+    "phone-mockup", "mobile-rating-sheet"
   ]
 };
 

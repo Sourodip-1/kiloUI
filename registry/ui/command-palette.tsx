@@ -250,7 +250,7 @@ export function CommandPalette({
                 <span>↵ Execute</span>
                 <span>Esc Dismiss</span>
               </div>
-              <span className="text-[var(--accent-green)]">kilo/ui v0.3.0</span>
+              <span className="text-[var(--accent-green)]">kilo/ui v1.38.9</span>
             </div>
           </div>
         </div>,

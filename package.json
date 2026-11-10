@@ -1,6 +1,6 @@
 {
   "name": "@kilo-ui/cli",
-  "version": "0.3.0",
+  "version": "1.38.9",
   "description": "Minimal, high-performance copy-paste UI primitives, shaders, and animations for React and Next.js",
   "license": "MIT",
   "author": "Sourodip",

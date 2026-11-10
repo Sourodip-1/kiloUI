@@ -6300,5 +6300,97 @@ export const REGISTRY_DATA: Record<string, RegistryItem> = {
         "content": "\"use client\";\n\nexport * from \"@/registry/ui/curated-filter-bar\";\n"
       }
     ]
+  },
+  "phone-mockup": {
+    "name": "phone-mockup",
+    "category": "Mobile App",
+    "title": "Phone Mockup",
+    "description": "Realistic smartphone device frame with dynamic island states, status bar (clock, 5G, wifi, battery), titanium finishes, and hardware buttons.",
+    "variants": ["iphone", "android", "minimal"],
+    "dependencies": ["clsx", "tailwind-merge", "motion", "lucide-react"],
+    "registryDependencies": ["utils"],
+    "usage": "import { PhoneMockup } from \"@/components/ui/phone-mockup\";\n\nexport function PhoneMockupDemo() {\n  return (\n    <PhoneMockup model=\"iphone\" finish=\"titanium-black\" islandState=\"compact\">\n      <div className=\"p-6 text-white text-center\">\n        <h2 className=\"text-lg font-bold\">App Screen Content</h2>\n      </div>\n    </PhoneMockup>\n  );\n}",
+    "props": [
+      {
+        "name": "model",
+        "type": "\"iphone\" | \"android\" | \"minimal\"",
+        "defaultValue": "\"iphone\"",
+        "description": "Chassis style and camera cutout mode"
+      },
+      {
+        "name": "finish",
+        "type": "\"titanium-natural\" | \"titanium-black\" | \"midnight\" | \"silver\"",
+        "defaultValue": "\"titanium-black\"",
+        "description": "Material chassis metal finish and specular edge reflection"
+      },
+      {
+        "name": "islandState",
+        "type": "\"idle\" | \"compact\" | \"call\" | \"music\" | \"alert\"",
+        "defaultValue": "\"idle\"",
+        "description": "Active Dynamic Island behavior and expanded status"
+      },
+      {
+        "name": "showStatusBar",
+        "type": "boolean",
+        "defaultValue": "true",
+        "description": "Whether to render top status bar (clock, wifi, cellular, battery)"
+      },
+      {
+        "name": "showHomeIndicator",
+        "type": "boolean",
+        "defaultValue": "true",
+        "description": "Whether to render bottom iOS/Android swipe home pill"
+      }
+    ],
+    "files": [
+      {
+        "name": "phone-mockup.tsx",
+        "type": "components:ui",
+        "content": "\"use client\";\n\nexport * from \"@/registry/ui/phone-mockup\";\n"
+      }
+    ]
+  },
+  "mobile-rating-sheet": {
+    "name": "mobile-rating-sheet",
+    "category": "Mobile App",
+    "title": "Mobile Rating Sheet",
+    "description": "App Store and in-app review feedback sheet with interactive spring-bounce 5-star rating, sentiment labels, feature chips, and feedback input.",
+    "variants": ["default", "compact", "promotional"],
+    "dependencies": ["clsx", "tailwind-merge", "motion", "lucide-react"],
+    "registryDependencies": ["utils"],
+    "usage": "import { MobileRatingSheet } from \"@/components/ui/mobile-rating-sheet\";\n\nexport function RatingDemo() {\n  return (\n    <MobileRatingSheet\n      title=\"Enjoying Kilo Studio?\"\n      onSubmit={(data) => console.log(\"Rating:\", data)}\n      onDismiss={() => {}}\n    />\n  );\n}",
+    "props": [
+      {
+        "name": "initialRating",
+        "type": "number",
+        "defaultValue": "5",
+        "description": "Initial number of active stars (1 to 5)"
+      },
+      {
+        "name": "title",
+        "type": "string",
+        "defaultValue": "\"Enjoying Kilo Studio?\"",
+        "description": "Prompt heading"
+      },
+      {
+        "name": "subtitle",
+        "type": "string",
+        "defaultValue": "\"Your feedback shapes future releases and micro-interactions.\"",
+        "description": "Subheading description"
+      },
+      {
+        "name": "onSubmit",
+        "type": "(data: { rating: number; selectedCategories: string[]; feedback: string }) => void",
+        "defaultValue": "undefined",
+        "description": "Callback invoked when user submits their review"
+      }
+    ],
+    "files": [
+      {
+        "name": "mobile-rating-sheet.tsx",
+        "type": "components:ui",
+        "content": "\"use client\";\n\nexport * from \"@/registry/ui/mobile-rating-sheet\";\n"
+      }
+    ]
   }
 };

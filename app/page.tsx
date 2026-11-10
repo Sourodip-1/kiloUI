@@ -313,7 +313,7 @@ export default function LandingPage() {
               <span>ui</span>
             </div>
             <span className="inline-flex items-center ml-2 px-2 py-0.5 rounded-full text-[10px] font-mono font-medium bg-white/10 text-white/90 border border-white/15 backdrop-blur-md shadow-xs">
-              v0.3.0
+              v1.38.9
             </span>
           </Link>
 
@@ -516,21 +516,20 @@ export default function LandingPage() {
           {/* Hero Foreground Content */}
           <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center space-y-7 pointer-events-none">
             <div className="space-y-4 flex flex-col items-center">
-              {/* Version 0.3.0 Release Pill */}
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 backdrop-blur-md shadow-xs pointer-events-auto hover:border-white/20 transition-all">
-                <span className="flex h-1.5 w-1.5 rounded-full bg-[var(--accent-green)] animate-pulse" />
-                <span className="font-mono text-xs text-white/80 font-medium">
-                  v0.3.0 Released
+              {/* Version 1.38.9 Release Pill */}
+              <Link
+                href="/mobile-primitives"
+                className="group inline-flex items-center gap-2.5 px-3 py-1 rounded-full border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/20 backdrop-blur-md shadow-2xs pointer-events-auto transition-all duration-200"
+              >
+                <span className="font-mono text-[11px] font-semibold text-[var(--accent-green)]">
+                  v1.38.9
                 </span>
-                <span className="text-white/30">•</span>
-                <Link
-                  href="/components/dynamic-island-banner"
-                  className="font-mono text-xs text-[var(--accent-green)] hover:underline inline-flex items-center gap-1"
-                >
-                  <span>10 New Overlays &amp; Primitives</span>
-                  <ArrowRight className="h-3 w-3" />
-                </Link>
-              </div>
+                <span className="h-3 w-[1px] bg-white/20" />
+                <span className="text-xs text-zinc-300 font-sans tracking-tight group-hover:text-white transition-colors">
+                  Mobile Primitives &amp; 3D Depth Carousel
+                </span>
+                <ArrowRight className="h-3 w-3 text-zinc-400 group-hover:text-white group-hover:translate-x-0.5 transition-all duration-150" />
+              </Link>
 
               <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-white uppercase font-sans leading-[1.06]">
                 Precision UI Primitives For Modern React

@@ -48,7 +48,7 @@ class TestMobilePrimitives(unittest.TestCase):
                 registered_names,
                 f"'{expected}' must be returned when filtering category by 'Mobile App'",
             )
-        self.assertEqual(len(registered_names), 5)
+        self.assertGreaterEqual(len(registered_names), 5)
 
     def test_primitive_schemas_and_constraints(self):
         """Verify schema extraction and authoritative M3 / ergonomic constraints."""

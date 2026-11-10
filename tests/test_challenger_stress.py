@@ -223,8 +223,9 @@ class TestChallengerASTValidationAndCompiler(unittest.TestCase):
         }
 
         res = full_validate_design_ast(deep_ast)
-        self.assertTrue(res["valid"])
-        self.assertEqual(res["summary"]["total_nodes"], 151)
+        # Trees deeper than max_depth (64) are safely rejected to prevent stack overflow
+        self.assertFalse(res["valid"])
+        self.assertTrue(any("depth" in err["message"].lower() for err in res["errors"]))
 
     def test_rejection_of_unfixable_schemas(self):
         """Ensure unfixable schemas (malformed JSON, non-dict, missing root) return valid=False and repaired_ast=None."""
@@ -310,16 +311,9 @@ class TestChallengerASTValidationAndCompiler(unittest.TestCase):
         returns valid: True (gap between mcp_server and ast_validator).
         """
         res = mcp_validate_design_ast(PROHIBITED_GLOWING_CIRCLE_AST)
-        # Server inline validator records aesthetic issues under warnings instead of errors
-        self.assertTrue(
-            res.get("valid"),
-            "EMPIRICAL PROOF: mcp_server.py validate_design_ast tool erroneously evaluates glowing circle as valid: True",
-        )
-        self.assertNotIn(
-            "repaired_ast",
-            res,
-            "EMPIRICAL PROOF: mcp_server.py validate_design_ast tool fails to return repaired_ast to external clients",
-        )
+        # Server validates strict aesthetics and marks glowing circle as invalid
+        self.assertFalse(res.get("valid"))
+        self.assertIn("repaired_ast", res)
 
 
 if __name__ == "__main__":

@@ -282,6 +282,8 @@ function SidebarBase({
     "dynamic-island-banner": "Overlays",
     "mobile-action-sheet": "Overlays",
     "action-sheet": "Overlays",
+    "mobile-rating-sheet": "Overlays",
+    "rating-sheet": "Overlays",
 
     // Data Display (10)
     "m3-card": "Data Display",
@@ -296,6 +298,8 @@ function SidebarBase({
     "villa-specs": "Data Display",
     "host-trust-card": "Data Display",
     "host-card": "Data Display",
+    "phone-mockup": "Data Display",
+    "device-frame": "Data Display",
   };
 
   const MOBILE_CATEGORY_PARAM_MAP: Record<string, string> = {
@@ -1352,7 +1356,7 @@ function SidebarBase({
               isCollapsed && "opacity-0 pointer-events-none"
             )}
           >
-            v0.3.0
+            v1.38.9
           </span>
         </a>
       </div>

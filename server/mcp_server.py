@@ -102,7 +102,7 @@ def _load_registry_catalog() -> dict[str, Any]:
                     )
                 return {
                     "name": "kilo-ui",
-                    "version": "0.3.0",
+                    "version": "1.38.9",
                     "description": "Authoritative Kilo UI Component Registry",
                     "total": len(items),
                     "total_primitives": len(items),
@@ -111,7 +111,7 @@ def _load_registry_catalog() -> dict[str, Any]:
                 }
         return {
             "name": "kilo-ui",
-            "version": "0.3.0",
+            "version": "1.38.9",
             "description": "Authoritative Kilo UI Component Registry",
             "total": 0,
             "total_primitives": 0,

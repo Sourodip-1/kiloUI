@@ -118,6 +118,8 @@ import { SpecsGridCard } from "@/registry/ui/specs-grid-card";
 import { HostTrustCard } from "@/registry/ui/host-trust-card";
 import { BookingActionBar } from "@/registry/ui/booking-action-bar";
 import { CuratedFilterBar } from "@/registry/ui/curated-filter-bar";
+import { PhoneMockup, DeviceModel, DeviceFinish, DynamicIslandState } from "@/registry/ui/phone-mockup";
+import { MobileRatingSheet } from "@/registry/ui/mobile-rating-sheet";
 import { RegistryItem } from "@/registry/registry-data";
 import { ScaledThumbnailWrapper } from "@/components/scaled-thumbnail-wrapper";
 import {
@@ -908,6 +910,11 @@ export function ComponentPreviewStage({
   const [depthCarouselSize, setDepthCarouselSize] = React.useState<"sm" | "default" | "lg">("default");
   const [depthCarouselTilt, setDepthCarouselTilt] = React.useState<number>(7);
   const [curatedActiveFilter, setCuratedActiveFilter] = React.useState("all");
+  const [mockupModel, setMockupModel] = React.useState<DeviceModel>("iphone");
+  const [mockupFinish, setMockupFinish] = React.useState<DeviceFinish>("titanium-black");
+  const [mockupIslandState, setMockupIslandState] = React.useState<DynamicIslandState>("compact");
+  const [ratingSheetScore, setRatingSheetScore] = React.useState(5);
+  const [ratingSheetDismissed, setRatingSheetDismissed] = React.useState(false);
   const [specsGuests, setSpecsGuests] = React.useState(4);
   const [hostVerified, setHostVerified] = React.useState(true);
   const [bookingSticky, setBookingSticky] = React.useState(false);
@@ -2603,6 +2610,10 @@ export function ComponentPreviewStage({
       code = `<BookingActionBar\n  primaryLabel="Check Availability"\n  price={{ amount: "$420", period: "/ night" }}\n  sticky={${bookingSticky}}\n  onPrimaryClick={() => console.log("Check availability")}\n  onSecondaryClick={() => console.log("Share")}\n/>`;
     } else if (item.name === "curated-filter-bar") {
       code = `<CuratedFilterBar\n  collectionTitle="Nocturne Sanctuaries"\n  collectionTag="CURATED COLLECTION"\n  availableCount="14 available"\n  filterCount={3}\n  activeFilter="${curatedActiveFilter}"\n  onSelectFilter={(id) => console.log("Selected", id)}\n/>`;
+    } else if (item.name === "phone-mockup") {
+      code = `<PhoneMockup\n  model="${mockupModel}"\n  finish="${mockupFinish}"\n  islandState="${mockupIslandState}"\n>\n  <div className="p-6 text-white text-center">\n    <h2 className="text-lg font-bold">App Screen Preview</h2>\n  </div>\n</PhoneMockup>`;
+    } else if (item.name === "mobile-rating-sheet") {
+      code = `<MobileRatingSheet\n  title="Enjoying Kilo Studio?"\n  initialRating={${ratingSheetScore}}\n  onSubmit={(data) => console.log("Rating:", data)}\n  onDismiss={() => console.log("Dismissed")}\n/>`;
     } else if (item.name === "m3-dialog") {
       code = `<M3Dialog open={${m3DialogOpen}} onOpenChange={setOpen} headline="Confirm Action" supportingText="Will dispatch packet to cluster." />`;
     } else if (item.name === "m3-snackbar") {
@@ -6954,6 +6965,93 @@ export function ComponentPreviewStage({
             </div>
           )}
 
+          {/* Phone Device Mockup Preview */}
+          {item.name === "phone-mockup" && (
+            <div className="relative w-full py-6 flex flex-col items-center justify-center">
+              <PhoneMockup
+                model={mockupModel}
+                finish={mockupFinish}
+                islandState={mockupIslandState}
+                onIslandClick={() => {
+                  const next: DynamicIslandState =
+                    mockupIslandState === "idle"
+                      ? "compact"
+                      : mockupIslandState === "compact"
+                      ? "music"
+                      : mockupIslandState === "music"
+                      ? "call"
+                      : mockupIslandState === "call"
+                      ? "alert"
+                      : "idle";
+                  setMockupIslandState(next);
+                  showCarouselToast(`Dynamic Island: ${next}`);
+                }}
+              >
+                <div className="p-5 space-y-4">
+                  <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-2">
+                    <span className="text-[10px] font-mono text-emerald-400 font-semibold uppercase tracking-wider">
+                      Live App Screen
+                    </span>
+                    <h3 className="text-base font-bold text-white">Kyoto Bamboo Villa</h3>
+                    <p className="text-xs text-zinc-400">
+                      Tap the Dynamic Island above to cycle through live ambient states.
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-center">
+                      <span className="block font-bold text-white text-sm">4.96 ★</span>
+                      <span className="text-[10px] text-zinc-400">Guest Rating</span>
+                    </div>
+                    <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-center">
+                      <span className="block font-bold text-white text-sm">$420</span>
+                      <span className="text-[10px] text-zinc-400">Per Night</span>
+                    </div>
+                  </div>
+                </div>
+              </PhoneMockup>
+              {carouselToast && (
+                <div className="fixed bottom-6 z-50 px-4 py-2 rounded-full bg-[#1b2234] border border-[#8083ff]/40 text-xs font-mono text-[#c0c1ff] shadow-xl backdrop-blur-md animate-in fade-in slide-in-from-bottom-2 duration-200">
+                  {carouselToast}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Mobile Rating Sheet Preview */}
+          {item.name === "mobile-rating-sheet" && (
+            <div className="relative w-full max-w-md mx-auto py-8 px-4 flex flex-col items-center">
+              <MobileRatingSheet
+                isOpen={!ratingSheetDismissed}
+                initialRating={ratingSheetScore}
+                onRatingChange={(r) => {
+                  setRatingSheetScore(r);
+                  showCarouselToast(`Rated ${r} / 5 stars`);
+                }}
+                onSubmit={(data) => {
+                  showCarouselToast(`Submitted ${data.rating}★ feedback!`);
+                }}
+                onDismiss={() => {
+                  setRatingSheetDismissed(true);
+                  showCarouselToast("Rating sheet dismissed");
+                }}
+              />
+              {ratingSheetDismissed && (
+                <button
+                  type="button"
+                  onClick={() => setRatingSheetDismissed(false)}
+                  className="mt-4 px-4 py-2 rounded-xl bg-[#8083ff]/20 text-[#c0c1ff] border border-[#8083ff]/40 text-xs font-semibold hover:bg-[#8083ff]/30 transition-all cursor-pointer"
+                >
+                  Reopen Rating Sheet
+                </button>
+              )}
+              {carouselToast && (
+                <div className="fixed bottom-6 z-50 px-4 py-2 rounded-full bg-[#1b2234] border border-[#8083ff]/40 text-xs font-mono text-[#c0c1ff] shadow-xl backdrop-blur-md animate-in fade-in slide-in-from-bottom-2 duration-200">
+                  {carouselToast}
+                </div>
+              )}
+            </div>
+          )}
+
           {/* M3 Dialog */}
           {item.name === "m3-dialog" && (
             <div className="w-full flex justify-center py-2">
@@ -9572,6 +9670,77 @@ export function ComponentPreviewStage({
                       { label: "Off-Grid", value: "offgrid" },
                       { label: "Within 3h", value: "within3h" },
                     ]}
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Phone Device Mockup Controls */}
+            {item.name === "phone-mockup" && (
+              <>
+                <CustomizeTile label="Device Model">
+                  <CustomizeSelect
+                    value={mockupModel}
+                    onChange={(val) => setMockupModel(val as DeviceModel)}
+                    options={[
+                      { label: "iPhone 16 Pro", value: "iphone" },
+                      { label: "Android Pixel", value: "android" },
+                      { label: "Minimal Showcase", value: "minimal" },
+                    ]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Chassis Finish">
+                  <CustomizeSelect
+                    value={mockupFinish}
+                    onChange={(val) => setMockupFinish(val as DeviceFinish)}
+                    options={[
+                      { label: "Titanium Black", value: "titanium-black" },
+                      { label: "Titanium Natural", value: "titanium-natural" },
+                      { label: "Midnight Blue", value: "midnight" },
+                      { label: "Silver Aluminum", value: "silver" },
+                    ]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Dynamic Island">
+                  <CustomizeSelect
+                    value={mockupIslandState}
+                    onChange={(val) => setMockupIslandState(val as DynamicIslandState)}
+                    options={[
+                      { label: "Compact Pill", value: "compact" },
+                      { label: "Music Ambient", value: "music" },
+                      { label: "Active Call", value: "call" },
+                      { label: "Passkey Alert", value: "alert" },
+                      { label: "Idle Camera", value: "idle" },
+                    ]}
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Mobile Rating Sheet Controls */}
+            {item.name === "mobile-rating-sheet" && (
+              <>
+                <CustomizeTile label="Initial Rating">
+                  <CustomizeSelect
+                    value={String(ratingSheetScore)}
+                    onChange={(val) => setRatingSheetScore(Number(val))}
+                    options={[
+                      { label: "5 Stars (Exceptional)", value: "5" },
+                      { label: "4 Stars (Great)", value: "4" },
+                      { label: "3 Stars (Solid)", value: "3" },
+                      { label: "2 Stars (Needs Work)", value: "2" },
+                      { label: "1 Star (Poor)", value: "1" },
+                    ]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Sheet State">
+                  <CustomizeSwitch
+                    checked={!ratingSheetDismissed}
+                    onChange={(open) => setRatingSheetDismissed(!open)}
+                    label="Show Feedback Prompt"
                   />
                 </CustomizeTile>
               </>

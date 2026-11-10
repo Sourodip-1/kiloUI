@@ -350,7 +350,7 @@ function MobilePrimitivesContent() {
     { id: "5", sender: "Security Enclave", subject: "Hardware biometrics passkey sync handshake ok", time: "3h" },
     { id: "6", sender: "Cloud Storage", subject: "Edge replica synchronization complete in 4 regions", time: "5h" },
     { id: "7", sender: "Kilo Studio", subject: "Spring physics membrane loader demo verified", time: "6h" },
-    { id: "8", sender: "Package Registry", subject: "CLI bundle distribution ready on npm @0.3.0", time: "1d" },
+    { id: "8", sender: "Package Registry", subject: "CLI bundle distribution ready on npm @1.38.9", time: "1d" },
   ]);
 
   // Pulse Sync Preset (Stitch Screen 1)

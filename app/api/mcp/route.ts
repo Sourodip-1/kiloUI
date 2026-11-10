@@ -15,7 +15,7 @@ const MCP_TOOLS = [
         category: {
           type: "string",
           description:
-            'Filter by category (e.g. "Actions", "Forms & Inputs", "Overlays", "Data Display", "Navigation", "Media & Layout", "Backgrounds & Shaders", "Cursors", "Mobile App"). If omitted, returns all 61 primitives.',
+            'Filter by category (e.g. "Actions", "Forms & Inputs", "Overlays", "Data Display", "Navigation", "Media & Layout", "Backgrounds & Shaders", "Cursors", "Mobile App"). If omitted, returns all primitives.',
         },
       },
       required: [],
@@ -78,7 +78,7 @@ const MCP_RESOURCES = [
   {
     uri: "kilo://registry/catalog",
     name: "Kilo UI Primitive Catalog",
-    description: "Complete machine-readable catalog of all 61 registered primitives.",
+    description: "Complete machine-readable catalog of all registered primitives.",
     mimeType: "application/json",
   },
   {
@@ -118,7 +118,7 @@ function handleRpc(body: any): any {
           },
           serverInfo: {
             name: "kilo-ui-hosted",
-            version: "0.3.0",
+            version: "1.38.9",
           },
         },
       };
@@ -412,7 +412,7 @@ export async function GET(req: NextRequest) {
   return NextResponse.json(
     {
       name: "kilo-ui-hosted-mcp",
-      version: "0.3.0",
+      version: "1.38.9",
       description: "Official Kilo UI Hosted Model Context Protocol (MCP) Server",
       protocolVersion: "2024-11-05",
       transports: ["streamable-http", "sse", "http-post"],

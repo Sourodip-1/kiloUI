@@ -468,7 +468,7 @@ def get_registry_catalog(registry_data: Dict[str, Any] | None = None) -> Dict[st
 
     return {
         "name": "kilo-ui",
-        "version": "0.3.0",
+        "version": "1.38.9",
         "description": "Authoritative Kilo UI Component Registry",
         "total": len(primitives),
         "total_primitives": len(primitives),
