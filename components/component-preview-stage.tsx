@@ -263,7 +263,7 @@ function CustomizeTile({
     >
       <span
         title={label}
-        className="text-xs font-semibold font-mono tracking-tight text-[var(--text-secondary)] truncate shrink-0 max-w-[50%] select-none"
+        className="text-xs font-semibold font-mono tracking-tight text-[var(--text-secondary)] truncate min-w-0 select-none mr-2"
       >
         {label}
       </span>
@@ -331,7 +331,7 @@ function CustomizeSelect({
         aria-haspopup="listbox"
         aria-expanded={open}
       >
-        <span className="truncate max-w-[120px] font-medium text-[var(--text-primary)]">
+        <span className="truncate max-w-[170px] sm:max-w-[200px] font-medium text-[var(--text-primary)]">
           {selectedOption.label}
         </span>
         <ChevronDown
@@ -906,6 +906,7 @@ export function ComponentPreviewStage({
 
   const [depthCarouselIndex, setDepthCarouselIndex] = React.useState(0);
   const [depthCarouselSize, setDepthCarouselSize] = React.useState<"sm" | "default" | "lg">("default");
+  const [depthCarouselTilt, setDepthCarouselTilt] = React.useState<number>(7);
   const [curatedActiveFilter, setCuratedActiveFilter] = React.useState("all");
   const [specsGuests, setSpecsGuests] = React.useState(4);
   const [hostVerified, setHostVerified] = React.useState(true);
@@ -6858,6 +6859,7 @@ export function ComponentPreviewStage({
               <div className="w-full max-w-3xl py-4 flex flex-col items-center overflow-visible bg-transparent">
                 <Depth3dCarousel
                   size={depthCarouselSize}
+                  tiltAngle={depthCarouselTilt}
                   activeIndex={depthCarouselIndex}
                   onChange={setDepthCarouselIndex}
                   onReserve={(it) => showCarouselToast(`Reserving ${it.title}`)}
@@ -9473,26 +9475,41 @@ export function ComponentPreviewStage({
             {/* 3D Depth Carousel Controls */}
             {item.name === "3d-depth-carousel" && (
               <>
-                <CustomizeTile label="Carousel Scale">
+                <CustomizeTile label="Scale">
                   <CustomizeSelect
                     value={depthCarouselSize}
                     onChange={(val) => setDepthCarouselSize(val as "sm" | "default" | "lg")}
                     options={[
-                      { label: "Compact (300px - Mobile Recommended)", value: "sm" },
-                      { label: "Balanced (345px Standard)", value: "default" },
-                      { label: "Expanded (415px Hero)", value: "lg" },
+                      { label: "Standard (345px)", value: "default" },
+                      { label: "Compact (300px)", value: "sm" },
+                      { label: "Expanded (415px)", value: "lg" },
                     ]}
                   />
                 </CustomizeTile>
 
-                <CustomizeTile label="Active Sanctuary Card">
+                <CustomizeTile label="Active Slide">
                   <CustomizeSelect
                     value={String(depthCarouselIndex)}
                     onChange={(val) => setDepthCarouselIndex(Number(val))}
-                    options={NOCTURNE_SANCTUARIES.map((item, idx) => ({
-                      label: `${item.title} (${item.location})`,
-                      value: String(idx),
-                    }))}
+                    options={[
+                      { label: "1. Kyoto Villa", value: "0" },
+                      { label: "2. Nordic Fjord", value: "1" },
+                      { label: "3. Amalfi Cliff", value: "2" },
+                      { label: "4. Matterhorn Chalet", value: "3" },
+                    ]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="3D Depth Tilt">
+                  <CustomizeSelect
+                    value={String(depthCarouselTilt)}
+                    onChange={(val) => setDepthCarouselTilt(Number(val))}
+                    options={[
+                      { label: "Spatial (7°)", value: "7" },
+                      { label: "Flat (0°)", value: "0" },
+                      { label: "Subtle (4°)", value: "4" },
+                      { label: "Dramatic (12°)", value: "12" },
+                    ]}
                   />
                 </CustomizeTile>
               </>

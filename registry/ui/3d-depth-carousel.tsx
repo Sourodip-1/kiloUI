@@ -168,6 +168,7 @@ export interface Depth3dCarouselProps {
   items?: SanctuaryCardData[];
   activeIndex?: number;
   size?: DepthCarouselSize;
+  tiltAngle?: number;
   onChange?: (index: number) => void;
   onReserve?: (item: SanctuaryCardData) => void;
   onBookmark?: (item: SanctuaryCardData, isBookmarked: boolean) => void;
@@ -183,6 +184,7 @@ export function Depth3dCarousel({
   items = NOCTURNE_SANCTUARIES,
   activeIndex: controlledIndex,
   size = "default",
+  tiltAngle = 7,
   onChange,
   onReserve,
   onBookmark,
@@ -286,7 +288,7 @@ export function Depth3dCarousel({
             ? -sizeConfig.sideOffset * 1.8
             : sizeConfig.sideOffset * 1.8;
 
-          const targetRotateY = isCenter ? 0 : isLeft ? -7 : isRight ? 7 : 0;
+          const targetRotateY = isCenter ? 0 : isLeft ? -tiltAngle : isRight ? tiltAngle : 0;
           const targetScale = isCenter ? 1 : isVisible ? 0.9 : 0.75;
           const targetOpacity = isCenter ? 1 : isVisible ? 0.75 : 0;
           const targetZIndex = isCenter ? 30 : isVisible ? 15 : 0;
