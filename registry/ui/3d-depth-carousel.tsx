@@ -264,20 +264,17 @@ export function Depth3dCarousel({
   }[size];
 
   return (
-    <div className={cn("relative w-full flex flex-col items-center select-none overflow-hidden py-1", className)}>
-      {/* Ambient Chromatic Glow behind Center Card */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 sm:w-64 sm:h-64 rounded-full bg-[#8083ff]/15 blur-[80px] pointer-events-none -z-0" />
-
+    <div className={cn("relative w-full flex flex-col items-center select-none overflow-visible bg-transparent py-2", className)}>
       {/* 3D Perspective Stage */}
       <div
-        className={cn("relative z-10 flex items-center justify-center w-full px-2", sizeConfig.stageMinH)}
+        className={cn("relative z-10 flex items-center justify-center w-full px-2 overflow-visible", sizeConfig.stageMinH)}
         style={{ perspective: 1200 }}
       >
-        {/* ── Left Peeking Card (Scaled, Depth Blur, -RotateY) ── */}
+        {/* ── Left Peeking Card (Always visible, Scaled, Depth Tilt) ── */}
         <div
           onClick={() => handleIndexChange(activeIdx - 1)}
           className={cn(
-            "shrink-0 overflow-hidden relative shadow-lg transform -rotate-y-6 scale-90 opacity-45 blur-[1.5px] hover:opacity-60 transition-all duration-300 cursor-pointer pointer-events-auto z-10 hidden xs:block",
+            "shrink-0 block overflow-hidden relative shadow-xl transform -rotate-y-6 scale-90 opacity-70 hover:opacity-95 transition-all duration-300 cursor-pointer pointer-events-auto z-10",
             sizeConfig.sideLeft
           )}
         >
@@ -287,7 +284,7 @@ export function Depth3dCarousel({
             alt={prevItem.imageAlt}
             className="w-full h-full object-cover object-center"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0e16] via-[#0a0e16]/60 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0e16] via-[#0a0e16]/50 to-transparent" />
 
           {/* Top Rating Badge */}
           <div className={cn("absolute top-3 left-3 bg-black/60 backdrop-blur-md rounded-full flex items-center gap-1 border border-white/10", sizeConfig.badgePad)}>
@@ -410,11 +407,11 @@ export function Depth3dCarousel({
           </div>
         </motion.div>
 
-        {/* ── Right Peeking Card (Scaled, Depth Blur, RotateY) ── */}
+        {/* ── Right Peeking Card (Always visible, Scaled, Depth Tilt) ── */}
         <div
           onClick={() => handleIndexChange(activeIdx + 1)}
           className={cn(
-            "shrink-0 overflow-hidden relative shadow-lg transform rotate-y-6 scale-90 opacity-45 blur-[1.5px] hover:opacity-60 transition-all duration-300 cursor-pointer pointer-events-auto z-10 hidden xs:block",
+            "shrink-0 block overflow-hidden relative shadow-xl transform rotate-y-6 scale-90 opacity-70 hover:opacity-95 transition-all duration-300 cursor-pointer pointer-events-auto z-10",
             sizeConfig.sideRight
           )}
         >
@@ -424,7 +421,7 @@ export function Depth3dCarousel({
             alt={nextItem.imageAlt}
             className="w-full h-full object-cover object-center"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0e16] via-[#0a0e16]/60 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0e16] via-[#0a0e16]/50 to-transparent" />
 
           {/* Top Rating Badge */}
           <div className={cn("absolute top-3 right-3 bg-black/60 backdrop-blur-md rounded-full flex items-center gap-1 border border-white/10", sizeConfig.badgePad)}>

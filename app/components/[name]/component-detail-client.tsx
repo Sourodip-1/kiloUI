@@ -75,7 +75,7 @@ export function ComponentDetailClient({ item, initialVariant }: ComponentDetailC
 
   const { showToast, isFavorited: checkFavorited, toggleFavorite } = useAppShell();
   const isFavorited = checkFavorited(item.name);
-  const isMobileApp = item.category === "Mobile App";
+  const isMobileApp = item.category === "Mobile App" && item.name !== "3d-depth-carousel";
   const [activeTab, setActiveTab] = React.useState<"preview" | "code">("preview");
   const [viewport, setViewport] = React.useState<"desktop" | "tablet" | "mobile">(isMobileApp ? "mobile" : "desktop");
   const [showGrid, setShowGrid] = React.useState(false);

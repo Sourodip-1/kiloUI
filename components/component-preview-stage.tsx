@@ -905,7 +905,7 @@ export function ComponentPreviewStage({
   const [shapedCardImageIdx, setShapedCardImageIdx] = React.useState(0);
 
   const [depthCarouselIndex, setDepthCarouselIndex] = React.useState(0);
-  const [depthCarouselSize, setDepthCarouselSize] = React.useState<"sm" | "default" | "lg">("sm");
+  const [depthCarouselSize, setDepthCarouselSize] = React.useState<"sm" | "default" | "lg">("default");
   const [curatedActiveFilter, setCuratedActiveFilter] = React.useState("all");
   const [specsGuests, setSpecsGuests] = React.useState(4);
   const [hostVerified, setHostVerified] = React.useState(true);
@@ -6854,8 +6854,8 @@ export function ComponentPreviewStage({
 
           {/* 3D Depth Carousel (Standalone Component Preview) */}
           {item.name === "3d-depth-carousel" && (
-            <div className="relative w-full flex flex-col items-center justify-center py-6 px-2 sm:px-4 max-w-4xl mx-auto">
-              <div className="w-full max-w-2xl py-4 flex flex-col items-center">
+            <div className="relative w-full flex flex-col items-center justify-center py-6 px-2 sm:px-4 max-w-4xl mx-auto overflow-visible bg-transparent">
+              <div className="w-full max-w-3xl py-4 flex flex-col items-center overflow-visible bg-transparent">
                 <Depth3dCarousel
                   size={depthCarouselSize}
                   activeIndex={depthCarouselIndex}
