@@ -101,6 +101,21 @@ const COMPONENT_ALIASES = {
   "3d-carousel": "3d-depth-carousel",
   "cards-carousel": "3d-depth-carousel",
   "depth-card-carousel": "3d-depth-carousel",
+  "specs-grid-card": "specs-grid-card",
+  "specs-card": "specs-grid-card",
+  "villa-specs": "specs-grid-card",
+  "property-specs": "specs-grid-card",
+  "host-trust-card": "host-trust-card",
+  "host-card": "host-trust-card",
+  "trust-card": "host-trust-card",
+  "booking-action-bar": "booking-action-bar",
+  "booking-bar": "booking-action-bar",
+  "action-bar": "booking-action-bar",
+  "sticky-action-bar": "booking-action-bar",
+  "curated-filter-bar": "curated-filter-bar",
+  "filter-bar": "curated-filter-bar",
+  "collection-filter-bar": "curated-filter-bar",
+  "pill-filter-bar": "curated-filter-bar",
 };
 
 // Associated companion files (e.g. CSS files)
@@ -121,14 +136,16 @@ const COMPONENT_DEPS = {
     "dynamic-island-banner", "stack-cards", "biometric-scanner", "m3-otp-input",
     "mobile-haptic-stepper", "pull-to-refresh", "swipe-action-card", "floating-action-dock",
     "mobile-bottom-sheet", "thumb-segment-controller", "m3-top-app-bar", "m3-navigation-bar",
-    "mobile-action-sheet", "mobile-numeric-keypad", "shaped-image-card", "3d-depth-carousel"
+    "mobile-action-sheet", "mobile-numeric-keypad", "shaped-image-card", "3d-depth-carousel",
+    "specs-grid-card", "host-trust-card", "booking-action-bar", "curated-filter-bar"
   ],
   motion: [
     "biometric-scanner", "m3-otp-input", "mobile-haptic-stepper", "dynamic-island-banner",
     "swipe-action-card", "pull-to-refresh", "floating-action-dock", "option-wheel",
     "blurred-carousel", "concave-carousel", "content-slider", "bento-cluster",
     "motion-engine", "drawer-dialog", "popover-dialog", "toast-stack",
-    "mobile-action-sheet", "mobile-numeric-keypad", "shaped-image-card", "3d-depth-carousel"
+    "mobile-action-sheet", "mobile-numeric-keypad", "shaped-image-card", "3d-depth-carousel",
+    "specs-grid-card", "host-trust-card", "booking-action-bar", "curated-filter-bar"
   ]
 };
 

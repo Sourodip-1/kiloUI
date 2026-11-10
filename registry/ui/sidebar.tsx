@@ -239,7 +239,7 @@ function SidebarBase({
   type MobileCategory = typeof MOBILE_CATEGORIES[number];
 
   const MOBILE_ITEM_CATEGORY_MAP: Record<string, MobileCategory> = {
-    // Actions (7)
+    // Actions (8)
     "m3-button": "Actions",
     "m3-fab": "Actions",
     "m3-segmented-button": "Actions",
@@ -247,6 +247,8 @@ function SidebarBase({
     "floating-action-dock": "Actions",
     "haptic-stepper": "Actions",
     "mobile-haptic-stepper": "Actions",
+    "booking-action-bar": "Actions",
+    "booking-bar": "Actions",
 
     // Forms & Inputs (11)
     "m3-text-field": "Forms & Inputs",
@@ -262,12 +264,14 @@ function SidebarBase({
     "mobile-numeric-keypad": "Forms & Inputs",
     "numeric-keypad": "Forms & Inputs",
 
-    // Navigation (5)
+    // Navigation (6)
     "m3-navigation-bar": "Navigation",
     "m3-top-app-bar": "Navigation",
     "m3-navigation-drawer": "Navigation",
     "m3-tabs": "Navigation",
     "thumb-segment-controller": "Navigation",
+    "curated-filter-bar": "Navigation",
+    "filter-bar": "Navigation",
 
     // Overlays (7)
     "mobile-bottom-sheet": "Overlays",
@@ -279,7 +283,7 @@ function SidebarBase({
     "mobile-action-sheet": "Overlays",
     "action-sheet": "Overlays",
 
-    // Data Display (8)
+    // Data Display (10)
     "m3-card": "Data Display",
     "m3-list": "Data Display",
     "m3-badge": "Data Display",
@@ -288,6 +292,10 @@ function SidebarBase({
     "shaped-image-card": "Data Display",
     "3d-depth-carousel": "Data Display",
     "depth-carousel": "Data Display",
+    "specs-grid-card": "Data Display",
+    "villa-specs": "Data Display",
+    "host-trust-card": "Data Display",
+    "host-card": "Data Display",
   };
 
   const MOBILE_CATEGORY_PARAM_MAP: Record<string, string> = {

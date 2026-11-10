@@ -94,6 +94,10 @@ import { MobileActionSheet } from "@/registry/ui/mobile-action-sheet";
 import { MobileNumericKeypad } from "@/registry/ui/mobile-numeric-keypad";
 import { ShapedImageCard, ImageCardShape } from "@/registry/ui/shaped-image-card";
 import { Depth3dCarousel, NOCTURNE_SANCTUARIES } from "@/registry/ui/3d-depth-carousel";
+import { SpecsGridCard } from "@/registry/ui/specs-grid-card";
+import { HostTrustCard } from "@/registry/ui/host-trust-card";
+import { BookingActionBar } from "@/registry/ui/booking-action-bar";
+import { CuratedFilterBar } from "@/registry/ui/curated-filter-bar";
 import {
   CanvasItem,
   CanvasItemType,
@@ -178,6 +182,7 @@ function MobilePrimitivesContent() {
   const [demoKeypadVal, setDemoKeypadVal] = React.useState("");
   const [demoShapedCardShape, setDemoShapedCardShape] = React.useState<ImageCardShape>("arch");
   const [demoCarouselIdx, setDemoCarouselIdx] = React.useState(0);
+  const [demoFilterBarTab, setDemoFilterBarTab] = React.useState("all");
 
   const scrollToPrimitives = React.useCallback(() => {
     setTimeout(() => {
@@ -947,6 +952,33 @@ function MobilePrimitivesContent() {
                     </div>
                   </div>
                 )}
+
+                {/* 06. Booking Action Bar (Stitch Screen ca8b6e8e) */}
+                {matchesSearch("Booking Action Bar", "Check Availability calendar cta bottom bar share", "Actions") && (
+                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all overflow-hidden">
+                    <div className="flex items-center justify-between">
+                      <Link href="/components/booking-action-bar" className="text-xs font-semibold text-[var(--text-primary)] hover:underline flex items-center gap-1">
+                        Booking Action Bar
+                        <ExternalLink className="h-3 w-3 text-[var(--text-muted)]" />
+                      </Link>
+                      <span className="text-[10px] font-mono text-[var(--text-muted)]">Conversion CTA</span>
+                    </div>
+
+                    <div className="py-2">
+                      <BookingActionBar
+                        primaryLabel="Check Availability"
+                        price={{ amount: "$420", period: "/ night" }}
+                        onPrimaryClick={() => showToast("Booking initiated")}
+                        onSecondaryClick={() => showToast("Link copied")}
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between text-[11px] font-mono text-[var(--text-muted)] pt-1">
+                      <span>Primary CTA + Secondary Share</span>
+                      <span className="text-[var(--accent-green)]">Tactile 0.98</span>
+                    </div>
+                  </div>
+                )}
               </>
             )}
 
@@ -1462,6 +1494,35 @@ function MobilePrimitivesContent() {
                     </div>
                   </div>
                 )}
+
+                {/* 16. Curated Filter Bar (Stitch Screen ca8b6e8e) */}
+                {matchesSearch("Curated Filter Bar", "Pill filters collection header horizontal tabs", "Navigation") && (
+                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all overflow-hidden">
+                    <div className="flex items-center justify-between">
+                      <Link href="/components/curated-filter-bar" className="text-xs font-semibold text-[var(--text-primary)] hover:underline flex items-center gap-1">
+                        Curated Filter Bar
+                        <ExternalLink className="h-3 w-3 text-[var(--text-muted)]" />
+                      </Link>
+                      <span className="text-[10px] font-mono text-[var(--text-muted)]">Pill Tabs</span>
+                    </div>
+
+                    <div className="py-2">
+                      <CuratedFilterBar
+                        showHeader={false}
+                        activeFilter={demoFilterBarTab}
+                        onSelectFilter={(id) => {
+                          setDemoFilterBarTab(id);
+                          showToast(`Filter: ${id}`);
+                        }}
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between text-[11px] font-mono text-[var(--text-muted)] pt-1">
+                      <span>Horizontal overflow pills</span>
+                      <span className="text-[var(--accent-green)]">Lavender Pill</span>
+                    </div>
+                  </div>
+                )}
               </>
             )}
 
@@ -1881,7 +1942,66 @@ function MobilePrimitivesContent() {
                   </div>
                 )}
 
-                {/* 22. M3 Cards & Surfaces */}
+                {/* 22. Property Specs Grid Card (Stitch Screen ca8b6e8e) */}
+                {matchesSearch("Property Specs Grid Card", "Villa specs 3 column metrics amenities starlink onsen", "Data Display") && (
+                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all overflow-hidden">
+                    <div className="flex items-center justify-between">
+                      <Link href="/components/specs-grid-card" className="text-xs font-semibold text-[var(--text-primary)] hover:underline flex items-center gap-1">
+                        Specs Grid Card
+                        <ExternalLink className="h-3 w-3 text-[var(--text-muted)]" />
+                      </Link>
+                      <span className="text-[10px] font-mono text-[var(--text-muted)]">3 Metrics</span>
+                    </div>
+
+                    <div className="py-1">
+                      <SpecsGridCard
+                        title="Villa Specs"
+                        badge="Instant Confirmation"
+                        metrics={[
+                          { label: "Max Guests", value: 4 },
+                          { label: "King Suites", value: 2 },
+                          { label: "Hot Spring", value: 1 },
+                        ]}
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between text-[11px] font-mono text-[var(--text-muted)] pt-1">
+                      <span>Property telemetry &amp; amenities</span>
+                      <span className="text-[var(--accent-green)]">Obsidian Grid</span>
+                    </div>
+                  </div>
+                )}
+
+                {/* 23. Host Trust Card (Stitch Screen ca8b6e8e) */}
+                {matchesSearch("Host Trust Card", "Verified host author credentialing sub minute response chat", "Data Display") && (
+                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all overflow-hidden">
+                    <div className="flex items-center justify-between">
+                      <Link href="/components/host-trust-card" className="text-xs font-semibold text-[var(--text-primary)] hover:underline flex items-center gap-1">
+                        Host Trust Card
+                        <ExternalLink className="h-3 w-3 text-[var(--text-muted)]" />
+                      </Link>
+                      <span className="text-[10px] font-mono text-[var(--text-muted)]">Verified Trust</span>
+                    </div>
+
+                    <div className="py-1">
+                      <HostTrustCard
+                        name="Kenji Sato"
+                        role="Master timber architect"
+                        responseTime="Responds in 10m"
+                        avatarUrl="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=300&auto=format&fit=crop"
+                        verified={true}
+                        onChat={() => showToast("Chat with Kenji Sato opened")}
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between text-[11px] font-mono text-[var(--text-muted)] pt-1">
+                      <span>Shield check &amp; response latency</span>
+                      <span className="text-[var(--accent-green)]">10m response</span>
+                    </div>
+                  </div>
+                )}
+
+                {/* 24. M3 Cards & Surfaces */}
                 {matchesSearch("M3 Card Surfaces", "Elevated filled outlined minimal surface", "Data Display") && (
                   <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all overflow-hidden">
                     <div className="flex items-center justify-between">

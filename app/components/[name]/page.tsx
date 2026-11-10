@@ -41,6 +41,10 @@ export async function generateMetadata({
     (name === "numeric-keypad" ? REGISTRY_DATA["mobile-numeric-keypad"] : undefined) ||
     (name === "image-card" || name === "image-card-shapes" || name === "shaped-card" ? REGISTRY_DATA["shaped-image-card"] : undefined) ||
     (name === "depth-carousel" || name === "3d-carousel" || name === "cards-carousel" || name === "depth-card-carousel" ? REGISTRY_DATA["3d-depth-carousel"] : undefined) ||
+    (name === "villa-specs" || name === "specs-card" || name === "property-specs" ? REGISTRY_DATA["specs-grid-card"] : undefined) ||
+    (name === "host-card" || name === "trust-card" || name === "author-card" ? REGISTRY_DATA["host-trust-card"] : undefined) ||
+    (name === "booking-bar" || name === "action-bar" || name === "sticky-action-bar" ? REGISTRY_DATA["booking-action-bar"] : undefined) ||
+    (name === "filter-bar" || name === "collection-filter-bar" || name === "pill-filter-bar" ? REGISTRY_DATA["curated-filter-bar"] : undefined) ||
     (name === "reactive-slates" || name === "reactive-slats" ? REGISTRY_DATA["prismatic-slats-bg"] : undefined);
   if (!item) return { title: "Component Not Found — kilo/ui" };
 
@@ -91,6 +95,10 @@ async function ComponentPageContent({
     (name === "numeric-keypad" ? REGISTRY_DATA["mobile-numeric-keypad"] : undefined) ||
     (name === "image-card" || name === "image-card-shapes" || name === "shaped-card" ? REGISTRY_DATA["shaped-image-card"] : undefined) ||
     (name === "depth-carousel" || name === "3d-carousel" || name === "cards-carousel" || name === "depth-card-carousel" ? REGISTRY_DATA["3d-depth-carousel"] : undefined) ||
+    (name === "villa-specs" || name === "specs-card" || name === "property-specs" ? REGISTRY_DATA["specs-grid-card"] : undefined) ||
+    (name === "host-card" || name === "trust-card" || name === "author-card" ? REGISTRY_DATA["host-trust-card"] : undefined) ||
+    (name === "booking-bar" || name === "action-bar" || name === "sticky-action-bar" ? REGISTRY_DATA["booking-action-bar"] : undefined) ||
+    (name === "filter-bar" || name === "collection-filter-bar" || name === "pill-filter-bar" ? REGISTRY_DATA["curated-filter-bar"] : undefined) ||
     (name === "reactive-slates" || name === "reactive-slats" ? REGISTRY_DATA["prismatic-slats-bg"] : undefined);
 
   if (!item) {

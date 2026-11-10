@@ -112,12 +112,12 @@ import { StackCards } from "@/registry/ui/stack-cards";
 import { ShapedImageCard, ImageCardShape, ImageCardLayout } from "@/registry/ui/shaped-image-card";
 import {
   Depth3dCarousel,
-  NocturneSanctuaryScreen,
   NOCTURNE_SANCTUARIES,
-  VillaSpecsCard,
-  HostTrustCard,
-  BookingActionBar,
 } from "@/registry/ui/3d-depth-carousel";
+import { SpecsGridCard } from "@/registry/ui/specs-grid-card";
+import { HostTrustCard } from "@/registry/ui/host-trust-card";
+import { BookingActionBar } from "@/registry/ui/booking-action-bar";
+import { CuratedFilterBar } from "@/registry/ui/curated-filter-bar";
 import { RegistryItem } from "@/registry/registry-data";
 import { ScaledThumbnailWrapper } from "@/components/scaled-thumbnail-wrapper";
 import {
@@ -905,7 +905,10 @@ export function ComponentPreviewStage({
   const [shapedCardImageIdx, setShapedCardImageIdx] = React.useState(0);
 
   const [depthCarouselIndex, setDepthCarouselIndex] = React.useState(0);
-  const [depthCarouselView, setDepthCarouselView] = React.useState<"screen" | "carousel">("screen");
+  const [curatedActiveFilter, setCuratedActiveFilter] = React.useState("all");
+  const [specsGuests, setSpecsGuests] = React.useState(4);
+  const [hostVerified, setHostVerified] = React.useState(true);
+  const [bookingSticky, setBookingSticky] = React.useState(false);
   const [carouselToast, setCarouselToast] = React.useState<string | null>(null);
   const showCarouselToast = React.useCallback((msg: string) => {
     setCarouselToast(msg);
@@ -2590,6 +2593,14 @@ export function ComponentPreviewStage({
       code = `<ShapedImageCard\n  shape="${shapedCardShape}"\n  layout="${shapedCardLayout}"\n  aspectRatio="${shapedCardAspect}"\n  glow={${shapedCardGlow}}\n  showBorder={${shapedCardBorder}}\n  imageSrc="${SHAPED_CARD_IMAGES[shapedCardImageIdx].url}"\n  title="${SHAPED_CARD_IMAGES[shapedCardImageIdx].title}"\n  subtitle="${SHAPED_CARD_IMAGES[shapedCardImageIdx].subtitle}"\n  badge="${SHAPED_CARD_IMAGES[shapedCardImageIdx].badge}"\n  description="${SHAPED_CARD_IMAGES[shapedCardImageIdx].desc}"\n  primaryAction={{\n    label: "Explore Space",\n    onClick: () => {}\n  }}\n/>`;
     } else if (item.name === "3d-depth-carousel") {
       code = `<Depth3dCarousel\n  activeIndex={${depthCarouselIndex}}\n  onChange={setIndex}\n  onReserve={(item) => console.log("Reserve", item.title)}\n  onBookmark={(item, saved) => console.log("Bookmark", item.id, saved)}\n/>`;
+    } else if (item.name === "specs-grid-card") {
+      code = `<SpecsGridCard\n  title="Villa Specs"\n  badge="Instant Confirmation"\n  metrics={[\n    { label: "Max Guests", value: ${specsGuests} },\n    { label: "King Suites", value: 2 },\n    { label: "Hot Spring", value: 1 },\n  ]}\n  amenities={["High-Speed Starlink", "Matcha Ritual Bar", "Zen Garden Yoga"]}\n/>`;
+    } else if (item.name === "host-trust-card") {
+      code = `<HostTrustCard\n  name="Kenji Sato"\n  role="Master timber architect"\n  responseTime="Responds in 10m"\n  verified={${hostVerified}}\n  onChat={() => console.log("Open chat")}\n/>`;
+    } else if (item.name === "booking-action-bar") {
+      code = `<BookingActionBar\n  primaryLabel="Check Availability"\n  price={{ amount: "$420", period: "/ night" }}\n  sticky={${bookingSticky}}\n  onPrimaryClick={() => console.log("Check availability")}\n  onSecondaryClick={() => console.log("Share")}\n/>`;
+    } else if (item.name === "curated-filter-bar") {
+      code = `<CuratedFilterBar\n  collectionTitle="Nocturne Sanctuaries"\n  collectionTag="CURATED COLLECTION"\n  availableCount="14 available"\n  filterCount={3}\n  activeFilter="${curatedActiveFilter}"\n  onSelectFilter={(id) => console.log("Selected", id)}\n/>`;
     } else if (item.name === "m3-dialog") {
       code = `<M3Dialog open={${m3DialogOpen}} onOpenChange={setOpen} headline="Confirm Action" supportingText="Will dispatch packet to cluster." />`;
     } else if (item.name === "m3-snackbar") {
@@ -6840,37 +6851,97 @@ export function ComponentPreviewStage({
             </div>
           )}
 
-          {/* 3D Depth Carousel */}
+          {/* 3D Depth Carousel (Standalone Component Preview) */}
           {item.name === "3d-depth-carousel" && (
             <div className="relative w-full flex flex-col items-center justify-center py-6 px-2 sm:px-4 max-w-4xl mx-auto">
-              {viewport === "mobile" || depthCarouselView === "screen" ? (
-                <div className="w-full flex justify-center">
-                  <NocturneSanctuaryScreen onToast={showCarouselToast} />
-                </div>
-              ) : (
-                <div className="w-full flex flex-col items-center space-y-6">
-                  {/* Standalone 3D Carousel Component Stage */}
-                  <div className="w-full max-w-2xl py-4">
-                    <Depth3dCarousel
-                      activeIndex={depthCarouselIndex}
-                      onChange={setDepthCarouselIndex}
-                      onReserve={(it) => showCarouselToast(`Reserving ${it.title}`)}
-                      onBookmark={(it, saved) => showCarouselToast(saved ? `Saved ${it.title}` : `Removed ${it.title}`)}
-                    />
-                  </div>
+              <div className="w-full max-w-2xl py-4 flex flex-col items-center">
+                <Depth3dCarousel
+                  activeIndex={depthCarouselIndex}
+                  onChange={setDepthCarouselIndex}
+                  onReserve={(it) => showCarouselToast(`Reserving ${it.title}`)}
+                  onBookmark={(it, saved) => showCarouselToast(saved ? `Saved ${it.title}` : `Removed ${it.title}`)}
+                />
+              </div>
 
-                  {/* Associated Specs and Host Cards Grid */}
-                  <div className="w-full max-w-lg grid grid-cols-1 gap-3">
-                    <VillaSpecsCard item={NOCTURNE_SANCTUARIES[depthCarouselIndex]} />
-                    <HostTrustCard item={NOCTURNE_SANCTUARIES[depthCarouselIndex]} onChat={() => showCarouselToast("Chat triggered")} />
-                    <BookingActionBar
-                      onCheckAvailability={() => showCarouselToast("Checking availability...")}
-                      onShare={() => showCarouselToast("Shared")}
-                    />
-                  </div>
+              {carouselToast && (
+                <div className="fixed bottom-6 z-50 px-4 py-2 rounded-full bg-[#1b2234] border border-[#8083ff]/40 text-xs font-mono text-[#c0c1ff] shadow-xl backdrop-blur-md animate-in fade-in slide-in-from-bottom-2 duration-200">
+                  {carouselToast}
                 </div>
               )}
+            </div>
+          )}
 
+          {/* Property Specs Grid Card */}
+          {item.name === "specs-grid-card" && (
+            <div className="w-full max-w-md mx-auto py-8 px-4 flex flex-col items-center">
+              <SpecsGridCard
+                title="Villa Specs"
+                badge="Instant Confirmation"
+                metrics={[
+                  { label: "Max Guests", value: specsGuests },
+                  { label: "King Suites", value: 2 },
+                  { label: "Hot Spring", value: 1 },
+                ]}
+              />
+            </div>
+          )}
+
+          {/* Host Trust Card */}
+          {item.name === "host-trust-card" && (
+            <div className="relative w-full max-w-md mx-auto py-8 px-4 flex flex-col items-center">
+              <HostTrustCard
+                name="Kenji Sato"
+                role="Master timber architect"
+                responseTime="Responds in 10m"
+                avatarUrl="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=300&auto=format&fit=crop"
+                verified={hostVerified}
+                onChat={() => showCarouselToast("Direct chat channel connected")}
+              />
+              {carouselToast && (
+                <div className="fixed bottom-6 z-50 px-4 py-2 rounded-full bg-[#1b2234] border border-[#8083ff]/40 text-xs font-mono text-[#c0c1ff] shadow-xl backdrop-blur-md animate-in fade-in slide-in-from-bottom-2 duration-200">
+                  {carouselToast}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Booking Action Bar */}
+          {item.name === "booking-action-bar" && (
+            <div className="relative w-full max-w-md mx-auto py-8 px-4 flex flex-col items-center space-y-4">
+              <div className="w-full p-4 rounded-2xl bg-[#090d16] border border-[#1b2234]">
+                <BookingActionBar
+                  primaryLabel="Check Availability"
+                  price={{ amount: "$420", period: "/ night" }}
+                  sticky={bookingSticky}
+                  onPrimaryClick={() => showCarouselToast("Checking reservation calendar...")}
+                  onSecondaryClick={() => showCarouselToast("Sanctuary URL copied to clipboard")}
+                />
+              </div>
+              {carouselToast && (
+                <div className="fixed bottom-6 z-50 px-4 py-2 rounded-full bg-[#1b2234] border border-[#8083ff]/40 text-xs font-mono text-[#c0c1ff] shadow-xl backdrop-blur-md animate-in fade-in slide-in-from-bottom-2 duration-200">
+                  {carouselToast}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Curated Filter Bar */}
+          {item.name === "curated-filter-bar" && (
+            <div className="relative w-full max-w-lg mx-auto py-8 px-4 flex flex-col items-center">
+              <div className="w-full p-4 rounded-2xl bg-[#090d16] border border-[#1b2234]">
+                <CuratedFilterBar
+                  collectionTitle="Nocturne Sanctuaries"
+                  collectionTag="CURATED COLLECTION"
+                  availableCount="14 available"
+                  filterCount={3}
+                  activeFilter={curatedActiveFilter}
+                  onSelectFilter={(id) => {
+                    setCuratedActiveFilter(id);
+                    showCarouselToast(`Switched to filter: ${id}`);
+                  }}
+                  onFilterClick={() => showCarouselToast("Opening advanced filters modal...")}
+                />
+              </div>
               {carouselToast && (
                 <div className="fixed bottom-6 z-50 px-4 py-2 rounded-full bg-[#1b2234] border border-[#8083ff]/40 text-xs font-mono text-[#c0c1ff] shadow-xl backdrop-blur-md animate-in fade-in slide-in-from-bottom-2 duration-200">
                   {carouselToast}
@@ -9400,18 +9471,7 @@ export function ComponentPreviewStage({
             {/* 3D Depth Carousel Controls */}
             {item.name === "3d-depth-carousel" && (
               <>
-                <CustomizeTile label="Presentation Mode">
-                  <CustomizeSelect
-                    value={depthCarouselView}
-                    onChange={(val) => setDepthCarouselView(val as "screen" | "carousel")}
-                    options={[
-                      { label: "Complete Mobile Screen (Nocturne)", value: "screen" },
-                      { label: "Standalone 3D Depth Carousel", value: "carousel" },
-                    ]}
-                  />
-                </CustomizeTile>
-
-                <CustomizeTile label="Active Card">
+                <CustomizeTile label="Active Sanctuary Card">
                   <CustomizeSelect
                     value={String(depthCarouselIndex)}
                     onChange={(val) => setDepthCarouselIndex(Number(val))}
@@ -9419,6 +9479,68 @@ export function ComponentPreviewStage({
                       label: `${item.title} (${item.location})`,
                       value: String(idx),
                     }))}
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Specs Grid Card Controls */}
+            {item.name === "specs-grid-card" && (
+              <>
+                <CustomizeTile label="Max Guests">
+                  <CustomizeSelect
+                    value={String(specsGuests)}
+                    onChange={(val) => setSpecsGuests(Number(val))}
+                    options={[
+                      { label: "2 Guests (Intimate)", value: "2" },
+                      { label: "4 Guests (Standard)", value: "4" },
+                      { label: "6 Guests (Group)", value: "6" },
+                      { label: "8 Guests (Estate)", value: "8" },
+                    ]}
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Host Trust Card Controls */}
+            {item.name === "host-trust-card" && (
+              <>
+                <CustomizeTile label="Host Identity">
+                  <CustomizeSwitch
+                    checked={hostVerified}
+                    onChange={setHostVerified}
+                    label="Verified Shield & Badge"
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Booking Action Bar Controls */}
+            {item.name === "booking-action-bar" && (
+              <>
+                <CustomizeTile label="Docking Mode">
+                  <CustomizeSwitch
+                    checked={bookingSticky}
+                    onChange={setBookingSticky}
+                    label="Sticky Floating Bar"
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Curated Filter Bar Controls */}
+            {item.name === "curated-filter-bar" && (
+              <>
+                <CustomizeTile label="Active Escape Tab">
+                  <CustomizeSelect
+                    value={curatedActiveFilter}
+                    onChange={(val) => setCuratedActiveFilter(val)}
+                    options={[
+                      { label: "All Escapes", value: "all" },
+                      { label: "Trending", value: "trending" },
+                      { label: "Off-Grid", value: "offgrid" },
+                      { label: "Within 3h", value: "within3h" },
+                    ]}
                   />
                 </CustomizeTile>
               </>

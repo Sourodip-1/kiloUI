@@ -6066,11 +6066,11 @@ export const REGISTRY_DATA: Record<string, RegistryItem> = {
     "name": "3d-depth-carousel",
     "category": "Mobile App",
     "title": "3D Depth Cards Carousel",
-    "description": "Mobile 3D perspective card carousel with peeking depth blur, specular glass overlays, touch swipe physics, villa specs, and host trust markers.",
-    "variants": ["default", "compact", "screen"],
+    "description": "Mobile 3D perspective card carousel with peeking depth blur, specular glass overlays, touch swipe physics, and animated indicator capsules.",
+    "variants": ["default", "compact"],
     "dependencies": ["clsx", "tailwind-merge", "motion", "lucide-react"],
     "registryDependencies": ["utils"],
-    "usage": "import { Depth3dCarousel, NocturneSanctuaryScreen } from \"@/components/ui/3d-depth-carousel\";\n\nexport function CarouselDemo() {\n  return (\n    <Depth3dCarousel\n      onReserve={(item) => console.log('Reserve', item.title)}\n    />\n  );\n}",
+    "usage": "import { Depth3dCarousel } from \"@/components/ui/3d-depth-carousel\";\n\nexport function CarouselDemo() {\n  return (\n    <Depth3dCarousel\n      onReserve={(item) => console.log('Reserve', item.title)}\n      onBookmark={(item, saved) => console.log(saved ? 'Saved' : 'Removed', item.title)}\n    />\n  );\n}",
     "props": [
       {
         "name": "items",
@@ -6102,6 +6102,202 @@ export const REGISTRY_DATA: Record<string, RegistryItem> = {
         "name": "3d-depth-carousel.tsx",
         "type": "components:ui",
         "content": "\"use client\";\n\nexport * from \"@/registry/ui/3d-depth-carousel\";\n"
+      }
+    ]
+  },
+  "specs-grid-card": {
+    "name": "specs-grid-card",
+    "category": "Mobile App",
+    "title": "Property Specs Grid Card",
+    "description": "Architectural property specification card with 3-column metric tiles and horizontal amenity chips matching Stitch mobile design standards.",
+    "variants": ["default", "compact"],
+    "dependencies": ["clsx", "tailwind-merge", "lucide-react"],
+    "registryDependencies": ["utils"],
+    "usage": "import { SpecsGridCard } from \"@/components/ui/specs-grid-card\";\n\nexport function SpecsCardDemo() {\n  return (\n    <SpecsGridCard\n      title=\"Villa Specs\"\n      badge=\"Instant Confirmation\"\n      metrics={[\n        { label: \"Max Guests\", value: 4 },\n        { label: \"King Suites\", value: 2 },\n        { label: \"Hot Spring\", value: 1 },\n      ]}\n      amenities={[\"High-Speed Starlink\", \"Matcha Ritual Bar\", \"Zen Garden Yoga\"]}\n    />\n  );\n}",
+    "props": [
+      {
+        "name": "title",
+        "type": "string",
+        "defaultValue": "\"Villa Specs\"",
+        "description": "Header title of the specification card"
+      },
+      {
+        "name": "badge",
+        "type": "ReactNode",
+        "defaultValue": "\"Instant Confirmation\"",
+        "description": "Optional status badge or confirmation tag displayed on the top right"
+      },
+      {
+        "name": "metrics",
+        "type": "SpecMetric[]",
+        "defaultValue": "DEFAULT_METRICS",
+        "description": "3-column grid items specifying numerical properties (Guests, Suites, Baths)"
+      },
+      {
+        "name": "amenities",
+        "type": "Array<{ label: string; icon?: ReactNode } | string>",
+        "defaultValue": "DEFAULT_AMENITIES",
+        "description": "Horizontal tags/chips displaying highlight amenities"
+      }
+    ],
+    "files": [
+      {
+        "name": "specs-grid-card.tsx",
+        "type": "components:ui",
+        "content": "\"use client\";\n\nexport * from \"@/registry/ui/specs-grid-card\";\n"
+      }
+    ]
+  },
+  "host-trust-card": {
+    "name": "host-trust-card",
+    "category": "Mobile App",
+    "title": "Host Trust Card",
+    "description": "Verified creator and host identity card with role credentialing, sub-minute response metrics, and an instant message action button.",
+    "variants": ["default", "compact"],
+    "dependencies": ["clsx", "tailwind-merge", "lucide-react"],
+    "registryDependencies": ["utils"],
+    "usage": "import { HostTrustCard } from \"@/components/ui/host-trust-card\";\n\nexport function HostCardDemo() {\n  return (\n    <HostTrustCard\n      name=\"Kenji Sato\"\n      role=\"Master timber architect\"\n      responseTime=\"Responds in 10m\"\n      verified={true}\n      onChat={() => console.log('Opening chat...')}\n    />\n  );\n}",
+    "props": [
+      {
+        "name": "name",
+        "type": "string",
+        "defaultValue": "\"Kenji Sato\"",
+        "description": "Display name of the verified host or creator"
+      },
+      {
+        "name": "role",
+        "type": "string",
+        "defaultValue": "\"Master timber architect\"",
+        "description": "Professional designation or role subtitle"
+      },
+      {
+        "name": "responseTime",
+        "type": "string",
+        "defaultValue": "\"Responds in 10m\"",
+        "description": "Typical communication response latency"
+      },
+      {
+        "name": "verified",
+        "type": "boolean",
+        "defaultValue": "true",
+        "description": "Whether to render the verified identity badge and shield check"
+      },
+      {
+        "name": "onChat",
+        "type": "() => void",
+        "defaultValue": "undefined",
+        "description": "Click handler for the chat action button"
+      }
+    ],
+    "files": [
+      {
+        "name": "host-trust-card.tsx",
+        "type": "components:ui",
+        "content": "\"use client\";\n\nexport * from \"@/registry/ui/host-trust-card\";\n"
+      }
+    ]
+  },
+  "booking-action-bar": {
+    "name": "booking-action-bar",
+    "category": "Mobile App",
+    "title": "Booking Action Bar",
+    "description": "Tactile mobile action bar featuring a high-contrast primary conversion button and circular secondary action button.",
+    "variants": ["default", "sticky"],
+    "dependencies": ["clsx", "tailwind-merge", "lucide-react"],
+    "registryDependencies": ["utils"],
+    "usage": "import { BookingActionBar } from \"@/components/ui/booking-action-bar\";\n\nexport function BookingBarDemo() {\n  return (\n    <BookingActionBar\n      primaryLabel=\"Check Availability\"\n      price={{ amount: \"$420\", period: \"/ night\" }}\n      onPrimaryClick={() => console.log('Check availability')}\n      onSecondaryClick={() => console.log('Share')}\n    />\n  );\n}",
+    "props": [
+      {
+        "name": "primaryLabel",
+        "type": "string",
+        "defaultValue": "\"Check Availability\"",
+        "description": "Label text for the prominent primary button"
+      },
+      {
+        "name": "onPrimaryClick",
+        "type": "() => void",
+        "defaultValue": "undefined",
+        "description": "Event handler triggered when primary button is clicked"
+      },
+      {
+        "name": "onSecondaryClick",
+        "type": "() => void",
+        "defaultValue": "undefined",
+        "description": "Event handler triggered when circular secondary button is clicked"
+      },
+      {
+        "name": "price",
+        "type": "{ amount: string | number; period?: string }",
+        "defaultValue": "undefined",
+        "description": "Optional price summary shown on the left side of the action bar"
+      },
+      {
+        "name": "sticky",
+        "type": "boolean",
+        "defaultValue": "false",
+        "description": "Whether the bar adheres to the bottom viewport with backdrop blur"
+      }
+    ],
+    "files": [
+      {
+        "name": "booking-action-bar.tsx",
+        "type": "components:ui",
+        "content": "\"use client\";\n\nexport * from \"@/registry/ui/booking-action-bar\";\n"
+      }
+    ]
+  },
+  "curated-filter-bar": {
+    "name": "curated-filter-bar",
+    "category": "Mobile App",
+    "title": "Curated Filter Bar",
+    "description": "Mobile collection header and horizontal pill filter bar with active indicators and secondary filter modal trigger.",
+    "variants": ["default", "compact"],
+    "dependencies": ["clsx", "tailwind-merge", "lucide-react"],
+    "registryDependencies": ["utils"],
+    "usage": "import { CuratedFilterBar } from \"@/components/ui/curated-filter-bar\";\n\nexport function FilterBarDemo() {\n  return (\n    <CuratedFilterBar\n      collectionTitle=\"Nocturne Sanctuaries\"\n      collectionTag=\"CURATED COLLECTION\"\n      availableCount=\"14 available\"\n      filterCount={3}\n      onSelectFilter={(id) => console.log('Selected', id)}\n    />\n  );\n}",
+    "props": [
+      {
+        "name": "collectionTitle",
+        "type": "string",
+        "defaultValue": "\"Nocturne Sanctuaries\"",
+        "description": "Title of the curated collection"
+      },
+      {
+        "name": "collectionTag",
+        "type": "string",
+        "defaultValue": "\"CURATED COLLECTION\"",
+        "description": "Eyebrow tag text above the collection title"
+      },
+      {
+        "name": "availableCount",
+        "type": "string | number",
+        "defaultValue": "\"14 available\"",
+        "description": "Counter text displaying the number of active items"
+      },
+      {
+        "name": "filterCount",
+        "type": "number",
+        "defaultValue": "3",
+        "description": "Number badge inside the filter button"
+      },
+      {
+        "name": "activeFilter",
+        "type": "string",
+        "defaultValue": "\"all\"",
+        "description": "ID of currently active filter pill"
+      },
+      {
+        "name": "onSelectFilter",
+        "type": "(id: string) => void",
+        "defaultValue": "undefined",
+        "description": "Callback triggered when a filter pill is tapped"
+      }
+    ],
+    "files": [
+      {
+        "name": "curated-filter-bar.tsx",
+        "type": "components:ui",
+        "content": "\"use client\";\n\nexport * from \"@/registry/ui/curated-filter-bar\";\n"
       }
     ]
   }
