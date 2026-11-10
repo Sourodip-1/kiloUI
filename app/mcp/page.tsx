@@ -343,13 +343,13 @@ const CLIENTS: ClientConfig[] = [
 }`,
     steps: {
       cloud: [
-        "Add the entry to ~/.gemini/config/mcp_config.json",
+        "Run `npx -y @kilo-ui/cli mcp setup antigravity --url` or add the JSON entry above to ~/.gemini/config/mcp_config.json",
         "Antigravity connects natively over HTTP POST / Streamable HTTP",
         "The agent will automatically use kilo-ui tools to construct and validate UI",
       ],
       npx: [
-        "Configure the npx command in ~/.gemini/config/mcp_config.json",
-        "Restart the agent session",
+        "Run `npx -y @kilo-ui/cli mcp setup antigravity` in your terminal to automatically configure ~/.gemini/config/mcp_config.json",
+        "Restart or reload Google Antigravity to discover all Kilo UI tools and resources",
       ],
       python: [
         "Run the local Python server script via stdio or SSE",
@@ -414,6 +414,77 @@ function CodePanel({ code, label, onCopyPrompt }: { code: string; label: string;
       <pre className="p-4 text-xs font-mono text-[var(--text-secondary)] leading-relaxed overflow-x-auto whitespace-pre">
         <code>{code}</code>
       </pre>
+    </div>
+  );
+}
+
+// ─── Auto-Setup Terminal Card (Antigravity & Automation) ──────────────────────
+function AutoSetupTerminalCard({ target = "antigravity" }: { target?: string }) {
+  const [cmdMode, setCmdMode] = React.useState<"npx" | "node">("npx");
+
+  const npxCmd = `npx -y @kilo-ui/cli mcp setup ${target}`;
+  const nodeCmd = `node -e 'const fs=require("fs"),p=require("path"),h=require("os").homedir(),d=p.join(h,".gemini","config"),f=p.join(d,"mcp_config.json");fs.mkdirSync(d,{recursive:true});let c={mcpServers:{}};try{c=JSON.parse(fs.readFileSync(f,"utf8"))}catch{}c.mcpServers=c.mcpServers||{};c.mcpServers["kilo-ui"]={command:"npx",args:["-y","@kilo-ui/cli","mcp"]};fs.writeFileSync(f,JSON.stringify(c,null,2));console.log("✓ Kilo UI MCP installed into Antigravity!");'`;
+
+  const activeCmd = cmdMode === "npx" ? npxCmd : nodeCmd;
+
+  return (
+    <div className="rounded-xl border border-[var(--accent-green)]/35 bg-[var(--surface-secondary)]/30 p-4 sm:p-5 space-y-3 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-1 border-b border-[var(--border)]/60">
+        <div className="flex items-center gap-2">
+          <Terminal className="h-4 w-4 text-[var(--accent-green)]" />
+          <span className="text-xs font-bold font-mono text-[var(--text-primary)]">
+            One-Command Terminal Setup
+          </span>
+          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-full bg-[var(--accent-green)]/15 text-[var(--accent-green)] border border-[var(--accent-green)]/30 font-semibold">
+            Recommended
+          </span>
+        </div>
+        <div className="flex items-center gap-1 text-[11px] font-mono">
+          <button
+            type="button"
+            onClick={() => setCmdMode("npx")}
+            className={cn(
+              "px-2 py-0.5 rounded cursor-pointer transition-colors",
+              cmdMode === "npx"
+                ? "bg-[var(--surface-primary)] text-[var(--text-primary)] font-semibold border border-[var(--border)]"
+                : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+            )}
+          >
+            npx CLI
+          </button>
+          <button
+            type="button"
+            onClick={() => setCmdMode("node")}
+            className={cn(
+              "px-2 py-0.5 rounded cursor-pointer transition-colors",
+              cmdMode === "node"
+                ? "bg-[var(--surface-primary)] text-[var(--text-primary)] font-semibold border border-[var(--border)]"
+                : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+            )}
+          >
+            Inline Node
+          </button>
+        </div>
+      </div>
+
+      <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
+        Smartly merges Kilo UI into <code className="text-[11px] font-mono px-1.5 py-0.5 rounded bg-[var(--surface-primary)] border border-[var(--border)] text-[var(--text-primary)] font-medium">~/.gemini/config/mcp_config.json</code> without touching existing MCP servers or breaking JSON syntax:
+      </p>
+
+      <div className="relative flex items-center justify-between gap-3 p-3 rounded-lg bg-[var(--surface-primary)] border border-[var(--border)] font-mono text-xs text-[var(--text-primary)] overflow-x-auto shadow-inner">
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="text-[var(--accent-green)] select-none shrink-0">$</span>
+          <span className="truncate select-all text-[var(--text-primary)] font-medium">
+            {activeCmd}
+          </span>
+        </div>
+        <CopyButton text={activeCmd} label="Copy command" />
+      </div>
+
+      <div className="flex items-center gap-2 text-[11px] font-mono text-[var(--text-muted)] pt-0.5">
+        <span className="flex h-1.5 w-1.5 rounded-full bg-[var(--accent-green)] shrink-0" />
+        <span>After running, restart or reload Google Antigravity to begin using Kilo UI tools.</span>
+      </div>
     </div>
   );
 }
@@ -597,9 +668,15 @@ Please query the Kilo UI registry whenever composing components, ensuring zero n
 
         {/* ── Client Configuration Block ── */}
         <div className="space-y-4">
+          {client.id === "antigravity" && (
+            <AutoSetupTerminalCard target="antigravity" />
+          )}
+
           <div className="flex items-center justify-between text-xs font-mono text-[var(--text-muted)]">
             <div className="flex items-center gap-2">
-              <span className="text-[var(--text-muted)]/60">Config target:</span>
+              <span className="text-[var(--text-muted)]/60">
+                {client.id === "antigravity" ? "Or manual configuration file:" : "Config target:"}
+              </span>
               <span className="text-[var(--text-secondary)] font-medium">{client.configPath}</span>
             </div>
           </div>

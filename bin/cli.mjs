@@ -559,9 +559,11 @@ ${ANSI.bold}COMMANDS${ANSI.reset}
   ${ANSI.cyan}add <component...>${ANSI.reset}     Add one or more components to your project
   ${ANSI.cyan}list${ANSI.reset}                    List all components available in the registry
   ${ANSI.cyan}mcp${ANSI.reset}                     Start the Model Context Protocol (MCP) stdio server
+  ${ANSI.cyan}mcp setup [target]${ANSI.reset}      Auto-configure MCP for Antigravity, Cursor, or Claude
   ${ANSI.cyan}help${ANSI.reset}                    Display this help message
 
 ${ANSI.bold}OPTIONS${ANSI.reset}
+  ${ANSI.cyan}--url${ANSI.reset}                   Use remote hosted Streamable HTTP endpoint instead of stdio
   ${ANSI.cyan}--overwrite${ANSI.reset}             Overwrite existing component files without asking
   ${ANSI.cyan}-v, --version${ANSI.reset}           Output version number
   ${ANSI.cyan}-h, --help${ANSI.reset}              Display help
@@ -573,6 +575,7 @@ ${ANSI.bold}EXAMPLES${ANSI.reset}
   $ npx @kilo-ui/cli add button --overwrite
   $ npx @kilo-ui/cli list
   $ npx @kilo-ui/cli mcp
+  $ npx @kilo-ui/cli mcp setup antigravity
 `);
 }
 
@@ -663,6 +666,126 @@ async function runMcpBridge() {
   });
 }
 
+async function runMcpSetup(target = "antigravity", options = {}) {
+  const normTarget = (target || "antigravity").toLowerCase();
+  const os = await import("node:os");
+
+  if (normTarget === "antigravity" || normTarget === "gemini" || normTarget === "agy") {
+    const homeDir = os.homedir();
+    const configDir = path.join(homeDir, ".gemini", "config");
+    const configFile = path.join(configDir, "mcp_config.json");
+
+    try {
+      fs.mkdirSync(configDir, { recursive: true });
+    } catch (err) {
+      error(`Could not create Antigravity config directory: ${err.message}`);
+      process.exit(1);
+    }
+
+    let config = { mcpServers: {} };
+    if (fs.existsSync(configFile)) {
+      try {
+        const raw = fs.readFileSync(configFile, "utf-8");
+        config = JSON.parse(raw);
+        if (!config.mcpServers || typeof config.mcpServers !== "object") {
+          config.mcpServers = {};
+        }
+      } catch (err) {
+        warn(`Existing mcp_config.json had syntax errors (${err.message}). Created backup at ${configFile}.bak`);
+        try {
+          fs.copyFileSync(configFile, `${configFile}.bak`);
+        } catch {}
+        config = { mcpServers: {} };
+      }
+    }
+
+    const isUrl = Boolean(options.url);
+    if (isUrl) {
+      config.mcpServers["kilo-ui"] = {
+        url: typeof options.url === "string" ? options.url : "https://www.kiloui.dev/api/mcp",
+      };
+    } else {
+      config.mcpServers["kilo-ui"] = {
+        command: "npx",
+        args: ["-y", "@kilo-ui/cli", "mcp"],
+      };
+    }
+
+    try {
+      fs.writeFileSync(configFile, JSON.stringify(config, null, 2) + "\n", "utf-8");
+    } catch (err) {
+      error(`Failed to write Antigravity configuration file: ${err.message}`);
+      process.exit(1);
+    }
+
+    log();
+    success(`${ANSI.bold}Successfully registered Kilo UI MCP for Google Antigravity!${ANSI.reset}`);
+    log(`  ${ANSI.dim}Config file:${ANSI.reset} ${configFile}`);
+    log(`  ${ANSI.dim}Transport:${ANSI.reset}   ${isUrl ? "Streamable HTTP (Remote)" : "Stdio (npx @kilo-ui/cli mcp)"}`);
+    log(`  ${ANSI.dim}Tools:${ANSI.reset}       list_kilo_primitives, get_primitive_schema, calculate_m3_palette, validate_design_ast`);
+    log(`  ${ANSI.dim}Resources:${ANSI.reset}   kilo://registry/catalog, m3://guidelines/surface-hierarchy`);
+    log();
+    info(`Next step: Open or reload Google Antigravity to start using Kilo UI with your agent.`);
+    log();
+    return;
+  }
+
+  if (normTarget === "cursor") {
+    const cursorDir = path.join(process.cwd(), ".cursor");
+    const configFile = path.join(cursorDir, "mcp.json");
+    fs.mkdirSync(cursorDir, { recursive: true });
+    let config = { mcpServers: {} };
+    if (fs.existsSync(configFile)) {
+      try {
+        config = JSON.parse(fs.readFileSync(configFile, "utf-8"));
+      } catch {}
+    }
+    config.mcpServers = config.mcpServers || {};
+    config.mcpServers["kilo-ui"] = {
+      url: "https://www.kiloui.dev/api/mcp",
+    };
+    fs.writeFileSync(configFile, JSON.stringify(config, null, 2) + "\n", "utf-8");
+    log();
+    success(`${ANSI.bold}Successfully registered Kilo UI MCP for Cursor!${ANSI.reset}`);
+    log(`  ${ANSI.dim}Config file:${ANSI.reset} ${configFile}`);
+    log();
+    return;
+  }
+
+  if (normTarget === "claude") {
+    const homeDir = os.homedir();
+    const isMac = process.platform === "darwin";
+    const isWin = process.platform === "win32";
+    const claudeDir = isMac
+      ? path.join(homeDir, "Library", "Application Support", "Claude")
+      : isWin
+      ? path.join(process.env.APPDATA || homeDir, "Claude")
+      : path.join(homeDir, ".config", "Claude");
+    const configFile = path.join(claudeDir, "claude_desktop_config.json");
+    fs.mkdirSync(claudeDir, { recursive: true });
+    let config = { mcpServers: {} };
+    if (fs.existsSync(configFile)) {
+      try {
+        config = JSON.parse(fs.readFileSync(configFile, "utf-8"));
+      } catch {}
+    }
+    config.mcpServers = config.mcpServers || {};
+    config.mcpServers["kilo-ui"] = {
+      command: "npx",
+      args: ["-y", "@kilo-ui/cli", "mcp"],
+    };
+    fs.writeFileSync(configFile, JSON.stringify(config, null, 2) + "\n", "utf-8");
+    log();
+    success(`${ANSI.bold}Successfully registered Kilo UI MCP for Claude Desktop!${ANSI.reset}`);
+    log(`  ${ANSI.dim}Config file:${ANSI.reset} ${configFile}`);
+    log();
+    return;
+  }
+
+  error(`Unknown MCP setup target: "${target}". Supported targets: antigravity, cursor, claude`);
+  process.exit(1);
+}
+
 async function main() {
   const args = process.argv.slice(2);
   const command = args[0];
@@ -678,7 +801,21 @@ async function main() {
   }
 
   if (command === "mcp") {
+    const sub = args[1];
+    if (sub === "setup" || sub === "install" || sub === "add" || sub === "config") {
+      const target = args[2] || "antigravity";
+      const useUrl = args.includes("--url");
+      await runMcpSetup(target, { url: useUrl });
+      return;
+    }
     await runMcpBridge();
+    return;
+  }
+
+  if (command === "mcp:setup" || command === "mcp-setup") {
+    const target = args[1] || "antigravity";
+    const useUrl = args.includes("--url");
+    await runMcpSetup(target, { url: useUrl });
     return;
   }
 
