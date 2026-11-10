@@ -14,6 +14,13 @@ export function generateStaticParams() {
     "liquid-glass-search-bar",
     "action-sheet",
     "numeric-keypad",
+    "image-card",
+    "image-card-shapes",
+    "shaped-card",
+    "depth-carousel",
+    "3d-carousel",
+    "cards-carousel",
+    "depth-card-carousel",
   ];
   return Array.from(new Set([...names, ...aliases])).map((name) => ({ name }));
 }
@@ -32,6 +39,8 @@ export async function generateMetadata({
     (name === "liquid-glass-search-bar" ? REGISTRY_DATA["search-bar"] : undefined) ||
     (name === "action-sheet" ? REGISTRY_DATA["mobile-action-sheet"] : undefined) ||
     (name === "numeric-keypad" ? REGISTRY_DATA["mobile-numeric-keypad"] : undefined) ||
+    (name === "image-card" || name === "image-card-shapes" || name === "shaped-card" ? REGISTRY_DATA["shaped-image-card"] : undefined) ||
+    (name === "depth-carousel" || name === "3d-carousel" || name === "cards-carousel" || name === "depth-card-carousel" ? REGISTRY_DATA["3d-depth-carousel"] : undefined) ||
     (name === "reactive-slates" || name === "reactive-slats" ? REGISTRY_DATA["prismatic-slats-bg"] : undefined);
   if (!item) return { title: "Component Not Found — kilo/ui" };
 
@@ -80,6 +89,8 @@ async function ComponentPageContent({
     (name === "liquid-glass-search-bar" ? REGISTRY_DATA["search-bar"] : undefined) ||
     (name === "action-sheet" ? REGISTRY_DATA["mobile-action-sheet"] : undefined) ||
     (name === "numeric-keypad" ? REGISTRY_DATA["mobile-numeric-keypad"] : undefined) ||
+    (name === "image-card" || name === "image-card-shapes" || name === "shaped-card" ? REGISTRY_DATA["shaped-image-card"] : undefined) ||
+    (name === "depth-carousel" || name === "3d-carousel" || name === "cards-carousel" || name === "depth-card-carousel" ? REGISTRY_DATA["3d-depth-carousel"] : undefined) ||
     (name === "reactive-slates" || name === "reactive-slats" ? REGISTRY_DATA["prismatic-slats-bg"] : undefined);
 
   if (!item) {

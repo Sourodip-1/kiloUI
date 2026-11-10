@@ -92,6 +92,8 @@ import { MobileHapticStepper } from "@/components/ui/mobile-haptic-stepper";
 import { DynamicIslandBanner } from "@/components/ui/dynamic-island";
 import { MobileActionSheet } from "@/registry/ui/mobile-action-sheet";
 import { MobileNumericKeypad } from "@/registry/ui/mobile-numeric-keypad";
+import { ShapedImageCard, ImageCardShape } from "@/registry/ui/shaped-image-card";
+import { Depth3dCarousel, NOCTURNE_SANCTUARIES } from "@/registry/ui/3d-depth-carousel";
 import {
   CanvasItem,
   CanvasItemType,
@@ -174,6 +176,8 @@ function MobilePrimitivesContent() {
   const [copiedCli, setCopiedCli] = React.useState(false);
   const [demoActionSheetOpen, setDemoActionSheetOpen] = React.useState(false);
   const [demoKeypadVal, setDemoKeypadVal] = React.useState("");
+  const [demoShapedCardShape, setDemoShapedCardShape] = React.useState<ImageCardShape>("arch");
+  const [demoCarouselIdx, setDemoCarouselIdx] = React.useState(0);
 
   const scrollToPrimitives = React.useCallback(() => {
     setTimeout(() => {
@@ -1792,7 +1796,92 @@ function MobilePrimitivesContent() {
             {/* ════════ DATA DISPLAY CATEGORY ════════ */}
             {showCategory("data-display") && (
               <>
-                {/* 20. M3 Cards & Surfaces */}
+                {/* 20. Shaped Image Card */}
+                {matchesSearch("Shaped Image Card", "Multi-silhouette geometric arch ticket blob hexagon image cards", "Data Display") && (
+                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all overflow-hidden">
+                    <div className="flex items-center justify-between">
+                      <Link href="/components/shaped-image-card" className="text-xs font-semibold text-[var(--text-primary)] hover:underline flex items-center gap-1">
+                        Shaped Image Card
+                        <ExternalLink className="h-3 w-3 text-[var(--text-muted)]" />
+                      </Link>
+                      <span className="text-[10px] font-mono text-[var(--text-muted)]">16 Silhouettes</span>
+                    </div>
+
+                    <div className="flex flex-col items-center justify-center p-2 rounded-xl bg-[var(--surface-primary)] border border-[var(--border)] space-y-3">
+                      <div className="w-full max-w-[200px]">
+                        <ShapedImageCard
+                          shape={demoShapedCardShape}
+                          layout="overlay"
+                          aspectRatio="4/5"
+                          glow
+                          imageSrc="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800&auto=format&fit=crop"
+                          title="Villa Bellinzona"
+                          subtitle="Alpine Retreat"
+                          badge="Featured"
+                          primaryAction={{
+                            label: "View Space",
+                            onClick: () => showToast("Opening space view..."),
+                          }}
+                        />
+                      </div>
+
+                      {/* Interactive Shape Pill Switcher */}
+                      <div className="flex items-center gap-1 overflow-x-auto w-full no-scrollbar py-1">
+                        {(["square", "rounded", "circle", "pill", "arch", "ticket", "hexagon", "blob", "shield", "star", "diamond", "heart", "scallop"] as ImageCardShape[]).map((sh) => (
+                          <button
+                            key={sh}
+                            type="button"
+                            onClick={() => setDemoShapedCardShape(sh)}
+                            className={cn(
+                              "px-2 py-0.5 rounded-full text-[9px] font-mono capitalize transition-all border shrink-0 cursor-pointer",
+                              demoShapedCardShape === sh
+                                ? "bg-[var(--accent-green)] text-black font-bold border-transparent"
+                                : "bg-[var(--surface-secondary)] text-[var(--text-muted)] border-[var(--border)] hover:text-[var(--text-primary)]"
+                            )}
+                          >
+                            {sh}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between text-[11px] font-mono text-[var(--text-muted)] pt-1">
+                      <span>Multi-shape CSS & SVG masks</span>
+                      <span className="text-[var(--accent-green)]">16 Shapes</span>
+                    </div>
+                  </div>
+                )}
+
+                {/* 21. 3D Depth Card Carousel (Stitch Screen ca8b6e8e) */}
+                {matchesSearch("3D Depth Card Carousel", "Curated collection perspective 3d cards sanctuary peek tilt", "Data Display") && (
+                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all overflow-hidden">
+                    <div className="flex items-center justify-between">
+                      <Link href="/components/3d-depth-carousel" className="text-xs font-semibold text-[var(--text-primary)] hover:underline flex items-center gap-1">
+                        3D Depth Carousel
+                        <ExternalLink className="h-3 w-3 text-[var(--text-muted)]" />
+                      </Link>
+                      <span className="text-[10px] font-mono text-[var(--text-muted)]">3D Spatial</span>
+                    </div>
+
+                    <div className="relative w-full rounded-xl bg-[#090d16] border border-[#1b2234] overflow-hidden py-4 flex flex-col items-center">
+                      <div className="w-full flex justify-center scale-90 sm:scale-95 origin-center">
+                        <Depth3dCarousel
+                          activeIndex={demoCarouselIdx}
+                          onChange={setDemoCarouselIdx}
+                          onReserve={(it) => showToast(`Reserving ${it.title}`)}
+                          onBookmark={(it, saved) => showToast(saved ? `Saved ${it.title}` : `Removed ${it.title}`)}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between text-[11px] font-mono text-[var(--text-muted)] pt-1">
+                      <span>Perspective 1200px • 3D Tilt</span>
+                      <span className="text-[var(--accent-green)]">4 Escapes</span>
+                    </div>
+                  </div>
+                )}
+
+                {/* 22. M3 Cards & Surfaces */}
                 {matchesSearch("M3 Card Surfaces", "Elevated filled outlined minimal surface", "Data Display") && (
                   <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all overflow-hidden">
                     <div className="flex items-center justify-between">

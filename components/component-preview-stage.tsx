@@ -109,6 +109,15 @@ import { ToastStack } from "@/registry/ui/toast-stack";
 import { TickerNotification } from "@/registry/ui/ticker-notification";
 import { DynamicIslandBanner } from "@/registry/ui/dynamic-island-banner";
 import { StackCards } from "@/registry/ui/stack-cards";
+import { ShapedImageCard, ImageCardShape, ImageCardLayout } from "@/registry/ui/shaped-image-card";
+import {
+  Depth3dCarousel,
+  NocturneSanctuaryScreen,
+  NOCTURNE_SANCTUARIES,
+  VillaSpecsCard,
+  HostTrustCard,
+  BookingActionBar,
+} from "@/registry/ui/3d-depth-carousel";
 import { RegistryItem } from "@/registry/registry-data";
 import { ScaledThumbnailWrapper } from "@/components/scaled-thumbnail-wrapper";
 import {
@@ -854,6 +863,54 @@ export function ComponentPreviewStage({
   const [m3CardVariant, setM3CardVariant] = React.useState<any>(
     item.name === "m3-card" && activeVariant ? activeVariant : "outlined"
   );
+
+  const SHAPED_CARD_IMAGES = [
+    {
+      title: "Villa Bellinzona",
+      subtitle: "Alpine Sanctuary",
+      badge: "Exclusive",
+      url: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800&auto=format&fit=crop",
+      desc: "Cantilevered brutalist residence nestled into the southern Swiss Alps with panoramic thermal glazing.",
+    },
+    {
+      title: "Cybernetic Horizon",
+      subtitle: "Neo Tokyo Grid",
+      badge: "Cyberpunk",
+      url: "https://images.unsplash.com/photo-1508739773434-c26b3d09e071?q=80&w=800&auto=format&fit=crop",
+      desc: "High-density telemetry nodes illuminating dense atmospheric mist across Sector 4.",
+    },
+    {
+      title: "Komorebi Forest",
+      subtitle: "Biophilic Retreat",
+      badge: "Nature",
+      url: "https://images.unsplash.com/photo-1511497584788-87676104235f?q=80&w=800&auto=format&fit=crop",
+      desc: "Filtered sunlight piercing morning mist through ancient Yakushima cedar canopies.",
+    },
+    {
+      title: "Orbital Habitat IX",
+      subtitle: "Deep Space Station",
+      badge: "Sci-Fi",
+      url: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=800&auto=format&fit=crop",
+      desc: "Next-generation solar torus generating artificial gravity for long-range research expeditions.",
+    },
+  ];
+
+  const [shapedCardShape, setShapedCardShape] = React.useState<ImageCardShape>("arch");
+  const [shapedCardLayout, setShapedCardLayout] = React.useState<ImageCardLayout>(
+    item.name === "shaped-image-card" && activeVariant ? (activeVariant as ImageCardLayout) : "overlay"
+  );
+  const [shapedCardAspect, setShapedCardAspect] = React.useState<"1/1" | "4/3" | "16/9" | "3/4" | "4/5" | "2/3">("4/5");
+  const [shapedCardGlow, setShapedCardGlow] = React.useState(true);
+  const [shapedCardBorder, setShapedCardBorder] = React.useState(true);
+  const [shapedCardImageIdx, setShapedCardImageIdx] = React.useState(0);
+
+  const [depthCarouselIndex, setDepthCarouselIndex] = React.useState(0);
+  const [depthCarouselView, setDepthCarouselView] = React.useState<"screen" | "carousel">("screen");
+  const [carouselToast, setCarouselToast] = React.useState<string | null>(null);
+  const showCarouselToast = React.useCallback((msg: string) => {
+    setCarouselToast(msg);
+    setTimeout(() => setCarouselToast((cur) => (cur === msg ? null : cur)), 2400);
+  }, []);
 
   const [m3DialogOpen, setM3DialogOpen] = React.useState(false);
   const [m3DialogVariant, setM3DialogVariant] = React.useState<any>(
@@ -1792,6 +1849,7 @@ export function ComponentPreviewStage({
       }
       else if (item.name === "m3-tabs") setM3TabsVariant(v);
       else if (item.name === "m3-card") setM3CardVariant(v);
+      else if (item.name === "shaped-image-card") setShapedCardLayout(v as ImageCardLayout);
       else if (item.name === "m3-dialog") {
         setM3DialogVariant(v);
         setM3DialogOpen(true);
@@ -2269,6 +2327,8 @@ export function ComponentPreviewStage({
       ? m3TabsVariant
       : item.name === "m3-card"
       ? m3CardVariant
+      : item.name === "shaped-image-card"
+      ? shapedCardLayout
       : item.name === "m3-dialog"
       ? m3DialogVariant
       : item.name === "m3-snackbar"
@@ -2526,6 +2586,10 @@ export function ComponentPreviewStage({
       code = `<M3Tabs type="${m3TabsVariant}" value="${m3TabsVal}" tabs={[{ id: "overview", label: "Overview" }, { id: "specs", label: "Specs" }]} />`;
     } else if (item.name === "m3-card") {
       code = `<M3Card variant="${m3CardVariant}" headline="Technical Shell 3L" subhead="Oversized fit">\n  <p>Waterproof ripstop monochrome</p>\n</M3Card>`;
+    } else if (item.name === "shaped-image-card") {
+      code = `<ShapedImageCard\n  shape="${shapedCardShape}"\n  layout="${shapedCardLayout}"\n  aspectRatio="${shapedCardAspect}"\n  glow={${shapedCardGlow}}\n  showBorder={${shapedCardBorder}}\n  imageSrc="${SHAPED_CARD_IMAGES[shapedCardImageIdx].url}"\n  title="${SHAPED_CARD_IMAGES[shapedCardImageIdx].title}"\n  subtitle="${SHAPED_CARD_IMAGES[shapedCardImageIdx].subtitle}"\n  badge="${SHAPED_CARD_IMAGES[shapedCardImageIdx].badge}"\n  description="${SHAPED_CARD_IMAGES[shapedCardImageIdx].desc}"\n  primaryAction={{\n    label: "Explore Space",\n    onClick: () => {}\n  }}\n/>`;
+    } else if (item.name === "3d-depth-carousel") {
+      code = `<Depth3dCarousel\n  activeIndex={${depthCarouselIndex}}\n  onChange={setIndex}\n  onReserve={(item) => console.log("Reserve", item.title)}\n  onBookmark={(item, saved) => console.log("Bookmark", item.id, saved)}\n/>`;
     } else if (item.name === "m3-dialog") {
       code = `<M3Dialog open={${m3DialogOpen}} onOpenChange={setOpen} headline="Confirm Action" supportingText="Will dispatch packet to cluster." />`;
     } else if (item.name === "m3-snackbar") {
@@ -6628,6 +6692,193 @@ export function ComponentPreviewStage({
             </div>
           )}
 
+          {/* Shaped Image Card */}
+          {item.name === "shaped-image-card" && (
+            <div className="w-full flex flex-col items-center justify-center py-6 px-4 space-y-8 max-w-4xl mx-auto">
+              {viewport === "mobile" ? (
+                <MobilePreviewChassis isLightMode={isLightMode} title="Gallery" subtitle="SHAPED CARDS">
+                  <div className="flex-1 flex flex-col p-4 space-y-4 overflow-y-auto">
+                    <ShapedImageCard
+                      shape={shapedCardShape}
+                      layout={shapedCardLayout}
+                      aspectRatio={shapedCardAspect}
+                      glow={shapedCardGlow}
+                      showBorder={shapedCardBorder}
+                      imageSrc={SHAPED_CARD_IMAGES[shapedCardImageIdx].url}
+                      title={SHAPED_CARD_IMAGES[shapedCardImageIdx].title}
+                      subtitle={SHAPED_CARD_IMAGES[shapedCardImageIdx].subtitle}
+                      badge={SHAPED_CARD_IMAGES[shapedCardImageIdx].badge}
+                      description={SHAPED_CARD_IMAGES[shapedCardImageIdx].desc}
+                      primaryAction={{
+                        label: "Explore Space",
+                        onClick: () => {},
+                      }}
+                    />
+
+                    {/* Quick Shape Selector in Mobile Preview */}
+                    <div className="space-y-1.5 pt-2">
+                      <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">
+                        Quick Shapes
+                      </span>
+                      <div className="grid grid-cols-4 gap-1.5">
+                        {(["arch", "ticket", "hexagon", "blob", "shield", "star", "diamond", "heart"] as ImageCardShape[]).map(
+                          (sh) => (
+                            <button
+                              key={sh}
+                              type="button"
+                              onClick={() => setShapedCardShape(sh)}
+                              className={cn(
+                                "py-1.5 px-2 rounded-lg text-[10px] font-mono capitalize transition-all border cursor-pointer text-center",
+                                shapedCardShape === sh
+                                  ? "bg-[var(--accent-green)] text-black font-bold border-transparent"
+                                  : "bg-[var(--surface-secondary)] text-[var(--text-secondary)] border-[var(--border)] hover:text-[var(--text-primary)]"
+                              )}
+                            >
+                              {sh}
+                            </button>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </MobilePreviewChassis>
+              ) : (
+                <div className="w-full flex flex-col items-center space-y-8">
+                  {/* Hero Featured Card with current customization */}
+                  <div className="w-full max-w-sm sm:max-w-md">
+                    <ShapedImageCard
+                      shape={shapedCardShape}
+                      layout={shapedCardLayout}
+                      aspectRatio={shapedCardAspect}
+                      glow={shapedCardGlow}
+                      showBorder={shapedCardBorder}
+                      imageSrc={SHAPED_CARD_IMAGES[shapedCardImageIdx].url}
+                      title={SHAPED_CARD_IMAGES[shapedCardImageIdx].title}
+                      subtitle={SHAPED_CARD_IMAGES[shapedCardImageIdx].subtitle}
+                      badge={SHAPED_CARD_IMAGES[shapedCardImageIdx].badge}
+                      description={SHAPED_CARD_IMAGES[shapedCardImageIdx].desc}
+                      primaryAction={{
+                        label: "Explore Space",
+                        onClick: () => {},
+                      }}
+                      secondaryAction={{
+                        label: "Bookmark",
+                        onClick: () => {},
+                      }}
+                    />
+                  </div>
+
+                  {/* Multi-Shape Comparison Gallery */}
+                  <div className="w-full space-y-3 pt-4 border-t border-[var(--border)]">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-mono uppercase tracking-wider text-[var(--text-muted)] font-bold">
+                        Shape Preset Archetypes
+                      </span>
+                      <span className="text-[10px] font-mono text-[var(--text-muted)]">
+                        Click any shape to apply
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+                      {(
+                        [
+                          { shape: "square", label: "Sharp Square" },
+                          { shape: "rounded", label: "Squircle" },
+                          { shape: "circle", label: "Circular Portal" },
+                          { shape: "pill", label: "Capsule Pill" },
+                          { shape: "arch", label: "Cathedral Arch" },
+                          { shape: "ticket", label: "Cinema Ticket" },
+                          { shape: "hexagon", label: "Honeycomb" },
+                          { shape: "blob", label: "Organic Blob" },
+                          { shape: "shield", label: "Heraldic Shield" },
+                          { shape: "star", label: "Starburst" },
+                          { shape: "diamond", label: "Rhombus" },
+                          { shape: "scallop", label: "Floral Rosette" },
+                          { shape: "cut-corner", label: "Cyber Chamfer" },
+                          { shape: "heart", label: "Smooth Heart" },
+                          { shape: "triangle", label: "Triangle" },
+                          { shape: "parallelogram", label: "Parallelogram" },
+                        ] as const
+                      ).map((item) => (
+                        <button
+                          key={item.shape}
+                          type="button"
+                          onClick={() => setShapedCardShape(item.shape as ImageCardShape)}
+                          className={cn(
+                            "group p-2.5 rounded-2xl border transition-all text-left flex flex-col items-center space-y-2 cursor-pointer",
+                            shapedCardShape === item.shape
+                              ? "bg-[var(--surface-secondary)] border-[var(--accent-green)] shadow-md"
+                              : "bg-[var(--surface-elevated)]/50 border-[var(--border)] hover:border-[var(--border-hover)]"
+                          )}
+                        >
+                          <div className="w-16 h-20 overflow-hidden">
+                            <ShapedImageCard
+                              shape={item.shape as ImageCardShape}
+                              layout="overlay"
+                              aspectRatio="4/5"
+                              imageSrc={SHAPED_CARD_IMAGES[shapedCardImageIdx].url}
+                              showBorder={false}
+                              interactive={false}
+                            />
+                          </div>
+                          <span
+                            className={cn(
+                              "text-[10px] font-mono text-center truncate w-full",
+                              shapedCardShape === item.shape
+                                ? "text-[var(--accent-green)] font-bold"
+                                : "text-[var(--text-muted)]"
+                            )}
+                          >
+                            {item.label}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* 3D Depth Carousel */}
+          {item.name === "3d-depth-carousel" && (
+            <div className="relative w-full flex flex-col items-center justify-center py-6 px-2 sm:px-4 max-w-4xl mx-auto">
+              {viewport === "mobile" || depthCarouselView === "screen" ? (
+                <div className="w-full flex justify-center">
+                  <NocturneSanctuaryScreen onToast={showCarouselToast} />
+                </div>
+              ) : (
+                <div className="w-full flex flex-col items-center space-y-6">
+                  {/* Standalone 3D Carousel Component Stage */}
+                  <div className="w-full max-w-2xl py-4">
+                    <Depth3dCarousel
+                      activeIndex={depthCarouselIndex}
+                      onChange={setDepthCarouselIndex}
+                      onReserve={(it) => showCarouselToast(`Reserving ${it.title}`)}
+                      onBookmark={(it, saved) => showCarouselToast(saved ? `Saved ${it.title}` : `Removed ${it.title}`)}
+                    />
+                  </div>
+
+                  {/* Associated Specs and Host Cards Grid */}
+                  <div className="w-full max-w-lg grid grid-cols-1 gap-3">
+                    <VillaSpecsCard item={NOCTURNE_SANCTUARIES[depthCarouselIndex]} />
+                    <HostTrustCard item={NOCTURNE_SANCTUARIES[depthCarouselIndex]} onChat={() => showCarouselToast("Chat triggered")} />
+                    <BookingActionBar
+                      onCheckAvailability={() => showCarouselToast("Checking availability...")}
+                      onShare={() => showCarouselToast("Shared")}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {carouselToast && (
+                <div className="fixed bottom-6 z-50 px-4 py-2 rounded-full bg-[#1b2234] border border-[#8083ff]/40 text-xs font-mono text-[#c0c1ff] shadow-xl backdrop-blur-md animate-in fade-in slide-in-from-bottom-2 duration-200">
+                  {carouselToast}
+                </div>
+              )}
+            </div>
+          )}
+
           {/* M3 Dialog */}
           {item.name === "m3-dialog" && (
             <div className="w-full flex justify-center py-2">
@@ -9045,6 +9296,129 @@ export function ComponentPreviewStage({
                       { label: "Filled (M3)", value: "filled" },
                       { label: "Minimal SaaS Card", value: "minimal" },
                     ]}
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Shaped Image Card Controls */}
+            {item.name === "shaped-image-card" && (
+              <>
+                <CustomizeTile label="Silhouette Shape">
+                  <CustomizeSelect
+                    value={shapedCardShape}
+                    onChange={(val) => setShapedCardShape(val as ImageCardShape)}
+                    options={[
+                      { label: "Square (Sharp 90°)", value: "square" },
+                      { label: "Rounded (Squircle)", value: "rounded" },
+                      { label: "Circle (Circular Aperture)", value: "circle" },
+                      { label: "Pill (Stadium Capsule)", value: "pill" },
+                      { label: "Cathedral Arch", value: "arch" },
+                      { label: "Cinema Ticket Notch", value: "ticket" },
+                      { label: "Honeycomb Hexagon", value: "hexagon" },
+                      { label: "Faceted Octagon", value: "octagon" },
+                      { label: "Rhombus Diamond", value: "diamond" },
+                      { label: "Celestial Starburst", value: "star" },
+                      { label: "Heraldic Shield", value: "shield" },
+                      { label: "Organic Fluid Blob", value: "blob" },
+                      { label: "Cyberpunk Cut-Corner", value: "cut-corner" },
+                      { label: "Smooth Heart", value: "heart" },
+                      { label: "Floral Rosette Scallop", value: "scallop" },
+                      { label: "Geometric Triangle", value: "triangle" },
+                      { label: "Speed Parallelogram", value: "parallelogram" },
+                    ]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Layout Style">
+                  <CustomizeSelect
+                    value={shapedCardLayout}
+                    onChange={(val) => {
+                      setShapedCardLayout(val as ImageCardLayout);
+                      onVariantChange?.(val);
+                    }}
+                    options={[
+                      { label: "Overlay Hero (Immersive)", value: "overlay" },
+                      { label: "Stacked Gallery (Card + Body)", value: "stacked" },
+                      { label: "Compact Tile", value: "compact" },
+                    ]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Aspect Ratio">
+                  <CustomizeSelect
+                    value={shapedCardAspect}
+                    onChange={(val) => setShapedCardAspect(val as any)}
+                    options={[
+                      { label: "4:5 Portrait (Standard)", value: "4/5" },
+                      { label: "1:1 Square", value: "1/1" },
+                      { label: "3:4 Classical", value: "3/4" },
+                      { label: "16:9 Widescreen", value: "16/9" },
+                      { label: "4:3 Landscape", value: "4/3" },
+                      { label: "2:3 Tall Poster", value: "2/3" },
+                    ]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Image Preset">
+                  <CustomizeSelect
+                    value={String(shapedCardImageIdx)}
+                    onChange={(val) => setShapedCardImageIdx(Number(val))}
+                    options={SHAPED_CARD_IMAGES.map((img, idx) => ({
+                      label: `${img.title} (${img.badge})`,
+                      value: String(idx),
+                    }))}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Visual Effect">
+                  <CustomizeSelect
+                    value={
+                      shapedCardBorder && shapedCardGlow
+                        ? "stroke-glow"
+                        : shapedCardBorder
+                        ? "stroke"
+                        : shapedCardGlow
+                        ? "glow"
+                        : "none"
+                    }
+                    onChange={(val) => {
+                      setShapedCardBorder(val === "stroke" || val === "stroke-glow");
+                      setShapedCardGlow(val === "glow" || val === "stroke-glow");
+                    }}
+                    options={[
+                      { label: "Contour Stroke & Glow", value: "stroke-glow" },
+                      { label: "Contour Stroke Only", value: "stroke" },
+                      { label: "Obsidian Glow Only", value: "glow" },
+                      { label: "Clean (No Effects)", value: "none" },
+                    ]}
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* 3D Depth Carousel Controls */}
+            {item.name === "3d-depth-carousel" && (
+              <>
+                <CustomizeTile label="Presentation Mode">
+                  <CustomizeSelect
+                    value={depthCarouselView}
+                    onChange={(val) => setDepthCarouselView(val as "screen" | "carousel")}
+                    options={[
+                      { label: "Complete Mobile Screen (Nocturne)", value: "screen" },
+                      { label: "Standalone 3D Depth Carousel", value: "carousel" },
+                    ]}
+                  />
+                </CustomizeTile>
+
+                <CustomizeTile label="Active Card">
+                  <CustomizeSelect
+                    value={String(depthCarouselIndex)}
+                    onChange={(val) => setDepthCarouselIndex(Number(val))}
+                    options={NOCTURNE_SANCTUARIES.map((item, idx) => ({
+                      label: `${item.title} (${item.location})`,
+                      value: String(idx),
+                    }))}
                   />
                 </CustomizeTile>
               </>

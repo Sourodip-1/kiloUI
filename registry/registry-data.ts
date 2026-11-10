@@ -6012,5 +6012,97 @@ export const REGISTRY_DATA: Record<string, RegistryItem> = {
         "content": "\"use client\";\n\nexport * from \"@/registry/ui/mobile-numeric-keypad\";\n"
       }
     ]
+  },
+  "shaped-image-card": {
+    "name": "shaped-image-card",
+    "category": "Data Display",
+    "title": "Shaped Image Card",
+    "description": "Multi-silhouette responsive image cards supporting 16+ architectural, organic, and geometric shapes with smooth hover zoom, tactile haptics, and live customization.",
+    "variants": ["overlay", "stacked", "compact"],
+    "dependencies": ["clsx", "tailwind-merge", "motion", "lucide-react"],
+    "registryDependencies": ["utils"],
+    "usage": "import { ShapedImageCard } from \"@/components/ui/shaped-image-card\";\n\nexport function ShapedCardDemo() {\n  return (\n    <ShapedImageCard\n      shape=\"arch\"\n      layout=\"overlay\"\n      imageSrc=\"https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800&auto=format&fit=crop\"\n      title=\"Villa Bellinzona\"\n      subtitle=\"Architectural Haven\"\n      badge=\"Featured\"\n      aspectRatio=\"4/5\"\n      glow\n      primaryAction={{\n        label: \"Explore Space\",\n        onClick: () => {}\n      }}\n    />\n  );\n}",
+    "props": [
+      {
+        "name": "shape",
+        "type": "'arch' | 'ticket' | 'circle' | 'hexagon' | 'octagon' | 'diamond' | 'star' | 'shield' | 'blob' | 'cut-corner' | 'pill' | 'heart' | 'scallop' | 'triangle' | 'parallelogram' | 'rounded'",
+        "defaultValue": "'arch'",
+        "description": "The geometric, organic, or architectural silhouette for the card"
+      },
+      {
+        "name": "layout",
+        "type": "'overlay' | 'stacked' | 'compact'",
+        "defaultValue": "'overlay'",
+        "description": "Layout archetype: immersive overlay hero vs stacked gallery media header"
+      },
+      {
+        "name": "aspectRatio",
+        "type": "'1/1' | '4/3' | '16/9' | '3/4' | '4/5' | '2/3'",
+        "defaultValue": "'4/5'",
+        "description": "Aspect ratio for the shaped image container"
+      },
+      {
+        "name": "showBorder",
+        "type": "boolean",
+        "defaultValue": "true",
+        "description": "Whether to render the subtle contour silhouette border"
+      },
+      {
+        "name": "glow",
+        "type": "boolean",
+        "defaultValue": "false",
+        "description": "Whether to render an ambient obsidian accent glow"
+      }
+    ],
+    "files": [
+      {
+        "name": "shaped-image-card.tsx",
+        "type": "components:ui",
+        "content": "\"use client\";\n\nexport * from \"@/registry/ui/shaped-image-card\";\n"
+      }
+    ]
+  },
+  "3d-depth-carousel": {
+    "name": "3d-depth-carousel",
+    "category": "Mobile App",
+    "title": "3D Depth Cards Carousel",
+    "description": "Mobile 3D perspective card carousel with peeking depth blur, specular glass overlays, touch swipe physics, villa specs, and host trust markers.",
+    "variants": ["default", "compact", "screen"],
+    "dependencies": ["clsx", "tailwind-merge", "motion", "lucide-react"],
+    "registryDependencies": ["utils"],
+    "usage": "import { Depth3dCarousel, NocturneSanctuaryScreen } from \"@/components/ui/3d-depth-carousel\";\n\nexport function CarouselDemo() {\n  return (\n    <Depth3dCarousel\n      onReserve={(item) => console.log('Reserve', item.title)}\n    />\n  );\n}",
+    "props": [
+      {
+        "name": "items",
+        "type": "SanctuaryCardData[]",
+        "defaultValue": "NOCTURNE_SANCTUARIES",
+        "description": "Array of destination/retreat card items to display in the 3D perspective stage"
+      },
+      {
+        "name": "activeIndex",
+        "type": "number",
+        "defaultValue": "0",
+        "description": "Controlled slide index of the center active card"
+      },
+      {
+        "name": "onChange",
+        "type": "(index: number) => void",
+        "defaultValue": "undefined",
+        "description": "Callback triggered when user swipes or clicks a slide"
+      },
+      {
+        "name": "onReserve",
+        "type": "(item: SanctuaryCardData) => void",
+        "defaultValue": "undefined",
+        "description": "Callback invoked when tapping the Reserve button"
+      }
+    ],
+    "files": [
+      {
+        "name": "3d-depth-carousel.tsx",
+        "type": "components:ui",
+        "content": "\"use client\";\n\nexport * from \"@/registry/ui/3d-depth-carousel\";\n"
+      }
+    ]
   }
 };

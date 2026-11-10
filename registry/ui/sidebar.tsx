@@ -279,12 +279,15 @@ function SidebarBase({
     "mobile-action-sheet": "Overlays",
     "action-sheet": "Overlays",
 
-    // Data Display (5)
+    // Data Display (8)
     "m3-card": "Data Display",
     "m3-list": "Data Display",
     "m3-badge": "Data Display",
     "m3-progress-indicator": "Data Display",
     "m3-snackbar": "Data Display",
+    "shaped-image-card": "Data Display",
+    "3d-depth-carousel": "Data Display",
+    "depth-carousel": "Data Display",
   };
 
   const MOBILE_CATEGORY_PARAM_MAP: Record<string, string> = {

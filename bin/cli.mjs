@@ -92,6 +92,15 @@ const COMPONENT_ALIASES = {
   "keypad": "mobile-numeric-keypad",
   "numeric-keypad": "mobile-numeric-keypad",
   "mobile-numeric-keypad": "mobile-numeric-keypad",
+  "shaped-image-card": "shaped-image-card",
+  "image-card": "shaped-image-card",
+  "shaped-card": "shaped-image-card",
+  "image-card-shapes": "shaped-image-card",
+  "3d-depth-carousel": "3d-depth-carousel",
+  "depth-carousel": "3d-depth-carousel",
+  "3d-carousel": "3d-depth-carousel",
+  "cards-carousel": "3d-depth-carousel",
+  "depth-card-carousel": "3d-depth-carousel",
 };
 
 // Associated companion files (e.g. CSS files)
@@ -112,14 +121,14 @@ const COMPONENT_DEPS = {
     "dynamic-island-banner", "stack-cards", "biometric-scanner", "m3-otp-input",
     "mobile-haptic-stepper", "pull-to-refresh", "swipe-action-card", "floating-action-dock",
     "mobile-bottom-sheet", "thumb-segment-controller", "m3-top-app-bar", "m3-navigation-bar",
-    "mobile-action-sheet", "mobile-numeric-keypad"
+    "mobile-action-sheet", "mobile-numeric-keypad", "shaped-image-card", "3d-depth-carousel"
   ],
   motion: [
     "biometric-scanner", "m3-otp-input", "mobile-haptic-stepper", "dynamic-island-banner",
     "swipe-action-card", "pull-to-refresh", "floating-action-dock", "option-wheel",
     "blurred-carousel", "concave-carousel", "content-slider", "bento-cluster",
     "motion-engine", "drawer-dialog", "popover-dialog", "toast-stack",
-    "mobile-action-sheet", "mobile-numeric-keypad"
+    "mobile-action-sheet", "mobile-numeric-keypad", "shaped-image-card", "3d-depth-carousel"
   ]
 };
 
