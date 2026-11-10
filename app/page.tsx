@@ -313,7 +313,7 @@ export default function LandingPage() {
               <span>ui</span>
             </div>
             <span className="inline-flex items-center ml-2 px-2 py-0.5 rounded-full text-[10px] font-mono font-medium bg-white/10 text-white/90 border border-white/15 backdrop-blur-md shadow-xs">
-              v1.38.9
+              v1.38.10
             </span>
           </Link>
 
@@ -522,7 +522,7 @@ export default function LandingPage() {
                 className="group inline-flex items-center gap-2.5 px-3 py-1 rounded-full border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/20 backdrop-blur-md shadow-2xs pointer-events-auto transition-all duration-200"
               >
                 <span className="font-mono text-[11px] font-semibold text-[var(--accent-green)]">
-                  v1.38.9
+                  v1.38.10
                 </span>
                 <span className="h-3 w-[1px] bg-white/20" />
                 <span className="text-xs text-zinc-300 font-sans tracking-tight group-hover:text-white transition-colors">

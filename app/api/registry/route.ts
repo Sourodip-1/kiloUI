@@ -14,7 +14,7 @@ export async function GET() {
   return NextResponse.json(
     {
       name: "kilo-ui",
-      version: "1.38.9",
+      version: "1.38.10",
       description: "Official Kilo UI Component Registry",
       components: list,
     },

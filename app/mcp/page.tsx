@@ -348,7 +348,8 @@ const CLIENTS: ClientConfig[] = [
         "The agent will automatically use kilo-ui tools to construct and validate UI",
       ],
       npx: [
-        "Run `npx -y @kilo-ui/cli mcp setup antigravity` in your terminal to automatically configure ~/.gemini/config/mcp_config.json",
+        "Windows: Run the one-command setup above (uses npx.cmd to ensure Antigravity can spawn Node on Windows)",
+        "macOS / Linux: Run `npx -y @kilo-ui/cli mcp setup antigravity` or save the JSON to ~/.gemini/config/mcp_config.json",
         "Restart or reload Google Antigravity to discover all Kilo UI tools and resources",
       ],
       python: [
@@ -420,15 +421,16 @@ function CodePanel({ code, label, onCopyPrompt }: { code: string; label: string;
 
 // ─── Auto-Setup Terminal Card (Antigravity & Automation) ──────────────────────
 function AutoSetupTerminalCard({ target = "antigravity" }: { target?: string }) {
-  const [cmdMode, setCmdMode] = React.useState<"npx" | "node">("npx");
+  const [osTab, setOsTab] = React.useState<"mac-linux" | "windows" | "cloud">("windows");
 
-  const npxCmd = `npx -y @kilo-ui/cli mcp setup ${target}`;
-  const nodeCmd = `node -e 'const fs=require("fs"),p=require("path"),h=require("os").homedir(),d=p.join(h,".gemini","config"),f=p.join(d,"mcp_config.json");fs.mkdirSync(d,{recursive:true});let c={mcpServers:{}};try{c=JSON.parse(fs.readFileSync(f,"utf8"))}catch{}c.mcpServers=c.mcpServers||{};c.mcpServers["kilo-ui"]={command:"npx",args:["-y","@kilo-ui/cli","mcp"]};fs.writeFileSync(f,JSON.stringify(c,null,2));console.log("✓ Kilo UI MCP installed into Antigravity!");'`;
+  const macLinuxCmd = `npx -y @kilo-ui/cli mcp setup ${target}`;
+  const windowsCmd = `node -e "const fs=require('fs'),p=require('path'),h=process.env.USERPROFILE||require('os').homedir(),d=p.join(h,'.gemini','config'),f=p.join(d,'mcp_config.json');fs.mkdirSync(d,{recursive:true});let c={mcpServers:{}};try{c=JSON.parse(fs.readFileSync(f,'utf8'))}catch{}c.mcpServers=c.mcpServers||{};c.mcpServers['kilo-ui']={command:'npx.cmd',args:['-y','@kilo-ui/cli','mcp']};fs.writeFileSync(f,JSON.stringify(c,null,2));console.log('✓ Kilo UI MCP installed into Antigravity!');"`;
+  const cloudCmd = `node -e "const fs=require('fs'),p=require('path'),h=process.env.USERPROFILE||require('os').homedir(),d=p.join(h,'.gemini','config'),f=p.join(d,'mcp_config.json');fs.mkdirSync(d,{recursive:true});let c={mcpServers:{}};try{c=JSON.parse(fs.readFileSync(f,'utf8'))}catch{}c.mcpServers=c.mcpServers||{};c.mcpServers['kilo-ui']={url:'https://www.kiloui.dev/api/mcp'};fs.writeFileSync(f,JSON.stringify(c,null,2));console.log('✓ Kilo UI MCP (Cloud) installed into Antigravity!');"`;
 
-  const activeCmd = cmdMode === "npx" ? npxCmd : nodeCmd;
+  const activeCmd = osTab === "windows" ? windowsCmd : osTab === "cloud" ? cloudCmd : macLinuxCmd;
 
   return (
-    <div className="rounded-xl border border-[var(--accent-green)]/35 bg-[var(--surface-secondary)]/30 p-4 sm:p-5 space-y-3 shadow-xs">
+    <div className="rounded-xl border border-[var(--accent-green)]/35 bg-[var(--surface-secondary)]/30 p-4 sm:p-5 space-y-3.5 shadow-xs">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-1 border-b border-[var(--border)]/60">
         <div className="flex items-center gap-2">
           <Terminal className="h-4 w-4 text-[var(--accent-green)]" />
@@ -442,33 +444,59 @@ function AutoSetupTerminalCard({ target = "antigravity" }: { target?: string }) 
         <div className="flex items-center gap-1 text-[11px] font-mono">
           <button
             type="button"
-            onClick={() => setCmdMode("npx")}
+            onClick={() => setOsTab("windows")}
             className={cn(
-              "px-2 py-0.5 rounded cursor-pointer transition-colors",
-              cmdMode === "npx"
+              "px-2.5 py-0.5 rounded cursor-pointer transition-colors",
+              osTab === "windows"
                 ? "bg-[var(--surface-primary)] text-[var(--text-primary)] font-semibold border border-[var(--border)]"
                 : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
             )}
           >
-            npx CLI
+            Windows (PowerShell &amp; CMD)
           </button>
           <button
             type="button"
-            onClick={() => setCmdMode("node")}
+            onClick={() => setOsTab("mac-linux")}
             className={cn(
-              "px-2 py-0.5 rounded cursor-pointer transition-colors",
-              cmdMode === "node"
+              "px-2.5 py-0.5 rounded cursor-pointer transition-colors",
+              osTab === "mac-linux"
                 ? "bg-[var(--surface-primary)] text-[var(--text-primary)] font-semibold border border-[var(--border)]"
                 : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
             )}
           >
-            Inline Node
+            macOS / Linux
+          </button>
+          <button
+            type="button"
+            onClick={() => setOsTab("cloud")}
+            className={cn(
+              "px-2.5 py-0.5 rounded cursor-pointer transition-colors",
+              osTab === "cloud"
+                ? "bg-[var(--surface-primary)] text-[var(--text-primary)] font-semibold border border-[var(--border)]"
+                : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+            )}
+          >
+            Cloud URL
           </button>
         </div>
       </div>
 
       <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
-        Smartly merges Kilo UI into <code className="text-[11px] font-mono px-1.5 py-0.5 rounded bg-[var(--surface-primary)] border border-[var(--border)] text-[var(--text-primary)] font-medium">~/.gemini/config/mcp_config.json</code> without touching existing MCP servers or breaking JSON syntax:
+        {osTab === "windows" && (
+          <>
+            Windows-optimized one-liner (uses <code className="text-[11px] font-mono text-[var(--accent-green)]">npx.cmd</code> to prevent <code className="text-[11px] font-mono text-amber-400">spawn ENOENT</code> errors). Safely updates <code className="text-[11px] font-mono px-1.5 py-0.5 rounded bg-[var(--surface-primary)] border border-[var(--border)] text-[var(--text-primary)] font-medium">%USERPROFILE%\.gemini\config\mcp_config.json</code>:
+          </>
+        )}
+        {osTab === "mac-linux" && (
+          <>
+            Automated CLI setup. Safely merges Kilo UI into <code className="text-[11px] font-mono px-1.5 py-0.5 rounded bg-[var(--surface-primary)] border border-[var(--border)] text-[var(--text-primary)] font-medium">~/.gemini/config/mcp_config.json</code>:
+          </>
+        )}
+        {osTab === "cloud" && (
+          <>
+            Zero local process execution. Directly connects Antigravity over Streamable HTTP to <code className="text-[11px] font-mono text-[var(--accent-green)]">https://www.kiloui.dev/api/mcp</code>:
+          </>
+        )}
       </p>
 
       <div className="relative flex items-center justify-between gap-3 p-3 rounded-lg bg-[var(--surface-primary)] border border-[var(--border)] font-mono text-xs text-[var(--text-primary)] overflow-x-auto shadow-inner">

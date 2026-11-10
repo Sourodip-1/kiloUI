@@ -118,7 +118,7 @@ function handleRpc(body: any): any {
           },
           serverInfo: {
             name: "kilo-ui-hosted",
-            version: "1.38.9",
+            version: "1.38.10",
           },
         },
       };
@@ -412,7 +412,7 @@ export async function GET(req: NextRequest) {
   return NextResponse.json(
     {
       name: "kilo-ui-hosted-mcp",
-      version: "1.38.9",
+      version: "1.38.10",
       description: "Official Kilo UI Hosted Model Context Protocol (MCP) Server",
       protocolVersion: "2024-11-05",
       transports: ["streamable-http", "sse", "http-post"],

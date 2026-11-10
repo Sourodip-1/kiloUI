@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const VERSION = "1.38.9";
+const VERSION = "1.38.10";
 const GITHUB_RAW_BASE = "https://raw.githubusercontent.com/Sourodip-1/kiloUI/main";
 const DEFAULT_REGISTRY_URL = process.env.KILO_REGISTRY_URL || "https://www.kiloui.dev/api/registry";
 
@@ -669,9 +669,10 @@ async function runMcpBridge() {
 async function runMcpSetup(target = "antigravity", options = {}) {
   const normTarget = (target || "antigravity").toLowerCase();
   const os = await import("node:os");
+  const isWin = process.platform === "win32";
 
   if (normTarget === "antigravity" || normTarget === "gemini" || normTarget === "agy") {
-    const homeDir = os.homedir();
+    const homeDir = process.env.USERPROFILE || os.homedir() || process.env.HOME;
     const configDir = path.join(homeDir, ".gemini", "config");
     const configFile = path.join(configDir, "mcp_config.json");
 
@@ -706,7 +707,7 @@ async function runMcpSetup(target = "antigravity", options = {}) {
       };
     } else {
       config.mcpServers["kilo-ui"] = {
-        command: "npx",
+        command: isWin ? "npx.cmd" : "npx",
         args: ["-y", "@kilo-ui/cli", "mcp"],
       };
     }
@@ -721,7 +722,7 @@ async function runMcpSetup(target = "antigravity", options = {}) {
     log();
     success(`${ANSI.bold}Successfully registered Kilo UI MCP for Google Antigravity!${ANSI.reset}`);
     log(`  ${ANSI.dim}Config file:${ANSI.reset} ${configFile}`);
-    log(`  ${ANSI.dim}Transport:${ANSI.reset}   ${isUrl ? "Streamable HTTP (Remote)" : "Stdio (npx @kilo-ui/cli mcp)"}`);
+    log(`  ${ANSI.dim}Transport:${ANSI.reset}   ${isUrl ? "Streamable HTTP (Remote)" : `Stdio (${isWin ? "npx.cmd" : "npx"} @kilo-ui/cli mcp)`}`);
     log(`  ${ANSI.dim}Tools:${ANSI.reset}       list_kilo_primitives, get_primitive_schema, calculate_m3_palette, validate_design_ast`);
     log(`  ${ANSI.dim}Resources:${ANSI.reset}   kilo://registry/catalog, m3://guidelines/surface-hierarchy`);
     log();
