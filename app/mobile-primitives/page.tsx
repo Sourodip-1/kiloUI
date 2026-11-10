@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import {
   Archive,
   Trash2,
@@ -49,6 +50,8 @@ import {
   ExternalLink,
   Edit3,
   Share2,
+  Maximize2,
+  Minimize2,
   Calendar,
   CheckCircle,
   ChevronDown,
@@ -83,6 +86,24 @@ import { M3SquigglyLoader } from "@/components/ui/m3-squiggly-loader";
 import { M3PhysicsLoader } from "@/components/ui/m3-physics-loader";
 import { M3Badge } from "@/registry/ui/m3-badge";
 import { M3List, M3ListItem } from "@/registry/ui/m3-list";
+import { M3OtpInput } from "@/registry/ui/m3-otp-input";
+import { BiometricScanner } from "@/components/ui/biometric-scanner";
+import { MobileHapticStepper } from "@/components/ui/mobile-haptic-stepper";
+import { DynamicIslandBanner } from "@/components/ui/dynamic-island";
+import { MobileActionSheet } from "@/registry/ui/mobile-action-sheet";
+import { MobileNumericKeypad } from "@/registry/ui/mobile-numeric-keypad";
+import {
+  CanvasItem,
+  CanvasItemType,
+  CustomPage,
+  DEFAULT_PALETTE_ITEMS,
+  INITIAL_CUSTOM_PAGES,
+  generateDesignPrompt,
+  MobileCanvasRenderer,
+  CanvasPaletteTray,
+  MobileStudioFocusModal,
+  PromptExportModal,
+} from "@/components/mobile-studio-builder";
 import { SlidingHighlightContainer } from "@/components/sliding-highlight";
 import { useAppShell } from "@/components/app-shell";
 
@@ -93,7 +114,8 @@ type PresetMode =
   | "pulse-security"
   | "pulse-projects"
   | "otp-verify"
-  | "wallet";
+  | "wallet"
+  | "custom";
 
 const PRESET_OPTIONS: { id: PresetMode; label: string; sub: string; icon: React.ReactNode }[] = [
   { id: "store", label: "Store", sub: "Essential Archive", icon: <ShoppingBag className="h-3.5 w-3.5 text-emerald-400" /> },
@@ -103,34 +125,87 @@ const PRESET_OPTIONS: { id: PresetMode; label: string; sub: string; icon: React.
   { id: "pulse-projects", label: "Projects", sub: "Sprint Board", icon: <Layers className="h-3.5 w-3.5 text-cyan-400" /> },
   { id: "otp-verify", label: "OTP Verify", sub: "Auth Shield", icon: <Key className="h-3.5 w-3.5 text-rose-400" /> },
   { id: "wallet", label: "Wallet", sub: "Telemetry", icon: <Zap className="h-3.5 w-3.5 text-amber-300" /> },
+  { id: "custom", label: "Custom Canvas", sub: "Interactive Studio", icon: <Sliders className="h-3.5 w-3.5 text-emerald-400" /> },
 ];
 
 type CategoryFilter = "all" | "actions" | "forms" | "navigation" | "overlays" | "data-display";
 
-export default function MobilePrimitivesPage() {
+let canvasItemIdCounter = 100;
+function getNextCanvasItemId(): string {
+  canvasItemIdCounter += 1;
+  return `item-${canvasItemIdCounter}`;
+}
+
+let customPageIdCounter = 10;
+function getNextCustomPageId(): string {
+  customPageIdCounter += 1;
+  return `custom-${customPageIdCounter}`;
+}
+
+function MobilePrimitivesContent() {
   const { theme } = useAppShell();
   const [isLightMode, setIsLightMode] = React.useState(false);
 
   React.useEffect(() => {
-    const checkLight = () => {
-      return document.documentElement.classList.contains("light");
-    };
-    setIsLightMode(checkLight());
+    const checkLight = () => document.documentElement.classList.contains("light");
+    const rafId = requestAnimationFrame(() => {
+      setIsLightMode(checkLight());
+    });
 
     const observer = new MutationObserver(() => {
       setIsLightMode(checkLight());
     });
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
-    return () => observer.disconnect();
+    return () => {
+      cancelAnimationFrame(rafId);
+      observer.disconnect();
+    };
   }, [theme]);
 
   // Page Controls
+  const searchParams = useSearchParams();
+  const categoryParam = searchParams?.get("category") as CategoryFilter | null;
+
   const [activeCategory, setActiveCategory] = React.useState<CategoryFilter>("all");
   const [searchQuery, setSearchQuery] = React.useState("");
   const [presetMode, setPresetMode] = React.useState<PresetMode>("store");
   const [isPresetDropdownOpen, setIsPresetDropdownOpen] = React.useState(false);
   const [isPhoneVisible, setIsPhoneVisible] = React.useState(true);
   const [copiedCli, setCopiedCli] = React.useState(false);
+  const [demoActionSheetOpen, setDemoActionSheetOpen] = React.useState(false);
+  const [demoKeypadVal, setDemoKeypadVal] = React.useState("");
+
+  const scrollToPrimitives = React.useCallback(() => {
+    setTimeout(() => {
+      const container = document.getElementById("main-scroll-container");
+      const el = document.getElementById("primitives-section");
+      if (container && el) {
+        const top = el.offsetTop - 24;
+        container.scrollTo({ top, behavior: "smooth" });
+      } else if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 80);
+  }, []);
+
+  React.useEffect(() => {
+    if (categoryParam && ["all", "actions", "forms", "navigation", "overlays", "data-display"].includes(categoryParam)) {
+      setActiveCategory(categoryParam);
+      scrollToPrimitives();
+    }
+  }, [categoryParam, scrollToPrimitives]);
+
+  React.useEffect(() => {
+    const handleCategoryChange = (e: Event) => {
+      const custom = e as CustomEvent<{ category: CategoryFilter }>;
+      if (custom.detail?.category) {
+        setActiveCategory(custom.detail.category);
+        scrollToPrimitives();
+      }
+    };
+    window.addEventListener("kilo:set-mobile-category", handleCategoryChange);
+    return () => window.removeEventListener("kilo:set-mobile-category", handleCategoryChange);
+  }, [scrollToPrimitives]);
 
   // ── Category Tabs Scroll Controls ──
   const tabsContainerRef = React.useRef<HTMLDivElement>(null);
@@ -210,7 +285,7 @@ export default function MobilePrimitivesPage() {
   const [demoRadioVal, setDemoRadioVal] = React.useState("express");
   const [demoSliderVal, setDemoSliderVal] = React.useState(68);
   const [demoFilterChips, setDemoFilterChips] = React.useState<string[]>(["Material 3", "Next.js"]);
-  const [demoOtpDigits, setDemoOtpDigits] = React.useState<string[]>(["8", "4", "2", "0", "", ""]);
+  const [demoOtpDigits, setDemoOtpDigits] = React.useState<string>("8420");
 
   // Navigation
   const [demoNavTab, setDemoNavTab] = React.useState("home");
@@ -223,6 +298,11 @@ export default function MobilePrimitivesPage() {
   const [demoSheetSelected, setDemoSheetSelected] = React.useState<"express" | "standard">("express");
   const [demoDialogOpen, setDemoDialogOpen] = React.useState(false);
   const [demoToastMsg, setDemoToastMsg] = React.useState<string | null>(null);
+
+  const showToast = React.useCallback((msg: string) => {
+    setDemoToastMsg(msg);
+    setTimeout(() => setDemoToastMsg(null), 3000);
+  }, []);
 
   // Data Display
   const [demoProgressVal, setDemoProgressVal] = React.useState(74);
@@ -276,8 +356,100 @@ export default function MobilePrimitivesPage() {
   const [activeBoardTab, setActiveBoardTab] = React.useState("in-progress");
 
   // OTP Verification Preset (Stitch Screen 6)
-  const [phoneOtpDigits, setPhoneOtpDigits] = React.useState<string[]>(["5", "9", "3", "1", "", ""]);
+  const [phoneOtpDigits, setPhoneOtpDigits] = React.useState<string>("5931");
   const [otpVerified, setOtpVerified] = React.useState(false);
+
+  // ── Custom Canvas & Studio State ──
+  const [customPages, setCustomPages] = React.useState<CustomPage[]>(INITIAL_CUSTOM_PAGES);
+  const [activeCustomPageId, setActiveCustomPageId] = React.useState<string>("custom-1");
+  const [isStudioExpanded, setIsStudioExpanded] = React.useState(false);
+  const [isExportPromptOpen, setIsExportPromptOpen] = React.useState(false);
+  const [exportedPromptText, setExportedPromptText] = React.useState("");
+
+  const activeCustomPage = customPages.find((p) => p.id === activeCustomPageId) || customPages[0];
+
+  const handleAddCanvasItem = React.useCallback((type: CanvasItemType) => {
+    const paletteDef = DEFAULT_PALETTE_ITEMS.find((p) => p.type === type);
+    const newItem: CanvasItem = {
+      id: getNextCanvasItemId(),
+      ...(paletteDef ? paletteDef.defaultItem : { type, title: type }),
+    };
+
+    setCustomPages((prev) =>
+      prev.map((page) =>
+        page.id === activeCustomPageId ? { ...page, items: [...page.items, newItem] } : page
+      )
+    );
+    showToast(`Added ${paletteDef?.label || type} to screen`);
+  }, [activeCustomPageId, showToast]);
+
+  const handleReorderCanvasItem = React.useCallback((index: number, direction: "up" | "down") => {
+    if (!activeCustomPage) return;
+    const items = [...activeCustomPage.items];
+    const targetIdx = direction === "up" ? index - 1 : index + 1;
+    if (targetIdx < 0 || targetIdx >= items.length) return;
+    const [moved] = items.splice(index, 1);
+    items.splice(targetIdx, 0, moved);
+
+    setCustomPages((prev) =>
+      prev.map((page) => (page.id === activeCustomPageId ? { ...page, items } : page))
+    );
+  }, [activeCustomPage, activeCustomPageId]);
+
+  const handleRemoveCanvasItem = React.useCallback((id: string) => {
+    setCustomPages((prev) =>
+      prev.map((page) =>
+        page.id === activeCustomPageId
+          ? { ...page, items: page.items.filter((item) => item.id !== id) }
+          : page
+      )
+    );
+    showToast("Component removed");
+  }, [activeCustomPageId, showToast]);
+
+  const handleUpdateCanvasItem = React.useCallback(
+    (id: string, updates: Partial<CanvasItem>) => {
+      setCustomPages((prev) =>
+        prev.map((page) =>
+          page.id === activeCustomPageId
+            ? {
+                ...page,
+                items: page.items.map((item) =>
+                  item.id === id ? { ...item, ...updates } : item
+                ),
+              }
+            : page
+        )
+      );
+    },
+    [activeCustomPageId]
+  );
+
+  const handleNewCustomPage = React.useCallback(() => {
+    const pageNum = customPages.length + 1;
+    const newPage: CustomPage = {
+      id: getNextCustomPageId(),
+      name: `Page ${pageNum}`,
+      items: [
+        {
+          id: getNextCanvasItemId(),
+          type: "app-bar",
+          title: `Custom Page ${pageNum}`,
+          subtitle: "Material 3 Screen",
+        },
+      ],
+    };
+    setCustomPages((prev) => [...prev, newPage]);
+    setActiveCustomPageId(newPage.id);
+    showToast(`Created Page ${pageNum}`);
+  }, [customPages.length, showToast]);
+
+  const handleExportPrompt = React.useCallback(() => {
+    if (!activeCustomPage) return;
+    const prompt = generateDesignPrompt(activeCustomPage.name, activeCustomPage.items);
+    setExportedPromptText(prompt);
+    setIsExportPromptOpen(true);
+  }, [activeCustomPage]);
 
   // Phone Bottom Sheet
   const [isPhoneSheetOpen, setIsPhoneSheetOpen] = React.useState(false);
@@ -296,14 +468,9 @@ export default function MobilePrimitivesPage() {
   const handleRefreshFeed = async () => {
     await new Promise((resolve) => setTimeout(resolve, 800));
     setFeedItems((prev) => [
-      { id: `${Date.now()}`, sender: "Sync Dispatch", subject: "Real-time buffer refreshed", time: "now" },
+      { id: getNextCanvasItemId(), sender: "Sync Dispatch", subject: "Real-time buffer refreshed", time: "now" },
       ...prev.slice(0, 3),
     ]);
-  };
-
-  const showToast = (msg: string) => {
-    setDemoToastMsg(msg);
-    setTimeout(() => setDemoToastMsg(null), 3000);
   };
 
   // Search and Category filtering
@@ -326,6 +493,28 @@ export default function MobilePrimitivesPage() {
     <div className="flex-1 min-h-0 bg-[var(--bg-main)] text-[var(--text-primary)] antialiased font-sans overflow-x-clip relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-8 py-10 space-y-8">
         
+        {/* Navigation Breadcrumb & Back Link */}
+        <div className="flex items-center justify-between pb-1">
+          <Link
+            href="/components"
+            className="inline-flex items-center gap-1.5 text-xs font-mono text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+            <span>Back to All Components</span>
+          </Link>
+
+          {presetMode === "custom" && (
+            <button
+              type="button"
+              onClick={() => setPresetMode("store")}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--surface-secondary)] border border-[var(--border)] text-xs font-mono text-[var(--accent-green)] hover:border-[var(--accent-green)]/40 transition-all cursor-pointer shadow-xs active:scale-95"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
+              <span>Back to Presets Showcase</span>
+            </button>
+          )}
+        </div>
+
         {/* ── Header ── */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 pb-2">
           <div className="space-y-1.5">
@@ -353,7 +542,7 @@ export default function MobilePrimitivesPage() {
         </div>
 
         {/* ── Category Filter Tabs & Instant Search Bar ── */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pt-1">
+        <div id="primitives-section" className="flex flex-col md:flex-row md:items-center justify-between gap-4 pt-1">
           <div className="relative flex items-center min-w-0 max-w-full">
             {/* Scroll Left Arrow Button */}
             {canScrollTabsLeft && (
@@ -416,9 +605,9 @@ export default function MobilePrimitivesPage() {
             )}
           </div>
 
-          {/* Quick Search Field & Preset Preview Toggle */}
+          {/* Quick Search Field */}
           <div className="flex items-center gap-2 w-full md:w-auto">
-            <div className="relative flex-1 md:w-56">
+            <div className="relative w-full md:w-64">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[var(--text-muted)]" />
               <input
                 type="text"
@@ -428,29 +617,12 @@ export default function MobilePrimitivesPage() {
                 className="w-full h-8.5 pl-8 pr-3 rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)]/40 text-xs font-sans text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--accent-green)] transition-colors"
               />
             </div>
-
-            <button
-              type="button"
-              onClick={() => setIsPhoneVisible(!isPhoneVisible)}
-              className={cn(
-                "h-8.5 px-3 rounded-xl border text-xs font-mono font-medium flex items-center gap-1.5 transition-all cursor-pointer shrink-0 select-none",
-                isPhoneVisible
-                  ? "bg-[var(--surface-secondary)] border-[var(--border)] text-[var(--text-primary)] hover:border-[var(--border-hover)]"
-                  : "bg-[var(--accent-green-deep)] border-[var(--accent-green)]/40 text-[var(--accent-green)] font-semibold shadow-xs"
-              )}
-              title={isPhoneVisible ? "Hide Preview Phone" : "Show Preview Phone"}
-            >
-              <Smartphone className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">{isPhoneVisible ? "Hide Preview" : "Show Preview"}</span>
-            </button>
           </div>
         </div>
 
-        {/* ── Two-Column Layout: Left Bento Grid, Right Phone Simulator ── */}
-        <div className="flex flex-col lg:flex-row gap-8 items-start pt-2 relative">
-          
-          {/* ── LEFT COLUMN: Primitives Grid ── */}
-          <div className="flex-1 min-w-0 grid gap-4 grid-cols-1 sm:grid-cols-2">
+        {/* ── 3-Column Primitives Grid Layout ── */}
+        <div className="w-full pt-2">
+          <div className="w-full grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
 
             {/* ════════ ACTIONS CATEGORY ════════ */}
             {showCategory("actions") && (
@@ -644,9 +816,10 @@ export default function MobilePrimitivesPage() {
                 {matchesSearch("Biometric Pulse Scanner", "Fingerprint TouchID face hardware sensor passkey", "Actions") && (
                   <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all overflow-hidden">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-semibold text-[var(--text-primary)]">
+                      <Link href="/components/biometric-scanner" className="text-xs font-semibold text-[var(--text-primary)] hover:underline flex items-center gap-1">
                         Biometric Scanner
-                      </span>
+                        <ExternalLink className="h-3 w-3 text-[var(--text-muted)]" />
+                      </Link>
                       <span className="text-[10px] font-mono text-[var(--text-muted)]">Hardware Enclave</span>
                     </div>
 
@@ -1005,33 +1178,35 @@ export default function MobilePrimitivesPage() {
                 {matchesSearch("OTP Input", "PIN verification 6 digits auth code", "Forms & Inputs") && (
                   <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all overflow-hidden">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-semibold text-[var(--text-primary)]">
+                      <Link href="/components/otp-input" className="text-xs font-semibold text-[var(--text-primary)] hover:underline flex items-center gap-1">
                         OTP Code Input
-                      </span>
+                        <ExternalLink className="h-3 w-3 text-[var(--text-muted)]" />
+                      </Link>
                       <span className="text-[10px] font-mono text-[var(--text-muted)]">Stitch M3-6</span>
                     </div>
 
-                    <div className="flex items-center justify-center gap-2 py-2">
-                      {demoOtpDigits.map((digit, i) => (
-                        <div
-                          key={i}
-                          className={cn(
-                            "w-9 h-11 rounded-xl border flex items-center justify-center font-mono font-bold text-sm transition-all",
-                            digit
-                              ? "border-[var(--accent-green)] bg-[var(--accent-green-deep)]/40 text-[var(--accent-green)] shadow-xs"
-                              : i === 4
-                              ? "border-[var(--text-primary)] ring-2 ring-[var(--accent-green)]/30 animate-pulse text-[var(--text-primary)]"
-                              : "border-[var(--border)] bg-[var(--surface-primary)] text-[var(--text-muted)]"
-                          )}
-                        >
-                          {digit || (i === 4 ? "|" : "•")}
-                        </div>
-                      ))}
+                    <div className="flex flex-col items-center justify-center gap-2 py-2">
+                      <M3OtpInput
+                        value={demoOtpDigits}
+                        onChange={setDemoOtpDigits}
+                        onComplete={(code) => showToast(`OTP Verified: ${code}`)}
+                        size="md"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setDemoOtpDigits("");
+                          showToast("OTP cleared");
+                        }}
+                        className="text-[10px] font-mono text-[var(--text-muted)] hover:text-[var(--text-primary)] cursor-pointer"
+                      >
+                        Reset Input
+                      </button>
                     </div>
 
                     <div className="flex items-center justify-between text-[11px] font-mono text-[var(--text-muted)] pt-1">
-                      <span>Auto-advance focus</span>
-                      <span className="text-[var(--accent-green)]">Secure PIN</span>
+                      <span>Interactive numeric entry</span>
+                      <span className="text-[var(--accent-green)]">M3 Tactile</span>
                     </div>
                   </div>
                 )}
@@ -1040,9 +1215,10 @@ export default function MobilePrimitivesPage() {
                 {matchesSearch("Mobile Haptic Stepper", "Touch quantity stepper counter reach", "Forms & Inputs") && (
                   <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all overflow-hidden">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-semibold text-[var(--text-primary)]">
+                      <Link href="/components/haptic-stepper" className="text-xs font-semibold text-[var(--text-primary)] hover:underline flex items-center gap-1">
                         Haptic Stepper
-                      </span>
+                        <ExternalLink className="h-3 w-3 text-[var(--text-muted)]" />
+                      </Link>
                       <span className="text-[10px] font-mono text-[var(--text-muted)]">44px Reach</span>
                     </div>
 
@@ -1098,6 +1274,46 @@ export default function MobilePrimitivesPage() {
                     <div className="flex items-center justify-between text-[11px] font-mono text-[var(--text-muted)] pt-1">
                       <span>Tactile spring limits</span>
                       <span className="text-[var(--accent-green)]">Haptic Pop</span>
+                    </div>
+                  </div>
+                )}
+
+                {/* 13. Mobile Numeric Keypad */}
+                {matchesSearch("Mobile Numeric Keypad", "Touch-calibrated PIN passcode checkout dialer", "Forms & Inputs") && (
+                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all overflow-hidden">
+                    <div className="flex items-center justify-between">
+                      <Link href="/components/mobile-numeric-keypad" className="text-xs font-semibold text-[var(--text-primary)] hover:underline flex items-center gap-1">
+                        Mobile Numeric Keypad
+                        <ExternalLink className="h-3 w-3 text-[var(--text-muted)]" />
+                      </Link>
+                      <span className="text-[10px] font-mono text-[var(--text-muted)]">Touch PIN</span>
+                    </div>
+
+                    <div className="flex flex-col items-center justify-center p-3 rounded-xl bg-[var(--surface-primary)] border border-[var(--border)] space-y-3">
+                      {/* PIN display */}
+                      <div className="h-8 px-4 rounded-lg bg-[var(--surface-secondary)] border border-[var(--border)] flex items-center justify-center min-w-[120px]">
+                        <span className="font-mono text-sm tracking-widest text-[var(--text-primary)] font-bold">
+                          {demoKeypadVal ? "•".repeat(demoKeypadVal.length) : <span className="text-[10px] text-[var(--text-muted)] tracking-normal font-sans">Enter PIN</span>}
+                        </span>
+                      </div>
+
+                      <div className="w-full max-w-[220px]">
+                        <MobileNumericKeypad
+                          value={demoKeypadVal}
+                          onChange={setDemoKeypadVal}
+                          maxLength={6}
+                          leftAction={{
+                            icon: <Fingerprint className="h-5 w-5 text-[var(--accent-green)]" />,
+                            label: "Touch ID",
+                            onClick: () => setDemoKeypadVal("4829"),
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between text-[11px] font-mono text-[var(--text-muted)] pt-1">
+                      <span>Biometric quick-trigger</span>
+                      <span className="text-[var(--accent-green)]">Haptic Keypad</span>
                     </div>
                   </div>
                 )}
@@ -1402,9 +1618,10 @@ export default function MobilePrimitivesPage() {
                 {matchesSearch("Dynamic Island Capsule", "Live activity capsule HUD status notch", "Overlays") && (
                   <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all overflow-hidden">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-semibold text-[var(--text-primary)]">
+                      <Link href="/components/dynamic-island" className="text-xs font-semibold text-[var(--text-primary)] hover:underline flex items-center gap-1">
                         Dynamic Island HUD
-                      </span>
+                        <ExternalLink className="h-3 w-3 text-[var(--text-muted)]" />
+                      </Link>
                       <span className="text-[10px] font-mono text-[var(--text-muted)]">Live Capsule</span>
                     </div>
 
@@ -1526,6 +1743,46 @@ export default function MobilePrimitivesPage() {
                     <div className="flex items-center justify-between text-[11px] font-mono text-[var(--text-muted)] pt-1">
                       <span>Swipe or tap dismiss</span>
                       <span className="text-[var(--accent-green)]">M3 Surface</span>
+                    </div>
+                  </div>
+                )}
+
+                {/* 20. Mobile Action Sheet */}
+                {matchesSearch("Mobile Action Sheet", "Cupertino M3 contextual action sheet destructive cancel", "Overlays") && (
+                  <div className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/40 flex flex-col justify-between space-y-4 hover:border-[var(--border-hover)] transition-all overflow-hidden">
+                    <div className="flex items-center justify-between">
+                      <Link href="/components/mobile-action-sheet" className="text-xs font-semibold text-[var(--text-primary)] hover:underline flex items-center gap-1">
+                        Mobile Action Sheet
+                        <ExternalLink className="h-3 w-3 text-[var(--text-muted)]" />
+                      </Link>
+                      <span className="text-[10px] font-mono text-[var(--text-muted)]">Cupertino / M3</span>
+                    </div>
+
+                    <div className="min-h-[160px] flex flex-col items-center justify-center p-6 rounded-xl bg-[var(--surface-primary)] border border-[var(--border)]">
+                      <button
+                        type="button"
+                        onClick={() => setDemoActionSheetOpen(true)}
+                        className="px-4 py-2 rounded-xl bg-[var(--surface-secondary)] hover:bg-[var(--surface-tertiary)] border border-[var(--border)] text-xs font-semibold text-[var(--text-primary)] cursor-pointer active:scale-95 transition-all shadow-xs"
+                      >
+                        Open Action Sheet
+                      </button>
+
+                      <MobileActionSheet
+                        open={demoActionSheetOpen}
+                        onOpenChange={setDemoActionSheetOpen}
+                        title="Document Options"
+                        description="Select an action to perform on this workspace node."
+                        actions={[
+                          { id: "share", label: "Share Document", icon: <Share2 className="h-4 w-4" />, onClick: () => setDemoActionSheetOpen(false) },
+                          { id: "duplicate", label: "Duplicate Node", icon: <Copy className="h-4 w-4" />, onClick: () => setDemoActionSheetOpen(false) },
+                          { id: "delete", label: "Delete Permanently", variant: "destructive", icon: <Trash2 className="h-4 w-4" />, onClick: () => setDemoActionSheetOpen(false) },
+                        ]}
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between text-[11px] font-mono text-[var(--text-muted)] pt-1">
+                      <span>Destructive grouping & cancel pill</span>
+                      <span className="text-[var(--accent-green)]">Spring Slide</span>
                     </div>
                   </div>
                 )}
@@ -2000,118 +2257,27 @@ export default function MobilePrimitivesPage() {
 
           </div>
 
-          {/* ── RIGHT COLUMN: Full Mobile Preview Panel Section ── */}
-          <div
-            className={cn(
-              "hidden lg:block shrink-0 self-stretch transition-[width,opacity] duration-400 ease-in-out",
-              isPhoneVisible ? "w-[410px] sm:w-[430px] opacity-100" : "w-0 opacity-0 pointer-events-none overflow-hidden"
-            )}
-          >
-            <div
-              ref={mobilePanelRef}
-              className={cn(
-                "sticky top-20 w-full max-h-[calc(100vh-5.5rem)] overflow-y-auto no-scrollbar flex flex-col items-center pl-7 pr-3 space-y-4 pb-12 transition-transform duration-400 ease-in-out will-change-transform",
-                isPhoneVisible ? "translate-x-0" : "translate-x-full pointer-events-none"
-              )}
+          
+        </div>
+      </div>
+
+      {/* Fullscreen Centered Focus Studio Modal */}
+        <AnimatePresence>
+          {isStudioExpanded && (
+            <MobileStudioFocusModal
+              isOpen={isStudioExpanded}
+              onClose={() => setIsStudioExpanded(false)}
+              activePageName={activeCustomPage?.name || "Canvas Screen"}
+              pages={customPages}
+              activePageId={activeCustomPageId}
+              onSelectPage={setActiveCustomPageId}
+              onNewPage={handleNewCustomPage}
+              onExportPrompt={handleExportPrompt}
+              onAddPaletteItem={handleAddCanvasItem}
             >
-            {/* Clean Preset Header */}
-            <div className="w-full flex items-center justify-between px-1">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold text-[var(--text-secondary)] font-mono">
-                  Preset Preview
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setIsPhoneVisible(false)}
-                  className="h-6 w-6 rounded-full bg-[var(--surface-secondary)] border border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:border-[var(--border-hover)] hover:scale-105 active:scale-95 flex items-center justify-center transition-all cursor-pointer"
-                  title="Collapse preview panel"
-                  aria-label="Collapse preview panel"
-                >
-                  <ChevronRight className="h-3.5 w-3.5" />
-                </button>
-              </div>
-
-              {/* Custom Animated Preset Selector */}
-              <div className="relative">
-                <button
-                  type="button"
-                  onClick={() => setIsPresetDropdownOpen(!isPresetDropdownOpen)}
-                  className="h-7 px-2.5 rounded-lg text-xs font-mono border border-[var(--border)] bg-[var(--surface-secondary)] hover:bg-[var(--surface-secondary)]/80 text-[var(--text-primary)] flex items-center gap-1.5 cursor-pointer transition-all shadow-2xs select-none"
-                >
-                  {PRESET_OPTIONS.find((p) => p.id === presetMode)?.icon}
-                  <span className="font-semibold">{PRESET_OPTIONS.find((p) => p.id === presetMode)?.label}</span>
-                  <ChevronDown className={cn("h-3 w-3 text-[var(--text-muted)] transition-transform duration-200", isPresetDropdownOpen && "rotate-180")} />
-                </button>
-
-                <AnimatePresence>
-                  {isPresetDropdownOpen && (
-                    <>
-                      <div className="fixed inset-0 z-40" onClick={() => setIsPresetDropdownOpen(false)} />
-                      <motion.div
-                        initial={{ opacity: 0, scale: 0.95, y: -4 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.95, y: -4 }}
-                        transition={{ type: "spring", stiffness: 450, damping: 28 }}
-                        className="absolute right-0 top-full mt-1.5 w-56 p-1 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)]/95 backdrop-blur-xl shadow-2xl z-50 divide-y divide-[var(--border)]/30 font-mono text-xs select-none"
-                      >
-                        <div className="p-1 space-y-0.5">
-                          {PRESET_OPTIONS.map((opt) => {
-                            const isSelected = presetMode === opt.id;
-                            return (
-                              <button
-                                key={opt.id}
-                                type="button"
-                                onClick={() => {
-                                  setPresetMode(opt.id);
-                                  setIsPresetDropdownOpen(false);
-                                }}
-                                className={cn(
-                                  "w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg transition-all cursor-pointer text-left",
-                                  isSelected
-                                    ? "bg-[var(--surface-tertiary)] text-[var(--text-primary)] font-semibold shadow-2xs"
-                                    : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)]/60"
-                                )}
-                              >
-                                <div className="flex items-center gap-2 min-w-0">
-                                  {opt.icon}
-                                  <div className="truncate">
-                                    <div className="leading-tight">{opt.label}</div>
-                                    <div className="text-[10px] text-[var(--text-muted)] leading-tight">{opt.sub}</div>
-                                  </div>
-                                </div>
-                                {isSelected && (
-                                  <Check className="h-3.5 w-3.5 text-[var(--accent-green)] shrink-0 ml-1.5" />
-                                )}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </motion.div>
-                    </>
-                  )}
-                </AnimatePresence>
-              </div>
-            </div>
-
-            {/* Phone Wrapper with hide toggle */}
-            <div className="relative">
-              {/* Circle button on left rim to push beyond right edge (never clipped) */}
-              <button
-                type="button"
-                onClick={() => setIsPhoneVisible(false)}
-                className="flex absolute -left-4.5 top-1/2 -translate-y-1/2 z-40 h-9 w-9 rounded-full bg-[var(--surface-elevated)] border-2 border-[var(--border)] text-[var(--text-primary)] hover:border-[var(--accent-green)] hover:text-[var(--accent-green)] shadow-xl hover:scale-110 active:scale-95 items-center justify-center transition-all duration-200 cursor-pointer group"
-                title="Collapse preview panel"
-                aria-label="Collapse preview panel"
-              >
-                <ChevronRight className="h-4.5 w-4.5 transition-transform duration-200 group-hover:translate-x-0.5" />
-              </button>
-
-              {/* Mobile Device Chassis Frame - Rims ALWAYS black, interior matching var(--bg-main) */}
-              <div
-                className="w-[360px] sm:w-[380px] h-[720px] rounded-[44px] bg-[var(--bg-main)] border-[7px] border-[#18191b] shadow-[0_20px_50px_-15px_rgba(0,0,0,0.85)] ring-1 ring-black/80 flex flex-col overflow-hidden relative select-none shrink-0"
-              >
-              
-                {/* Top Status Bar & Dynamic Island */}
+              {/* Phone Device Chassis Frame Centered */}
+              <div className="w-[360px] sm:w-[380px] h-[720px] rounded-[44px] bg-[var(--bg-main)] border-[7px] border-[#18191b] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.95)] ring-1 ring-black/80 flex flex-col overflow-hidden relative select-none shrink-0">
+                {/* Top Status Bar */}
                 <div
                   className={cn(
                     "pt-2 pb-1 px-5 flex items-center justify-between shrink-0 z-30 text-[11px] font-mono transition-colors",
@@ -2121,506 +2287,31 @@ export default function MobilePrimitivesPage() {
                   <span className={cn("font-semibold text-xs", isLightMode ? "text-neutral-900" : "text-white")}>
                     9:41
                   </span>
-
-                  {/* Hardware Dynamic Island - always black */}
-                  <div className="w-22 h-4.5 rounded-full bg-black border border-neutral-800 flex items-center justify-center gap-1.5 px-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-[#1c1d22] border border-neutral-700/60" />
-                    <div className="w-1 h-1 rounded-full bg-[#0a1829]" />
+                  <div className="w-24 h-5 rounded-full bg-black flex items-center justify-between px-2.5 shadow-inner">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500/80" />
+                    <span className="text-[9px] font-mono font-bold text-neutral-400">STUDIO</span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-neutral-600" />
                   </div>
-
-                  <div className="flex items-center gap-1.5 text-[10px]">
-                    <span>5G</span>
-                    <div className="w-4 h-2 rounded-xs border border-current flex items-center p-0.5">
-                      <div className="w-full h-full bg-current rounded-3xs" />
-                    </div>
+                  <div className="flex items-center gap-1.5 text-xs">
+                    <Wifi className="h-3 w-3" />
+                    <span className="text-[10px] font-bold">5G</span>
                   </div>
                 </div>
 
-                {/* ════ PRESET 1: STORE PRESET ════ */}
-                {presetMode === "store" && (
-                  <div
-                    className={cn(
-                      "flex-1 flex flex-col justify-between px-4 py-3 space-y-3 transition-colors",
-                      isLightMode ? "bg-white text-neutral-900" : "bg-[var(--bg-main)] text-[var(--text-primary)]"
-                    )}
-                  >
-                    {/* Header */}
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <span className="text-[10px] font-mono uppercase tracking-wider opacity-60">Kilo Studio</span>
-                        <h2 className="text-xl font-bold font-sans">Essential Archive</h2>
-                      </div>
-                      <div className="relative">
-                        <div className={cn("h-9 w-9 rounded-full flex items-center justify-center border", isLightMode ? "bg-neutral-100 border-neutral-200" : "bg-[var(--surface-secondary)] border-[var(--border)]")}>
-                          <ShoppingBag className="h-4 w-4" />
-                        </div>
-                        <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-[var(--accent-green)] text-[var(--bg-main)] text-[10px] font-mono font-bold flex items-center justify-center">
-                          {cartCount}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Filter Pills */}
-                    <div className="flex items-center gap-1.5">
-                      {["All (24)", "Outerwear", "Footwear"].map((cat) => (
-                        <button
-                          key={cat}
-                          type="button"
-                          onClick={() => setStoreCategory(cat)}
-                          className={cn(
-                            "px-3 py-1 rounded-full text-xs font-semibold transition-all cursor-pointer",
-                            storeCategory === cat
-                              ? isLightMode
-                                ? "bg-neutral-900 text-white"
-                                : "bg-white text-black"
-                              : isLightMode
-                              ? "bg-neutral-200/60 text-neutral-700"
-                              : "bg-[var(--surface-secondary)] text-[var(--text-secondary)]"
-                          )}
-                        >
-                          {cat}
-                        </button>
-                      ))}
-                    </div>
-
-                    {/* Hero Product Card */}
-                    <div className={cn("p-4 rounded-2xl border space-y-2.5", isLightMode ? "bg-white border-neutral-200 shadow-sm" : "bg-[var(--surface-elevated)] border-[var(--border)]")}>
-                      <div className="flex justify-between items-start">
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[var(--surface-secondary)] text-[var(--text-muted)]">
-                          DROP 01
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setLikedItems((prev) =>
-                              prev.includes("parka-1") ? prev.filter((i) => i !== "parka-1") : [...prev, "parka-1"]
-                            );
-                          }}
-                          className="text-rose-500 cursor-pointer"
-                        >
-                          <Heart className={cn("h-4 w-4", likedItems.includes("parka-1") && "fill-current")} />
-                        </button>
-                      </div>
-
-                      <div className="h-24 rounded-xl bg-[var(--surface-secondary)] flex flex-col items-center justify-center border border-dashed border-[var(--border)]">
-                        <span className="text-sm font-mono font-bold">[ MODULAR PARKA ]</span>
-                        <span className="text-[10px] text-neutral-500 font-mono mt-0.5">Interactive 3D model</span>
-                      </div>
-
-                      <div className="flex items-center justify-between pt-0.5">
-                        <div>
-                          <div className="text-xs font-bold">Technical Shell 3L</div>
-                          <div className="text-xs font-mono text-neutral-400">$245.00</div>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => setCartCount((c) => c + 1)}
-                          className="px-3.5 py-1.5 rounded-full bg-[var(--accent-green)] text-[var(--bg-main)] text-xs font-bold cursor-pointer active:scale-95 transition-all"
-                        >
-                          Quick Buy
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Additional Product Card 2 */}
-                    <div className={cn("p-3 rounded-2xl border space-y-1.5", isLightMode ? "bg-white border-neutral-200 shadow-sm" : "bg-[var(--surface-elevated)] border-[var(--border)]")}>
-                      <div className="flex justify-between items-start">
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[var(--surface-secondary)] text-[var(--text-muted)]">
-                          DROP 02
-                        </span>
-                        <span className="text-[10px] font-mono text-[var(--accent-green)] font-semibold">In Stock</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <div className="text-xs font-bold">Arc Minimal Trench 2.0</div>
-                          <div className="text-xs font-mono text-neutral-400">$280.00 • Stormproof</div>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => setCartCount((c) => c + 1)}
-                          className="px-3 py-1 rounded-full bg-[var(--surface-secondary)] hover:bg-[var(--surface-tertiary)] text-xs font-mono font-semibold cursor-pointer active:scale-95 transition-all"
-                        >
-                          + Cart
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Saved Item */}
-                    <div className={cn("p-2.5 rounded-xl border text-xs font-mono flex justify-between items-center", isLightMode ? "bg-white border-neutral-200" : "bg-[var(--surface-secondary)] border-[var(--border)]")}>
-                      <span className="text-[11px] truncate">Raw Black Overshirt • L</span>
-                      <span className="text-[var(--accent-green)] font-bold text-xs">$65.00</span>
-                    </div>
-                  </div>
-                )}
-
-                {/* ════ PRESET 2: FEED PRESET ════ */}
-                {presetMode === "feed" && (
-                  <div
-                    className={cn(
-                      "flex-1 flex flex-col justify-between px-4 py-3 space-y-3 transition-colors",
-                      isLightMode ? "bg-white text-neutral-900" : "bg-[var(--bg-main)] text-[var(--text-primary)]"
-                    )}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <span className="text-[10px] font-mono uppercase tracking-wider opacity-60">Communication</span>
-                        <h2 className="text-xl font-bold font-sans">Inbox Stream</h2>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={handleRefreshFeed}
-                        className={cn("h-8 w-8 rounded-full border flex items-center justify-center cursor-pointer active:scale-95", isLightMode ? "bg-white border-neutral-200 text-neutral-700" : "bg-[var(--surface-secondary)] border-[var(--border)] text-neutral-300")}
-                      >
-                        <RefreshCw className="h-3.5 w-3.5" />
-                      </button>
-                    </div>
-
-                    <div className="space-y-2">
-                      {feedItems.slice(0, 4).map((item) => (
-                        <div
-                          key={item.id}
-                          className={cn("p-3 rounded-xl border space-y-1 transition-all", isLightMode ? "bg-white border-neutral-200 shadow-2xs" : "bg-[var(--surface-elevated)] border-[var(--border)]")}
-                        >
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs font-bold font-sans">{item.sender}</span>
-                            <span className="text-[10px] font-mono text-neutral-400">{item.time}</span>
-                          </div>
-                          <p className="text-xs text-neutral-400 font-sans leading-relaxed">{item.subject}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* ════ PRESET 3: PULSE SYNC (Stitch Screen 1) ════ */}
-                {presetMode === "pulse-sync" && (
-                  <div
-                    className={cn(
-                      "flex-1 flex flex-col justify-between px-4 py-3 space-y-3 transition-colors",
-                      isLightMode ? "bg-white text-neutral-900" : "bg-[var(--bg-main)] text-[var(--text-primary)]"
-                    )}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <span className="text-[10px] font-mono text-[var(--accent-green)] uppercase tracking-wider font-semibold">Pulse Cloud Core</span>
-                        <h2 className="text-xl font-bold font-sans">Sync Engine</h2>
-                      </div>
-                      <span className="px-2 py-0.5 rounded-full bg-[var(--accent-green-deep)] text-[var(--accent-green)] text-[10px] font-mono font-bold">
-                        ACTIVE
-                      </span>
-                    </div>
-
-                    {/* Live Telemetry Ticker */}
-                    <div className={cn("p-3 rounded-xl border flex items-center justify-between text-xs font-mono", isLightMode ? "bg-white border-neutral-200" : "bg-[var(--surface-elevated)] border-[var(--border)]")}>
-                      <div className="flex items-center gap-1.5">
-                        <Activity className="h-4 w-4 text-[var(--accent-green)]" />
-                        <span>1.42 GB/s</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 text-neutral-400">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-green)] animate-pulse" />
-                        <span>{pulseNodes} nodes locked</span>
-                      </div>
-                    </div>
-
-                    {/* Primary Asset Pipeline */}
-                    <div className={cn("p-3.5 rounded-2xl border space-y-2.5", isLightMode ? "bg-white border-neutral-200" : "bg-[var(--surface-elevated)] border-[var(--border)]")}>
-                      <div className="flex justify-between items-center text-xs">
-                        <span className="font-bold">Asset Transcode Pipeline</span>
-                        <span className="font-mono text-[var(--accent-green)] font-bold">74%</span>
-                      </div>
-                      <div className="w-full h-1.5 bg-neutral-800 rounded-full overflow-hidden">
-                        <div className="h-full bg-[var(--accent-green)] rounded-full w-[74%]" />
-                      </div>
-                      <div className="grid grid-cols-4 gap-1 pt-1 text-center text-[9px] font-mono">
-                        <div className="p-1 rounded bg-[var(--surface-secondary)] text-[var(--accent-green)] font-bold">1. Setup ✓</div>
-                        <div className="p-1 rounded bg-[var(--surface-secondary)] text-[var(--accent-green)] font-bold">2. Encode ✓</div>
-                        <div className="p-1 rounded bg-[var(--accent-green-deep)] text-[var(--accent-green)] font-bold">3. Sync...</div>
-                        <div className="p-1 rounded bg-[var(--surface-secondary)] text-neutral-500">4. Distribute</div>
-                      </div>
-                    </div>
-
-                    {/* Nodes grid */}
-                    <div className="space-y-1.5">
-                      <span className="text-[10px] font-mono text-neutral-400 uppercase tracking-wider">Replica Health</span>
-                      <div className="grid grid-cols-2 gap-2">
-                        {["US-East (Primary)", "EU-West (Hot Standby)", "AP-South (Read)", "SA-East (Replica)"].map((node) => (
-                          <div key={node} className={cn("p-2 rounded-xl border text-[11px] font-mono flex items-center justify-between", isLightMode ? "bg-white border-neutral-200" : "bg-[var(--surface-secondary)] border-[var(--border)]")}>
-                            <span className="truncate">{node}</span>
-                            <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0 ml-1" />
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* ════ PRESET 4: PULSE SECURITY (Stitch Screen 2) ════ */}
-                {presetMode === "pulse-security" && (
-                  <div
-                    className={cn(
-                      "flex-1 flex flex-col justify-between px-4 py-3 space-y-3 transition-colors",
-                      isLightMode ? "bg-white text-neutral-900" : "bg-[var(--bg-main)] text-[var(--text-primary)]"
-                    )}
-                  >
-                    <div>
-                      <span className="text-[10px] font-mono text-[var(--accent-green)] uppercase tracking-wider font-semibold">Pulse Security</span>
-                      <h2 className="text-xl font-bold font-sans">Sessions &amp; Auth</h2>
-                    </div>
-
-                    <div className={cn("p-4 rounded-2xl border space-y-3.5", isLightMode ? "bg-white border-neutral-200" : "bg-[var(--surface-elevated)] border-[var(--border)]")}>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2.5">
-                          <Shield className="h-5 w-5 text-[var(--accent-green)]" />
-                          <div>
-                            <div className="text-xs font-bold">Biometric Face Auth</div>
-                            <div className="text-[10px] text-neutral-400">Secure enclave authentication</div>
-                          </div>
-                        </div>
-                        <M3Switch checked={biometricEnabled} onChange={setBiometricEnabled} />
-                      </div>
-
-                      <div className="flex items-center justify-between pt-2 border-t border-[var(--border)]/60">
-                        <div className="flex items-center gap-2.5">
-                          <Key className="h-5 w-5 text-amber-400" />
-                          <div>
-                            <div className="text-xs font-bold">Hardware 2FA Key</div>
-                            <div className="text-[10px] text-neutral-400">YubiKey / WebAuthn passkey</div>
-                          </div>
-                        </div>
-                        <M3Switch checked={twoFactorActive} onChange={setTwoFactorActive} />
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <span className="text-[10px] font-mono text-neutral-400 uppercase tracking-wider">Active Device Sessions</span>
-                      <div className={cn("p-3 rounded-xl border space-y-1 text-xs", isLightMode ? "bg-white border-neutral-200" : "bg-[var(--surface-elevated)] border-[var(--border)]")}>
-                        <div className="flex justify-between font-bold">
-                          <span>MacBook Pro 16&quot; (This Device)</span>
-                          <span className="text-[var(--accent-green)] font-mono text-[10px]">CURRENT</span>
-                        </div>
-                        <div className="text-[10px] font-mono text-neutral-400">Chrome 131 • San Francisco, CA</div>
-                      </div>
-                      <div className={cn("p-3 rounded-xl border space-y-1 text-xs opacity-75", isLightMode ? "bg-white border-neutral-200" : "bg-[var(--surface-elevated)]/75 border-[var(--border)]")}>
-                        <div className="flex justify-between font-bold">
-                          <span>iPhone 16 Pro</span>
-                          <span className="text-neutral-400 font-mono text-[10px]">2h ago</span>
-                        </div>
-                        <div className="text-[10px] font-mono text-neutral-400">Safari iOS • Tokyo, JP</div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* ════ PRESET 5: PULSE PROJECTS (Stitch Screen 3) ════ */}
-                {presetMode === "pulse-projects" && (
-                  <div
-                    className={cn(
-                      "flex-1 flex flex-col justify-between px-4 py-3 space-y-3 transition-colors",
-                      isLightMode ? "bg-white text-neutral-900" : "bg-[var(--bg-main)] text-[var(--text-primary)]"
-                    )}
-                  >
-                    <div>
-                      <span className="text-[10px] font-mono text-[var(--accent-green)] uppercase tracking-wider font-semibold">Pulse Projects</span>
-                      <h2 className="text-xl font-bold font-sans">Sprint Kanban</h2>
-                    </div>
-
-                    <div className="flex items-center gap-1">
-                      {["in-progress", "in-review", "done"].map((tab) => (
-                        <button
-                          key={tab}
-                          type="button"
-                          onClick={() => setActiveBoardTab(tab)}
-                          className={cn(
-                            "flex-1 py-1 text-xs font-mono uppercase rounded-lg transition-all cursor-pointer",
-                            activeBoardTab === tab
-                              ? "bg-[var(--accent-green-deep)] text-[var(--accent-green)] font-bold border border-[var(--accent-green)]/30"
-                              : "text-neutral-400 hover:text-neutral-200"
-                          )}
-                        >
-                          {tab.replace("-", " ")}
-                        </button>
-                      ))}
-                    </div>
-
-                    <div className="space-y-2.5">
-                      {[
-                        { title: "M3 Motion tokens integration", tag: "CRITICAL", lead: "Souro", est: "2h" },
-                        { title: "AST Validator schema audit", tag: "CORE", lead: "DevTeam", est: "4h" },
-                        { title: "Dynamic Island notch calibration", tag: "UI", lead: "Design", est: "1h" },
-                      ].map((task, i) => (
-                        <div
-                          key={i}
-                          className={cn("p-3.5 rounded-xl border space-y-2", isLightMode ? "bg-white border-neutral-200 shadow-2xs" : "bg-[var(--surface-elevated)] border-[var(--border)]")}
-                        >
-                          <div className="flex justify-between items-start">
-                            <span className="text-xs font-bold leading-tight">{task.title}</span>
-                            <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[var(--surface-secondary)] text-[var(--text-muted)] font-semibold">
-                              {task.tag}
-                            </span>
-                          </div>
-                          <div className="flex justify-between items-center text-[10px] font-mono text-neutral-400 pt-1 border-t border-[var(--border)]/40">
-                            <span>Lead: {task.lead}</span>
-                            <span>{task.est} remaining</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* ════ PRESET 6: OTP VERIFY (Stitch Screen 6) ════ */}
-                {presetMode === "otp-verify" && (
-                  <div
-                    className={cn(
-                      "flex-1 flex flex-col justify-between px-4 py-4 space-y-4 transition-colors text-center",
-                      isLightMode ? "bg-white text-neutral-900" : "bg-[var(--bg-main)] text-[var(--text-primary)]"
-                    )}
-                  >
-                    <div className="flex flex-col items-center space-y-2 pt-2">
-                      <div className="h-14 w-14 rounded-2xl bg-[var(--accent-green-deep)] text-[var(--accent-green)] border border-[var(--accent-green)]/30 flex items-center justify-center">
-                        <Lock className="h-6 w-6" />
-                      </div>
-                      <h2 className="text-xl font-bold font-sans">Two-Step Verification</h2>
-                      <p className="text-xs text-neutral-400 max-w-xs">
-                        Enter the 6-digit confirmation code dispatched to your hardware authenticator.
-                      </p>
-                    </div>
-
-                    {/* 6 Digit Inputs */}
-                    <div className="flex items-center justify-center gap-2 py-1">
-                      {phoneOtpDigits.map((digit, i) => (
-                        <div
-                          key={i}
-                          className={cn(
-                            "w-10 h-13 rounded-xl border-2 flex items-center justify-center font-mono font-bold text-base transition-all",
-                            digit
-                              ? "border-[var(--accent-green)] bg-[var(--accent-green-deep)]/30 text-[var(--accent-green)]"
-                              : i === 4
-                              ? "border-[var(--text-primary)] ring-2 ring-[var(--accent-green)]/30 text-[var(--text-primary)]"
-                              : "border-[var(--border)] bg-[var(--surface-primary)] text-neutral-500"
-                          )}
-                        >
-                          {digit || (i === 4 ? "|" : "•")}
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="space-y-2.5 pt-1">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setPhoneOtpDigits(["5", "9", "3", "1", "8", "4"]);
-                          setOtpVerified(true);
-                          showToast("Session authenticated!");
-                        }}
-                        className="w-full py-3 rounded-full bg-[var(--accent-green)] text-[var(--bg-main)] font-sans font-bold text-xs shadow-md active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-2"
-                      >
-                        {otpVerified ? <CheckCircle2 className="h-4 w-4" /> : null}
-                        <span>{otpVerified ? "Code Verified" : "Verify Session"}</span>
-                      </button>
-
-                      <div className="text-xs font-mono text-neutral-400">
-                        Didn&apos;t receive code? <span className="text-[var(--accent-green)] cursor-pointer">Resend in 24s</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* ════ PRESET 7: WALLET PRESET ════ */}
-                {presetMode === "wallet" && (
-                  <div
-                    className={cn(
-                      "flex-1 flex flex-col justify-between px-4 py-3 space-y-3 transition-colors",
-                      isLightMode ? "bg-white text-neutral-900" : "bg-[var(--bg-main)] text-[var(--text-primary)]"
-                    )}
-                  >
-                    <div>
-                      <span className="text-[10px] font-mono uppercase tracking-wider opacity-60">Vault &amp; Tokens</span>
-                      <h2 className="text-xl font-bold font-sans">Active Liquidity</h2>
-                    </div>
-
-                    <div className={cn("p-4 rounded-2xl border space-y-2.5", isLightMode ? "bg-white border-neutral-200 shadow-sm" : "bg-[var(--surface-elevated)] border-[var(--border)]")}>
-                      <span className="text-[10px] font-mono text-neutral-400 uppercase">Available Telemetry Credit</span>
-                      <div className="text-2xl font-mono font-bold tracking-tight text-[var(--accent-green)]">
-                        $14,892.40
-                      </div>
-                      <div className="grid grid-cols-2 gap-2 pt-1">
-                        <button
-                          type="button"
-                          onClick={() => showToast("Quick Send modal opened")}
-                          className="py-2 rounded-xl bg-[var(--surface-secondary)] text-xs font-mono font-bold flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 transition-all"
-                        >
-                          <Send className="h-3.5 w-3.5" />
-                          <span>Send</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => showToast("Deposit address copied")}
-                          className="py-2 rounded-xl bg-[var(--surface-secondary)] text-xs font-mono font-bold flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 transition-all"
-                        >
-                          <ArrowDownLeft className="h-3.5 w-3.5" />
-                          <span>Deposit</span>
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="space-y-1.5">
-                      <span className="text-[10px] font-mono text-neutral-400 uppercase tracking-wider">Recent Activity</span>
-                      {[
-                        { title: "Validator Stake #09", time: "10m ago", amt: "+$420.00", pos: true },
-                        { title: "AST Batch Verification", time: "1h ago", amt: "-$12.50", pos: false },
-                        { title: "Cluster Shard Provision", time: "3h ago", amt: "-$85.00", pos: false },
-                      ].map((tx, i) => (
-                        <div key={i} className={cn("p-2.5 rounded-xl border flex items-center justify-between text-xs font-mono", isLightMode ? "bg-white border-neutral-200" : "bg-[var(--surface-secondary)] border-[var(--border)]")}>
-                          <div>
-                            <div className="font-bold">{tx.title}</div>
-                            <div className="text-[10px] text-neutral-400">{tx.time}</div>
-                          </div>
-                          <span className={cn("font-bold", tx.pos ? "text-[var(--accent-green)]" : "text-neutral-400")}>
-                            {tx.amt}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Bottom Centered Island Navigation Dock */}
-                <div className="absolute inset-x-0 bottom-4 z-30 flex justify-center pointer-events-none">
-                  <FloatingActionDock
-                    className="relative pointer-events-auto"
-                    dockClassName="scale-90"
-                    primaryAction={{
-                      label: "Action",
-                      icon: <Plus className="h-3.5 w-3.5" />,
-                      onClick: () => setIsPhoneSheetOpen(true),
-                    }}
-                    items={[
-                      {
-                        id: "home",
-                        label: "Home",
-                        icon: <Home className="h-3.5 w-3.5" />,
-                        onClick: () => setPhoneDockSelected("home"),
-                        active: phoneDockSelected === "home",
-                      },
-                      {
-                        id: "explore",
-                        label: "Explore",
-                        icon: <Compass className="h-3.5 w-3.5" />,
-                        onClick: () => setPhoneDockSelected("explore"),
-                        active: phoneDockSelected === "explore",
-                      },
-                      {
-                        id: "alerts",
-                        label: "Alerts",
-                        icon: <Bell className="h-3.5 w-3.5" />,
-                        onClick: () => setPhoneDockSelected("alerts"),
-                        active: phoneDockSelected === "alerts",
-                        badge: 2,
-                      },
-                    ]}
+                {/* Custom Canvas Renderer inside Centered Studio Chassis */}
+                {activeCustomPage ? (
+                  <MobileCanvasRenderer
+                    items={activeCustomPage.items}
+                    onReorder={handleReorderCanvasItem}
+                    onRemove={handleRemoveCanvasItem}
+                    onAddItem={handleAddCanvasItem}
+                    onUpdateItem={handleUpdateCanvasItem}
                   />
-                </div>
+                ) : (
+                  <div className="flex-1 flex items-center justify-center p-6 text-neutral-500 font-mono text-xs">
+                    No active page selected
+                  </div>
+                )}
 
                 {/* Bottom Home Indicator Bar */}
                 <div
@@ -2631,88 +2322,17 @@ export default function MobilePrimitivesPage() {
                 >
                   <div className={cn("w-32 h-1 rounded-full", isLightMode ? "bg-neutral-300" : "bg-neutral-700")} />
                 </div>
-
               </div>
-            </div>
+            </MobileStudioFocusModal>
+          )}
+        </AnimatePresence>
 
-            {/* ── Below Mobile Phone: Section Extension for Full Panel Scrolling ── */}
-            <div className="w-[360px] sm:w-[380px] space-y-3 pt-2">
-              {/* Preset Quick Switcher Card */}
-              <div className="w-full p-3.5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/80 backdrop-blur-md space-y-2.5 font-mono text-xs select-none shadow-xs">
-                <div className="flex items-center justify-between text-[11px] text-[var(--text-muted)]">
-                  <span className="font-semibold uppercase tracking-wider">Switch Preset Screen</span>
-                  <span className="text-[var(--accent-green)] font-bold">
-                    {PRESET_OPTIONS.find((p) => p.id === presetMode)?.label}
-                  </span>
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 pt-0.5">
-                  {PRESET_OPTIONS.map((opt) => (
-                    <button
-                      key={opt.id}
-                      type="button"
-                      onClick={() => setPresetMode(opt.id)}
-                      className={cn(
-                        "p-2 rounded-xl border text-[11px] flex items-center gap-1.5 transition-all cursor-pointer truncate",
-                        presetMode === opt.id
-                          ? "bg-[var(--surface-tertiary)] border-[var(--accent-green)]/40 text-[var(--accent-green)] font-bold shadow-2xs"
-                          : "bg-[var(--surface-secondary)]/50 border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)]"
-                      )}
-                    >
-                      {opt.icon}
-                      <span className="truncate">{opt.label}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Reactive State Inspector Card */}
-              <div className="w-full p-3.5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/80 backdrop-blur-md space-y-2 font-mono text-xs select-none shadow-xs">
-                <div className="flex items-center justify-between text-[11px]">
-                  <span className="text-[var(--text-muted)]">Active Preset</span>
-                  <span className="font-bold text-[var(--accent-green)] uppercase">{presetMode}</span>
-                </div>
-                <div className="flex items-center justify-between text-[11px]">
-                  <span className="text-[var(--text-muted)]">Chassis Frame</span>
-                  <span className="text-[var(--text-primary)]">Hardware 720px M3 Glass</span>
-                </div>
-                <div className="flex items-center justify-between text-[11px]">
-                  <span className="text-[var(--text-muted)]">Scroll Chaining</span>
-                  <span className="text-[var(--accent-green)]">Panel Section Linked</span>
-                </div>
-              </div>
-
-              {/* Quick CLI Command */}
-              <div className="w-full p-3 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/80 backdrop-blur-md flex items-center justify-between font-mono text-xs select-none shadow-xs">
-                <div className="flex items-center gap-1.5 truncate text-[11px]">
-                  <span className="text-[var(--accent-green)]">$</span>
-                  <span className="text-[var(--text-muted)] truncate">npx @kilo-ui/cli add mobile</span>
-                </div>
-                <button
-                  type="button"
-                  onClick={handleCopyCli}
-                  className="px-2.5 py-1 rounded-lg bg-[var(--surface-secondary)] hover:bg-[var(--surface-tertiary)] text-[10px] text-[var(--text-primary)] cursor-pointer active:scale-95 transition-all shrink-0 ml-2"
-                >
-                  {copiedCli ? "Copied" : "Copy"}
-                </button>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-
-        {/* Floating Slide-Open Circle Button on Right Edge when Panel is hidden */}
-        {!isPhoneVisible && (
-          <button
-            type="button"
-            onClick={() => setIsPhoneVisible(true)}
-            className="fixed right-5 top-1/2 -translate-y-1/2 z-50 h-11 w-11 rounded-full bg-[var(--surface-elevated)] border-2 border-[var(--border)] text-[var(--text-primary)] hover:border-[var(--accent-green)] hover:text-[var(--accent-green)] shadow-2xl hover:scale-110 active:scale-95 flex items-center justify-center transition-all cursor-pointer select-none group"
-            title="Open Mobile Preview Panel"
-            aria-label="Open Mobile Preview Panel"
-          >
-            <ChevronLeft className="h-5 w-5 transition-transform group-hover:-translate-x-0.5 text-[var(--accent-green)]" />
-          </button>
-        )}
+        {/* Prompt Export Dialog */}
+        <PromptExportModal
+          isOpen={isExportPromptOpen}
+          onClose={() => setIsExportPromptOpen(false)}
+          prompt={exportedPromptText}
+        />
 
         {/* Global Toast Notification */}
         <AnimatePresence>
@@ -2731,6 +2351,13 @@ export default function MobilePrimitivesPage() {
         </AnimatePresence>
 
       </div>
-    </div>
+  );
+}
+
+export default function MobilePrimitivesPage() {
+  return (
+    <React.Suspense fallback={<div className="min-h-screen bg-[var(--bg-main)]" />}>
+      <MobilePrimitivesContent />
+    </React.Suspense>
   );
 }

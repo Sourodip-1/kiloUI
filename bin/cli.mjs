@@ -69,6 +69,29 @@ const COMPONENT_ALIASES = {
   "dynamic-island-banner": "dynamic-island-banner",
   "stack-cards": "stack-cards",
   "card-stack": "stack-cards",
+  "biometric-scanner": "biometric-scanner",
+  "biometric": "biometric-scanner",
+  "fingerprint": "biometric-scanner",
+  "otp-input": "m3-otp-input",
+  "m3-otp-input": "m3-otp-input",
+  "otp": "m3-otp-input",
+  "haptic-stepper": "mobile-haptic-stepper",
+  "mobile-haptic-stepper": "mobile-haptic-stepper",
+  "stepper": "mobile-haptic-stepper",
+  "pull-to-refresh": "pull-to-refresh",
+  "swipe-action": "swipe-action-card",
+  "swipe-action-card": "swipe-action-card",
+  "floating-dock": "floating-action-dock",
+  "floating-action-dock": "floating-action-dock",
+  "bottom-dock": "floating-action-dock",
+  "mobile-bottom-sheet": "mobile-bottom-sheet",
+  "thumb-segment": "thumb-segment-controller",
+  "thumb-segment-controller": "thumb-segment-controller",
+  "action-sheet": "mobile-action-sheet",
+  "mobile-action-sheet": "mobile-action-sheet",
+  "keypad": "mobile-numeric-keypad",
+  "numeric-keypad": "mobile-numeric-keypad",
+  "mobile-numeric-keypad": "mobile-numeric-keypad",
 };
 
 // Associated companion files (e.g. CSS files)
@@ -86,8 +109,18 @@ const COMPONENT_DEPS = {
     "horizon-login", "minimalist-login", "dialog", "tabs", "sidebar", "notched-navbar", 
     "elastic-slot-button", "popover-dialog", "command-palette", "drawer-dialog", 
     "spotlight-modal", "announcement-bar", "toast-stack", "ticker-notification", 
-    "dynamic-island-banner", "stack-cards"
+    "dynamic-island-banner", "stack-cards", "biometric-scanner", "m3-otp-input",
+    "mobile-haptic-stepper", "pull-to-refresh", "swipe-action-card", "floating-action-dock",
+    "mobile-bottom-sheet", "thumb-segment-controller", "m3-top-app-bar", "m3-navigation-bar",
+    "mobile-action-sheet", "mobile-numeric-keypad"
   ],
+  motion: [
+    "biometric-scanner", "m3-otp-input", "mobile-haptic-stepper", "dynamic-island-banner",
+    "swipe-action-card", "pull-to-refresh", "floating-action-dock", "option-wheel",
+    "blurred-carousel", "concave-carousel", "content-slider", "bento-cluster",
+    "motion-engine", "drawer-dialog", "popover-dialog", "toast-stack",
+    "mobile-action-sheet", "mobile-numeric-keypad"
+  ]
 };
 
 function log(msg = "") {
@@ -325,6 +358,9 @@ async function addComponent(componentName, options = {}) {
       }
       if (COMPONENT_DEPS["lucide-react"].includes(resolved.name)) {
         neededDeps.push("lucide-react");
+      }
+      if (COMPONENT_DEPS.motion?.includes(resolved.name) && !deps["motion"] && !deps["framer-motion"]) {
+        neededDeps.push("motion");
       }
 
       const missing = neededDeps.filter((d) => !deps[d]);

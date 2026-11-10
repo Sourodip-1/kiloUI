@@ -6,7 +6,16 @@ import { ComponentDetailClient } from "./component-detail-client";
 import { ComponentDetailSkeleton } from "@/components/skeletons";
 
 export function generateStaticParams() {
-  return Object.keys(REGISTRY_DATA).map((name) => ({ name }));
+  const names = Object.keys(REGISTRY_DATA);
+  const aliases = [
+    "dynamic-island",
+    "otp-input",
+    "haptic-stepper",
+    "liquid-glass-search-bar",
+    "action-sheet",
+    "numeric-keypad",
+  ];
+  return Array.from(new Set([...names, ...aliases])).map((name) => ({ name }));
 }
 
 export async function generateMetadata({
@@ -17,7 +26,12 @@ export async function generateMetadata({
   const { name } = await params;
   const item =
     REGISTRY_DATA[name] ||
+    (name === "dynamic-island" ? REGISTRY_DATA["dynamic-island-banner"] : undefined) ||
+    (name === "otp-input" ? REGISTRY_DATA["m3-otp-input"] : undefined) ||
+    (name === "haptic-stepper" ? REGISTRY_DATA["mobile-haptic-stepper"] : undefined) ||
     (name === "liquid-glass-search-bar" ? REGISTRY_DATA["search-bar"] : undefined) ||
+    (name === "action-sheet" ? REGISTRY_DATA["mobile-action-sheet"] : undefined) ||
+    (name === "numeric-keypad" ? REGISTRY_DATA["mobile-numeric-keypad"] : undefined) ||
     (name === "reactive-slates" || name === "reactive-slats" ? REGISTRY_DATA["prismatic-slats-bg"] : undefined);
   if (!item) return { title: "Component Not Found — kilo/ui" };
 
@@ -60,7 +74,12 @@ async function ComponentPageContent({
   const { name } = await params;
   const item =
     REGISTRY_DATA[name] ||
+    (name === "dynamic-island" ? REGISTRY_DATA["dynamic-island-banner"] : undefined) ||
+    (name === "otp-input" ? REGISTRY_DATA["m3-otp-input"] : undefined) ||
+    (name === "haptic-stepper" ? REGISTRY_DATA["mobile-haptic-stepper"] : undefined) ||
     (name === "liquid-glass-search-bar" ? REGISTRY_DATA["search-bar"] : undefined) ||
+    (name === "action-sheet" ? REGISTRY_DATA["mobile-action-sheet"] : undefined) ||
+    (name === "numeric-keypad" ? REGISTRY_DATA["mobile-numeric-keypad"] : undefined) ||
     (name === "reactive-slates" || name === "reactive-slats" ? REGISTRY_DATA["prismatic-slats-bg"] : undefined);
 
   if (!item) {

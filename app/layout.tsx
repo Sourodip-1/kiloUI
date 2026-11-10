@@ -1,22 +1,20 @@
 import type { Metadata } from "next";
-import { Google_Sans, Google_Sans_Code } from "next/font/google";
+import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { AppShell } from "@/components/app-shell";
 
-const googleSans = Google_Sans({
+const googleSans = Plus_Jakarta_Sans({
   variable: "--font-google-sans",
   subsets: ["latin"],
   display: "swap",
   weight: ["400", "500", "600", "700"],
-  adjustFontFallback: false,
 });
 
-const googleSansCode = Google_Sans_Code({
+const googleSansCode = JetBrains_Mono({
   variable: "--font-google-sans-code",
   subsets: ["latin"],
   display: "swap",
   weight: ["400", "500", "600", "700"],
-  adjustFontFallback: false,
 });
 
 export const metadata: Metadata = {

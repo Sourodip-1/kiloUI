@@ -25,6 +25,7 @@ export interface M3FabProps
   menuItems?: M3FabMenuItem[];
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  showBackdrop?: boolean;
 }
 
 export const M3Fab = React.forwardRef<HTMLButtonElement, M3FabProps>(
@@ -39,6 +40,7 @@ export const M3Fab = React.forwardRef<HTMLButtonElement, M3FabProps>(
       menuItems,
       open: controlledOpen,
       onOpenChange,
+      showBackdrop = false,
       onClick,
       children,
       ...props
@@ -117,10 +119,10 @@ export const M3Fab = React.forwardRef<HTMLButtonElement, M3FabProps>(
     }
 
     return (
-      <div className="relative inline-flex flex-col items-end">
-        {/* Backdrop Scrim */}
+      <div className={cn("relative inline-flex flex-col items-end", isOpen ? "z-50" : "z-10")}>
+        {/* Optional Scrim Backdrop (Disabled by default so page is not blurred) */}
         <AnimatePresence>
-          {isOpen && (
+          {isOpen && showBackdrop && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -193,8 +195,8 @@ export const M3Fab = React.forwardRef<HTMLButtonElement, M3FabProps>(
           )}
         </AnimatePresence>
 
-        {/* Main Floating Button on top of scrim */}
-        <div className="relative z-50">
+        {/* Main Floating Button on top of speed dial */}
+        <div className={cn("relative", isOpen ? "z-50" : "z-10")}>
           {mainFabButton}
         </div>
       </div>

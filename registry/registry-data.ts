@@ -5691,5 +5691,326 @@ export const REGISTRY_DATA: Record<string, RegistryItem> = {
       "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { ChevronRight } from \"lucide-react\";\nimport { cn } from \"@/lib/utils\";\n\nexport interface M3ListItemProps {\n  headline: string;\n  supportingText?: string;\n  overline?: string;\n  leading?: React.ReactNode;\n  trailing?: React.ReactNode;\n  trailingText?: string;\n  showChevron?: boolean;\n  onClick?: () => void;\n  design?: \"m3\" | \"minimal\";\n  divider?: boolean;\n  className?: string;\n}\n\nexport function M3ListItem({\n  headline,\n  supportingText,\n  overline,\n  leading,\n  trailing,\n  trailingText,\n  showChevron = false,\n  onClick,\n  design = \"m3\",\n  divider = true,\n  className,\n}: M3ListItemProps) {\n  const isMinimal = design === \"minimal\";\n  const isClickable = Boolean(onClick);\n\n  return (\n    <div\n      onClick={onClick}\n      role={isClickable ? \"button\" : undefined}\n      tabIndex={isClickable ? 0 : undefined}\n      className={cn(\n        \"flex items-center justify-between w-full font-sans transition-colors duration-150 select-none\",\n        isClickable && \"cursor-pointer active:bg-[var(--surface-tertiary)]\",\n        isMinimal\n          ? \"px-3 py-2.5 hover:bg-[var(--surface-secondary)]/50 rounded-lg\"\n          : \"px-4 py-3 hover:bg-[var(--surface-secondary)]/70\",\n        divider && \"border-b border-[var(--border)]/50\",\n        className\n      )}\n    >\n      {/* Leading Slot */}\n      <div className=\"flex items-center gap-3.5 min-w-0 flex-1\">\n        {leading && <div className=\"shrink-0 text-[var(--text-primary)]\">{leading}</div>}\n\n        {/* Content Lines */}\n        <div className=\"min-w-0 flex-1\">\n          {overline && (\n            <span className=\"text-[10px] font-mono uppercase tracking-wider text-[var(--text-muted)] block truncate\">\n              {overline}\n            </span>\n          )}\n          <h4 className=\"text-sm font-semibold text-[var(--text-primary)] leading-snug truncate\">\n            {headline}\n          </h4>\n          {supportingText && (\n            <p className=\"text-xs text-[var(--text-secondary)] leading-normal truncate mt-0.5\">\n              {supportingText}\n            </p>\n          )}\n        </div>\n      </div>\n\n      {/* Trailing Slot */}\n      <div className=\"flex items-center gap-2 shrink-0 ml-3\">\n        {trailingText && (\n          <span className=\"text-[11px] font-mono text-[var(--text-muted)]\">\n            {trailingText}\n          </span>\n        )}\n        {trailing}\n        {showChevron && (\n          <ChevronRight className=\"h-4 w-4 text-[var(--text-muted)]\" />\n        )}\n      </div>\n    </div>\n  );\n}\n\nexport interface M3ListProps {\n  children: React.ReactNode;\n  header?: string;\n  design?: \"m3\" | \"minimal\";\n  className?: string;\n}\n\nexport function M3List({\n  children,\n  header,\n  design = \"m3\",\n  className,\n}: M3ListProps) {\n  const isMinimal = design === \"minimal\";\n\n  return (\n    <div\n      role=\"list\"\n      className={cn(\n        \"w-full flex flex-col overflow-hidden font-sans\",\n        isMinimal\n          ? \"rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] p-1 space-y-0.5 shadow-2xs\"\n          : \"rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-xs\",\n        className\n      )}\n    >\n      {header && (\n        <div className=\"px-4 pt-3 pb-1 text-[10px] font-mono font-semibold uppercase tracking-wider text-[var(--text-muted)]\">\n          {header}\n        </div>\n      )}\n      {children}\n    </div>\n  );\n}\n"
     }
   ]
-}
+},
+  "m3-otp-input": {
+    "name": "m3-otp-input",
+    "category": "Mobile App",
+    "title": "M3 OTP PIN Input",
+    "description": "Tactile, accessible 6-digit one-time passcode verification input with auto-advance, backspace traversal, and paste handling.",
+    "variants": ["default", "sm", "lg", "masked"],
+    "dependencies": ["clsx", "tailwind-merge"],
+    "registryDependencies": ["utils"],
+    "usage": "import { M3OtpInput } from \"@/components/ui/m3-otp-input\";\n\nexport function OtpDemo() {\n  const [code, setCode] = React.useState(\"\");\n  return (\n    <M3OtpInput\n      length={6}\n      value={code}\n      onChange={setCode}\n      onComplete={(finalCode) => console.log(\"Verified\", finalCode)}\n    />\n  );\n}",
+    "props": [
+      {
+        "name": "length",
+        "type": "number",
+        "defaultValue": "6",
+        "description": "Number of OTP digit input cells"
+      },
+      {
+        "name": "value",
+        "type": "string",
+        "description": "Controlled OTP numeric string"
+      },
+      {
+        "name": "onChange",
+        "type": "(value: string) => void",
+        "description": "Change callback with current sanitized digits"
+      },
+      {
+        "name": "onComplete",
+        "type": "(value: string) => void",
+        "description": "Triggered when all cells are completed"
+      },
+      {
+        "name": "size",
+        "type": "\"sm\" | \"md\" | \"lg\"",
+        "defaultValue": "\"md\"",
+        "description": "Dimensions of digit cells"
+      }
+    ],
+    "files": [
+      {
+        "name": "m3-otp-input.tsx",
+        "type": "components:ui",
+        "content": "\"use client\";\n\nexport * from \"@/registry/ui/m3-otp-input\";\n"
+      }
+    ]
+  },
+  "mobile-haptic-stepper": {
+    "name": "mobile-haptic-stepper",
+    "category": "Mobile App",
+    "title": "Mobile Haptic Stepper",
+    "description": "Ergonomic quantity stepper with tactile haptic impulse vibration, spring scale animations, and directional digit rolling.",
+    "variants": ["pill", "compact", "segmented", "minimal"],
+    "dependencies": ["clsx", "tailwind-merge", "motion", "lucide-react"],
+    "registryDependencies": ["utils"],
+    "usage": "import { MobileHapticStepper } from \"@/components/ui/mobile-haptic-stepper\";\n\nexport function StepperDemo() {\n  const [qty, setQty] = React.useState(2);\n  return <MobileHapticStepper value={qty} onChange={setQty} min={1} max={10} unit=\"pcs\" />;\n}",
+    "props": [
+      {
+        "name": "value",
+        "type": "number",
+        "description": "Controlled numeric value"
+      },
+      {
+        "name": "onChange",
+        "type": "(val: number) => void",
+        "description": "Quantity change callback"
+      },
+      {
+        "name": "min",
+        "type": "number",
+        "defaultValue": "0",
+        "description": "Lower quantity limit"
+      },
+      {
+        "name": "max",
+        "type": "number",
+        "defaultValue": "99",
+        "description": "Upper quantity limit"
+      },
+      {
+        "name": "size",
+        "type": "\"sm\" | \"md\" | \"lg\"",
+        "defaultValue": "\"md\"",
+        "description": "Button and typography scale"
+      }
+    ],
+    "files": [
+      {
+        "name": "mobile-haptic-stepper.tsx",
+        "type": "components:ui",
+        "content": "\"use client\";\n\nexport * from \"@/registry/ui/mobile-haptic-stepper\";\n"
+      }
+    ]
+  },
+  "biometric-scanner": {
+    "name": "biometric-scanner",
+    "category": "Mobile App",
+    "title": "Biometric Scanner",
+    "description": "Hardware enclave biometric fingerprint and passkey authentication sensor with haptic vibration and progressive scan animation.",
+    "variants": ["tile", "pill", "minimal"],
+    "dependencies": ["clsx", "tailwind-merge", "motion", "lucide-react"],
+    "registryDependencies": ["utils"],
+    "usage": "import { BiometricScanner } from \"@/components/ui/biometric-scanner\";\n\nexport function BiometricDemo() {\n  return (\n    <BiometricScanner\n      onSuccess={() => console.log(\"Authenticated!\")}\n      label=\"Security Enclave\"\n      sublabel=\"Touch sensor with registered finger\"\n    />\n  );\n}",
+    "props": [
+      {
+        "name": "status",
+        "type": "\"idle\" | \"scanning\" | \"authenticated\" | \"failed\"",
+        "description": "Controlled scan state"
+      },
+      {
+        "name": "onSuccess",
+        "type": "() => void",
+        "description": "Fired upon successful authentication"
+      },
+      {
+        "name": "variant",
+        "type": "\"tile\" | \"pill\" | \"minimal\"",
+        "defaultValue": "\"tile\"",
+        "description": "Visual presentation shape"
+      },
+      {
+        "name": "size",
+        "type": "\"sm\" | \"md\" | \"lg\"",
+        "defaultValue": "\"md\"",
+        "description": "Dimensions of the target sensor"
+      }
+    ],
+    "files": [
+      {
+        "name": "biometric-scanner.tsx",
+        "type": "components:ui",
+        "content": "\"use client\";\n\nexport * from \"@/registry/ui/biometric-scanner\";\n"
+      }
+    ]
+  },
+  "otp-input": {
+    "name": "otp-input",
+    "category": "Mobile App",
+    "title": "OTP Input",
+    "description": "Segmented 4-to-8 digit PIN code input with keyboard navigation, auto-advance, backspace handling, and smooth scale-focus animations.",
+    "variants": ["standard", "masked", "compact", "spaced"],
+    "dependencies": ["clsx", "tailwind-merge"],
+    "registryDependencies": ["utils"],
+    "usage": "import { M3OtpInput } from \"@/components/ui/m3-otp-input\";\n\nexport function OtpDemo() {\n  const [code, setCode] = React.useState(\"\");\n  return (\n    <M3OtpInput\n      length={6}\n      value={code}\n      onChange={setCode}\n      onComplete={(finalCode) => console.log(\"Verified\", finalCode)}\n    />\n  );\n}",
+    "props": [
+      {
+        "name": "length",
+        "type": "number",
+        "defaultValue": "6",
+        "description": "Number of input slots"
+      },
+      {
+        "name": "value",
+        "type": "string",
+        "description": "Controlled value string"
+      },
+      {
+        "name": "onChange",
+        "type": "(value: string) => void",
+        "description": "Fires on any digit change"
+      },
+      {
+        "name": "mask",
+        "type": "boolean",
+        "defaultValue": "false",
+        "description": "Obscure entered digits with disc bullets"
+      }
+    ],
+    "files": [
+      {
+        "name": "m3-otp-input.tsx",
+        "type": "components:ui",
+        "content": "\"use client\";\n\nexport * from \"@/registry/ui/m3-otp-input\";\n"
+      }
+    ]
+  },
+  "haptic-stepper": {
+    "name": "haptic-stepper",
+    "category": "Mobile App",
+    "title": "Haptic Stepper",
+    "description": "Tactile increment and decrement quantity control with micro-vibration feedback, directional digit glide, and bounded limits.",
+    "variants": ["pill", "compact", "segmented", "minimal"],
+    "dependencies": ["clsx", "tailwind-merge", "motion", "lucide-react"],
+    "registryDependencies": ["utils"],
+    "usage": "import { MobileHapticStepper } from \"@/components/ui/mobile-haptic-stepper\";\n\nexport function StepperDemo() {\n  const [qty, setQty] = React.useState(2);\n  return <MobileHapticStepper value={qty} onChange={setQty} min={1} max={10} unit=\"pcs\" />;\n}",
+    "props": [
+      {
+        "name": "value",
+        "type": "number",
+        "description": "Current numeric value"
+      },
+      {
+        "name": "onChange",
+        "type": "(val: number) => void",
+        "description": "Callback with next numeric quantity"
+      },
+      {
+        "name": "min",
+        "type": "number",
+        "defaultValue": "0",
+        "description": "Lower quantity limit"
+      },
+      {
+        "name": "max",
+        "type": "number",
+        "defaultValue": "99",
+        "description": "Upper quantity limit"
+      }
+    ],
+    "files": [
+      {
+        "name": "mobile-haptic-stepper.tsx",
+        "type": "components:ui",
+        "content": "\"use client\";\n\nexport * from \"@/registry/ui/mobile-haptic-stepper\";\n"
+      }
+    ]
+  },
+  "dynamic-island": {
+    "name": "dynamic-island",
+    "category": "Mobile App",
+    "title": "Dynamic Island",
+    "description": "Fluid morphing status capsule that smoothly transitions from a compact indicator into an interactive HUD with waveform telemetry.",
+    "variants": ["compact-pill", "expanded-hud", "media-wave", "telemetry-alert"],
+    "dependencies": ["lucide-react", "clsx", "tailwind-merge"],
+    "registryDependencies": ["utils"],
+    "usage": "import { DynamicIslandBanner } from \"@/components/ui/dynamic-island-banner\";\n\nexport function IslandDemo() {\n  return <DynamicIslandBanner variant=\"compact-pill\" />;\n}",
+    "props": [
+      {
+        "name": "variant",
+        "type": "\"compact-pill\" | \"expanded-hud\" | \"media-wave\" | \"telemetry-alert\"",
+        "defaultValue": "\"compact-pill\"",
+        "description": "Visual morph state"
+      },
+      {
+        "name": "title",
+        "type": "string",
+        "defaultValue": "\"Telemetry Stream Active\"",
+        "description": "Primary status message"
+      }
+    ],
+    "files": [
+      {
+        "name": "dynamic-island-banner.tsx",
+        "type": "components:ui",
+        "content": "\"use client\";\n\nexport * from \"@/registry/ui/dynamic-island-banner\";\n"
+      }
+    ]
+  },
+  "mobile-action-sheet": {
+    "name": "mobile-action-sheet",
+    "category": "Mobile App",
+    "title": "Mobile Action Sheet",
+    "description": "Touch-calibrated modal action sheet with drag handle, destructive action support, isolated cancel pill, and spring slide physics.",
+    "variants": ["default", "compact", "alert"],
+    "dependencies": ["clsx", "tailwind-merge", "motion", "lucide-react"],
+    "registryDependencies": ["utils"],
+    "usage": "import { MobileActionSheet } from \"@/components/ui/mobile-action-sheet\";\n\nexport function ActionSheetDemo() {\n  const [open, setOpen] = React.useState(false);\n  return (\n    <MobileActionSheet\n      open={open}\n      onOpenChange={setOpen}\n      title=\"File Operations\"\n      actions={[\n        { id: \"share\", label: \"Share\", onClick: () => {} },\n        { id: \"delete\", label: \"Delete\", variant: \"destructive\", onClick: () => {} }\n      ]}\n    />\n  );\n}",
+    "props": [
+      {
+        "name": "open",
+        "type": "boolean",
+        "defaultValue": "false",
+        "description": "Controlled open state"
+      },
+      {
+        "name": "actions",
+        "type": "MobileActionSheetItem[]",
+        "defaultValue": "[]",
+        "description": "List of actions with labels, icons, variants and handlers"
+      },
+      {
+        "name": "cancelLabel",
+        "type": "string",
+        "defaultValue": "\"Cancel\"",
+        "description": "Label for the separate cancel button"
+      }
+    ],
+    "files": [
+      {
+        "name": "mobile-action-sheet.tsx",
+        "type": "components:ui",
+        "content": "\"use client\";\n\nexport * from \"@/registry/ui/mobile-action-sheet\";\n"
+      }
+    ]
+  },
+  "mobile-numeric-keypad": {
+    "name": "mobile-numeric-keypad",
+    "category": "Mobile App",
+    "title": "Mobile Numeric Keypad",
+    "description": "Tactile on-screen 0-9 numeric pinpad with subtext lettering, backspace, and biometric sensor trigger for PINs and checkout.",
+    "variants": ["default", "compact", "letters"],
+    "dependencies": ["clsx", "tailwind-merge", "motion", "lucide-react"],
+    "registryDependencies": ["utils"],
+    "usage": "import { MobileNumericKeypad } from \"@/components/ui/mobile-numeric-keypad\";\n\nexport function KeypadDemo() {\n  const [pin, setPin] = React.useState(\"\");\n  return (\n    <MobileNumericKeypad\n      value={pin}\n      onChange={setPin}\n      maxLength={6}\n      onComplete={(code) => console.log(code)}\n    />\n  );\n}",
+    "props": [
+      {
+        "name": "value",
+        "type": "string",
+        "defaultValue": "\"\"",
+        "description": "Current numeric value"
+      },
+      {
+        "name": "maxLength",
+        "type": "number",
+        "defaultValue": "6",
+        "description": "Maximum number of digits accepted"
+      },
+      {
+        "name": "showLetters",
+        "type": "boolean",
+        "defaultValue": "true",
+        "description": "Whether to render alphanumeric subtext (ABC, DEF, etc.)"
+      }
+    ],
+    "files": [
+      {
+        "name": "mobile-numeric-keypad.tsx",
+        "type": "components:ui",
+        "content": "\"use client\";\n\nexport * from \"@/registry/ui/mobile-numeric-keypad\";\n"
+      }
+    ]
+  }
 };

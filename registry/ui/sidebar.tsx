@@ -31,6 +31,7 @@ export interface SidebarProps extends React.HTMLAttributes<HTMLElement> {
   activeCategory?: string;
   theme?: "dark" | "light" | "system";
   activeVariant?: string;
+  activeCategoryParam?: string;
 }
 
 interface ComponentVariantsTreeProps {
@@ -206,6 +207,7 @@ function SidebarBase({
   activeCategory,
   theme = "dark",
   activeVariant,
+  activeCategoryParam,
   variant = "scrollable-categories",
   ...props
 }: SidebarProps) {
@@ -237,14 +239,16 @@ function SidebarBase({
   type MobileCategory = typeof MOBILE_CATEGORIES[number];
 
   const MOBILE_ITEM_CATEGORY_MAP: Record<string, MobileCategory> = {
-    // Actions (5)
+    // Actions (7)
     "m3-button": "Actions",
     "m3-fab": "Actions",
     "m3-segmented-button": "Actions",
     "m3-icon-button": "Actions",
     "floating-action-dock": "Actions",
+    "haptic-stepper": "Actions",
+    "mobile-haptic-stepper": "Actions",
 
-    // Forms & Inputs (7)
+    // Forms & Inputs (11)
     "m3-text-field": "Forms & Inputs",
     "m3-search-bar": "Forms & Inputs",
     "m3-switch": "Forms & Inputs",
@@ -252,6 +256,11 @@ function SidebarBase({
     "m3-radio": "Forms & Inputs",
     "m3-slider": "Forms & Inputs",
     "m3-chip": "Forms & Inputs",
+    "biometric-scanner": "Forms & Inputs",
+    "otp-input": "Forms & Inputs",
+    "m3-otp-input": "Forms & Inputs",
+    "mobile-numeric-keypad": "Forms & Inputs",
+    "numeric-keypad": "Forms & Inputs",
 
     // Navigation (5)
     "m3-navigation-bar": "Navigation",
@@ -260,11 +269,15 @@ function SidebarBase({
     "m3-tabs": "Navigation",
     "thumb-segment-controller": "Navigation",
 
-    // Overlays (4)
+    // Overlays (7)
     "mobile-bottom-sheet": "Overlays",
     "m3-dialog": "Overlays",
     "swipe-action-card": "Overlays",
     "pull-to-refresh": "Overlays",
+    "dynamic-island": "Overlays",
+    "dynamic-island-banner": "Overlays",
+    "mobile-action-sheet": "Overlays",
+    "action-sheet": "Overlays",
 
     // Data Display (5)
     "m3-card": "Data Display",
@@ -274,12 +287,51 @@ function SidebarBase({
     "m3-snackbar": "Data Display",
   };
 
+  const MOBILE_CATEGORY_PARAM_MAP: Record<string, string> = {
+    "Actions": "actions",
+    "Forms & Inputs": "forms",
+    "Navigation": "navigation",
+    "Overlays": "overlays",
+    "Data Display": "data-display",
+  };
+
   const [activePlatform, setActivePlatform] = React.useState<"web" | "mobile">("web");
+  const [currentMobileCategory, setCurrentMobileCategory] = React.useState<string | undefined>(activeCategoryParam);
+
+  React.useEffect(() => {
+    if (activeCategoryParam) {
+      setCurrentMobileCategory(activeCategoryParam);
+    }
+  }, [activeCategoryParam]);
+
+  React.useEffect(() => {
+    const handleSetMobileCat = (e: Event) => {
+      const detail = (e as CustomEvent<{ category: string }>).detail;
+      if (detail?.category) {
+        setCurrentMobileCategory(detail.category);
+      }
+    };
+    window.addEventListener("kilo:set-mobile-category", handleSetMobileCat);
+    return () => window.removeEventListener("kilo:set-mobile-category", handleSetMobileCat);
+  }, []);
 
   const handlePlatformChange = (platform: "web" | "mobile") => {
     setActivePlatform(platform);
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(
+        new CustomEvent("kilo:splash", {
+          detail: {
+            route: platform === "mobile" ? "/mobile-primitives" : "/components",
+            label: platform === "mobile" ? "Mobile Studio" : "All Components",
+          },
+        })
+      );
+    }
     if (platform === "mobile") {
       router.push("/mobile-primitives");
+      onMobileOpenChange?.(false);
+    } else {
+      router.push("/components");
       onMobileOpenChange?.(false);
     }
   };
@@ -487,7 +539,14 @@ function SidebarBase({
   const isScrollableCategories = variant === "scrollable-categories";
 
   const topNavSection = (
-    <div className={cn("px-2.5 pt-3 pb-1 w-64 select-none", isScrollableCategories && "shrink-0")}>
+    <div
+      className={cn(
+        "pt-3 pb-1 select-none",
+        isScrollableCategories
+          ? cn("shrink-0", isCollapsed ? "w-14 px-2.5" : "w-64 px-2.5")
+          : "w-full"
+      )}
+    >
       <SlidingHighlightContainer
         className="space-y-1"
         pillClassName="bg-[var(--surface-secondary)]/90 border border-[var(--border)]/40 rounded-md shadow-2xs"
@@ -643,7 +702,7 @@ function SidebarBase({
       <div
         className={cn(
           "border-t border-[var(--border)] mt-2 mb-1 transition-all duration-300",
-          isCollapsed ? "w-8 ml-0.5" : "w-full"
+          isCollapsed ? "w-8 mx-auto" : "w-full"
         )}
       />
     </div>
@@ -689,33 +748,23 @@ function SidebarBase({
             </button>
           </div>
         ) : (
-          <div className="flex flex-col items-center gap-1 p-1 bg-[var(--surface-primary)] border border-[var(--border)] rounded-lg mb-2 select-none">
-            <button
-              type="button"
-              onClick={() => handlePlatformChange("web")}
-              title={`Web App (${webItemsCount} components)`}
-              className={cn(
-                "h-7 w-7 flex items-center justify-center rounded-md transition-all duration-150 cursor-pointer",
-                activePlatform === "web"
-                  ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] border border-[var(--border)]"
-                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)] border border-transparent hover:bg-[var(--surface-secondary)]/50"
+          <div
+            data-hover-item="true"
+            onClick={() => handlePlatformChange(activePlatform === "web" ? "mobile" : "web")}
+            className="group relative z-10 flex items-center justify-center w-full rounded p-2 text-xs font-semibold tracking-tight transition-colors duration-150 cursor-pointer text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)]/60 mb-1 select-none"
+            title={
+              activePlatform === "web"
+                ? `Web App (${webItemsCount} components) — click to switch to Mobile App`
+                : `Mobile App (${mobileItems.length} primitives) — click to switch to Web App`
+            }
+          >
+            <div className="flex h-5 w-5 shrink-0 items-center justify-center">
+              {activePlatform === "web" ? (
+                <Monitor className="h-4 w-4 text-[var(--accent-green)] transition-all duration-200 group-hover:scale-115" />
+              ) : (
+                <Smartphone className="h-4 w-4 text-[var(--accent-green)] transition-all duration-200 group-hover:scale-115" />
               )}
-            >
-              <Monitor className="h-3.5 w-3.5 shrink-0" />
-            </button>
-            <button
-              type="button"
-              onClick={() => handlePlatformChange("mobile")}
-              title={`Mobile App (${mobileItems.length} components)`}
-              className={cn(
-                "h-7 w-7 flex items-center justify-center rounded-md transition-all duration-150 cursor-pointer",
-                activePlatform === "mobile"
-                  ? "bg-[var(--surface-secondary)] text-[var(--text-primary)] border border-[var(--border)]"
-                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)] border border-transparent hover:bg-[var(--surface-secondary)]/50"
-              )}
-            >
-              <Smartphone className="h-3.5 w-3.5 shrink-0" />
-            </button>
+            </div>
           </div>
         )}
 
@@ -723,41 +772,43 @@ function SidebarBase({
         {activePlatform === "web" ? (
           <>
             {/* Categories Header */}
-            <div className="flex items-center justify-between w-full rounded p-2 text-[10px] font-sans font-semibold uppercase tracking-wider text-[var(--text-muted)] select-none">
-              <div className="flex items-center flex-1 min-w-0">
-                <div
-                  className="flex h-5 w-5 shrink-0 items-center justify-center cursor-default"
-                  title={isCollapsed ? `Categories (${webCategories.length})` : undefined}
-                >
-                  <VectorCategoryIcon category="all" className="h-4 w-4 text-[var(--text-muted)]" />
+            {!isCollapsed && (
+              <div className="flex items-center justify-between w-full rounded p-2 text-[10px] font-sans font-semibold uppercase tracking-wider text-[var(--text-muted)] select-none">
+                <div className="flex items-center flex-1 min-w-0">
+                  <div
+                    className="flex h-5 w-5 shrink-0 items-center justify-center cursor-default"
+                    title={isCollapsed ? `Categories (${webCategories.length})` : undefined}
+                  >
+                    <VectorCategoryIcon category="all" className="h-4 w-4 text-[var(--text-muted)]" />
+                  </div>
+                  <span
+                    className={cn(
+                      "ml-2.5 flex items-center gap-1.5 whitespace-nowrap transition-opacity duration-200",
+                      isCollapsed && "opacity-0 pointer-events-none"
+                    )}
+                  >
+                    <span>Categories</span>
+                    <span className="text-[9px] text-[var(--text-muted)] font-normal tabular-nums">({webCategories.length})</span>
+                  </span>
                 </div>
-                <span
+                <button
+                  type="button"
+                  onClick={handleToggleAllCategories}
                   className={cn(
-                    "ml-2.5 flex items-center gap-1.5 whitespace-nowrap transition-opacity duration-200",
+                    "p-1 rounded text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] transition-opacity duration-200 cursor-pointer shrink-0",
                     isCollapsed && "opacity-0 pointer-events-none"
                   )}
+                  title={isAllCollapsed ? "Expand all categories" : "Collapse all categories"}
+                  aria-label={isAllCollapsed ? "Expand all categories" : "Collapse all categories"}
                 >
-                  <span>Categories</span>
-                  <span className="text-[9px] text-[var(--text-muted)] font-normal tabular-nums">({webCategories.length})</span>
-                </span>
+                  {isAllCollapsed ? (
+                    <ChevronsUpDown className="h-3.5 w-3.5" />
+                  ) : (
+                    <ChevronsDownUp className="h-3.5 w-3.5" />
+                  )}
+                </button>
               </div>
-              <button
-                type="button"
-                onClick={handleToggleAllCategories}
-                className={cn(
-                  "p-1 rounded text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] transition-opacity duration-200 cursor-pointer shrink-0",
-                  isCollapsed && "opacity-0 pointer-events-none"
-                )}
-                title={isAllCollapsed ? "Expand all categories" : "Collapse all categories"}
-                aria-label={isAllCollapsed ? "Expand all categories" : "Collapse all categories"}
-              >
-                {isAllCollapsed ? (
-                  <ChevronsUpDown className="h-3.5 w-3.5" />
-                ) : (
-                  <ChevronsDownUp className="h-3.5 w-3.5" />
-                )}
-              </button>
-            </div>
+            )}
 
             {/* Categories List */}
             {webCategories.map((cat) => {
@@ -945,59 +996,55 @@ function SidebarBase({
         ) : (
           <>
             {/* Mobile Studio header with expand/collapse all button (aligned with Categories header, no highlight) */}
-            <div className="flex items-center justify-between w-full rounded p-2 text-[10px] font-sans font-semibold uppercase tracking-wider text-[var(--text-muted)] select-none">
-              <Link
-                href="/mobile-primitives"
-                onClick={() => onMobileOpenChange?.(false)}
-                className="flex items-center flex-1 min-w-0 hover:text-[var(--text-primary)] transition-colors group/studio"
-                title={isCollapsed ? "Mobile Studio" : undefined}
-              >
-                <div className="flex h-5 w-5 shrink-0 items-center justify-center">
-                  <VectorMobileIcon
-                    isActive={false}
-                    animated={false}
-                    className="h-4 w-4 text-[var(--text-muted)] group-hover/studio:text-[var(--text-primary)] transition-colors"
-                  />
-                </div>
-                <span
-                  className={cn(
-                    "ml-2.5 flex items-center gap-1.5 whitespace-nowrap transition-opacity duration-200",
-                    isCollapsed && "opacity-0 pointer-events-none"
-                  )}
+            {!isCollapsed && (
+              <div className="flex items-center justify-between w-full rounded p-2 text-[10px] font-sans font-semibold uppercase tracking-wider text-[var(--text-muted)] select-none">
+                <Link
+                  href="/mobile-primitives"
+                  onClick={() => onMobileOpenChange?.(false)}
+                  className="flex items-center flex-1 min-w-0 hover:text-[var(--text-primary)] transition-colors group/studio"
+                  title="Mobile Studio"
                 >
-                  <span className="group-hover/studio:text-[var(--text-primary)] transition-colors">Mobile Studio</span>
-                  <span className="text-[9px] text-[var(--text-muted)] font-normal tabular-nums">({mobileItems.length})</span>
-                </span>
-              </Link>
+                  <div className="flex h-5 w-5 shrink-0 items-center justify-center">
+                    <VectorMobileIcon
+                      isActive={false}
+                      animated={false}
+                      className="h-4 w-4 text-[var(--text-muted)] group-hover/studio:text-[var(--text-primary)] transition-colors"
+                    />
+                  </div>
+                  <span className="ml-2.5 flex items-center gap-1.5 whitespace-nowrap">
+                    <span className="group-hover/studio:text-[var(--text-primary)] transition-colors">Mobile Studio</span>
+                    <span className="text-[9px] text-[var(--text-muted)] font-normal tabular-nums">({mobileItems.length})</span>
+                  </span>
+                </Link>
 
-              {/* Expand all / Collapse all categories of primitives */}
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleToggleAllMobileCategories();
-                }}
-                className={cn(
-                  "p-1 rounded text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] transition-opacity duration-200 cursor-pointer shrink-0",
-                  isCollapsed && "opacity-0 pointer-events-none"
-                )}
-                title={isAllMobileCollapsed ? "Expand all categories" : "Collapse all categories"}
-                aria-label={isAllMobileCollapsed ? "Expand all categories" : "Collapse all categories"}
-              >
-                {isAllMobileCollapsed ? (
-                  <ChevronsUpDown className="h-3.5 w-3.5" />
-                ) : (
-                  <ChevronsDownUp className="h-3.5 w-3.5" />
-                )}
-              </button>
-            </div>
+                {/* Expand all / Collapse all categories of primitives */}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleToggleAllMobileCategories();
+                  }}
+                  className="p-1 rounded text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] transition-opacity duration-200 cursor-pointer shrink-0"
+                  title={isAllMobileCollapsed ? "Expand all categories" : "Collapse all categories"}
+                  aria-label={isAllMobileCollapsed ? "Expand all categories" : "Collapse all categories"}
+                >
+                  {isAllMobileCollapsed ? (
+                    <ChevronsUpDown className="h-3.5 w-3.5" />
+                  ) : (
+                    <ChevronsDownUp className="h-3.5 w-3.5" />
+                  )}
+                </button>
+              </div>
+            )}
 
             {/* Mobile Categories Accordion List */}
             {MOBILE_CATEGORIES.map((cat) => {
               const catItems = mobileItems.filter((i) => MOBILE_ITEM_CATEGORY_MAP[i.name] === cat);
-              const isCategoryActive = catItems.some(
-                (i) => pathname === `/components/${i.name}` || activeComponent === i.name
-              );
+              const isCategoryActive =
+                (pathname === "/mobile-primitives" && currentMobileCategory === MOBILE_CATEGORY_PARAM_MAP[cat]) ||
+                catItems.some(
+                  (i) => pathname === `/components/${i.name}` || activeComponent === i.name
+                );
               const isExpanded = expandedMobileCategories[cat] ?? true;
 
               return (
@@ -1011,9 +1058,19 @@ function SidebarBase({
                         : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-transparent"
                     )}
                   >
-                    <button
-                      type="button"
-                      onClick={() => toggleMobileCategory(cat)}
+                    <Link
+                      href={`/mobile-primitives?category=${MOBILE_CATEGORY_PARAM_MAP[cat] || "all"}`}
+                      onClick={() => {
+                        onMobileOpenChange?.(false);
+                        setCurrentMobileCategory(MOBILE_CATEGORY_PARAM_MAP[cat]);
+                        if (typeof window !== "undefined") {
+                          window.dispatchEvent(
+                            new CustomEvent("kilo:set-mobile-category", {
+                              detail: { category: MOBILE_CATEGORY_PARAM_MAP[cat] || "all" },
+                            })
+                          );
+                        }
+                      }}
                       className="flex items-center flex-1 min-w-0 text-left cursor-pointer"
                       title={isCollapsed ? `${cat} (${catItems.length})` : undefined}
                     >
@@ -1037,7 +1094,7 @@ function SidebarBase({
                       >
                         {cat}
                       </span>
-                    </button>
+                    </Link>
 
                     <div
                       className={cn(
@@ -1241,19 +1298,28 @@ function SidebarBase({
       {isScrollableCategories ? (
         <>
           {topNavSection}
-          <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-2.5 py-1 w-64 custom-scrollbar">
+          <div className={cn(
+            "flex-1 min-h-0 overflow-y-auto overflow-x-hidden py-1 custom-scrollbar",
+            isCollapsed ? "w-14 px-2.5" : "w-64 px-2.5"
+          )}>
             {categoriesNavSection}
           </div>
         </>
       ) : (
-        <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-2.5 py-1 w-64 custom-scrollbar">
+        <div className={cn(
+          "flex-1 min-h-0 overflow-y-auto overflow-x-hidden py-1 custom-scrollbar",
+          isCollapsed ? "w-14 px-2.5" : "w-64 px-2.5"
+        )}>
           {topNavSection}
           {categoriesNavSection}
         </div>
       )}
 
       {/* 4. Minimal Clean Footer */}
-      <div className="border-t border-[var(--border)] p-2.5 shrink-0 w-64">
+      <div className={cn(
+        "border-t border-[var(--border)] shrink-0",
+        isCollapsed ? "w-14 p-2" : "w-64 p-2.5"
+      )}>
         <a
           href="https://github.com/Sourodip-1/kiloUI"
           target="_blank"
@@ -1324,7 +1390,8 @@ function SidebarBase({
 function SidebarWithSearchParams(props: SidebarProps) {
   const searchParams = useSearchParams();
   const activeVariant = props.activeVariant || searchParams?.get("variant") || undefined;
-  return <SidebarBase {...props} activeVariant={activeVariant} />;
+  const activeCategoryParam = searchParams?.get("category") || undefined;
+  return <SidebarBase {...props} activeVariant={activeVariant} activeCategoryParam={activeCategoryParam} />;
 }
 
 export function Sidebar(props: SidebarProps) {

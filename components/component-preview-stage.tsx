@@ -32,6 +32,9 @@ import { M3PhysicsLoader } from "@/components/ui/m3-physics-loader";
 import { M3LoadingIndicator } from "@/registry/ui/m3-loading-indicator";
 import { M3Badge } from "@/registry/ui/m3-badge";
 import { M3List, M3ListItem } from "@/registry/ui/m3-list";
+import { BiometricScanner } from "@/registry/ui/biometric-scanner";
+import { M3OtpInput } from "@/registry/ui/m3-otp-input";
+import { MobileHapticStepper } from "@/registry/ui/mobile-haptic-stepper";
 import { Button } from "@/registry/ui/button";
 import { Input } from "@/registry/ui/input";
 import { Switch } from "@/registry/ui/switch";
@@ -884,6 +887,27 @@ export function ComponentPreviewStage({
   const [m3ListVariant, setM3ListVariant] = React.useState<any>(
     item.name === "m3-list" && activeVariant ? activeVariant : "two-line"
   );
+
+  // Biometric Scanner state
+  const [biometricVariant, setBiometricVariant] = React.useState<any>(
+    item.name === "biometric-scanner" && activeVariant ? activeVariant : "tile"
+  );
+  const [biometricSize, setBiometricSize] = React.useState<"sm" | "md" | "lg">("md");
+
+  // OTP Input state
+  const [otpVal, setOtpVal] = React.useState("8420");
+  const [otpLength, setOtpLength] = React.useState(6);
+  const [otpMask, setOtpMask] = React.useState(false);
+  const [otpError, setOtpError] = React.useState(false);
+
+  // Mobile Haptic Stepper state
+  const [stepperVariant, setStepperVariant] = React.useState<any>(
+    (item.name === "mobile-haptic-stepper" || item.name === "haptic-stepper") && activeVariant
+      ? activeVariant
+      : "pill"
+  );
+  const [stepperVal, setStepperVal] = React.useState(3);
+  const [stepperSize, setStepperSize] = React.useState<"sm" | "md" | "lg">("md");
   // 1. Button state
   const [btnVariant, setBtnVariant] = React.useState<any>(
     item.name === "button" && activeVariant ? activeVariant : "default"
@@ -1024,7 +1048,7 @@ export function ComponentPreviewStage({
   const [tickerPauseOnHover, setTickerPauseOnHover] = React.useState(true);
 
   const [dynamicIslandVariant, setDynamicIslandVariant] = React.useState<any>(
-    item.name === "dynamic-island-banner" && activeVariant ? activeVariant : "compact-pill"
+    (item.name === "dynamic-island-banner" || item.name === "dynamic-island") && activeVariant ? activeVariant : "compact-pill"
   );
   const [dynamicIslandAccent, setDynamicIslandAccent] = React.useState<any>("green");
 
@@ -1710,8 +1734,14 @@ export function ComponentPreviewStage({
       return ["stacked-bottom-right", "stacked-top-center", "cyber-telemetry", "minimal-list"];
     if (item.name === "ticker-notification")
       return ["cyber-terminal", "status-beacon", "news-wire", "monochrome-minimal"];
-    if (item.name === "dynamic-island-banner")
+    if (item.name === "dynamic-island-banner" || item.name === "dynamic-island")
       return ["compact-pill", "expanded-hud", "media-wave", "telemetry-alert"];
+    if (item.name === "biometric-scanner")
+      return ["tile", "pill", "minimal"];
+    if (item.name === "mobile-haptic-stepper" || item.name === "haptic-stepper")
+      return ["pill", "compact", "segmented", "minimal"];
+    if (item.name === "m3-otp-input" || item.name === "otp-input")
+      return ["standard", "masked", "compact", "spaced"];
     if (item.name === "stack-cards")
       return ["perspective-stack", "fan-out", "cyber-deck", "minimal-swipe"];
     return [];
@@ -1770,6 +1800,12 @@ export function ComponentPreviewStage({
       else if (item.name === "m3-progress-indicator") setM3ProgressVariant(v);
       else if (item.name === "m3-badge") setM3BadgeVariant(v);
       else if (item.name === "m3-list") setM3ListVariant(v);
+      else if (item.name === "biometric-scanner") setBiometricVariant(v);
+      else if (item.name === "mobile-haptic-stepper" || item.name === "haptic-stepper") setStepperVariant(v);
+      else if (item.name === "m3-otp-input" || item.name === "otp-input") {
+        if (v === "masked") setOtpMask(true);
+        else setOtpMask(false);
+      }
       else if (item.name === "button") setBtnVariant(v);
       else if (item.name === "magnetic-button") setMagneticVariant(v);
       else if (item.name === "border-beam-button") setBorderBeamVariant(v);
@@ -1792,7 +1828,7 @@ export function ComponentPreviewStage({
       else if (item.name === "announcement-bar") setAnnouncementVariant(v);
       else if (item.name === "toast-stack") setToastStackVariant(v);
       else if (item.name === "ticker-notification") setTickerVariant(v);
-      else if (item.name === "dynamic-island-banner") setDynamicIslandVariant(v);
+      else if (item.name === "dynamic-island-banner" || item.name === "dynamic-island") setDynamicIslandVariant(v);
       else if (item.name === "stack-cards") setStackCardsVariant(v);
       else if (item.name === "checkbox") {
         setCheckboxVariant(v as any);
@@ -2243,6 +2279,12 @@ export function ComponentPreviewStage({
       ? m3BadgeVariant
       : item.name === "m3-list"
       ? m3ListVariant
+      : item.name === "biometric-scanner"
+      ? biometricVariant
+      : item.name === "mobile-haptic-stepper" || item.name === "haptic-stepper"
+      ? stepperVariant
+      : item.name === "dynamic-island-banner" || item.name === "dynamic-island"
+      ? dynamicIslandVariant
       : activeVariant || variants[0] || "default";
 
   const currentIndex = Math.max(0, variants.indexOf(currentVariant));
@@ -2504,6 +2546,12 @@ export function ComponentPreviewStage({
       code = `<M3Badge content={${m3BadgeVal}}><Bell className="h-5 w-5" /></M3Badge>`;
     } else if (item.name === "m3-list") {
       code = `<M3List header="Transactions">\n  <M3ListItem headline="Kilo Studio" supportingText="Payment completed" trailingText="10:24 AM" />\n</M3List>`;
+    } else if (item.name === "biometric-scanner") {
+      code = `<BiometricScanner\n  variant="${biometricVariant}"\n  size="${biometricSize}"\n  label="Security Enclave"\n  sublabel="Touch sensor with registered finger"\n  onSuccess={() => console.log("Authenticated!")}\n/>`;
+    } else if (item.name === "m3-otp-input" || item.name === "otp-input") {
+      code = `<M3OtpInput\n  length={${otpLength}}\n  value="${otpVal}"\n  size="md"${otpMask ? "\n  mask" : ""}${otpError ? "\n  error" : ""}\n  onChange={(val) => console.log(val)}\n  onComplete={(code) => console.log("Verified:", code)}\n/>`;
+    } else if (item.name === "mobile-haptic-stepper" || item.name === "haptic-stepper") {
+      code = `<MobileHapticStepper\n  variant="${stepperVariant}"\n  size="${stepperSize}"\n  value={${stepperVal}}\n  min={0}\n  max={20}\n  unit="pcs"\n  onChange={(qty) => console.log(qty)}\n/>`;
     } else if (item.name === "popover-dialog") {
       code = `<PopoverDialog\n  variant="${popoverVariant}"\n  placement="${popoverPlacement}"${popoverShowArrow ? "\n  showArrow" : ""}\n  title="Node Configuration"\n  description="Adjust routing priorities and edge bandwidth limits."\n/>`;
     } else if (item.name === "command-palette") {
@@ -2518,7 +2566,7 @@ export function ComponentPreviewStage({
       code = `<ToastStack\n  variant="${toastStackVariant}"\n  gap="${toastStackGap}"${toastStackExpand ? "\n  isExpanded={true}" : ""}\n  maxVisible={3}\n/>`;
     } else if (item.name === "ticker-notification") {
       code = `<TickerNotification\n  variant="${tickerVariant}"\n  speed="${tickerSpeed}"${tickerPauseOnHover ? "\n  pauseOnHover" : ""}\n/>`;
-    } else if (item.name === "dynamic-island-banner") {
+    } else if (item.name === "dynamic-island-banner" || item.name === "dynamic-island") {
       code = `<DynamicIslandBanner\n  variant="${dynamicIslandVariant}"\n  accentColor="${dynamicIslandAccent}"\n  title="Telemetry Stream Active"\n  subtitle="Edge Node 04 // 24.8ms RTT // 99.98% Health"\n/>`;
     } else if (item.name === "stack-cards") {
       code = `<StackCards\n  variant="${stackCardsVariant}"\n  cardWidth={380}\n  cardHeight={240}${stackCardsAutoPlay ? "\n  autoPlay" : ""}\n/>`;
@@ -3852,7 +3900,7 @@ export function ComponentPreviewStage({
           )}
 
           {/* Dynamic Island Banner */}
-          {item.name === "dynamic-island-banner" && (
+          {(item.name === "dynamic-island-banner" || item.name === "dynamic-island") && (
             <div className="w-full max-w-xl px-4 py-6 flex flex-col items-center">
               <DynamicIslandBanner
                 variant={dynamicIslandVariant}
@@ -6964,6 +7012,148 @@ export function ComponentPreviewStage({
               </MobilePreviewChassis>
             </div>
           )}
+
+          {/* Biometric Scanner */}
+          {item.name === "biometric-scanner" && (
+            <div className="w-full flex justify-center py-2">
+              <MobilePreviewChassis isLightMode={isLightMode} title="Biometrics" subtitle="SECURITY">
+                <div className="flex-1 flex flex-col items-center justify-center p-5 space-y-6">
+                  <div className="w-full max-w-[280px] flex flex-col items-center space-y-4">
+                    <BiometricScanner
+                      variant={biometricVariant}
+                      size={biometricSize}
+                      label="Security Enclave"
+                      sublabel="Touch sensor with registered finger"
+                      onSuccess={() => {
+                        // eslint-disable-next-line no-console
+                        console.log("Hardware biometric authenticated");
+                      }}
+                    />
+                  </div>
+
+                  <div className="w-full p-3 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/60 text-xs font-mono space-y-2">
+                    <div className="flex items-center justify-between text-[11px]">
+                      <span className="text-[var(--text-muted)]">Sensor Hardware</span>
+                      <span className="text-[var(--accent-green)] font-bold">READY</span>
+                    </div>
+                    <div className="flex items-center justify-between text-[11px]">
+                      <span className="text-[var(--text-muted)]">Vibration Haptics</span>
+                      <span className="text-[var(--text-primary)]">Enabled</span>
+                    </div>
+                  </div>
+                </div>
+              </MobilePreviewChassis>
+            </div>
+          )}
+
+          {/* M3 OTP Input */}
+          {(item.name === "m3-otp-input" || item.name === "otp-input") && (
+            <div className="w-full flex justify-center py-2">
+              <MobilePreviewChassis isLightMode={isLightMode} title="OTP Verification" subtitle="AUTH SHIELD">
+                <div className="flex-1 flex flex-col items-center justify-center p-5 space-y-6">
+                  <div className="w-full flex flex-col items-center space-y-4 text-center">
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--accent-green)] font-semibold">
+                        2-Step Verification
+                      </span>
+                      <h4 className="text-base font-bold text-[var(--text-primary)]">Enter Security PIN</h4>
+                      <p className="text-xs text-[var(--text-muted)]">
+                        A {otpLength}-digit code was dispatched to your enclave hardware.
+                      </p>
+                    </div>
+
+                    <div className="py-3">
+                      <M3OtpInput
+                        length={otpLength}
+                        value={otpVal}
+                        onChange={setOtpVal}
+                        mask={otpMask}
+                        error={otpError}
+                        onComplete={(code) => {
+                          // eslint-disable-next-line no-console
+                          console.log(`Code ${code} verified!`);
+                        }}
+                      />
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setOtpVal("")}
+                        className="px-3 py-1 rounded-lg border border-[var(--border)] bg-[var(--surface-secondary)] text-[11px] font-mono text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
+                      >
+                        Clear PIN
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setOtpError(!otpError)}
+                        className={cn(
+                          "px-3 py-1 rounded-lg border text-[11px] font-mono transition-colors cursor-pointer",
+                          otpError
+                            ? "border-rose-500/40 bg-rose-500/10 text-rose-400"
+                            : "border-[var(--border)] bg-[var(--surface-secondary)] text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                        )}
+                      >
+                        {otpError ? "Error: Active" : "Simulate Error"}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="w-full p-3 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/60 text-xs font-mono space-y-1.5">
+                    <div className="flex items-center justify-between text-[11px]">
+                      <span className="text-[var(--text-muted)]">Entered Digits</span>
+                      <span className="font-bold text-[var(--accent-green)]">{otpVal.length} / {otpLength}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-[11px]">
+                      <span className="text-[var(--text-muted)]">Auto-advance</span>
+                      <span className="text-[var(--text-primary)]">Active</span>
+                    </div>
+                  </div>
+                </div>
+              </MobilePreviewChassis>
+            </div>
+          )}
+
+          {/* Mobile Haptic Stepper */}
+          {(item.name === "mobile-haptic-stepper" || item.name === "haptic-stepper") && (
+            <div className="w-full flex justify-center py-2">
+              <MobilePreviewChassis isLightMode={isLightMode} title="Haptic Stepper" subtitle="ACTIONS">
+                <div className="flex-1 flex flex-col items-center justify-center p-5 space-y-6">
+                  <div className="w-full max-w-[280px] p-4 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] flex flex-col items-center space-y-4">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--text-muted)]">
+                      Order Quantity
+                    </span>
+
+                    <MobileHapticStepper
+                      variant={stepperVariant}
+                      size={stepperSize}
+                      value={stepperVal}
+                      onChange={setStepperVal}
+                      min={0}
+                      max={20}
+                      unit="pcs"
+                    />
+
+                    <div className="w-full pt-3 border-t border-[var(--border)] flex justify-between items-center text-xs font-mono">
+                      <span className="text-[var(--text-muted)]">Subtotal ($45/unit)</span>
+                      <span className="font-bold text-[var(--accent-green)]">${stepperVal * 45}.00</span>
+                    </div>
+                  </div>
+
+                  <div className="w-full p-3 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]/60 text-xs font-mono space-y-1.5">
+                    <div className="flex items-center justify-between text-[11px]">
+                      <span className="text-[var(--text-muted)]">Haptic Vibration</span>
+                      <span className="text-[var(--accent-green)] font-bold">15ms Damped</span>
+                    </div>
+                    <div className="flex items-center justify-between text-[11px]">
+                      <span className="text-[var(--text-muted)]">Boundary Range</span>
+                      <span className="text-[var(--text-primary)]">0 - 20 items</span>
+                    </div>
+                  </div>
+                </div>
+              </MobilePreviewChassis>
+            </div>
+          )}
         </ScaledThumbnailWrapper>
       </div>
 
@@ -9096,6 +9286,100 @@ export function ComponentPreviewStage({
                       { label: "One-Line (M3)", value: "one-line" },
                       { label: "Three-Line (M3)", value: "three-line" },
                       { label: "Minimal SaaS List", value: "minimal" },
+                    ]}
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Biometric Scanner Controls */}
+            {item.name === "biometric-scanner" && (
+              <>
+                <CustomizeTile label="Variant">
+                  <CustomizeSelect
+                    value={biometricVariant}
+                    onChange={(val) => {
+                      setBiometricVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={[
+                      { label: "Tile (Card)", value: "tile" },
+                      { label: "Pill (Compact)", value: "pill" },
+                      { label: "Minimal (Icon)", value: "minimal" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Sensor Size">
+                  <CustomizeSelect
+                    value={biometricSize}
+                    onChange={(val) => setBiometricSize(val as any)}
+                    options={[
+                      { label: "Small (36px)", value: "sm" },
+                      { label: "Medium (48px)", value: "md" },
+                      { label: "Large (64px)", value: "lg" },
+                    ]}
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* OTP Input Controls */}
+            {(item.name === "m3-otp-input" || item.name === "otp-input") && (
+              <>
+                <CustomizeTile label="Length">
+                  <CustomizeSelect
+                    value={String(otpLength)}
+                    onChange={(val) => setOtpLength(Number(val))}
+                    options={[
+                      { label: "4 Digits", value: "4" },
+                      { label: "6 Digits (Standard)", value: "6" },
+                      { label: "8 Digits", value: "8" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Mask Characters">
+                  <CustomizeSwitch
+                    label="Bullet Mask"
+                    checked={otpMask}
+                    onChange={setOtpMask}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Error State">
+                  <CustomizeSwitch
+                    label="Simulate Invalid PIN"
+                    checked={otpError}
+                    onChange={setOtpError}
+                  />
+                </CustomizeTile>
+              </>
+            )}
+
+            {/* Mobile Haptic Stepper Controls */}
+            {(item.name === "mobile-haptic-stepper" || item.name === "haptic-stepper") && (
+              <>
+                <CustomizeTile label="Variant">
+                  <CustomizeSelect
+                    value={stepperVariant}
+                    onChange={(val) => {
+                      setStepperVariant(val);
+                      onVariantChange?.(val);
+                    }}
+                    options={[
+                      { label: "Pill Shape", value: "pill" },
+                      { label: "Compact", value: "compact" },
+                      { label: "Segmented Bar", value: "segmented" },
+                      { label: "Minimal Outlined", value: "minimal" },
+                    ]}
+                  />
+                </CustomizeTile>
+                <CustomizeTile label="Button Size">
+                  <CustomizeSelect
+                    value={stepperSize}
+                    onChange={(val) => setStepperSize(val as any)}
+                    options={[
+                      { label: "Small", value: "sm" },
+                      { label: "Medium", value: "md" },
+                      { label: "Large", value: "lg" },
                     ]}
                   />
                 </CustomizeTile>

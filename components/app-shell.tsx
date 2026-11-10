@@ -31,6 +31,7 @@ import {
   VectorGithubIcon,
 } from "@/components/vector-icons";
 import { REGISTRY_DATA, RegistryItem } from "@/registry/registry-data";
+import { KiloSplash } from "@/components/kilo-splash";
 
 type ThemeMode = "dark" | "light" | "system";
 export type AccentColor = "green" | "violet" | "blue" | "amber" | "rose" | "cyan";
@@ -58,6 +59,8 @@ interface AppShellContextType {
   clearFavorites: () => void;
   likedDrawerOpen: boolean;
   setLikedDrawerOpen: (open: boolean) => void;
+  triggerSplash: (targetRoute: string, customLabel?: string) => void;
+  isSplashActive: boolean;
 }
 
 const AppShellContext = React.createContext<AppShellContextType | null>(null);
@@ -309,6 +312,156 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   // Main content scroll container ref
   const mainScrollRef = React.useRef<HTMLDivElement>(null);
 
+  // Splash Screen State & Route Transition Control
+  const [splashState, setSplashState] = React.useState<{
+    active: boolean;
+    isLoading: boolean;
+    targetLabel?: string;
+  } | null>(null);
+
+  const targetRouteRef = React.useRef<string | null>(null);
+
+  const isMainPage = React.useCallback((urlPath: string): boolean => {
+    const clean = urlPath.split("?")[0].split("#")[0];
+    return (
+      clean === "/" ||
+      clean === "/overview" ||
+      clean === "/components" ||
+      clean === "/mobile-primitives" ||
+      clean === "/icons" ||
+      clean === "/mcp" ||
+      clean === "/liked"
+    );
+  }, []);
+
+  const getRouteLabel = React.useCallback((urlPath: string): string => {
+    const clean = urlPath.split("?")[0].split("#")[0];
+    if (clean === "/overview") return "Overview";
+    if (clean === "/components") return "All Components";
+    if (clean === "/mobile-primitives") return "Mobile Studio";
+    if (clean === "/icons") return "Icon Vault";
+    if (clean === "/mcp") return "MCP Connect";
+    if (clean === "/liked") return "Favorites";
+    return "Precision UI";
+  }, []);
+
+  const triggerSplash = React.useCallback(
+    (targetRoute: string, customLabel?: string) => {
+      const label = customLabel || getRouteLabel(targetRoute);
+      targetRouteRef.current = targetRoute.split("?")[0].split("#")[0];
+      setSplashState({
+        active: true,
+        isLoading: true,
+        targetLabel: label,
+      });
+    },
+    [getRouteLabel]
+  );
+
+  const handleSplashComplete = React.useCallback(() => {
+    setSplashState(null);
+    targetRouteRef.current = null;
+  }, []);
+
+  // When pathname changes to the target route, wait for DOM & shaders to mount, then finish loading
+  React.useEffect(() => {
+    if (splashState?.active && splashState.isLoading) {
+      const currentClean = pathname.split("?")[0].split("#")[0];
+      if (!targetRouteRef.current || currentClean === targetRouteRef.current) {
+        const rafId = requestAnimationFrame(() => {
+          setSplashState((prev) => (prev ? { ...prev, isLoading: false } : null));
+        });
+        return () => cancelAnimationFrame(rafId);
+      }
+    }
+  }, [pathname, splashState?.active, splashState?.isLoading]);
+
+  // Trigger splash for navigation between main pages (subpages use skeleton loading)
+  React.useEffect(() => {
+    const handleGlobalClick = (e: MouseEvent) => {
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+
+      const target = (e.target as HTMLElement).closest("a");
+      if (!target) return;
+
+      const href = target.getAttribute("href");
+      if (!href) return;
+
+      if (
+        href.startsWith("http://") ||
+        href.startsWith("https://") ||
+        href.startsWith("//") ||
+        href.startsWith("#") ||
+        href.startsWith("mailto:") ||
+        href.startsWith("tel:") ||
+        target.target === "_blank"
+      ) {
+        return;
+      }
+
+      const cleanTarget = href.split("?")[0].split("#")[0];
+      const currentClean = pathname.split("?")[0].split("#")[0];
+
+      // Only trigger splash when navigating to a main page!
+      // Other pages (e.g. /components/[name]) use skeleton loading.
+      if (cleanTarget !== currentClean && isMainPage(cleanTarget)) {
+        triggerSplash(cleanTarget);
+      }
+    };
+
+    window.addEventListener("click", handleGlobalClick, { capture: true });
+    return () => window.removeEventListener("click", handleGlobalClick, { capture: true });
+  }, [pathname, isMainPage, triggerSplash]);
+
+  // Listen for explicit "kilo:splash" events only (e.g. major platform switch)
+  React.useEffect(() => {
+    const handleCustomSplash = (e: Event) => {
+      const customEvent = e as CustomEvent<{ route: string; label?: string }>;
+      if (customEvent.detail?.route) {
+        const route = customEvent.detail.route.split("?")[0].split("#")[0];
+        // Trigger splash for any main core portal
+        if (isMainPage(route)) {
+          triggerSplash(route, customEvent.detail.label);
+        }
+      }
+    };
+    window.addEventListener("kilo:splash", handleCustomSplash);
+    return () => window.removeEventListener("kilo:splash", handleCustomSplash);
+  }, [isMainPage, triggerSplash]);
+
+  // Initial page load splash on direct entry to main portal routes only (once per session)
+  React.useEffect(() => {
+    const currentClean = pathname.split("?")[0].split("#")[0];
+    if (isMainPage(currentClean)) {
+      try {
+        const hasShownInitial = sessionStorage.getItem("kilo_initial_splash_shown");
+        if (!hasShownInitial) {
+          sessionStorage.setItem("kilo_initial_splash_shown", "true");
+          setSplashState({
+            active: true,
+            isLoading: true,
+            targetLabel: getRouteLabel(currentClean),
+          });
+
+          const checkReady = () => {
+            requestAnimationFrame(() => {
+              setSplashState((prev) => (prev ? { ...prev, isLoading: false } : null));
+            });
+          };
+
+          if (document.readyState === "complete") {
+            checkReady();
+          } else {
+            window.addEventListener("load", checkReady, { once: true });
+            return () => window.removeEventListener("load", checkReady);
+          }
+        }
+      } catch {
+        // ignore storage errors
+      }
+    }
+  }, [pathname, isMainPage, getRouteLabel]);
+
   // Reset scroll to top whenever navigating to a different component/route
   React.useEffect(() => {
     const scrollToTop = () => {
@@ -340,8 +493,18 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         clearFavorites,
         likedDrawerOpen,
         setLikedDrawerOpen,
+        triggerSplash,
+        isSplashActive: Boolean(splashState?.active),
       }}
     >
+      {/* Global Splash Screen on Page Transitions & Route Loading */}
+      {splashState && (
+        <KiloSplash
+          isLoading={splashState.isLoading}
+          targetLabel={splashState.targetLabel}
+          onComplete={handleSplashComplete}
+        />
+      )}
       {pathname === "/" || !["/components", "/overview", "/icons", "/liked", "/login", "/mobile-primitives", "/mcp"].some(r => pathname === r || pathname?.startsWith(r + "/")) ? (
         <div className="min-h-screen w-full bg-[#070709] text-white antialiased font-sans">
           {children}
@@ -366,7 +529,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             className="flex flex-1 flex-col h-full overflow-y-auto overflow-x-hidden min-w-0"
           >
             {/* Top Sticky Header */}
-            <header className="sticky top-0 z-40 flex min-h-14 items-center justify-between gap-2 border-b border-[var(--border)] bg-[var(--bg-main)]/95 backdrop-blur px-3 sm:px-6 py-2 shrink-0">
+            <header className="sticky top-0 z-[60] flex min-h-14 items-center justify-between gap-2 border-b border-[var(--border)] bg-[var(--bg-main)]/95 backdrop-blur px-3 sm:px-6 py-2 shrink-0">
               <div className="flex items-center gap-3">
                 {/* Mobile Menu Trigger */}
                 <button

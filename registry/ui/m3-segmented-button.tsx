@@ -95,7 +95,7 @@ export function M3SegmentedButton({
             transition={{ type: "spring", stiffness: 500, damping: 30 }}
             className={cn(
               "relative flex-1 min-w-0 flex items-center justify-center font-sans font-medium select-none cursor-pointer disabled:opacity-40 disabled:pointer-events-none focus-visible:outline-none",
-              size === "sm" ? "h-8 px-2 text-xs gap-1" : "h-10 px-2.5 text-xs sm:text-sm gap-1.5",
+              size === "sm" ? "h-7.5 px-1.5 text-[11px] gap-1" : "h-10 px-2.5 text-xs sm:text-sm gap-1.5",
               isMinimal
                 ? cn(
                     "rounded-lg",
@@ -120,7 +120,7 @@ export function M3SegmentedButton({
                   transition={{ type: "spring", stiffness: 500, damping: 25 }}
                   className="shrink-0 text-[var(--accent-green)]"
                 >
-                  <Check className="h-3.5 w-3.5 stroke-[2.5]" />
+                  <Check className={cn("stroke-[2.5]", size === "sm" ? "h-3 w-3" : "h-3.5 w-3.5")} />
                 </motion.span>
               )}
             </AnimatePresence>
