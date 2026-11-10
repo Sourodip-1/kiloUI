@@ -1925,8 +1925,9 @@ function MobilePrimitivesContent() {
                     </div>
 
                     <div className="relative w-full rounded-xl bg-[#090d16] border border-[#1b2234] overflow-hidden py-4 flex flex-col items-center">
-                      <div className="w-full flex justify-center scale-90 sm:scale-95 origin-center">
+                      <div className="w-full flex justify-center py-1">
                         <Depth3dCarousel
+                          size="sm"
                           activeIndex={demoCarouselIdx}
                           onChange={setDemoCarouselIdx}
                           onReserve={(it) => showToast(`Reserving ${it.title}`)}

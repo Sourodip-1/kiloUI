@@ -162,9 +162,12 @@ export const NOCTURNE_SANCTUARIES: SanctuaryCardData[] = [
   },
 ];
 
+export type DepthCarouselSize = "sm" | "default" | "lg";
+
 export interface Depth3dCarouselProps {
   items?: SanctuaryCardData[];
   activeIndex?: number;
+  size?: DepthCarouselSize;
   onChange?: (index: number) => void;
   onReserve?: (item: SanctuaryCardData) => void;
   onBookmark?: (item: SanctuaryCardData, isBookmarked: boolean) => void;
@@ -179,6 +182,7 @@ export interface Depth3dCarouselProps {
 export function Depth3dCarousel({
   items = NOCTURNE_SANCTUARIES,
   activeIndex: controlledIndex,
+  size = "default",
   onChange,
   onReserve,
   onBookmark,
@@ -217,20 +221,65 @@ export function Depth3dCarousel({
   const prevItem = items[prevIdx];
   const nextItem = items[nextIdx];
 
+  const sizeConfig = {
+    sm: {
+      centerCard: "w-[195px] sm:w-[210px] h-[280px] sm:h-[300px] rounded-2xl",
+      sideLeft: "w-[155px] sm:w-[170px] h-[240px] sm:h-[255px] rounded-xl -mr-12 sm:-mr-14",
+      sideRight: "w-[155px] sm:w-[170px] h-[240px] sm:h-[255px] rounded-xl -ml-12 sm:-ml-14",
+      stageMinH: "min-h-[305px]",
+      titleText: "text-sm font-bold",
+      taglineText: "text-[9px]",
+      bottomPad: "p-3 pt-4",
+      priceText: "text-xs",
+      btnPad: "px-2.5 py-1 text-[10px]",
+      badgePad: "px-2 py-0.5 text-[9px]",
+      heartBtn: "w-6 h-6 top-10 right-2.5",
+    },
+    default: {
+      centerCard: "w-[225px] sm:w-[240px] h-[325px] sm:h-[345px] rounded-2xl",
+      sideLeft: "w-[175px] sm:w-[190px] h-[275px] sm:h-[295px] rounded-xl -mr-14 sm:-mr-16",
+      sideRight: "w-[175px] sm:w-[190px] h-[275px] sm:h-[295px] rounded-xl -ml-14 sm:-ml-16",
+      stageMinH: "min-h-[355px]",
+      titleText: "text-base font-bold",
+      taglineText: "text-[11px]",
+      bottomPad: "p-3.5 pt-5",
+      priceText: "text-sm",
+      btnPad: "px-3 py-1.5 text-xs",
+      badgePad: "px-2 py-1 text-[10px]",
+      heartBtn: "w-7 h-7 top-12 right-3",
+    },
+    lg: {
+      centerCard: "w-[270px] sm:w-[290px] h-[395px] sm:h-[415px] rounded-3xl",
+      sideLeft: "w-[210px] sm:w-[230px] h-[340px] sm:h-[360px] rounded-2xl -mr-16 sm:-mr-20",
+      sideRight: "w-[210px] sm:w-[230px] h-[340px] sm:h-[360px] rounded-2xl -ml-16 sm:-ml-20",
+      stageMinH: "min-h-[425px]",
+      titleText: "text-xl font-bold",
+      taglineText: "text-xs",
+      bottomPad: "p-5 pt-8",
+      priceText: "text-lg",
+      btnPad: "px-4 py-2 text-xs",
+      badgePad: "px-3 py-1.5 text-xs",
+      heartBtn: "w-9 h-9 top-16 right-4",
+    },
+  }[size];
+
   return (
-    <div className={cn("relative w-full flex flex-col items-center select-none overflow-hidden py-2", className)}>
+    <div className={cn("relative w-full flex flex-col items-center select-none overflow-hidden py-1", className)}>
       {/* Ambient Chromatic Glow behind Center Card */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 md:w-80 md:h-80 rounded-full bg-[#8083ff]/15 blur-[90px] pointer-events-none -z-0" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 sm:w-64 sm:h-64 rounded-full bg-[#8083ff]/15 blur-[80px] pointer-events-none -z-0" />
 
       {/* 3D Perspective Stage */}
       <div
-        className="relative z-10 flex items-center justify-center w-full min-h-[440px] px-2"
+        className={cn("relative z-10 flex items-center justify-center w-full px-2", sizeConfig.stageMinH)}
         style={{ perspective: 1200 }}
       >
         {/* ── Left Peeking Card (Scaled, Depth Blur, -RotateY) ── */}
         <div
           onClick={() => handleIndexChange(activeIdx - 1)}
-          className="shrink-0 w-[220px] sm:w-[240px] h-[360px] sm:h-[380px] -mr-16 sm:-mr-20 rounded-2xl overflow-hidden relative shadow-lg transform -rotate-y-6 scale-90 opacity-45 blur-[1.5px] hover:opacity-60 transition-all duration-300 cursor-pointer pointer-events-auto z-10 hidden xs:block"
+          className={cn(
+            "shrink-0 overflow-hidden relative shadow-lg transform -rotate-y-6 scale-90 opacity-45 blur-[1.5px] hover:opacity-60 transition-all duration-300 cursor-pointer pointer-events-auto z-10 hidden xs:block",
+            sizeConfig.sideLeft
+          )}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -241,16 +290,16 @@ export function Depth3dCarousel({
           <div className="absolute inset-0 bg-gradient-to-t from-[#0a0e16] via-[#0a0e16]/60 to-transparent" />
 
           {/* Top Rating Badge */}
-          <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-full flex items-center gap-1 border border-white/10">
+          <div className={cn("absolute top-3 left-3 bg-black/60 backdrop-blur-md rounded-full flex items-center gap-1 border border-white/10", sizeConfig.badgePad)}>
             <Star className="h-3 w-3 text-amber-400 fill-amber-400" />
-            <span className="text-[11px] font-mono text-white font-semibold">{prevItem.rating}</span>
+            <span className="text-[10px] font-mono text-white font-semibold">{prevItem.rating}</span>
           </div>
 
           {/* Bottom Card Summary */}
-          <div className="absolute bottom-4 inset-x-4 flex flex-col gap-0.5">
-            <span className="text-[10px] font-mono uppercase tracking-wider text-[#4cd7f6]">{prevItem.location}</span>
-            <h4 className="text-sm font-bold text-white truncate">{prevItem.title}</h4>
-            <p className="text-xs text-neutral-400">${prevItem.pricePerNight} / night</p>
+          <div className="absolute bottom-3 inset-x-3 flex flex-col gap-0.5">
+            <span className="text-[9px] font-mono uppercase tracking-wider text-[#4cd7f6]">{prevItem.location}</span>
+            <h4 className="text-xs font-bold text-white truncate">{prevItem.title}</h4>
+            <p className="text-[11px] text-neutral-400">${prevItem.pricePerNight} / night</p>
           </div>
         </div>
 
@@ -260,7 +309,10 @@ export function Depth3dCarousel({
           dragConstraints={{ left: 0, right: 0 }}
           dragElastic={0.2}
           onDragEnd={handleDragEnd}
-          className="shrink-0 w-[280px] sm:w-[305px] h-[415px] sm:h-[435px] rounded-3xl overflow-hidden relative shadow-2xl z-20 bg-[#141824] border border-white/10 group cursor-grab active:cursor-grabbing will-change-transform"
+          className={cn(
+            "shrink-0 overflow-hidden relative shadow-2xl z-20 bg-[#141824] border border-white/10 group cursor-grab active:cursor-grabbing will-change-transform",
+            sizeConfig.centerCard
+          )}
         >
           {/* Background Image */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -276,17 +328,17 @@ export function Depth3dCarousel({
           <div className="absolute inset-0 bg-gradient-to-b from-[#0a0e16]/60 via-transparent to-transparent" />
 
           {/* Top Badges Row */}
-          <div className="absolute top-4 inset-x-4 flex items-center justify-between z-10 pointer-events-none">
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#0a0e16]/80 backdrop-blur-xl border border-white/10 shadow-sm">
-              <MapPin className="h-3.5 w-3.5 text-[#4cd7f6]" />
-              <span className="text-xs font-sans text-white font-semibold tracking-wide">
+          <div className="absolute top-3 inset-x-3 flex items-center justify-between z-10 pointer-events-none">
+            <div className={cn("flex items-center gap-1 rounded-full bg-[#0a0e16]/80 backdrop-blur-xl border border-white/10 shadow-sm", sizeConfig.badgePad)}>
+              <MapPin className="h-3 w-3 text-[#4cd7f6]" />
+              <span className="font-sans text-white font-semibold tracking-wide truncate max-w-[110px]">
                 {currentItem.location}
               </span>
             </div>
 
-            <div className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-[#0a0e16]/80 backdrop-blur-xl border border-white/10 shadow-sm">
-              <Star className="h-3.5 w-3.5 text-amber-400 fill-amber-400" />
-              <span className="text-xs font-mono text-white font-bold">{currentItem.rating}</span>
+            <div className={cn("flex items-center gap-1 rounded-full bg-[#0a0e16]/80 backdrop-blur-xl border border-white/10 shadow-sm", sizeConfig.badgePad)}>
+              <Star className="h-3 w-3 text-amber-400 fill-amber-400" />
+              <span className="font-mono text-white font-bold">{currentItem.rating}</span>
             </div>
           </div>
 
@@ -294,13 +346,16 @@ export function Depth3dCarousel({
           <button
             type="button"
             onClick={(e) => toggleBookmark(currentItem, e)}
-            className="absolute top-16 right-4 w-9 h-9 rounded-full bg-[#1c2028]/80 backdrop-blur-md flex items-center justify-center text-white hover:text-rose-400 active:scale-90 transition-all shadow-md z-10 border border-white/10 cursor-pointer"
+            className={cn(
+              "absolute rounded-full bg-[#1c2028]/80 backdrop-blur-md flex items-center justify-center text-white hover:text-rose-400 active:scale-90 transition-all shadow-md z-10 border border-white/10 cursor-pointer",
+              sizeConfig.heartBtn
+            )}
             title="Save Sanctuary"
             aria-label="Save Sanctuary"
           >
             <Heart
               className={cn(
-                "h-4 w-4 transition-colors",
+                "h-3.5 w-3.5 transition-colors",
                 bookmarkedIds[currentItem.id]
                   ? "text-rose-500 fill-rose-500"
                   : "text-white"
@@ -309,44 +364,47 @@ export function Depth3dCarousel({
           </button>
 
           {/* Bottom Content Scrim Shield */}
-          <div className="absolute bottom-0 inset-x-0 p-5 flex flex-col gap-2 z-10 bg-gradient-to-t from-[#0a0e16] via-[#0a0e16]/95 to-transparent pt-8">
+          <div className={cn("absolute bottom-0 inset-x-0 flex flex-col gap-1.5 z-10 bg-gradient-to-t from-[#0a0e16] via-[#0a0e16]/95 to-transparent", sizeConfig.bottomPad)}>
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono tracking-wider uppercase text-pink-400 font-semibold">
+              <span className="text-[9px] font-mono tracking-wider uppercase text-pink-400 font-semibold">
                 {currentItem.category}
               </span>
-              <div className="flex items-center gap-1 text-[#4cd7f6] text-[11px] font-sans font-medium">
-                <ShieldCheck className="h-3.5 w-3.5" />
+              <div className="flex items-center gap-1 text-[#4cd7f6] text-[10px] font-sans font-medium">
+                <ShieldCheck className="h-3 w-3" />
                 <span>{currentItem.badge}</span>
               </div>
             </div>
 
             <div>
-              <h3 className="text-xl font-bold text-white tracking-tight leading-tight">
+              <h3 className={cn("text-white tracking-tight leading-tight", sizeConfig.titleText)}>
                 {currentItem.title}
               </h3>
-              <p className="text-xs text-neutral-300 line-clamp-1 mt-0.5 leading-relaxed">
+              <p className={cn("text-neutral-300 line-clamp-1 mt-0.5 leading-relaxed", sizeConfig.taglineText)}>
                 {currentItem.tagline}
               </p>
             </div>
 
-            <div className="flex items-center justify-between pt-1.5 border-t border-white/10">
+            <div className="flex items-center justify-between pt-1.5 border-t border-white/10 mt-0.5">
               <div className="flex flex-col">
-                <span className="text-[10px] font-mono text-neutral-400">Experience from</span>
+                <span className="text-[9px] font-mono text-neutral-400">Experience from</span>
                 <div className="flex items-baseline gap-1">
-                  <span className="text-lg font-bold text-white font-sans">
+                  <span className={cn("font-bold text-white font-sans", sizeConfig.priceText)}>
                     ${currentItem.pricePerNight}
                   </span>
-                  <span className="text-xs text-neutral-400 font-sans">/ night</span>
+                  <span className="text-[10px] text-neutral-400 font-sans">/ night</span>
                 </div>
               </div>
 
               <button
                 type="button"
                 onClick={() => onReserve?.(currentItem)}
-                className="px-4 py-2 rounded-full bg-[#c0c1ff] text-[#1000a9] font-sans text-xs font-semibold flex items-center gap-1.5 shadow-lg active:scale-95 transition-transform hover:brightness-105 cursor-pointer"
+                className={cn(
+                  "rounded-full bg-[#c0c1ff] text-[#1000a9] font-sans font-semibold flex items-center gap-1 shadow-lg active:scale-95 transition-transform hover:brightness-105 cursor-pointer",
+                  sizeConfig.btnPad
+                )}
               >
                 <span>Reserve</span>
-                <ArrowRight className="h-3.5 w-3.5" />
+                <ArrowRight className="h-3 w-3" />
               </button>
             </div>
           </div>
@@ -355,7 +413,10 @@ export function Depth3dCarousel({
         {/* ── Right Peeking Card (Scaled, Depth Blur, RotateY) ── */}
         <div
           onClick={() => handleIndexChange(activeIdx + 1)}
-          className="shrink-0 w-[220px] sm:w-[240px] h-[360px] sm:h-[380px] -ml-16 sm:-ml-20 rounded-2xl overflow-hidden relative shadow-lg transform rotate-y-6 scale-90 opacity-45 blur-[1.5px] hover:opacity-60 transition-all duration-300 cursor-pointer pointer-events-auto z-10 hidden xs:block"
+          className={cn(
+            "shrink-0 overflow-hidden relative shadow-lg transform rotate-y-6 scale-90 opacity-45 blur-[1.5px] hover:opacity-60 transition-all duration-300 cursor-pointer pointer-events-auto z-10 hidden xs:block",
+            sizeConfig.sideRight
+          )}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -366,16 +427,16 @@ export function Depth3dCarousel({
           <div className="absolute inset-0 bg-gradient-to-t from-[#0a0e16] via-[#0a0e16]/60 to-transparent" />
 
           {/* Top Rating Badge */}
-          <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-full flex items-center gap-1 border border-white/10">
+          <div className={cn("absolute top-3 right-3 bg-black/60 backdrop-blur-md rounded-full flex items-center gap-1 border border-white/10", sizeConfig.badgePad)}>
             <Star className="h-3 w-3 text-amber-400 fill-amber-400" />
-            <span className="text-[11px] font-mono text-white font-semibold">{nextItem.rating}</span>
+            <span className="text-[10px] font-mono text-white font-semibold">{nextItem.rating}</span>
           </div>
 
           {/* Bottom Card Summary */}
-          <div className="absolute bottom-4 inset-x-4 flex flex-col gap-0.5 text-right">
-            <span className="text-[10px] font-mono uppercase tracking-wider text-[#4cd7f6]">{nextItem.location}</span>
-            <h4 className="text-sm font-bold text-white truncate">{nextItem.title}</h4>
-            <p className="text-xs text-neutral-400">${nextItem.pricePerNight} / night</p>
+          <div className="absolute bottom-3 inset-x-3 flex flex-col gap-0.5 text-right">
+            <span className="text-[9px] font-mono uppercase tracking-wider text-[#4cd7f6]">{nextItem.location}</span>
+            <h4 className="text-xs font-bold text-white truncate">{nextItem.title}</h4>
+            <p className="text-[11px] text-neutral-400">${nextItem.pricePerNight} / night</p>
           </div>
         </div>
       </div>

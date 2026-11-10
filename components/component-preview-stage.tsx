@@ -905,6 +905,7 @@ export function ComponentPreviewStage({
   const [shapedCardImageIdx, setShapedCardImageIdx] = React.useState(0);
 
   const [depthCarouselIndex, setDepthCarouselIndex] = React.useState(0);
+  const [depthCarouselSize, setDepthCarouselSize] = React.useState<"sm" | "default" | "lg">("sm");
   const [curatedActiveFilter, setCuratedActiveFilter] = React.useState("all");
   const [specsGuests, setSpecsGuests] = React.useState(4);
   const [hostVerified, setHostVerified] = React.useState(true);
@@ -2592,7 +2593,7 @@ export function ComponentPreviewStage({
     } else if (item.name === "shaped-image-card") {
       code = `<ShapedImageCard\n  shape="${shapedCardShape}"\n  layout="${shapedCardLayout}"\n  aspectRatio="${shapedCardAspect}"\n  glow={${shapedCardGlow}}\n  showBorder={${shapedCardBorder}}\n  imageSrc="${SHAPED_CARD_IMAGES[shapedCardImageIdx].url}"\n  title="${SHAPED_CARD_IMAGES[shapedCardImageIdx].title}"\n  subtitle="${SHAPED_CARD_IMAGES[shapedCardImageIdx].subtitle}"\n  badge="${SHAPED_CARD_IMAGES[shapedCardImageIdx].badge}"\n  description="${SHAPED_CARD_IMAGES[shapedCardImageIdx].desc}"\n  primaryAction={{\n    label: "Explore Space",\n    onClick: () => {}\n  }}\n/>`;
     } else if (item.name === "3d-depth-carousel") {
-      code = `<Depth3dCarousel\n  activeIndex={${depthCarouselIndex}}\n  onChange={setIndex}\n  onReserve={(item) => console.log("Reserve", item.title)}\n  onBookmark={(item, saved) => console.log("Bookmark", item.id, saved)}\n/>`;
+      code = `<Depth3dCarousel\n  size="${depthCarouselSize}"\n  activeIndex={${depthCarouselIndex}}\n  onChange={setIndex}\n  onReserve={(item) => console.log("Reserve", item.title)}\n  onBookmark={(item, saved) => console.log("Bookmark", item.id, saved)}\n/>`;
     } else if (item.name === "specs-grid-card") {
       code = `<SpecsGridCard\n  title="Villa Specs"\n  badge="Instant Confirmation"\n  metrics={[\n    { label: "Max Guests", value: ${specsGuests} },\n    { label: "King Suites", value: 2 },\n    { label: "Hot Spring", value: 1 },\n  ]}\n  amenities={["High-Speed Starlink", "Matcha Ritual Bar", "Zen Garden Yoga"]}\n/>`;
     } else if (item.name === "host-trust-card") {
@@ -6856,6 +6857,7 @@ export function ComponentPreviewStage({
             <div className="relative w-full flex flex-col items-center justify-center py-6 px-2 sm:px-4 max-w-4xl mx-auto">
               <div className="w-full max-w-2xl py-4 flex flex-col items-center">
                 <Depth3dCarousel
+                  size={depthCarouselSize}
                   activeIndex={depthCarouselIndex}
                   onChange={setDepthCarouselIndex}
                   onReserve={(it) => showCarouselToast(`Reserving ${it.title}`)}
@@ -9471,6 +9473,18 @@ export function ComponentPreviewStage({
             {/* 3D Depth Carousel Controls */}
             {item.name === "3d-depth-carousel" && (
               <>
+                <CustomizeTile label="Carousel Scale">
+                  <CustomizeSelect
+                    value={depthCarouselSize}
+                    onChange={(val) => setDepthCarouselSize(val as "sm" | "default" | "lg")}
+                    options={[
+                      { label: "Compact (300px - Mobile Recommended)", value: "sm" },
+                      { label: "Balanced (345px Standard)", value: "default" },
+                      { label: "Expanded (415px Hero)", value: "lg" },
+                    ]}
+                  />
+                </CustomizeTile>
+
                 <CustomizeTile label="Active Sanctuary Card">
                   <CustomizeSelect
                     value={String(depthCarouselIndex)}
